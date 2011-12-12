@@ -90,3 +90,12 @@ To start your Application:
 
     $app = new \YourApp\Application;
     $app->run( $argv );
+
+
+Todo
+----
+* readline support.
+* autocompleter.
+* exception renderer.
+* alias
+* interact
