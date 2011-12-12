@@ -12,6 +12,12 @@ If the subcommand is not defined, you can still use the simple form:
 
     $ app [app-opts] [arguments]
 
+Requirement
+-----------
+
+* PHP5.3
+* PSR-0 Autoloader
+* pear.corneltek.com/GetOptionKit
 
 Tutorial
 --------
@@ -74,5 +80,8 @@ src/YourApp/Command/ListCommand.php
 To start your Application:
 
     <?php
+
+    // use your PSR-0 autoloader to load classes
+
     $app = new \YourApp\Application;
     $app->run( $argv );
