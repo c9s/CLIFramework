@@ -11,7 +11,7 @@
     <active>1</active>
   </lead>
   <date>2011-12-12</date>
-  <time>22:00:35</time>
+  <time>22:15:54</time>
   <version>
     <release>0.0.1</release>
     <api>0.0.1</api>
@@ -41,6 +41,7 @@
       <file install-as="TestApp/Application.php" name="tests/TestApp/Application.php" role="test" md5sum="676dc451abeed5d0197417aa15fef308"/>
       <file install-as="TestApp/Command/ListCommand/FooCommand.php" name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="55ca48ae0b3ade3672666fae2587cd81"/>
       <file install-as="TestApp/Command/ListCommand.php" name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="8b9d5900c998fae2ab55de72e35a75d0"/>
+      <file install-as="README.md" name="README.md" role="doc" md5sum="7d0f518a327d05edd1bb09a53eaba4ff"/>
     </dir>
   </contents>
   <dependencies>
