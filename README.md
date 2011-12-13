@@ -1,6 +1,31 @@
 CLIFramework
 ============
 
+CLIFramework is a command-line application framework, for building flexiable, simple command-line applications.
+
+In one CLIFramework application, each command is a class file, a command class can have many subcommands,
+
+and each subcommand can also have their subcommands and arguments, options, and so on.
+
+Commands and Subcommands can be registered from outside of an application or your plugins.
+
+Defining a new command is pretty simple, all you need to is declare a class which is inherited from `CLIFramework\Command` class.
+
+Commands have methods for stages, like `prepare`, `execute`, `finish`, for a command like below:
+
+    $ app foo_cmd bar_cmd arg1 arg2 arg3
+
+The call graph is like:
+
+    app->run
+    - app->prepare
+      - foo_cmd->prepare
+        - bar_cmd->prepare
+        - bar_cmd->execute
+        - bar_cmd->finish
+      - foo_cmd->finish
+    - app->finish
+
 Command Forms
 -------------
 
