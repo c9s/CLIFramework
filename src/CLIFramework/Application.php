@@ -50,10 +50,10 @@ class Application extends CommandBase
     /**
      * register application option specs to the parser
      */
-    public function options($getopt)
+    public function options($opts)
     {
-        // $parser->add( );
-
+        $opts->add('v|verbose');
+        $opts->add('d|debug');
     }
 
 
