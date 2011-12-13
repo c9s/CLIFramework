@@ -130,6 +130,31 @@ abstract class CommandBase
         return @$this->commands[ $command ];
     }
 
+    /* 
+     * return comand options (parsed) 
+     */
+    function getOptions()
+    {
+        return $this->options;
+    }
+
+
+    /* 
+     * set options
+     *
+     * @param OptionResult $options 
+     */
+    function setOptions( $options )
+    {
+        $this->options = $options;
+    }
+
+    /* prepare stage */
+    function prepare() { }
+
+    /* for finalize stage */
+    function finish() { }
+
     /* main command execute method */
     abstract function execute($arguments);
 }

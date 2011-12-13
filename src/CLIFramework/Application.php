@@ -97,6 +97,7 @@ class Application extends CommandBase
 
         // save options result
         $current_cmd->options = $getopt->parse( $argv );
+        $current_cmd->prepare();
 
         $command_stack = array();
         $arguments = array();
@@ -104,9 +105,12 @@ class Application extends CommandBase
 
         while( ! $getopt->isEnd() ) {
 
-            if( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) {
+            // check current argument is a subcommand name 
+            // or normal arguments by given a subcommand list.
+            if( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) 
+            {
+                $subcommand = $getopt->getCurrentArgument();
                 $getopt->advance();
-                $subcommand = array_shift( $subcommand_list );
 
                 // initialize subcommand (subcommand with parent command class)
                 $command_class = $current_cmd->getCommandClass( $subcommand );
@@ -164,7 +168,7 @@ class Application extends CommandBase
 
         // get last command and run
         if( $last_cmd = array_pop( $command_stack ) ) {
-            $last_cmd->execute( $arguments );
+            $return = $last_cmd->execute( $arguments );
             $last_cmd->finish();
             while( $cmd = array_pop( $command_stack ) ) {
                 // call finish stage.. of every command.
@@ -173,8 +177,10 @@ class Application extends CommandBase
         }
         else {
             // no command specified.
-            $this->execute( $arguments );
+            return $this->execute( $arguments );
         }
+
+        $current_cmd->finish();
     }
 
 

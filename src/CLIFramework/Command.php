@@ -14,18 +14,6 @@ use GetOptionKit\GetOptionKit;
 abstract class Command extends CommandBase
 {
 
-    /* prepare stage */
-    function prepare() { }
-
-    /* for finalize stage */
-    function finish() { }
-
-
-    function getOptions()
-    {
-        return $this->options;
-    }
-
     function getCommandName()
     {
         $class = get_class($this);
