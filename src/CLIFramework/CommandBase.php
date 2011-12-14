@@ -85,8 +85,6 @@ abstract class CommandBase
      */
     public function registerCommand($command,$class = null)
     {
-
-        
         // try to load the class/subclass.
         if( $class ) {
             if( $this->loader->loadClass( $class ) === false )

@@ -73,7 +73,8 @@ class Application extends CommandBase
 
         $current_cmd = $this;
 
-        // init application 
+        // init application,
+        // before parsing options, we have to known the registered commands.
         $current_cmd->init();
 
         // use getoption kit to parse application options

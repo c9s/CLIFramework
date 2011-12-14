@@ -58,7 +58,6 @@ class CommandLoader
         if( class_exists($class ))
             return $class;
 
-
         // if it's a full-qualified class name.
         if( $class[0] == '\\' ) 
         {
@@ -73,6 +72,8 @@ class CommandLoader
             // has application command class ?
             foreach( $this->namespaces as $ns ) {
                 $fullclass = $ns . '\\' . $class;
+
+                # echo "\nLooking for $fullclass\n";
                 if( class_exists($fullclass) )
                     return $fullclass;
 
