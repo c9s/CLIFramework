@@ -47,7 +47,21 @@ Requirement
 
 * PHP5.3
 * PSR-0 Autoloader
+* pear.corneltek.com/Universal
 * pear.corneltek.com/GetOptionKit
+
+
+Installation
+------------
+
+From pear:
+
+    $ pear channel-discover pear.corneltek.com
+    $ pear install corneltek/CLIFramework
+
+Or install through source:
+
+    $ pear install -f package.xml
 
 Tutorial
 --------
@@ -116,6 +130,13 @@ To start your Application:
     $app = new \YourApp\Application;
     $app->run( $argv );
 
+
+Example
+-------
+Please check `example/demo.php`
+
+
+    $ php example/demo.php
 
 Todo
 ----
