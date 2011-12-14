@@ -40,6 +40,7 @@ abstract class CommandBase
         $this->logger       = new Logger;
     }
 
+
     function usage()
     {
         // return usage
@@ -147,6 +148,16 @@ abstract class CommandBase
     function setOptions( $options )
     {
         $this->options = $options;
+    }
+
+    function getLogger()
+    {
+        return $this->logger;
+    }
+
+    function setLogger($logger)
+    {
+        $this->logger = $logger;
     }
 
     /* prepare stage */
