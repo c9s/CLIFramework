@@ -10,11 +10,11 @@
     <email>cornelius.howl@gmail.com</email>
     <active>1</active>
   </lead>
-  <date>2011-12-14</date>
-  <time>22:33:56</time>
+  <date>2011-12-15</date>
+  <time>00:54:36</time>
   <version>
-    <release>0.0.1</release>
-    <api>0.0.1</api>
+    <release>0.0.2</release>
+    <api>0.0.2</api>
   </version>
   <stability>
     <release>beta</release>
@@ -24,23 +24,23 @@
   <notes>-</notes>
   <contents>
     <dir name="/">
-      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="cfbe1da6edf8ae1fc87d80677c5b3f96"/>
-      <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="a4f07bed03ce3d80c6a56433d25b9fa5"/>
+      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="5de4f72309a18cda33e4ac2c6702fd0a"/>
+      <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="5aaf615056eba883c07365d39c2b399c"/>
       <file install-as="CLIFramework/Command.php" name="src/CLIFramework/Command.php" role="php" md5sum="fd894213dc002aef9f5facd243259a5f"/>
-      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="f350765f646c259a4fb1aab5ff57ff85"/>
+      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="abd5a6e027b94c5c85abce52f3e03b96"/>
       <file install-as="CLIFramework/CommandInterface.php" name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
-      <file install-as="CLIFramework/CommandLoader.php" name="src/CLIFramework/CommandLoader.php" role="php" md5sum="a20ae702404772b66708afef9dee4e1f"/>
-      <file install-as="CLIFramework/Formatter.php" name="src/CLIFramework/Formatter.php" role="php" md5sum="7b5edf83245660320f9ec5550e5dc5d0"/>
+      <file install-as="CLIFramework/CommandLoader.php" name="src/CLIFramework/CommandLoader.php" role="php" md5sum="3bed9629e324dd7b4e1d28c22f28b126"/>
+      <file install-as="CLIFramework/Formatter.php" name="src/CLIFramework/Formatter.php" role="php" md5sum="6457510f498e749392304be0fb7f246a"/>
       <file install-as="CLIFramework/Logger.php" name="src/CLIFramework/Logger.php" role="php" md5sum="190b443bf5047d8af68999a6d7cae77a"/>
       <file install-as="CLIFramework/Utils.php" name="src/CLIFramework/Utils.php" role="php" md5sum="c1e1498ebc1eac966da1fbda153eb1e3"/>
+      <file install-as="bootstrap.php" name="tests/bootstrap.php" role="test" md5sum="dc3c892b7c3c12c23d8f4740238f27b7"/>
       <file install-as="CLIFramework/ApplicationTest.php" name="tests/CLIFramework/ApplicationTest.php" role="test" md5sum="808f5cee913ee7eb84a6ce3ec81e5913"/>
       <file install-as="CLIFramework/CommandLoaderTest.php" name="tests/CLIFramework/CommandLoaderTest.php" role="test" md5sum="860fcd7d805d2fa7335ab10b866e1ae3"/>
       <file install-as="CLIFramework/LoggerTest.php" name="tests/CLIFramework/LoggerTest.php" role="test" md5sum="01fae1d4f94c8c1be13f3e5d32ff7946"/>
+      <file install-as="helpers.php" name="tests/helpers.php" role="test" md5sum="442b22ed35a844926391dc62c49ec706"/>
       <file install-as="TestApp/Application.php" name="tests/TestApp/Application.php" role="test" md5sum="676dc451abeed5d0197417aa15fef308"/>
       <file install-as="TestApp/Command/ListCommand/FooCommand.php" name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="55ca48ae0b3ade3672666fae2587cd81"/>
       <file install-as="TestApp/Command/ListCommand.php" name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="8b9d5900c998fae2ab55de72e35a75d0"/>
-      <file install-as="bootstrap.php" name="tests/bootstrap.php" role="test" md5sum="507d0b7bfd41e80546df10c1449f7c8b"/>
-      <file install-as="helpers.php" name="tests/helpers.php" role="test" md5sum="442b22ed35a844926391dc62c49ec706"/>
       <file install-as="README.md" name="README.md" role="doc" md5sum="c7486ba41f9c950cbaadbdd2d9919edc"/>
     </dir>
   </contents>
@@ -54,6 +54,11 @@
       </pearinstaller>
       <package>
         <name>GetOptionKit</name>
+        <channel>pear.corneltek.com</channel>
+        <min>0.0.1</min>
+      </package>
+      <package>
+        <name>Universal</name>
         <channel>pear.corneltek.com</channel>
         <min>0.0.1</min>
       </package>
