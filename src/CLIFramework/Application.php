@@ -33,8 +33,8 @@ class Application extends CommandBase
         $app_ns = $app_ref_class->getNamespaceName();
 
         $this->loader = new CommandLoader();
-        $this->loader->addNamespace( $app_ns . '\\Command' );
         $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
+        $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
         $this->optionsParser = new ContinuousOptionParser;
     }
 
@@ -56,8 +56,8 @@ class Application extends CommandBase
      */
     public function init()
     {
-        $this->registerCommand('list','\CLIFramework\Command\ListCommand');
-        $this->registerCommand('help','\CLIFramework\Command\HelpCommand');
+        // $this->registerCommand('list','\\CLIFramework\\Command\\ListCommand');
+        $this->registerCommand('help','\\CLIFramework\\Command\\HelpCommand');
     }
 
 
@@ -94,7 +94,7 @@ class Application extends CommandBase
         $command_stack = array();
         $arguments = array();
         $subcommand_list = $current_cmd->getCommandList();
-
+        $parent = null;
         while( ! $getopt->isEnd() ) {
 
             // check current argument is a subcommand name 
@@ -119,13 +119,14 @@ class Application extends CommandBase
                     throw new Exception("command $subcommand not found.");
                 }
 
-                // save parent command object.
+                // if current_cmd is not application, we should save parent command object.
+                $current_cmd = new $command_class();
                 if( $current_cmd !== $this )
                     $parent = $current_cmd;
-                $current_cmd = new $command_class();
 
                 // save parent command class.
                 $current_cmd->parent = $parent;
+                $current_cmd->application = $this;
 
                 // let command has the command loader to register subcommand (load class)
                 $current_cmd->loader = $this->loader;

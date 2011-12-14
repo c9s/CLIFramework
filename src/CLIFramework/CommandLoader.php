@@ -10,6 +10,8 @@
  */
 namespace CLIFramework;
 
+use Exception;
+
 class CommandLoader 
 {
     public $namespaces = array();
@@ -17,8 +19,9 @@ class CommandLoader
     public function addNamespace( $ns )
     {
         $nss = (array) $ns;
-        foreach( $nss as $n )
+        foreach( $nss as $n ) {
             $this->namespaces[] = $n;
+        }
     }
 
 
@@ -55,25 +58,31 @@ class CommandLoader
         if( class_exists($class ))
             return $class;
 
+
         // if it's a full-qualified class name.
-        if( $class[0] == '\\' ) {
+        if( $class[0] == '\\' ) 
+        {
             spl_autoload_call( $class );
             if( class_exists($class) )
                 return $class;
-        }
+            else
+                throw new Exception("Command class $class not found.");
+        } 
+        else {
+            // for subcommand class name (under any subcommand namespace)
+            // has application command class ?
+            foreach( $this->namespaces as $ns ) {
+                $fullclass = $ns . '\\' . $class;
+                if( class_exists($fullclass) )
+                    return $fullclass;
 
-        // for subcommand class name (under any subcommand namespace)
-        // has application command class ?
-        foreach( $this->namespaces as $ns ) {
-            $class = $ns . '\\' . $class;
-            if( class_exists($class) )
-                return $class;
-
-            spl_autoload_call( $class );
-            if( class_exists($class) )
-                return $class;
+                spl_autoload_call( $fullclass );
+                if( class_exists($fullclass) )
+                    return $fullclass;
+            }
         }
     }
+
 
 
     /* 

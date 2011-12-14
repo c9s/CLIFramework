@@ -1,8 +1,7 @@
 <?php
 require 'tests/helpers.php';
-require 'UniversalClassLoader/SplClassLoader.php';
-$classLoader = new \UniversalClassLoader\SplClassLoader(array( 
-    'Onion' => 'src',
+require '../Universal/src/Universal/ClassLoader/SplClassLoader.php';
+$classLoader = new \Universal\ClassLoader\SplClassLoader(array( 
     'CLIFramework' => 'src',
     'TestApp' => 'tests',
 ));

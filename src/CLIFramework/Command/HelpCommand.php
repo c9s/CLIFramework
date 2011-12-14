@@ -9,6 +9,7 @@
  *
  */
 namespace CLIFramework\Command;
+
 use CLIFramework\Command;
 use CLIFramework\CommandInterface;
 

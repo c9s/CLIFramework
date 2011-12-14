@@ -13,6 +13,7 @@ use GetOptionKit\GetOptionKit;
 
 abstract class Command extends CommandBase
 {
+    public $application;
 
     function getCommandName()
     {

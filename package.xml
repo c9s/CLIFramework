@@ -10,8 +10,8 @@
     <email>cornelius.howl@gmail.com</email>
     <active>1</active>
   </lead>
-  <date>2011-12-12</date>
-  <time>22:15:54</time>
+  <date>2011-12-14</date>
+  <time>20:02:26</time>
   <version>
     <release>0.0.1</release>
     <api>0.0.1</api>
@@ -24,24 +24,24 @@
   <notes>-</notes>
   <contents>
     <dir name="/">
-      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="7f2ac46aab594c7b3f88bac18b40067d"/>
+      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="2ebd7264d96bf0032969d248647eef4f"/>
       <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="8ddc47f4e0c5f77468ab0f9683bd5b65"/>
-      <file install-as="CLIFramework/Command.php" name="src/CLIFramework/Command.php" role="php" md5sum="63357317049aeb3bb0ff33733133bdc7"/>
-      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="8c706779d834c29724f245e8578b1d50"/>
+      <file install-as="CLIFramework/Command.php" name="src/CLIFramework/Command.php" role="php" md5sum="f87e257f04bb1aace0cca55e0384a1db"/>
+      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="e0570d4ae7f333d704fd5419d2b3f587"/>
       <file install-as="CLIFramework/CommandInterface.php" name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
       <file install-as="CLIFramework/CommandLoader.php" name="src/CLIFramework/CommandLoader.php" role="php" md5sum="83c4d9eae4d2e50f7bbdc26a8ba790db"/>
       <file install-as="CLIFramework/Formatter.php" name="src/CLIFramework/Formatter.php" role="php" md5sum="7b5edf83245660320f9ec5550e5dc5d0"/>
       <file install-as="CLIFramework/Logger.php" name="src/CLIFramework/Logger.php" role="php" md5sum="190b443bf5047d8af68999a6d7cae77a"/>
       <file install-as="CLIFramework/Utils.php" name="src/CLIFramework/Utils.php" role="php" md5sum="c1e1498ebc1eac966da1fbda153eb1e3"/>
-      <file install-as="bootstrap.php" name="tests/bootstrap.php" role="test" md5sum="c6dd398c6a27d99e0f84eb9350abcaa3"/>
       <file install-as="CLIFramework/ApplicationTest.php" name="tests/CLIFramework/ApplicationTest.php" role="test" md5sum="808f5cee913ee7eb84a6ce3ec81e5913"/>
       <file install-as="CLIFramework/CommandLoaderTest.php" name="tests/CLIFramework/CommandLoaderTest.php" role="test" md5sum="860fcd7d805d2fa7335ab10b866e1ae3"/>
       <file install-as="CLIFramework/LoggerTest.php" name="tests/CLIFramework/LoggerTest.php" role="test" md5sum="01fae1d4f94c8c1be13f3e5d32ff7946"/>
-      <file install-as="helpers.php" name="tests/helpers.php" role="test" md5sum="442b22ed35a844926391dc62c49ec706"/>
       <file install-as="TestApp/Application.php" name="tests/TestApp/Application.php" role="test" md5sum="676dc451abeed5d0197417aa15fef308"/>
       <file install-as="TestApp/Command/ListCommand/FooCommand.php" name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="55ca48ae0b3ade3672666fae2587cd81"/>
       <file install-as="TestApp/Command/ListCommand.php" name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="8b9d5900c998fae2ab55de72e35a75d0"/>
-      <file install-as="README.md" name="README.md" role="doc" md5sum="7d0f518a327d05edd1bb09a53eaba4ff"/>
+      <file install-as="bootstrap.php" name="tests/bootstrap.php" role="test" md5sum="c6dd398c6a27d99e0f84eb9350abcaa3"/>
+      <file install-as="helpers.php" name="tests/helpers.php" role="test" md5sum="442b22ed35a844926391dc62c49ec706"/>
+      <file install-as="README.md" name="README.md" role="doc" md5sum="5e24f2aa6dfc56459d8d82c71285beb3"/>
     </dir>
   </contents>
   <dependencies>

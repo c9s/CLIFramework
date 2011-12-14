@@ -10,6 +10,7 @@
  */
 namespace CLIFramework;
 
+use Exception;
 
 
 /**
@@ -98,11 +99,13 @@ abstract class CommandBase
             else {
                 $class = $this->loader->load($command);
             }
-
         }
+
+        if( ! $class )
+            throw new Exception("command class $class for command $command not found");
+
         $this->commands[ $command ] = $class;
     }
-
 
 
     public function hasCommand($command)
