@@ -37,6 +37,11 @@ If the subcommand is not defined, you can still use the simple form:
 
     $ app [app-opts] [arguments]
 
+For example,
+
+    $ app db schema --clean dbname
+    $ app gen controller --opt1 --opt2 ControllerName 
+
 Requirement
 -----------
 
@@ -106,7 +111,16 @@ To start your Application:
 
     <?php
 
-    // use your PSR-0 autoloader to load classes
+    // include your PSR-0 autoloader to load classes here...
 
     $app = new \YourApp\Application;
     $app->run( $argv );
+
+
+Todo
+----
+* readline support.
+* autocompleter.
+* exception renderer.
+* alias
+* interact
