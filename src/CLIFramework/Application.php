@@ -22,7 +22,7 @@ use Exception;
 class Application extends CommandBase
 {
     // options parser
-    public $optionParser;
+    public $optionsParser;
 
     function __construct()
     {

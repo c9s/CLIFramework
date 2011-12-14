@@ -10,6 +10,7 @@
  */
 namespace CLIFramework;
 
+use GetOptionKit\OptionSpecCollection;
 use Exception;
 
 
@@ -161,11 +162,36 @@ abstract class CommandBase
             throw new Exception("command $subcommand not found.");
         }
 
+        return $this->createCommand($command_class);
+    }
+
+
+    function createCommand($command_class)
+    {
         // if current_cmd is not application, we should save parent command object.
         $cmd = new $command_class;
         $cmd->parent = $this;
+
+
+        // check self 
+        if( $this instanceof \CLIFramework\Application ) 
+            $cmd->application = $this;
+        elseif( $this->application )
+            $cmd->application = $this->application;
+        else
+            throw new Exception;
+
+        // get option parser, init specs from the command.
+        $specs = new OptionSpecCollection;
+
+        // init application options
+        $cmd->options($specs);
+
+        // save options specs
+        $cmd->optionSpecs = $specs;
         return $cmd;
     }
+
 
     /* 
      * return comand options (parsed) 
