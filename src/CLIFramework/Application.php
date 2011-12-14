@@ -24,13 +24,6 @@ class Application extends CommandBase
     // options parser
     public $optionParser;
 
-    // command namespace for autoloader
-    public $commandNamespaces = array( 
-        // '\\Onion\\Command',
-        '\\CLIFramework\\Command'
-    );
-
-
     function __construct()
     {
         parent::__construct();
@@ -41,8 +34,7 @@ class Application extends CommandBase
 
         $this->loader = new CommandLoader();
         $this->loader->addNamespace( $app_ns . '\\Command' );
-        $this->loader->addNamespace( $this->commandNamespaces );
-
+        $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
         $this->optionsParser = new ContinuousOptionParser;
     }
 
