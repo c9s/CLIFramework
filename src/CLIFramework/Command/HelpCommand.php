@@ -29,6 +29,10 @@ class HelpCommand extends Command
         // if there is no subcommand to render help, show all available commands.
         if( $subcommand ) {
 
+            // get command object.
+            //$this->application->
+
+
 
         } else {
             // print application subcommands
@@ -53,7 +57,7 @@ class HelpCommand extends Command
             foreach( $command_classes as $class ) {
                 $cmd = new $class;
                 $brief = $cmd->brief();
-                printf("  % 10s - %s\n", $cmd->getCommandName(), $brief );
+                printf("     %-12s - %s\n", $cmd->getCommandName(), $brief );
             }
         }
 

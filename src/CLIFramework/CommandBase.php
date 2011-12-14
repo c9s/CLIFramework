@@ -132,6 +132,41 @@ abstract class CommandBase
         return @$this->commands[ $command ];
     }
 
+
+
+    /*
+     * get subcommand object from current command
+     * by command name
+     *
+     * @param string $command
+     */
+    public function getCommand($command)
+    {
+        // keep scope here. (hate)
+        $command_class = null;
+
+        // I have parent, I am a subcommand of application, i should load 
+        // command class by subcommand strategy
+        if( $this->parent )
+        {
+            $command_class = $this->loader->loadSubcommand($command, $this->parent );
+        }
+        else 
+        {
+            // initialize subcommand (subcommand with parent command class)
+            $command_class = $this->loader->load( $command );
+        }
+
+        if( ! $command_class ) {
+            throw new Exception("command $subcommand not found.");
+        }
+
+        // if current_cmd is not application, we should save parent command object.
+        $cmd = new $command_class;
+        $cmd->parent = $this;
+        return $cmd;
+    }
+
     /* 
      * return comand options (parsed) 
      */

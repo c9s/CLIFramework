@@ -105,23 +105,7 @@ class Application extends CommandBase
                 $subcommand = $getopt->getCurrentArgument();
                 $getopt->advance();
 
-                // initialize subcommand (subcommand with parent command class)
-                $command_class = $current_cmd->getCommandClass( $subcommand );
-                if( ! $command_class ) {
-                    if( end($command_stack) ) {
-                        $command_class = $this->loader->loadSubcommand($subcommand, end($command_stack));
-                    } 
-                    else {
-                        $command_class = $this->loader->load( $subcommand );
-                    }
-                }
-
-                if( ! $command_class ) {
-                    throw new Exception("command $subcommand not found.");
-                }
-
-                // if current_cmd is not application, we should save parent command object.
-                $current_cmd = new $command_class();
+                $current_cmd =  $current_cmd->getCommand( $subcommand );
                 if( $current_cmd !== $this )
                     $parent = $current_cmd;
 
