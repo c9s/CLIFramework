@@ -11,7 +11,7 @@
     <active>1</active>
   </lead>
   <date>2011-12-15</date>
-  <time>00:54:36</time>
+  <time>02:15:01</time>
   <version>
     <release>0.0.2</release>
     <api>0.0.2</api>
@@ -24,10 +24,10 @@
   <notes>-</notes>
   <contents>
     <dir name="/">
-      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="5de4f72309a18cda33e4ac2c6702fd0a"/>
-      <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="5aaf615056eba883c07365d39c2b399c"/>
+      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="a4752136b300adc1c45be044584cca4d"/>
+      <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="4e0eab30560766adced5598048970d10"/>
       <file install-as="CLIFramework/Command.php" name="src/CLIFramework/Command.php" role="php" md5sum="fd894213dc002aef9f5facd243259a5f"/>
-      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="abd5a6e027b94c5c85abce52f3e03b96"/>
+      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="1737009831943edf03ce65289761512f"/>
       <file install-as="CLIFramework/CommandInterface.php" name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
       <file install-as="CLIFramework/CommandLoader.php" name="src/CLIFramework/CommandLoader.php" role="php" md5sum="3bed9629e324dd7b4e1d28c22f28b126"/>
       <file install-as="CLIFramework/Formatter.php" name="src/CLIFramework/Formatter.php" role="php" md5sum="6457510f498e749392304be0fb7f246a"/>
@@ -41,7 +41,7 @@
       <file install-as="TestApp/Application.php" name="tests/TestApp/Application.php" role="test" md5sum="676dc451abeed5d0197417aa15fef308"/>
       <file install-as="TestApp/Command/ListCommand/FooCommand.php" name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="55ca48ae0b3ade3672666fae2587cd81"/>
       <file install-as="TestApp/Command/ListCommand.php" name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="8b9d5900c998fae2ab55de72e35a75d0"/>
-      <file install-as="README.md" name="README.md" role="doc" md5sum="c7486ba41f9c950cbaadbdd2d9919edc"/>
+      <file install-as="README.md" name="README.md" role="doc" md5sum="5a695c3d0ae2a363abaf18a3cdeb9700"/>
     </dir>
   </contents>
   <dependencies>
