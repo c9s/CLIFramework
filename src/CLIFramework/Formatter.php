@@ -57,7 +57,8 @@ class Formatter
 
     public function __construct()
     {
-        $this->supportsColors = DIRECTORY_SEPARATOR != '\\' && function_exists('posix_isatty') && @posix_isatty(STDOUT);
+        $this->supportsColors = DIRECTORY_SEPARATOR != '\\' 
+                && function_exists('posix_isatty') && @posix_isatty(STDOUT);
     }
 
 
