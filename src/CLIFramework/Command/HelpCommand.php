@@ -51,7 +51,7 @@ class HelpCommand extends Command
             // print command brief list
             echo "* Available commands:\n";
             foreach( $command_classes as $class ) {
-                $cmd = new $class($this->dispatcher);
+                $cmd = new $class;
                 $brief = $cmd->brief();
                 printf("  % 10s - %s\n", $cmd->getCommandName(), $brief );
             }
