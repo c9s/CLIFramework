@@ -22,7 +22,7 @@ use Exception;
 class Application extends CommandBase
 {
     // options parser
-    public $optionsParser;
+    public $getoptParser;
 
     function __construct()
     {
@@ -35,7 +35,13 @@ class Application extends CommandBase
         $this->loader = new CommandLoader();
         $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
         $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
-        $this->optionsParser = new ContinuousOptionParser;
+
+
+        // init option parser
+        $this->getoptParser = new ContinuousOptionParser;
+
+
+
     }
 
 
@@ -78,7 +84,7 @@ class Application extends CommandBase
         $current_cmd->init();
 
         // use getoption kit to parse application options
-        $getopt = $this->optionsParser;
+        $getopt = $this->getoptParser;
         $specs = new OptionSpecCollection;
         $getopt->setSpecs( $specs );
 
