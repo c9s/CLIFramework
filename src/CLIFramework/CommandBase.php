@@ -67,8 +67,9 @@ abstract class CommandBase
     /**
      * init function 
      *
-     * register subcommand here
-     * */
+     * register custom subcommand here
+     *
+     **/
     function init()
     {
 
