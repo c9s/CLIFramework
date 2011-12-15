@@ -93,7 +93,6 @@ abstract class CommandBase
     {
 
 
-
         // try to load the class/subclass.
         if( $class ) {
             if( $this->loader->loadClass( $class ) === false )
@@ -194,7 +193,7 @@ abstract class CommandBase
 
 
     /* 
-     * return comand options (parsed) 
+     * @return comand options (parsed) 
      */
     function getOptions()
     {
@@ -211,6 +210,19 @@ abstract class CommandBase
     {
         $this->options = $options;
     }
+
+
+    /*
+     *
+     * get option spec 
+     */
+    function getOptionSpec()
+    {
+        return $this->optionSpecs;
+    }
+
+
+
 
     function getLogger()
     {
