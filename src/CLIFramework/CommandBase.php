@@ -77,12 +77,17 @@ abstract class CommandBase
 
 
     /**
-     * register command to application
+     * register command to application, in init() method stage,
+     * we save command classes in property `commands`.
      *
-     * XXX: support optional class name, auto translate command name into class 
-     * name.
+     * when command is needed, get the command from property `commands`, and 
+     * initialize the command object.
      *
      * class name could be full-qualified or subclass name (under App\Command\ )
+     *
+     * @param string $command Command name or subcommand name
+     * @param string $class   Full-qualified Class name
+     * @return string         Loaded class name
      */
     public function registerCommand($command,$class = null)
     {
@@ -106,7 +111,7 @@ abstract class CommandBase
         if( ! $class )
             throw new Exception("command class $class for command $command not found");
 
-        $this->commands[ $command ] = $class;
+        return $this->commands[ $command ] = $class;
     }
 
 
