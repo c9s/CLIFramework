@@ -95,7 +95,6 @@ class Application extends CommandBase
         $command_stack = array();
         $arguments = array();
         $subcommand_list = $current_cmd->getCommandList();
-        $parent = null;
         while( ! $getopt->isEnd() ) {
 
             // check current argument is a subcommand name 
@@ -105,27 +104,9 @@ class Application extends CommandBase
                 $subcommand = $getopt->getCurrentArgument();
                 $getopt->advance();
 
-                $current_cmd =  $current_cmd->getCommand( $subcommand );
-                if( $current_cmd !== $this )
-                    $parent = $current_cmd;
+                $current_cmd = $current_cmd->getCommand( $subcommand );
 
-                // save parent command class.
-                $current_cmd->parent = $parent;
-                $current_cmd->application = $this;
-
-                // let command has the command loader to register subcommand (load class)
-                $current_cmd->loader = $this->loader;
-
-
-
-                // init subcommand option
-                $command_specs = new OptionSpecCollection;
-                $getopt->setSpecs($command_specs);
-                $current_cmd->options( $command_specs );
-                $current_cmd->optionSpecs = $command_specs;
-
-                // register subcommands
-                $current_cmd->init();
+                $getopt->setSpecs($current_cmd->optionSpecs);
 
                 // parse options for command.
                 $current_cmd_options = $getopt->continueParse();

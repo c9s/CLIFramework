@@ -86,6 +86,9 @@ abstract class CommandBase
      */
     public function registerCommand($command,$class = null)
     {
+
+
+
         // try to load the class/subclass.
         if( $class ) {
             if( $this->loader->loadClass( $class ) === false )
@@ -93,7 +96,7 @@ abstract class CommandBase
         }
         else {
             if ( $this->parent ) {
-                $class = $this->loader->loadSubcommand($command,$this->parent);
+                $class = $this->loader->loadSubcommand($command,$this);
             }
             else {
                 $class = $this->loader->load($command);
@@ -143,25 +146,12 @@ abstract class CommandBase
      */
     public function getCommand($command)
     {
+
         // keep scope here. (hate)
-        $command_class = null;
-
-        // I have parent, I am a subcommand of application, i should load 
-        // command class by subcommand strategy
-        if( $this->parent )
-        {
-            $command_class = $this->loader->loadSubcommand($command, $this->parent );
-        }
-        else 
-        {
-            // initialize subcommand (subcommand with parent command class)
-            $command_class = $this->loader->load( $command );
-        }
-
+        $command_class = $this->getCommandClass($command);
         if( ! $command_class ) {
             throw new Exception("command $subcommand not found.");
         }
-
         return $this->createCommand($command_class);
     }
 
@@ -170,16 +160,15 @@ abstract class CommandBase
     {
         // if current_cmd is not application, we should save parent command object.
         $cmd = new $command_class;
-        $cmd->parent = $this;
-
 
         // check self 
-        if( $this instanceof \CLIFramework\Application ) 
+        if( is_a($this, '\CLIFramework\Application' ) ) {
             $cmd->application = $this;
-        elseif( $this->application )
+            $cmd->parent = $this;
+        } else {
             $cmd->application = $this->application;
-        else
-            throw new Exception;
+            $cmd->parent = $this;
+        } 
 
         // get option parser, init specs from the command.
         $specs = new OptionSpecCollection;
@@ -187,8 +176,14 @@ abstract class CommandBase
         // init application options
         $cmd->options($specs);
 
+
         // save options specs
         $cmd->optionSpecs = $specs;
+
+        // let command has the command loader to register subcommand (load class)
+        $cmd->loader = $this->loader;
+
+        $cmd->init();
         return $cmd;
     }
 
