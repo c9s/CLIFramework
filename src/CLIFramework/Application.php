@@ -23,6 +23,7 @@ class Application extends CommandBase
 {
     // options parser
     public $getoptParser;
+    public $supportReadline;
 
     function __construct()
     {
@@ -40,8 +41,7 @@ class Application extends CommandBase
         // init option parser
         $this->getoptParser = new ContinuousOptionParser;
 
-
-
+        $this->supportReadline = extension_loaded('readline');
     }
 
 
