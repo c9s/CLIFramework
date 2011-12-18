@@ -17,6 +17,10 @@ class HelpCommand extends Command
     implements CommandInterface
 {
 
+
+    /**
+     * one line description
+     */
     function brief()
     {
         return 'show help message.';
@@ -30,8 +34,15 @@ class HelpCommand extends Command
         if( $subcommand ) {
 
             // get command object.
-            //$this->application->
+            $cmd = $this->application->getCommand( $subcommand );
 
+            echo "* Command $subcommand\n";
+
+            echo "* Brief\n";
+            echo $cmd->brief();
+
+            echo "\n";
+            $cmd->optionSpecs->printOptions();
 
 
         } else {

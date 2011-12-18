@@ -43,15 +43,37 @@ abstract class CommandBase
     }
 
 
+
+    /**
+     * return one line brief for this command.
+     *
+     * @return string brief 
+     */
+    function brief() 
+    {
+        return 'undefined.';
+    }
+
+
+    /**
+     * usage string  (one-line)
+     *
+     * @return string usage
+     */
     function usage()
     {
         // return usage
     }
 
-    /* TODO: read brief from markdown format doc file. */
-    function brief() 
+
+    /**
+     * detailed help text
+     *
+     * @return string helpText
+     */
+    function help()
     {
-        return 'undefined.';
+        return '';
     }
 
     /* 
@@ -142,12 +164,13 @@ abstract class CommandBase
     }
 
 
-
     /*
      * get subcommand object from current command
      * by command name
      *
      * @param string $command
+     *
+     * @return Command initialized command object.
      */
     public function getCommand($command)
     {
@@ -161,6 +184,12 @@ abstract class CommandBase
     }
 
 
+    /**
+     * create and initialize command object.
+     *
+     * @param string $command_class Command class.
+     * @return Command command object.
+     */
     function createCommand($command_class)
     {
         // if current_cmd is not application, we should save parent command object.
