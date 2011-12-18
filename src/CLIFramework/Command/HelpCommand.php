@@ -36,13 +36,18 @@ class HelpCommand extends Command
             // get command object.
             $cmd = $this->application->getCommand( $subcommand );
 
-            echo "* Command $subcommand\n";
+            echo "Usage\n";
+            echo "\t" . $cmd->usage();
+            echo "\n";
 
-            echo "* Brief\n";
-            echo $cmd->brief();
+            echo "Brief\n";
+            echo "\t" . $cmd->brief();
+            echo "\n";
+
+            $cmd->optionSpecs->printOptions();
 
             echo "\n";
-            $cmd->optionSpecs->printOptions();
+            echo $cmd->help();
 
 
         } else {
