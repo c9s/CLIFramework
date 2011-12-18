@@ -64,12 +64,14 @@ class HelpCommand extends Command
         } else {
             // print application subcommands
 
-
             // print application brief
             echo $this->parent->brief() . "\n\n";
 
             // print application options
+            echo "* Available options:\n";
             $this->parent->optionSpecs->printOptions();
+
+            echo "\n";
 
             // get command list, command classes should be preloaded.
             $classes = get_declared_classes();
