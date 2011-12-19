@@ -11,10 +11,20 @@
 namespace CLIFramework;
 use GetOptionKit\GetOptionKit;
 
+/**
+ * abstract command class
+ *
+ */
 abstract class Command extends CommandBase
 {
     public $application;
 
+
+    /**
+     * translate current class name to command name.
+     *
+     * @return string command name
+     */
     function getCommandName()
     {
         $class = get_class($this);

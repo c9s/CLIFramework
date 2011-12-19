@@ -17,6 +17,10 @@ class HelpCommand extends Command
     implements CommandInterface
 {
 
+
+    /**
+     * one line description
+     */
     function brief()
     {
         return 'show help message.';
@@ -30,19 +34,44 @@ class HelpCommand extends Command
         if( $subcommand ) {
 
             // get command object.
-            //$this->application->
+            $cmd = $this->application->getCommand( $subcommand );
+            $brief_line = $cmd->brief();
+            $usage_line = $cmd->usage();
+            $option_lines = $cmd->optionSpecs->outputOptions();
 
+
+            if( $usage_line ) {
+                echo "Usage:\n";
+                echo "\t" . $usage_line;
+                echo "\n";
+            }
+
+            if( $brief_line ) {
+                echo "Brief:\n";
+                echo "\t" . $brief_line;
+                echo "\n";
+            }
+
+            if( $option_lines ) {
+                echo "Options:\n";
+                echo join("\n",$option_lines);
+            }
+
+            echo "\n";
+            echo $cmd->help();
 
 
         } else {
             // print application subcommands
 
-
             // print application brief
             echo $this->parent->brief() . "\n\n";
 
             // print application options
+            echo $this->formatter->format("Available options:\n",'info2');
             $this->parent->optionSpecs->printOptions();
+
+            echo "\n";
 
             // get command list, command classes should be preloaded.
             $classes = get_declared_classes();
@@ -53,7 +82,7 @@ class HelpCommand extends Command
             }
 
             // print command brief list
-            echo "* Available commands:\n";
+            echo $this->formatter->format("Available commands:\n",'info2');
             foreach( $command_classes as $class ) {
                 $cmd = new $class;
                 $brief = $cmd->brief();

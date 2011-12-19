@@ -15,6 +15,16 @@ use CLIFramework\Command;
 class ListCommand extends Command 
 {
 
+    function brief()
+    {
+        return 'brief message';
+    }
+
+    function usage()
+    {
+        return 'app list [arguments]';
+    }
+
     function init()
     {
         $this->registerCommand('foo');
