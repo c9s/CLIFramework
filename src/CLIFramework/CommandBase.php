@@ -22,23 +22,52 @@ use Exception;
 abstract class CommandBase 
 {
 
-    // command message logger
+    /**
+     *
+     * @var CLIFramework\Formatter 
+     */
+    public $formatter;
+
+    /**
+     * command message logger
+     *
+     * @var CLIFramework\Logger
+     */
     public $logger;
 
-    // command class loader
+    /**
+     * command class loader
+     *
+     * @var CLIFramework\CommandLoader
+     */
     public $loader;
 
-    /* application commands */
+    /**
+     * application commands 
+     * */
     public $commands = array();
 
+
+    /**
+     * parsed options
+     *
+     * @var GetOptionKit\OptionResult
+     */
     public $options;
 
+
+    /**
+     * parent commmand
+     *
+     * @var CLIFramework\CommandBase or CLIFramework\Application
+     */
     public $parent;
 
     public $optionSpecs;
 
     function __construct()
     {
+		$this->formatter    = new Formatter;
         $this->logger       = new Logger;
     }
 
