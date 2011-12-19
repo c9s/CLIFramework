@@ -117,6 +117,7 @@ class Application extends CommandBase
                 // parse options for command.
                 $current_cmd_options = $getopt->continueParse();
 
+
                 // run subcommand prepare
                 $current_cmd->prepare();
 

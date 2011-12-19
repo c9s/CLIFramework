@@ -71,7 +71,7 @@ class HelpCommand extends Command
             echo $this->formatter->format("Available options:\n",'info2');
             $this->parent->optionSpecs->printOptions();
 
-            echo "\n";
+            echo "\n\n";
 
             // get command list, command classes should be preloaded.
             $classes = get_declared_classes();
