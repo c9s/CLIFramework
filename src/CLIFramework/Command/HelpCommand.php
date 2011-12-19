@@ -68,7 +68,7 @@ class HelpCommand extends Command
             echo $this->parent->brief() . "\n\n";
 
             // print application options
-            echo "* Available options:\n";
+            echo $this->formatter->format("Available options:\n",'info2');
             $this->parent->optionSpecs->printOptions();
 
             echo "\n";
@@ -82,7 +82,7 @@ class HelpCommand extends Command
             }
 
             // print command brief list
-            echo "* Available commands:\n";
+            echo $this->formatter->format("Available commands:\n",'info2');
             foreach( $command_classes as $class ) {
                 $cmd = new $class;
                 $brief = $cmd->brief();
