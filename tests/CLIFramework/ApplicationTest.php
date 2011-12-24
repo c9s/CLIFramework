@@ -21,6 +21,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $argv = explode(' ','app -v -d list foo arg1 arg2 arg3');
         $app->run($argv);
 
+        $logger = $app::getLogger();
+        ok( $logger );
 
         global $_prepare;
         global $_execute;
