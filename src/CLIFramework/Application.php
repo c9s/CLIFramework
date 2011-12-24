@@ -190,7 +190,7 @@ class Application extends CommandBase
 
     static function getLogger()
     {
-        return self::$logger;
+        return static::$logger;
     }
 
 }
