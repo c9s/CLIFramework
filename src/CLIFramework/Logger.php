@@ -34,6 +34,16 @@ class Logger
         'debug2' => 7,
     );
 
+    public $levelStyles = array(
+        'critical' => 'strong_red',
+        'error'    => 'strong_red',
+        'warn'     => 'red',
+        'info'     => 'strong_green',
+        'info2'    => 'green',
+        'debug'    => 'strong_white',
+        'debug2'   => 'white',
+    );
+
 
     /**
      * current level 
@@ -85,58 +95,22 @@ class Logger
         return $this->formatter;
     }
 
-
-    public function criticalError($msg)
+    function __call($method,$args)
     {
-        $this->_print($msg,'strong_red');
-    }
-
-    public function error($msg)
-    {
-        $this->_print($msg,'strong_red');
-    }
-
-    public function warn($msg,$indent = 0)
-    {
-        $this->_print($msg,'yellow',$indent);
-    }
-
-    public function info($msg,$indent = 0)
-    {
-        $style = $this->level > 4 ? 'strong_green' : 'white';
-        $this->_print($msg, $style ,$indent);
-    }
-
-    public function info2($msg,$indent = 0) 
-    {
-        $style = $this->level > 4 ? 'green' : 'white';
-        $this->_print($msg, $style ,$indent);
-    }
-
-    public function debug($msg,$indent = 0)
-    {
-        $this->_print($msg,'white',$indent);
-    }
-
-    public function debug2($msg,$indent = 0)
-    {
-        $this->_print($msg,'strong_white',$indent);
-    }
-
-    public function getLevelByName($style_name)
-    {
-        return @$this->logLevels[ $style_name ];
-    }
-
-    private function _print($msg,$style,$indent = 0) 
-    {
-        $level = $this->getLevelByName( $style );
+        $msg = $args[0];
+        $indent = @$args[1];
+        $level = $this->getLevelByName($method);
+        $style = $this->getStyleByName($method);
         if( $level > $this->level ) {
             // do not print.
             return;
         }
 
-        echo str_repeat("\t", $indent);
+        if( $level <= 4 )
+            $style = 'white';
+
+        if( $indent )
+            echo str_repeat("\t", $indent);
 
         /* detect object */
         if( is_object($msg) || is_array($msg) )  {
@@ -144,6 +118,16 @@ class Logger
         } else {
             echo $this->formatter->format( $msg , $style ) , "\n";
         }
+    }
+
+    public function getStyleByName($levelName)
+    {
+        return @$this->levelStyles[$levelName];
+    }
+
+    public function getLevelByName($levelName)
+    {
+        return @$this->logLevels[$levelName];
     }
 }
 
