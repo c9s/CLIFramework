@@ -39,7 +39,7 @@ class Logger
         'error'    => 'strong_red',
         'warn'     => 'red',
         'info'     => 'strong_green',
-        'info2'    => 'green',
+        'info1'    => 'green',
         'debug'    => 'strong_white',
         'debug2'   => 'white',
     );
@@ -106,7 +106,7 @@ class Logger
             return;
         }
 
-        if( $level <= 4 )
+        if( $this->level <= 4 )
             $style = 'white';
 
         if( $indent )
