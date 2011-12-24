@@ -103,7 +103,7 @@ class Logger
 
     public function info($msg,$indent = 0)
     {
-        $style = $this->level > 4 ? 'green' : 'white';
+        $style = $this->level > 4 ? 'strong_green' : 'white';
         $this->_print($msg, $style ,$indent);
     }
 
