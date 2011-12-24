@@ -14,13 +14,13 @@ class Formatter
 {
 
     protected $styles = array(
-        'error'    => array('fg' => 'red'),
-        'error2'    => array('fg' => 'red', 'bold' => 1),
-        'warn'     => array('fg' => 'red'),
-        'info'    => array('fg' => 'green','bold' => 1),
-        'info2'     => array('fg' => 'green'),
-        'debug'    => array('fg' => 'white'),
-        'debug2'    => array('fg' => 'white','bold' => 1),
+        'red'          => array('fg' => 'red'),
+        'green'        => array('fg' => 'green'),
+        'white'        => array('fg' => 'white'),
+        'yellow'       => array('fg' => 'yellow'),
+        'strong_red'   => array('fg' => 'red', 'bold'  => 1),
+        'strong_green' => array('fg' => 'green','bold' => 1),
+        'strong_white' => array('fg' => 'white','bold' => 1),
     );
 
     protected $options = array(

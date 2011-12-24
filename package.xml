@@ -11,14 +11,14 @@
     <active>1</active>
   </lead>
   <date>2011-12-24</date>
-  <time>19:03:52</time>
+  <time>23:46:03</time>
   <version>
-    <release>0.0.5</release>
-    <api>0.0.5</api>
+    <release>0.0.6</release>
+    <api>0.0.6</api>
   </version>
   <stability>
-    <release>beta</release>
-    <api>beta</api>
+    <release>stable</release>
+    <api>stable</api>
   </stability>
   <license>PHP LICENSE</license>
   <notes>-</notes>

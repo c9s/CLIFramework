@@ -59,14 +59,19 @@ class Logger
         $this->level = $level;
     }
 
+    public function quiet()
+    {
+        $this->level = 0;
+    }
+
     public function setVerbose()
     {
-        $this->level = $this->getStyleLevel('info2');
+        $this->level = $this->getLevelByName('info2');
     }
 
     public function setDebug()
     {
-        $this->level = $this->getStyleLevel('debug2');
+        $this->level = $this->getLevelByName('debug2');
     }
 
 
@@ -83,47 +88,49 @@ class Logger
 
     public function criticalError($msg)
     {
-        $this->_print($msg,'error');
+        $this->_print($msg,'strong_red');
     }
 
     public function error($msg)
     {
-        $this->_print($msg,'error2');
+        $this->_print($msg,'strong_red');
     }
 
     public function warn($msg,$indent = 0)
     {
-        $this->_print($msg,'warn',$indent);
+        $this->_print($msg,'yellow',$indent);
     }
 
     public function info($msg,$indent = 0)
     {
-        $this->_print($msg,'info',$indent);
+        $style = $this->level > 4 ? 'green' : 'white';
+        $this->_print($msg, $style ,$indent);
     }
 
     public function info2($msg,$indent = 0) 
     {
-        $this->_print($msg,'info2',$indent);
+        $style = $this->level > 4 ? 'green' : 'white';
+        $this->_print($msg, $style ,$indent);
     }
 
     public function debug($msg,$indent = 0)
     {
-        $this->_print($msg,'debug',$indent);
+        $this->_print($msg,'white',$indent);
     }
 
     public function debug2($msg,$indent = 0)
     {
-        $this->_print($msg,'debug2',$indent);
+        $this->_print($msg,'strong_white',$indent);
     }
 
-    public function getStyleLevel($style_name)
+    public function getLevelByName($style_name)
     {
         return @$this->logLevels[ $style_name ];
     }
 
     private function _print($msg,$style,$indent = 0) 
     {
-        $level = $this->getStyleLevel( $style );
+        $level = $this->getLevelByName( $style );
         if( $level > $this->level ) {
             // do not print.
             return;
