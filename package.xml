@@ -11,7 +11,7 @@
     <active>1</active>
   </lead>
   <date>2011-12-24</date>
-  <time>19:02:17</time>
+  <time>19:03:52</time>
   <version>
     <release>0.0.5</release>
     <api>0.0.5</api>
@@ -24,7 +24,7 @@
   <notes>-</notes>
   <contents>
     <dir name="/">
-      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="a5e401876422b80d9c605751b80418f5"/>
+      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="5b823dfa39b0f0359442fe77523c1c12"/>
       <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b886752699de409d09bd657bdc71f1cb"/>
       <file install-as="CLIFramework/Command.php" name="src/CLIFramework/Command.php" role="php" md5sum="7de61263a474f3b9e55aae3d91f6931d"/>
       <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="c82067ed5ddeb8c8bb765dd5940dea2a"/>
