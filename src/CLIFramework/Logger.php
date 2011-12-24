@@ -23,13 +23,30 @@ class Logger
      * info2          = 5
      * debug          = 6
      * debug2         = 7
-     *
      * */
+    public $logLevels = array(
+        'critical' => 1,
+        'error'    => 2,
+        'warn'     => 3,
+        'info' => 4,
+        'info2' => 5,
+        'debug' => 6,
+        'debug2' => 7,
+    );
 
-    /* current level */
-    public $level = 7;
 
-    /* foramtter class */
+    /**
+     * current level 
+     *
+     * any message level lower than this will be displayed.
+     * */
+    public $level = 4;
+
+    /**
+     * foramtter class 
+     *
+     * @var CLIFramework\Formatter
+     */
 	public $formatter;
 
 	public function __construct()
@@ -40,6 +57,16 @@ class Logger
     public function setLevel($level, $indent = 0)
     {
         $this->level = $level;
+    }
+
+    public function setVerbose()
+    {
+        $this->level = $this->getStyleLevel('info2');
+    }
+
+    public function setDebug()
+    {
+        $this->level = $this->getStyleLevel('debug2');
     }
 
 
@@ -89,8 +116,19 @@ class Logger
         $this->_print($msg,'debug2',$indent);
     }
 
+    public function getStyleLevel($style_name)
+    {
+        return @$this->logLevels[ $style_name ];
+    }
+
     private function _print($msg,$style,$indent = 0) 
     {
+        $level = $this->getStyleLevel( $style );
+        if( $level > $this->level ) {
+            // do not print.
+            return;
+        }
+
         echo str_repeat("\t", $indent);
 
         /* detect object */
@@ -100,7 +138,6 @@ class Logger
             echo $this->formatter->format( $msg , $style ) , "\n";
         }
     }
-
 }
 
 

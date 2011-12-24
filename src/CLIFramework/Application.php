@@ -25,9 +25,19 @@ class Application extends CommandBase
     public $getoptParser;
     public $supportReadline;
 
+
+    /**
+    * command message logger
+    *
+    * @var CLIFramework\Logger
+    */
+    static $logger;
+
     function __construct()
     {
         parent::__construct();
+
+        static::$logger = new Logger;
 
         // get current class namespace, add {App}\Command\ to loader
         $app_ref_class = new \ReflectionClass($this);
@@ -50,8 +60,9 @@ class Application extends CommandBase
      */
     public function options($opts)
     {
-        $opts->add('v|verbose');
-        $opts->add('d|debug');
+        $opts->add('v|verbose','Print verbose message.');
+        $opts->add('d|debug'  ,'Print debug message.');
+        $opts->add('q|quiet'  ,'Be quiet.');
     }
 
 
@@ -119,9 +130,9 @@ class Application extends CommandBase
 
 
                 // run subcommand prepare
+                $current_cmd->options = $current_cmd_options;
                 $current_cmd->prepare();
 
-                $current_cmd->options = $current_cmd_options;
                 $command_stack[] = $current_cmd; // save command object into the stack
 
                 // update subcommand list
@@ -149,6 +160,19 @@ class Application extends CommandBase
         $current_cmd->finish();
     }
 
+    public function prepare()
+    {
+        $options = $this->getOptions();
+        if( $options->verbose ) {
+            static::getLogger()->setVerbose();
+        }
+        elseif( $options->debug ) {
+            static::getLogger()->setDebug();
+        }
+        elseif( $options->quiet ) {
+            static::getLogger()->setLevel(2);
+        }
+    }
 
     public function execute( $arguments = array() )
     {
@@ -162,6 +186,11 @@ class Application extends CommandBase
         else {
             throw new Exception("Help command is not defined.");
         }
+    }
+
+    static function getLogger()
+    {
+        return self::$logger;
     }
 
 }

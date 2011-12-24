@@ -35,4 +35,11 @@ abstract class Command extends CommandBase
     }
 
 
+    function getLogger()
+    {
+        $app = $this->application;
+        return $app::getLogger();
+    }
+
+
 }

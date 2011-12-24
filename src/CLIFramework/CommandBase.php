@@ -28,12 +28,8 @@ abstract class CommandBase
      */
     public $formatter;
 
-    /**
-     * command message logger
-     *
-     * @var CLIFramework\Logger
-     */
-    public $logger;
+
+
 
     /**
      * command class loader
@@ -68,7 +64,6 @@ abstract class CommandBase
     function __construct()
     {
 		$this->formatter    = new Formatter;
-        $this->logger       = new Logger;
     }
 
 
@@ -233,12 +228,14 @@ abstract class CommandBase
             $cmd->parent = $this;
         } 
 
+        // $cmd->logger = get_class($cmd->application)::getLogger();
+        $cmd->formatter = $cmd->application->formatter;
+
         // get option parser, init specs from the command.
         $specs = new OptionSpecCollection;
 
         // init application options
         $cmd->options($specs);
-
 
         // save options specs
         $cmd->optionSpecs = $specs;
@@ -280,18 +277,6 @@ abstract class CommandBase
         return $this->optionSpecs;
     }
 
-
-
-
-    function getLogger()
-    {
-        return $this->logger;
-    }
-
-    function setLogger($logger)
-    {
-        $this->logger = $logger;
-    }
 
     /* prepare stage */
     function prepare() { }

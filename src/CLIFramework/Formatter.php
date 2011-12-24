@@ -17,10 +17,10 @@ class Formatter
         'error'    => array('fg' => 'red'),
         'error2'    => array('fg' => 'red', 'bold' => 1),
         'warn'     => array('fg' => 'red'),
+        'info'    => array('fg' => 'green','bold' => 1),
+        'info2'     => array('fg' => 'green'),
         'debug'    => array('fg' => 'white'),
         'debug2'    => array('fg' => 'white','bold' => 1),
-        'info'     => array('fg' => 'green'),
-        'info2'    => array('fg' => 'green','bold' => 1),
     );
 
     protected $options = array(

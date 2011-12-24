@@ -10,8 +10,8 @@
     <email>cornelius.howl@gmail.com</email>
     <active>1</active>
   </lead>
-  <date>2011-12-19</date>
-  <time>14:19:14</time>
+  <date>2011-12-20</date>
+  <time>11:50:33</time>
   <version>
     <release>0.0.4</release>
     <api>0.0.4</api>
@@ -24,14 +24,14 @@
   <notes>-</notes>
   <contents>
     <dir name="/">
-      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="33754a94951e4daf3330928353a03ba7"/>
-      <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="abb62efd2eda7af71a0f9438cea02355"/>
+      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="0beeaf33254caef846b0c1fcb1f8325c"/>
+      <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b886752699de409d09bd657bdc71f1cb"/>
       <file install-as="CLIFramework/Command.php" name="src/CLIFramework/Command.php" role="php" md5sum="d73287877f5557847c95eb72f5efc431"/>
-      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="aafc7a9def7f0237697bacc677b7cb3f"/>
+      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="8a0ee1640b5946b9b981ed1049550db6"/>
       <file install-as="CLIFramework/CommandInterface.php" name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
       <file install-as="CLIFramework/CommandLoader.php" name="src/CLIFramework/CommandLoader.php" role="php" md5sum="3bed9629e324dd7b4e1d28c22f28b126"/>
-      <file install-as="CLIFramework/Formatter.php" name="src/CLIFramework/Formatter.php" role="php" md5sum="6457510f498e749392304be0fb7f246a"/>
-      <file install-as="CLIFramework/Logger.php" name="src/CLIFramework/Logger.php" role="php" md5sum="190b443bf5047d8af68999a6d7cae77a"/>
+      <file install-as="CLIFramework/Formatter.php" name="src/CLIFramework/Formatter.php" role="php" md5sum="be810ba571a534b7dbfb5584cd1ad397"/>
+      <file install-as="CLIFramework/Logger.php" name="src/CLIFramework/Logger.php" role="php" md5sum="6652a321dc14f5fdbd5ca86950514f7b"/>
       <file install-as="CLIFramework/Utils.php" name="src/CLIFramework/Utils.php" role="php" md5sum="c1e1498ebc1eac966da1fbda153eb1e3"/>
       <file install-as="bootstrap.php" name="tests/bootstrap.php" role="test" md5sum="dc3c892b7c3c12c23d8f4740238f27b7"/>
       <file install-as="CLIFramework/ApplicationTest.php" name="tests/CLIFramework/ApplicationTest.php" role="test" md5sum="808f5cee913ee7eb84a6ce3ec81e5913"/>
