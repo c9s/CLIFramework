@@ -37,7 +37,6 @@ class Application extends CommandBase
     {
         parent::__construct();
 
-        static::$logger = new Logger;
 
         // get current class namespace, add {App}\Command\ to loader
         $app_ref_class = new \ReflectionClass($this);
@@ -190,7 +189,9 @@ class Application extends CommandBase
 
     static function getLogger()
     {
-        return static::$logger;
+        if( static::$logger )
+            return static::$logger;
+        return static::$logger = new Logger;
     }
 
 }
