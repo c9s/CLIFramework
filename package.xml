@@ -11,7 +11,7 @@
     <active>1</active>
   </lead>
   <date>2011-12-25</date>
-  <time>16:19:14</time>
+  <time>17:45:24</time>
   <version>
     <release>0.0.7</release>
     <api>0.0.7</api>
@@ -24,23 +24,23 @@
   <notes>-</notes>
   <contents>
     <dir name="/">
-      <file install-as="bootstrap.php" name="tests/bootstrap.php" role="test" md5sum="dc3c892b7c3c12c23d8f4740238f27b7"/>
-      <file install-as="CLIFramework/ApplicationTest.php" name="tests/CLIFramework/ApplicationTest.php" role="test" md5sum="54bec5e072cc65fae6845a4a33b47e7e"/>
-      <file install-as="CLIFramework/CommandLoaderTest.php" name="tests/CLIFramework/CommandLoaderTest.php" role="test" md5sum="860fcd7d805d2fa7335ab10b866e1ae3"/>
-      <file install-as="CLIFramework/LoggerTest.php" name="tests/CLIFramework/LoggerTest.php" role="test" md5sum="01fae1d4f94c8c1be13f3e5d32ff7946"/>
-      <file install-as="helpers.php" name="tests/helpers.php" role="test" md5sum="442b22ed35a844926391dc62c49ec706"/>
-      <file install-as="TestApp/Application.php" name="tests/TestApp/Application.php" role="test" md5sum="676dc451abeed5d0197417aa15fef308"/>
-      <file install-as="TestApp/Command/ListCommand/FooCommand.php" name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="55ca48ae0b3ade3672666fae2587cd81"/>
-      <file install-as="TestApp/Command/ListCommand.php" name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="20df72923b62e11fdc9ac294f676a019"/>
-      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="5b823dfa39b0f0359442fe77523c1c12"/>
-      <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b886752699de409d09bd657bdc71f1cb"/>
-      <file install-as="CLIFramework/Command.php" name="src/CLIFramework/Command.php" role="php" md5sum="7de61263a474f3b9e55aae3d91f6931d"/>
-      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="c82067ed5ddeb8c8bb765dd5940dea2a"/>
-      <file install-as="CLIFramework/CommandInterface.php" name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
-      <file install-as="CLIFramework/CommandLoader.php" name="src/CLIFramework/CommandLoader.php" role="php" md5sum="3bed9629e324dd7b4e1d28c22f28b126"/>
-      <file install-as="CLIFramework/Formatter.php" name="src/CLIFramework/Formatter.php" role="php" md5sum="b18ca105a8be132da3d4ffaf847afcdf"/>
-      <file install-as="CLIFramework/Logger.php" name="src/CLIFramework/Logger.php" role="php" md5sum="5a11bc2b178da963de7b240269609691"/>
-      <file install-as="CLIFramework/Utils.php" name="src/CLIFramework/Utils.php" role="php" md5sum="c1e1498ebc1eac966da1fbda153eb1e3"/>
+      <file name="tests/bootstrap.php" role="test" md5sum="dc3c892b7c3c12c23d8f4740238f27b7"/>
+      <file name="tests/CLIFramework/ApplicationTest.php" role="test" md5sum="54bec5e072cc65fae6845a4a33b47e7e"/>
+      <file name="tests/CLIFramework/CommandLoaderTest.php" role="test" md5sum="860fcd7d805d2fa7335ab10b866e1ae3"/>
+      <file name="tests/CLIFramework/LoggerTest.php" role="test" md5sum="01fae1d4f94c8c1be13f3e5d32ff7946"/>
+      <file name="tests/helpers.php" role="test" md5sum="442b22ed35a844926391dc62c49ec706"/>
+      <file name="tests/TestApp/Application.php" role="test" md5sum="676dc451abeed5d0197417aa15fef308"/>
+      <file name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="55ca48ae0b3ade3672666fae2587cd81"/>
+      <file name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="20df72923b62e11fdc9ac294f676a019"/>
+      <file name="src/CLIFramework/Application.php" role="php" md5sum="5b823dfa39b0f0359442fe77523c1c12"/>
+      <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b886752699de409d09bd657bdc71f1cb"/>
+      <file name="src/CLIFramework/Command.php" role="php" md5sum="7de61263a474f3b9e55aae3d91f6931d"/>
+      <file name="src/CLIFramework/CommandBase.php" role="php" md5sum="c82067ed5ddeb8c8bb765dd5940dea2a"/>
+      <file name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
+      <file name="src/CLIFramework/CommandLoader.php" role="php" md5sum="3bed9629e324dd7b4e1d28c22f28b126"/>
+      <file name="src/CLIFramework/Formatter.php" role="php" md5sum="b18ca105a8be132da3d4ffaf847afcdf"/>
+      <file name="src/CLIFramework/Logger.php" role="php" md5sum="5a11bc2b178da963de7b240269609691"/>
+      <file name="src/CLIFramework/Utils.php" role="php" md5sum="c1e1498ebc1eac966da1fbda153eb1e3"/>
     </dir>
   </contents>
   <dependencies>
@@ -71,5 +71,25 @@
       </extension>
     </required>
   </dependencies>
-  <phprelease/>
+  <phprelease>
+    <filelist>
+      <install name="tests/bootstrap.php" as="bootstrap.php"/>
+      <install name="tests/CLIFramework/ApplicationTest.php" as="CLIFramework/ApplicationTest.php"/>
+      <install name="tests/CLIFramework/CommandLoaderTest.php" as="CLIFramework/CommandLoaderTest.php"/>
+      <install name="tests/CLIFramework/LoggerTest.php" as="CLIFramework/LoggerTest.php"/>
+      <install name="tests/helpers.php" as="helpers.php"/>
+      <install name="tests/TestApp/Application.php" as="TestApp/Application.php"/>
+      <install name="tests/TestApp/Command/ListCommand/FooCommand.php" as="TestApp/Command/ListCommand/FooCommand.php"/>
+      <install name="tests/TestApp/Command/ListCommand.php" as="TestApp/Command/ListCommand.php"/>
+      <install name="src/CLIFramework/Application.php" as="CLIFramework/Application.php"/>
+      <install name="src/CLIFramework/Command/HelpCommand.php" as="CLIFramework/Command/HelpCommand.php"/>
+      <install name="src/CLIFramework/Command.php" as="CLIFramework/Command.php"/>
+      <install name="src/CLIFramework/CommandBase.php" as="CLIFramework/CommandBase.php"/>
+      <install name="src/CLIFramework/CommandInterface.php" as="CLIFramework/CommandInterface.php"/>
+      <install name="src/CLIFramework/CommandLoader.php" as="CLIFramework/CommandLoader.php"/>
+      <install name="src/CLIFramework/Formatter.php" as="CLIFramework/Formatter.php"/>
+      <install name="src/CLIFramework/Logger.php" as="CLIFramework/Logger.php"/>
+      <install name="src/CLIFramework/Utils.php" as="CLIFramework/Utils.php"/>
+    </filelist>
+  </phprelease>
 </package>
