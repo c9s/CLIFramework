@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.4.10" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0                                 http://pear.php.net/dtd/tasks-1.0.xsd                                 http://pear.php.net/dtd/package-2.0                                 http://pear.php.net/dtd/package-2.0.xsd">
+<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.4.10" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0        http://pear.php.net/dtd/tasks-1.0.xsd        http://pear.php.net/dtd/package-2.0        http://pear.php.net/dtd/package-2.0.xsd">
   <name>CLIFramework</name>
   <channel>pear.corneltek.com</channel>
   <summary>A Powerful Command Line Application Framework</summary>
@@ -10,8 +10,8 @@
     <email>cornelius.howl@gmail.com</email>
     <active>1</active>
   </lead>
-  <date>2011-12-24</date>
-  <time>23:46:03</time>
+  <date>2011-12-25</date>
+  <time>00:54:56</time>
   <version>
     <release>0.0.6</release>
     <api>0.0.6</api>
@@ -20,19 +20,10 @@
     <release>stable</release>
     <api>stable</api>
   </stability>
-  <license>PHP LICENSE</license>
+  <license>PHP</license>
   <notes>-</notes>
   <contents>
     <dir name="/">
-      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="5b823dfa39b0f0359442fe77523c1c12"/>
-      <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b886752699de409d09bd657bdc71f1cb"/>
-      <file install-as="CLIFramework/Command.php" name="src/CLIFramework/Command.php" role="php" md5sum="7de61263a474f3b9e55aae3d91f6931d"/>
-      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="c82067ed5ddeb8c8bb765dd5940dea2a"/>
-      <file install-as="CLIFramework/CommandInterface.php" name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
-      <file install-as="CLIFramework/CommandLoader.php" name="src/CLIFramework/CommandLoader.php" role="php" md5sum="3bed9629e324dd7b4e1d28c22f28b126"/>
-      <file install-as="CLIFramework/Formatter.php" name="src/CLIFramework/Formatter.php" role="php" md5sum="be810ba571a534b7dbfb5584cd1ad397"/>
-      <file install-as="CLIFramework/Logger.php" name="src/CLIFramework/Logger.php" role="php" md5sum="6652a321dc14f5fdbd5ca86950514f7b"/>
-      <file install-as="CLIFramework/Utils.php" name="src/CLIFramework/Utils.php" role="php" md5sum="c1e1498ebc1eac966da1fbda153eb1e3"/>
       <file install-as="bootstrap.php" name="tests/bootstrap.php" role="test" md5sum="dc3c892b7c3c12c23d8f4740238f27b7"/>
       <file install-as="CLIFramework/ApplicationTest.php" name="tests/CLIFramework/ApplicationTest.php" role="test" md5sum="54bec5e072cc65fae6845a4a33b47e7e"/>
       <file install-as="CLIFramework/CommandLoaderTest.php" name="tests/CLIFramework/CommandLoaderTest.php" role="test" md5sum="860fcd7d805d2fa7335ab10b866e1ae3"/>
@@ -41,35 +32,25 @@
       <file install-as="TestApp/Application.php" name="tests/TestApp/Application.php" role="test" md5sum="676dc451abeed5d0197417aa15fef308"/>
       <file install-as="TestApp/Command/ListCommand/FooCommand.php" name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="55ca48ae0b3ade3672666fae2587cd81"/>
       <file install-as="TestApp/Command/ListCommand.php" name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="20df72923b62e11fdc9ac294f676a019"/>
-      <file install-as="README.md" name="README.md" role="doc" md5sum="5a695c3d0ae2a363abaf18a3cdeb9700"/>
+      <file install-as="CLIFramework/Application.php" name="src/CLIFramework/Application.php" role="php" md5sum="5b823dfa39b0f0359442fe77523c1c12"/>
+      <file install-as="CLIFramework/Command/HelpCommand.php" name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b886752699de409d09bd657bdc71f1cb"/>
+      <file install-as="CLIFramework/Command.php" name="src/CLIFramework/Command.php" role="php" md5sum="7de61263a474f3b9e55aae3d91f6931d"/>
+      <file install-as="CLIFramework/CommandBase.php" name="src/CLIFramework/CommandBase.php" role="php" md5sum="c82067ed5ddeb8c8bb765dd5940dea2a"/>
+      <file install-as="CLIFramework/CommandInterface.php" name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
+      <file install-as="CLIFramework/CommandLoader.php" name="src/CLIFramework/CommandLoader.php" role="php" md5sum="3bed9629e324dd7b4e1d28c22f28b126"/>
+      <file install-as="CLIFramework/Formatter.php" name="src/CLIFramework/Formatter.php" role="php" md5sum="b18ca105a8be132da3d4ffaf847afcdf"/>
+      <file install-as="CLIFramework/Logger.php" name="src/CLIFramework/Logger.php" role="php" md5sum="5a11bc2b178da963de7b240269609691"/>
+      <file install-as="CLIFramework/Utils.php" name="src/CLIFramework/Utils.php" role="php" md5sum="c1e1498ebc1eac966da1fbda153eb1e3"/>
     </dir>
   </contents>
   <dependencies>
     <required>
       <php>
-        <min>5.3</min>
+        <min>3.5</min>
       </php>
       <pearinstaller>
         <min>1.4.1</min>
       </pearinstaller>
-      <package>
-        <name>GetOptionKit</name>
-        <channel>pear.corneltek.com</channel>
-        <min>0.0.1</min>
-      </package>
-      <package>
-        <name>Universal</name>
-        <channel>pear.corneltek.com</channel>
-        <min>0.0.1</min>
-      </package>
-      <extension>
-        <name>reflection</name>
-        <min>0</min>
-      </extension>
-      <extension>
-        <name>pcre</name>
-        <min>0</min>
-      </extension>
     </required>
   </dependencies>
   <phprelease/>
