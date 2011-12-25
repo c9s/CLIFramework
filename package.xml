@@ -8,10 +8,10 @@
     <name>Yo-An Lin</name>
     <user/>
     <email>cornelius.howl@gmail.com</email>
-    <active>1</active>
+    <active>yes</active>
   </lead>
   <date>2011-12-25</date>
-  <time>17:57:28</time>
+  <time>19:56:08</time>
   <version>
     <release>0.0.7</release>
     <api>0.0.7</api>
