@@ -11,10 +11,10 @@
     <active>1</active>
   </lead>
   <date>2011-12-25</date>
-  <time>00:54:56</time>
+  <time>13:04:17</time>
   <version>
-    <release>0.0.6</release>
-    <api>0.0.6</api>
+    <release>0.0.7</release>
+    <api>0.0.7</api>
   </version>
   <stability>
     <release>stable</release>
@@ -46,11 +46,29 @@
   <dependencies>
     <required>
       <php>
-        <min>3.5</min>
+        <min>5.3</min>
       </php>
       <pearinstaller>
         <min>1.4.1</min>
       </pearinstaller>
+      <package>
+        <name>GetOptionKit</name>
+        <channel>pear.corneltek.com</channel>
+        <min>0.0.1</min>
+      </package>
+      <package>
+        <name>Universal</name>
+        <channel>pear.corneltek.com</channel>
+        <min>0.0.1</min>
+      </package>
+      <extension>
+        <name>reflection</name>
+        <min>0.0.0</min>
+      </extension>
+      <extension>
+        <name>pcre</name>
+        <min>0.0.0</min>
+      </extension>
     </required>
   </dependencies>
   <phprelease/>
