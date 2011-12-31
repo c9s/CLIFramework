@@ -129,6 +129,12 @@ class Logger
     {
         return @$this->logLevels[$levelName];
     }
+
+    static function getInstance()
+    {
+        static $instance;
+        return $instance ? $instance : $instance = new static;
+    }
 }
 
 
