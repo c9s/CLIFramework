@@ -184,7 +184,8 @@ abstract class CommandBase
      */
     public function getCommandClass($command)
     {
-        return @$this->commands[ $command ];
+        if( isset($this->commands[ $command ]) )
+            return $this->commands[ $command ];
     }
 
 
@@ -198,7 +199,6 @@ abstract class CommandBase
      */
     public function getCommand($command)
     {
-
         // keep scope here. (hate)
         $command_class = $this->getCommandClass($command);
         if( ! $command_class ) {
