@@ -10,11 +10,11 @@
     <email>cornelius.howl@gmail.com</email>
     <active>yes</active>
   </lead>
-  <date>2011-12-31</date>
-  <time>21:19:32</time>
+  <date>2012-01-01</date>
+  <time>22:02:08</time>
   <version>
-    <release>0.0.8</release>
-    <api>0.0.8</api>
+    <release>0.0.9</release>
+    <api>0.0.9</api>
   </version>
   <stability>
     <release>stable</release>
@@ -35,9 +35,9 @@
       <file name="src/CLIFramework/Application.php" role="php" md5sum="5b823dfa39b0f0359442fe77523c1c12"/>
       <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b886752699de409d09bd657bdc71f1cb"/>
       <file name="src/CLIFramework/Command.php" role="php" md5sum="7de61263a474f3b9e55aae3d91f6931d"/>
-      <file name="src/CLIFramework/CommandBase.php" role="php" md5sum="c82067ed5ddeb8c8bb765dd5940dea2a"/>
+      <file name="src/CLIFramework/CommandBase.php" role="php" md5sum="78aef6b14904067ed72d3495b6b6fca9"/>
       <file name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
-      <file name="src/CLIFramework/CommandLoader.php" role="php" md5sum="3bed9629e324dd7b4e1d28c22f28b126"/>
+      <file name="src/CLIFramework/CommandLoader.php" role="php" md5sum="247353d829e3ae95f64039efb01846ce"/>
       <file name="src/CLIFramework/Formatter.php" role="php" md5sum="b18ca105a8be132da3d4ffaf847afcdf"/>
       <file name="src/CLIFramework/Logger.php" role="php" md5sum="40ce4a4f8872a56d22e154538ce6608d"/>
       <file name="src/CLIFramework/Utils.php" role="php" md5sum="c1e1498ebc1eac966da1fbda153eb1e3"/>
