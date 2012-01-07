@@ -202,7 +202,7 @@ abstract class CommandBase
         // keep scope here. (hate)
         $command_class = $this->getCommandClass($command);
         if( ! $command_class ) {
-            throw new Exception("command $subcommand not found.");
+            throw new Exception("command $command not found.");
         }
         return $this->createCommand($command_class);
     }

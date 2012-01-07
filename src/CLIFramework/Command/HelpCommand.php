@@ -32,7 +32,6 @@ class HelpCommand extends Command
 
         // if there is no subcommand to render help, show all available commands.
         if( $subcommand ) {
-
             // get command object.
             $cmd = $this->application->getCommand( $subcommand );
             $brief_line = $cmd->brief();

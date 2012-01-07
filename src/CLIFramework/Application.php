@@ -86,77 +86,82 @@ class Application extends CommandBase
      * */
     public function run(Array $argv)
     {
+        try {
+            $current_cmd = $this;
 
-        $current_cmd = $this;
+            // init application,
+            // before parsing options, we have to known the registered commands.
+            $current_cmd->init();
 
-        // init application,
-        // before parsing options, we have to known the registered commands.
-        $current_cmd->init();
+            // use getoption kit to parse application options
+            $getopt = $this->getoptParser;
+            $specs = new OptionSpecCollection;
+            $getopt->setSpecs( $specs );
 
-        // use getoption kit to parse application options
-        $getopt = $this->getoptParser;
-        $specs = new OptionSpecCollection;
-        $getopt->setSpecs( $specs );
+            // init application options
+            $current_cmd->options($specs);
 
-        // init application options
-        $current_cmd->options($specs);
+            // save options specs
+            $current_cmd->optionSpecs = $specs;
 
-        // save options specs
-        $current_cmd->optionSpecs = $specs;
+            // save options result
+            $current_cmd->options = $getopt->parse( $argv );
+            $current_cmd->prepare();
 
-        // save options result
-        $current_cmd->options = $getopt->parse( $argv );
-        $current_cmd->prepare();
+            $command_stack = array();
+            $arguments = array();
+            $subcommand_list = $current_cmd->getCommandList();
+            while( ! $getopt->isEnd() ) {
 
-        $command_stack = array();
-        $arguments = array();
-        $subcommand_list = $current_cmd->getCommandList();
-        while( ! $getopt->isEnd() ) {
+                // check current argument is a subcommand name 
+                // or normal arguments by given a subcommand list.
+                if( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) 
+                {
+                    $subcommand = $getopt->getCurrentArgument();
+                    $getopt->advance();
 
-            // check current argument is a subcommand name 
-            // or normal arguments by given a subcommand list.
-            if( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) 
-            {
-                $subcommand = $getopt->getCurrentArgument();
-                $getopt->advance();
+                    $current_cmd = $current_cmd->getCommand( $subcommand );
 
-                $current_cmd = $current_cmd->getCommand( $subcommand );
+                    $getopt->setSpecs($current_cmd->optionSpecs);
 
-                $getopt->setSpecs($current_cmd->optionSpecs);
-
-                // parse options for command.
-                $current_cmd_options = $getopt->continueParse();
+                    // parse options for command.
+                    $current_cmd_options = $getopt->continueParse();
 
 
-                // run subcommand prepare
-                $current_cmd->options = $current_cmd_options;
-                $current_cmd->prepare();
+                    // run subcommand prepare
+                    $current_cmd->options = $current_cmd_options;
+                    $current_cmd->prepare();
 
-                $command_stack[] = $current_cmd; // save command object into the stack
+                    $command_stack[] = $current_cmd; // save command object into the stack
 
-                // update subcommand list
-                $subcommand_list = $current_cmd->getCommandList();
+                    // update subcommand list
+                    $subcommand_list = $current_cmd->getCommandList();
 
-            } else {
-                $arguments[] = $getopt->advance();
+                } else {
+                    $arguments[] = $getopt->advance();
+                }
             }
-        }
 
-        // get last command and run
-        if( $last_cmd = array_pop( $command_stack ) ) {
-            $return = $last_cmd->execute( $arguments );
-            $last_cmd->finish();
-            while( $cmd = array_pop( $command_stack ) ) {
-                // call finish stage.. of every command.
-                $cmd->finish();
+            // get last command and run
+            if( $last_cmd = array_pop( $command_stack ) ) {
+                $return = $last_cmd->execute( $arguments );
+                $last_cmd->finish();
+                while( $cmd = array_pop( $command_stack ) ) {
+                    // call finish stage.. of every command.
+                    $cmd->finish();
+                }
             }
-        }
-        else {
-            // no command specified.
-            return $this->execute( $arguments );
-        }
+            else {
+                // no command specified.
+                return $this->execute( $arguments );
+            }
 
-        $current_cmd->finish();
+            $current_cmd->finish();
+        } 
+        catch( Exception $e ) 
+        {
+            $this->getLogger()->error( $e->getMessage() );
+        }
     }
 
     public function prepare()
@@ -179,6 +184,7 @@ class Application extends CommandBase
         $help_class = $this->getCommandClass( 'help' );
         if( $help_class ) {
             $help = new $help_class;
+            $help->application = $this;
             $help->parent = $this;
             $help->execute($arguments);
         }
