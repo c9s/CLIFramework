@@ -106,7 +106,7 @@ class Logger
             return;
         }
 
-        if( $this->level <= 4 )
+        if( $this->level <= 4 && $level >= 4 )
             $style = 'white';
 
         if( $indent )
