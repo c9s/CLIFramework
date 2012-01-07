@@ -144,7 +144,7 @@ class Application extends CommandBase
 
             // get last command and run
             if( $last_cmd = array_pop( $command_stack ) ) {
-                $return = $last_cmd->execute( $arguments );
+                $return = $last_cmd->executeWrapper( $arguments );
                 $last_cmd->finish();
                 while( $cmd = array_pop( $command_stack ) ) {
                     // call finish stage.. of every command.
@@ -153,7 +153,7 @@ class Application extends CommandBase
             }
             else {
                 // no command specified.
-                return $this->execute( $arguments );
+                return $this->executeWrapper( $arguments );
             }
 
             $current_cmd->finish();
@@ -178,15 +178,16 @@ class Application extends CommandBase
         }
     }
 
-    public function execute( $arguments = array() )
+    public function execute()
     {
+        $arguments = func_get_args();
         // show list and help by default
         $help_class = $this->getCommandClass( 'help' );
         if( $help_class ) {
             $help = new $help_class;
             $help->application = $this;
             $help->parent = $this;
-            $help->execute($arguments);
+            $help->executeWrapper($arguments);
         }
         else {
             throw new Exception("Help command is not defined.");

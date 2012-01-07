@@ -12,7 +12,7 @@ namespace CLIFramework;
 
 use GetOptionKit\OptionSpecCollection;
 use Exception;
-
+use ReflectionObject;
 
 /**
  * Command based class
@@ -279,13 +279,37 @@ abstract class CommandBase
 
 
     /* prepare stage */
-    function prepare() { }
+    public function prepare() { }
 
     /* for finalize stage */
-    function finish() { }
+    public function finish() { }
 
     /* main command execute method */
-    abstract function execute($arguments);
+    // abstract function execute($arguments);
+
+
+    public function executeWrapper($args) 
+    {
+        // call_user_func_array(  );
+        $refl = new ReflectionObject($this);
+
+        if( ! method_exists( $this,'execute' ) )
+            throw new Exception('execute method is not defined.');
+        
+        $reflMethod = $refl->getMethod('execute');
+        $requiredNumber = $reflMethod->getNumberOfRequiredParameters();
+        if( count($args) < $requiredNumber ) {
+            $this->getLogger()->error( "Command requires at least $requiredNumber arguments." );
+            $this->getLogger()->error( "Command prototype:" );
+            $params = $reflMethod->getParameters();
+            foreach( $params as $param ) {
+                $this->getLogger()->error( 
+                    $param->getPosition() . ' => $' . $param->getName() , 1 );
+            }
+            throw new Exception('Wrong Parameter, Can not execute command.');
+        }
+        return call_user_func_array(array($this,'execute'), $args);
+    }
 }
 
 
