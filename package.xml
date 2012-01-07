@@ -11,10 +11,10 @@
     <active>yes</active>
   </lead>
   <date>2012-01-08</date>
-  <time>01:40:37</time>
+  <time>03:07:16</time>
   <version>
-    <release>0.0.10</release>
-    <api>0.0.10</api>
+    <release>0.1.1</release>
+    <api>0.1.1</api>
   </version>
   <stability>
     <release>stable</release>
@@ -28,14 +28,14 @@
       <file name="tests/CLIFramework/CommandLoaderTest.php" role="test" md5sum="860fcd7d805d2fa7335ab10b866e1ae3"/>
       <file name="tests/CLIFramework/LoggerTest.php" role="test" md5sum="01fae1d4f94c8c1be13f3e5d32ff7946"/>
       <file name="tests/TestApp/Application.php" role="test" md5sum="676dc451abeed5d0197417aa15fef308"/>
-      <file name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="55ca48ae0b3ade3672666fae2587cd81"/>
-      <file name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="20df72923b62e11fdc9ac294f676a019"/>
+      <file name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="c8af5aee3eca83a28b00a4f59ce8c78c"/>
+      <file name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="490f0e6a6aa0366fe5feb8edb2e268d1"/>
       <file name="tests/bootstrap.php" role="test" md5sum="dc3c892b7c3c12c23d8f4740238f27b7"/>
       <file name="tests/helpers.php" role="test" md5sum="442b22ed35a844926391dc62c49ec706"/>
-      <file name="src/CLIFramework/Application.php" role="php" md5sum="f82b8c54903ddc0b19f7a8616ac97f81"/>
-      <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="38697e3c106d52a095312f2b4fa029a7"/>
+      <file name="src/CLIFramework/Application.php" role="php" md5sum="e50223ba999a56852ff83e0089ea2dff"/>
+      <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="1afb81c208fd466f8f1b56020d4ef5a7"/>
       <file name="src/CLIFramework/Command.php" role="php" md5sum="7de61263a474f3b9e55aae3d91f6931d"/>
-      <file name="src/CLIFramework/CommandBase.php" role="php" md5sum="1a8318525a48237f56ba225acde6bc2d"/>
+      <file name="src/CLIFramework/CommandBase.php" role="php" md5sum="52377f747901e5d6a62abea43d33e1d2"/>
       <file name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
       <file name="src/CLIFramework/CommandLoader.php" role="php" md5sum="247353d829e3ae95f64039efb01846ce"/>
       <file name="src/CLIFramework/Formatter.php" role="php" md5sum="b18ca105a8be132da3d4ffaf847afcdf"/>
