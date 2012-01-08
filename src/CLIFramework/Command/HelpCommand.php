@@ -26,13 +26,10 @@ class HelpCommand extends Command
         return 'show help message.';
     }
 
-    function execute($arguments)
+    function execute($subcommand = null)
     {
-        $subcommand = array_shift($arguments);
-
         // if there is no subcommand to render help, show all available commands.
         if( $subcommand ) {
-
             // get command object.
             $cmd = $this->application->getCommand( $subcommand );
             $brief_line = $cmd->brief();

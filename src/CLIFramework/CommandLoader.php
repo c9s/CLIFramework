@@ -28,6 +28,8 @@ class CommandLoader
     /**
      * translate command name to class name 
      *
+     * list => ListCommand
+     * list-all => ListAllCommand
      **/
     public function translate($command)
     {

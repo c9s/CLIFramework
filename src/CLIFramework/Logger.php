@@ -106,7 +106,7 @@ class Logger
             return;
         }
 
-        if( $this->level <= 4 )
+        if( $this->level <= 4 && $level >= 4 )
             $style = 'white';
 
         if( $indent )
@@ -128,6 +128,12 @@ class Logger
     public function getLevelByName($levelName)
     {
         return @$this->logLevels[$levelName];
+    }
+
+    static function getInstance()
+    {
+        static $instance;
+        return $instance ? $instance : $instance = new static;
     }
 }
 

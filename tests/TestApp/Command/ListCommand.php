@@ -30,7 +30,7 @@ class ListCommand extends Command
         $this->registerCommand('foo');
     }
 
-    function execute($args)
+    function execute()
     {
 
     }

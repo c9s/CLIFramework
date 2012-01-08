@@ -20,7 +20,7 @@ class FooCommand extends Command
         $_prepare = 1;
     }
 
-    function execute($arguments)
+    function execute()
     {
         global $_execute;
         $_execute = 1;
