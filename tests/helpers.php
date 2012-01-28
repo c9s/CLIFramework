@@ -10,7 +10,7 @@
  */
 
 if( !defined('DEBUG_BACKTRACE_PROVIDE_OBJECT') )
-    define('DEBUG_BACKTRACE_PROVIDE_OBJECT',0);
+    define('DEBUG_BACKTRACE_PROVIDE_OBJECT',1);
 
 function ok( $v , $msg = null )
 {
