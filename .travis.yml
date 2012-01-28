@@ -6,8 +6,7 @@ php:
 
 before_script:
   - phpenv rehash
-  - curl -s http://install.onionphp.org/ | sh
-#   - "pyrus upgrade -f -p pear2.php.net/PEAR2_Pyrus_Developer"
+  - curl -O https://raw.github.com/c9s/Onion/master/onion.phar
   - php onion.phar -d bundle
 #   - ./scripts/compile.sh
 #  - php onion.phar -d build --pyrus
