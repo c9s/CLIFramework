@@ -1,0 +1,16 @@
+language: php
+php:
+  - 5.3.2
+  - 5.3
+  - 5.4
+
+before_script:
+  - phpenv rehash
+  - "pyrus upgrade -f -p pear2.php.net/PEAR2_Pyrus_Developer"
+  - php onion.phar -d bundle
+#   - ./scripts/compile.sh
+#  - php onion.phar -d build --pyrus
+
+script: phpunit
+#  notifications:
+#    irc: "irc.freenode.org#onion-dev"
