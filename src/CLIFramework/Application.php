@@ -21,10 +21,13 @@ use Exception;
 
 class Application extends CommandBase
 {
+    const core_version = '1.1.1';
+    const app_version  = '0';
+    const app_name = 'CLIFramework';
+
     // options parser
     public $getoptParser;
     public $supportReadline;
-
 
     /**
     * command message logger
@@ -36,7 +39,6 @@ class Application extends CommandBase
     function __construct()
     {
         parent::__construct();
-
 
         // get current class namespace, add {App}\Command\ to loader
         $app_ref_class = new \ReflectionClass($this);
@@ -62,6 +64,8 @@ class Application extends CommandBase
         $opts->add('v|verbose','Print verbose message.');
         $opts->add('d|debug'  ,'Print debug message.');
         $opts->add('q|quiet'  ,'Be quiet.');
+        $opts->add('h|help'   ,'help');
+        $opts->add('version'  ,'show version');
     }
 
 
@@ -180,10 +184,19 @@ class Application extends CommandBase
 
     public function execute()
     {
+        $options = $this->getOptions();
+
+        if( $options->version ) {
+            echo static::app_name , "\n";
+            echo "version: " , static::app_version , "\n";
+            echo "cliframework core: ", self::core_version , "\n";
+            return;
+        }
+
         $arguments = func_get_args();
         // show list and help by default
         $help_class = $this->getCommandClass( 'help' );
-        if( $help_class ) {
+        if( $help_class || $options->help ) {
             $help = new $help_class;
             $help->application = $this;
             $help->parent = $this;

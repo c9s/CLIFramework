@@ -15,9 +15,8 @@ class Application extends \CLIFramework\Application
 
     function options($getopt)
     {
-        $getopt->add('v|verbose','Verbose message');
-        $getopt->add('d|debug','Debug message');
         $getopt->add('c|color','Color message');
+        parent::options($getopt);
     }
 
     function init()
