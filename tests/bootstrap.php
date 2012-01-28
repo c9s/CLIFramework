@@ -1,9 +1,8 @@
 <?php
 require 'tests/helpers.php';
-require 'vendor/pear/Universal/ClassLoader/SplClassLoader.php';
-$classLoader = new \Universal\ClassLoader\SplClassLoader(array( 
-    'CLIFramework' => 'src',
-    'TestApp' => 'tests',
+require 'vendor/pear/Universal/ClassLoader/BasePathClassLoader.php';
+$classLoader = new \Universal\ClassLoader\BasePathClassLoader(array( 
+    'src', 'vendor/pear', 'tests',
 ));
 $classLoader->useIncludePath(true);
 $classLoader->register();
