@@ -9,6 +9,9 @@
  *
  */
 
+if( !defined('DEBUG_BACKTRACE_PROVIDE_OBJECT') )
+    define('DEBUG_BACKTRACE_PROVIDE_OBJECT',0);
+
 function ok( $v , $msg = null )
 {
     $stacks = debug_backtrace( DEBUG_BACKTRACE_PROVIDE_OBJECT ); # XXX: limit is only availabel in PHP5.4
