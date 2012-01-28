@@ -187,8 +187,7 @@ class Application extends CommandBase
         $options = $this->getOptions();
 
         if( $options->version ) {
-            echo static::app_name , "\n";
-            echo "version: " , static::app_version , "\n";
+            echo static::app_name , ' - ' , static::app_version , "\n";
             echo "cliframework core: ", self::core_version , "\n";
             return;
         }
