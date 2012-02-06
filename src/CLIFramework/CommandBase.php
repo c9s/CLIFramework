@@ -156,7 +156,6 @@ abstract class CommandBase
 
         if( ! $class )
             throw new Exception("command class $class for command $command not found");
-
         return $this->commands[ $command ] = $class;
     }
 

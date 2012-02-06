@@ -36,6 +36,10 @@ class HelpCommand extends Command
             $usage_line = $cmd->usage();
             $option_lines = $cmd->optionSpecs->outputOptions();
 
+            if( $brief_line ) {
+                echo "\t" . $brief_line;
+                echo "\n";
+            }
 
             if( $usage_line ) {
                 echo "Usage:\n";
@@ -43,11 +47,6 @@ class HelpCommand extends Command
                 echo "\n";
             }
 
-            if( $brief_line ) {
-                echo "Brief:\n";
-                echo "\t" . $brief_line;
-                echo "\n";
-            }
 
             if( $option_lines ) {
                 echo "Options:\n";
@@ -80,10 +79,12 @@ class HelpCommand extends Command
 
             // print command brief list
             echo $this->formatter->format("Available commands:\n",'info2');
-            foreach( $command_classes as $class ) {
+            foreach( $this->application->commands as $name => $class ) {
                 $cmd = new $class;
                 $brief = $cmd->brief();
-                printf("     %-12s - %s\n", $cmd->getCommandName(), $brief );
+                printf("     %-12s - %s\n", 
+                    $name,
+                    $brief );
             }
         }
 
