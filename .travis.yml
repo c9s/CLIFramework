@@ -6,8 +6,8 @@ php:
 
 before_script:
   - phpenv rehash
-  - curl -O https://raw.github.com/c9s/Onion/master/onion.phar
-  - php onion.phar bundle
+  - curl -O https://raw.github.com/c9s/Onion/master/onion
+  - php onion bundle
 #   - ./scripts/compile.sh
 #  - php onion.phar -d build --pyrus
 
