@@ -10,6 +10,17 @@
  */
 namespace CLIFramework;
 
+
+/**
+ * Console output formatter class
+ *
+ *
+ *   $formatter = new Formatter;
+ *   $text = $formatter->format( 'text', 'styleName' );
+ *   $text = $formatter->format( 'text', 'red' );
+ *   $text = $formatter->format( 'text', 'green' );
+ *
+ */
 class Formatter
 {
 
