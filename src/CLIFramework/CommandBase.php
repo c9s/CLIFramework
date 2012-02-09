@@ -9,7 +9,6 @@
  *
  */
 namespace CLIFramework;
-
 use GetOptionKit\OptionSpecCollection;
 use Exception;
 use ReflectionObject;
@@ -309,6 +308,23 @@ abstract class CommandBase
         }
         return call_user_func_array(array($this,'execute'), $args);
     }
+
+    /**
+     * show prompt with message
+     */
+    public function prompt($prompt)
+    {
+        if( extension_loaded('readline') ) {
+            $line = readline($prompt);
+            readline_add_history($line);
+            return $line;
+        } else {
+            echo $prompt;
+            return rtrim( fgets( STDIN ), "\n" );
+        }
+    }
+
+
 }
 
 
