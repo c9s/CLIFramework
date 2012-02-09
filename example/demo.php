@@ -18,3 +18,10 @@ $classloader->useIncludePath(true);
 $classloader->register();
 $app = new \TestApp\Application;
 $app->run($argv);
+
+$logger = $app->getLogger();
+$logger->info('info message');
+$logger->debug('debug message');
+$logger->info2('info2 message');
+$logger->warn('warning message');
+
