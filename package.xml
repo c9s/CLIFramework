@@ -11,7 +11,7 @@
     <active>yes</active>
   </lead>
   <date>2012-02-10</date>
-  <time>22:29:13</time>
+  <time>22:40:27</time>
   <version>
     <release>0.1.6</release>
     <api>0.1.6</api>
@@ -34,7 +34,7 @@
       <file name="tests/helpers.php" role="test" md5sum="1a1fff7b0a332a46bf19fe20b61ff3df"/>
       <file name="src/CLIFramework/Application.php" role="php" md5sum="e865ad77d985ef001287ec998e861736"/>
       <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b4ed17440f63028673237f3a8323e0cf"/>
-      <file name="src/CLIFramework/Command.php" role="php" md5sum="7de61263a474f3b9e55aae3d91f6931d"/>
+      <file name="src/CLIFramework/Command.php" role="php" md5sum="90b2a7c3016e21c23dde758ed9f7ef04"/>
       <file name="src/CLIFramework/CommandBase.php" role="php" md5sum="0fdac534be1152b3428316504f3a3aa3"/>
       <file name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
       <file name="src/CLIFramework/CommandLoader.php" role="php" md5sum="247353d829e3ae95f64039efb01846ce"/>
@@ -49,7 +49,7 @@
         <min>5.3</min>
       </php>
       <pearinstaller>
-        <min>1.4.1</min>
+        <min>1.4</min>
       </pearinstaller>
       <package>
         <name>GetOptionKit</name>
