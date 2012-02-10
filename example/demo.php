@@ -9,11 +9,9 @@
  *
  */
 
-require 'Universal/ClassLoader/SplClassLoader.php';
-$classloader = new \Universal\ClassLoader\SplClassLoader(array( 
-    'CLIFramework' => 'src',
-    'TestApp' => 'tests'
-));
+require 'vendor/pear/Universal/ClassLoader/BasePathClassLoader.php';
+$classloader = new \Universal\ClassLoader\BasePathClassLoader(array( 
+    'src', 'tests' , 'vendor/pear' ));
 $classloader->useIncludePath(true);
 $classloader->register();
 $app = new \TestApp\Application;
@@ -25,3 +23,6 @@ $logger->debug('debug message');
 $logger->info2('info2 message');
 $logger->warn('warning message');
 
+$line = $app->prompt('> ');
+echo "input value: ";
+var_dump($line); 
