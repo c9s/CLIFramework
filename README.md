@@ -146,8 +146,29 @@ Example
 -------
 Please check `example/demo.php`
 
-
     $ php example/demo.php
+
+
+Message style format
+--------------------
+
+```php
+<?php
+$formatter = new CLIFramework\Formatter;
+$formatter->format( 'message' , 'green' );
+```
+
+Built-in styles:
+
+    'red'          => array('fg' => 'red'),
+    'green'        => array('fg' => 'green'),
+    'white'        => array('fg' => 'white'),
+    'yellow'       => array('fg' => 'yellow'),
+    'strong_red'   => array('fg' => 'red', 'bold'  => 1),
+    'strong_green' => array('fg' => 'green','bold' => 1),
+    'strong_white' => array('fg' => 'white','bold' => 1),
+
+
 
 Todo
 ----
