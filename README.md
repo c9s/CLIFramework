@@ -66,9 +66,9 @@ Or install through source:
 Tutorial
 --------
 
-To use CLIFramework, please define the application class first:
+To use CLIFramework, please define the application class first,
 
-src/YourApp/CLIApplication.php
+`src/YourApp/CLIApplication.php`:
 
 ```php
 <?php
@@ -92,6 +92,7 @@ class CLIApplication extends Application
     {
         $this->registerCommand( 'list', '\YourApp\Command\ListCommand' );
         $this->registerCommand( 'foo', '\YourApp\Command\FooCommand' );
+        $this->registerCommand( 'bar' );    // initialize with \YourApp\Command\BarCommand
     }
 
 }
@@ -120,7 +121,10 @@ class ListCommand extends Command {
 
     function execute($arg1,$arg2,$arg3 = 0)
     {
+        $logger = $this->getLogger();
 
+        $logger->info('execute');
+        $logger->error('error');
     }
 }
 ```
@@ -144,7 +148,6 @@ Please check `example/demo.php`
 
 Todo
 ----
-* readline support.
 * autocompleter.
 * exception renderer.
 * alias
