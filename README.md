@@ -125,6 +125,9 @@ class ListCommand extends Command {
 
         $logger->info('execute');
         $logger->error('error');
+
+        $input = $this->prompt('Please type something');
+
     }
 }
 ```
