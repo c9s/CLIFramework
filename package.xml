@@ -10,15 +10,15 @@
     <email>cornelius.howl@gmail.com</email>
     <active>yes</active>
   </lead>
-  <date>2012-02-12</date>
-  <time>11:59:21</time>
+  <date>2012-03-02</date>
+  <time>13:54:36</time>
   <version>
-    <release>0.1.6</release>
-    <api>0.1.6</api>
+    <release>1.0.6</release>
+    <api>1.0.6</api>
   </version>
   <stability>
-    <release>alpha</release>
-    <api>alpha</api>
+    <release>stable</release>
+    <api>stable</api>
   </stability>
   <license>PHP</license>
   <notes>-</notes>
@@ -62,7 +62,7 @@
         <min>0.0.1</min>
       </package>
       <extension>
-        <name>reflection</name>
+        <name>Reflection</name>
         <min>0.0.0</min>
       </extension>
       <extension>
