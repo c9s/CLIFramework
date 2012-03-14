@@ -21,8 +21,8 @@ use Exception;
 
 class Application extends CommandBase
 {
-    const core_version = '1.1.2';
-    const version  = '1.1.2';
+    const core_version = '1.2.1';
+    const version  = '1.2.1';
     const name = 'CLIFramework';
 
     // options parser
