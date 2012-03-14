@@ -23,6 +23,6 @@ $logger->debug('debug message');
 $logger->info2('info2 message');
 $logger->warn('warning message');
 
-$line = $app->prompt('> ');
+$line = $app->ask('Your Name',array('John','Mary'));
 echo "input value: ";
 var_dump($line); 

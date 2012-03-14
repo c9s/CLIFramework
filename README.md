@@ -121,12 +121,12 @@ class ListCommand extends Command {
 
     function execute($arg1,$arg2,$arg3 = 0)
     {
-        $logger = $this->getLogger();
+        $logger = $this->logger;
 
         $logger->info('execute');
         $logger->error('error');
 
-        $input = $this->prompt('Please type something');
+        $input = $this->ask('Please type something');
 
     }
 }
@@ -140,6 +140,24 @@ To start your Application:
 // include your PSR-0 autoloader to load classes here...
 $app = new \YourApp\Application;
 $app->run( $argv );
+```
+
+Console Prompt (Readline)
+-------------------------
+
+simple prompt:
+
+```
+    $input = $this->ask("Your name please");
+```
+
+    $ php demo.php
+    Your name please: 
+
+prompt and except valid values:
+
+```
+    $input = $this->ask("Your name please", array('John', 'Pedro'));
 ```
 
 Example

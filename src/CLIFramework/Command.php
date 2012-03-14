@@ -34,11 +34,19 @@ abstract class Command extends CommandBase
         return strtolower( preg_replace( '/(?<=[a-z])([A-Z])/', '-\1' , $class ) );
     }
 
-
     function getLogger()
     {
         $app = $this->application;
         return $app::getLogger();
     }
+
+    function __get($k)
+    {
+        if( $k == 'logger' ) {
+            return $this->getLogger();
+        }
+        throw new Exception( "$k is not defined." );
+    }
+
 }
 

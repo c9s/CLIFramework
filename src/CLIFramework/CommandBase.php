@@ -312,16 +312,33 @@ abstract class CommandBase
     /**
      * show prompt with message
      */
-    public function prompt($prompt)
+    public function ask($prompt, $validAnswers = null )
     {
-        if( extension_loaded('readline') ) {
-            $line = readline($prompt);
-            readline_add_history($line);
-            return $line;
-        } else {
-            echo $prompt;
-            return rtrim( fgets( STDIN ), "\n" );
+        if( $validAnswers ) {
+            $prompt .= ' [' . join('/',$validAnswers) . ']';
         }
+        $prompt .= ': ';
+
+        $answer = null;
+        while(1) {
+            if( extension_loaded('readline') ) {
+                $answer = readline($prompt);
+                readline_add_history($answer);
+            } else {
+                echo $prompt;
+                $answer = rtrim( fgets( STDIN ), "\n" );
+            }
+            $answer = trim( $answer );
+            if( $validAnswers ) {
+                if( in_array($answer,$validAnswers) ) {
+                    break;
+                } else {
+                    continue;
+                }
+            }
+            break;
+        }
+        return $answer;
     }
 
 
