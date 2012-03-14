@@ -12,6 +12,22 @@ use CLIFramework\Formatter;
 class Prompter
 {
 
+    public $style;
+
+
+
+
+    /**
+     * set prompt style
+     */
+    public function setStyle($style)
+    {
+        return $this->style = $style;
+    }
+
+
+
+
     /**
      * show prompt with message
      */
