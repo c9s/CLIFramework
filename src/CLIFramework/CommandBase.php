@@ -319,6 +319,11 @@ abstract class CommandBase
         return $prompter->ask( $prompt , $validAnswers );
     }
 
+    public function choose($prompt, $choices ) {
+        $prompter = new Prompter;
+        return $prompter->choose( $prompt, $choices );
+    }
+
 }
 
 

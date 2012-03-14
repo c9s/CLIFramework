@@ -44,10 +44,44 @@ class Prompter
         return $answer;
     }
 
+
+
+    /**
+     *
+     *
+     */
     public function choose($prompt, $choices ) 
     {
+        echo $prompt . ": \n";
 
+        $choicesMap = array();
+        $i = 0;
+        foreach( $choices as $choice => $value ) {
+            $i++;
+            $choicesMap[ $i ] = $value;
+            echo "\t" . ($i) . "  $choice\n";
+        }
 
+        $choosePrompt = "Please Choose (1-$i): ";
+        while(1) {
+            if( extension_loaded('readline') ) {
+                $answer = readline($choosePrompt);
+                readline_add_history($answer);
+            } else {
+                echo $choosePrompt;
+                $answer = rtrim( fgets( STDIN ), "\n" );
+            }
+
+            $answer = (int) trim( $answer );
+            if( is_integer( $answer ) ) {
+                if( isset( $choicesMap[$answer] ) ) {
+                    return $choicesMap[$answer];
+                } else {
+                    continue;
+                }
+            }
+            break;
+        }
     }
 
 }
