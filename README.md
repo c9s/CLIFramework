@@ -160,6 +160,27 @@ prompt and except valid values:
     $input = $this->ask("Your name please", array('John', 'Pedro'));
 ```
 
+
+Version Info
+------------
+CLIFrameword has a built-in --version option, to setup the version info, 
+you can simply override a const in your application class to setup version string:
+
+
+```php
+<?
+class ConsoleApp extends CLIFramework\Application
+{
+    const name = 'YourApp';
+    const version = '1.2.1';
+}
+```
+
+This shows:
+
+    $ yourapp.php --version
+    YourApp - version 1.2.1
+
 Example
 -------
 Please check `example/demo.php`

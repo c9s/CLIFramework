@@ -21,9 +21,9 @@ use Exception;
 
 class Application extends CommandBase
 {
-    const core_version = '1.1.1';
-    const app_version  = '0';
-    const app_name = 'CLIFramework';
+    const core_version = '1.1.2';
+    const version  = '1.1.2';
+    const name = 'CLIFramework';
 
     // options parser
     public $getoptParser;
@@ -187,7 +187,7 @@ class Application extends CommandBase
         $options = $this->getOptions();
 
         if( $options->version ) {
-            echo static::app_name , ' - ' , static::app_version , "\n";
+            echo static::name , ' - ' , static::version , "\n";
             echo "cliframework core: ", self::core_version , "\n";
             return;
         }
