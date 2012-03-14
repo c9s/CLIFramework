@@ -181,6 +181,10 @@ This shows:
     $ yourapp.php --version
     YourApp - version 1.2.1
 
+
+
+
+
 Example
 -------
 Please check `example/demo.php`
@@ -208,6 +212,34 @@ Built-in styles:
     'strong_white' => array('fg' => 'white','bold' => 1),
 
 
+Prompter Component
+------------------
+
+
+```php
+<?
+    $prompter = new CLIFramework\Prompter;
+
+    $prompter->style = 'strong_white';
+
+    $value = $prompter->ask( "Please enter your email" );
+
+    $value = $prompter->ask( "Apple or Banana" , array( 'Apple', 'Banana' ) );
+```
+
+
+Chooser Component
+-----------------
+
+```php
+<?
+    $chooser = new CLIFramework\Chooser;
+    $value = $chooser->choose( "System Options" , array( 
+        'use php-5.4.0' => '5.4.0',
+        'use php-5.4.1' => '5.4.1',
+        'use system' => '5.3.0',
+    ));
+```
 
 Todo
 ----
