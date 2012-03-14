@@ -24,14 +24,17 @@ namespace CLIFramework;
 class Formatter
 {
 
+    // Refactor style builder out.
     protected $styles = array(
         'red'          => array('fg' => 'red'),
         'green'        => array('fg' => 'green'),
         'white'        => array('fg' => 'white'),
         'yellow'       => array('fg' => 'yellow'),
-        'strong_red'   => array('fg' => 'red', 'bold'  => 1),
-        'strong_green' => array('fg' => 'green','bold' => 1),
-        'strong_white' => array('fg' => 'white','bold' => 1),
+        'strong_red'   => array('fg' => 'red',     'bold'  => 1),
+        'strong_green' => array('fg' => 'green',   'bold' => 1),
+        'strong_white' => array('fg' => 'white',   'bold' => 1),
+        'ask'          => array('fg' => 'white',   'bold' => 1 , 'underscore' => 4 ),
+        'choose'       => array('fg' => 'white',   'bold' => 1 , 'underscore' => 4 ),
     );
 
     protected $options = array(
@@ -81,6 +84,11 @@ class Formatter
 
     public function getStartMark($style)
     {
+        if (!$this->supportsColors)
+            return;
+
+        if ( $style == 'none' || ! isset($this->styles[$style]) )
+            return '';
 
         $parameters = $this->styles[$style];
         $codes = array();
@@ -101,6 +109,8 @@ class Formatter
 
     public function getClearMark()
     {
+        if( ! $this->supportsColors )
+            return '';
         return "\033[0m";
     }
 
@@ -114,12 +124,6 @@ class Formatter
      */
     public function format($text = '', $style = 'none')
     {
-        if (!$this->supportsColors)
-            return $text;
-
-        if ( $style == 'none' || ! isset($this->styles[$style]) )
-            return $text;
-
         return 
             $this->getStartMark($style)
             . $text 

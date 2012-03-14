@@ -11,6 +11,7 @@
 namespace CLIFramework;
 use GetOptionKit\OptionSpecCollection;
 use CLIFramework\Prompter;
+use CLIFramework\Chooser;
 use Exception;
 use ReflectionObject;
 
@@ -316,12 +317,14 @@ abstract class CommandBase
     public function ask($prompt, $validAnswers = null )
     {
         $prompter = new Prompter;
+        $prompter->style = 'ask';
         return $prompter->ask( $prompt , $validAnswers );
     }
 
     public function choose($prompt, $choices ) {
-        $prompter = new Prompter;
-        return $prompter->choose( $prompt, $choices );
+        $chooser = new Chooser;
+        $chooser->style = 'choose';
+        return $chooser->choose( $prompt, $choices );
     }
 
 }

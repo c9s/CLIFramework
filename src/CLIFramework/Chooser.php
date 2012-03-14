@@ -9,7 +9,7 @@ use CLIFramework\Formatter;
  *
  *
  */
-class Prompter
+class Chooser
 {
 
     public $style;
@@ -30,40 +30,51 @@ class Prompter
 
 
     /**
-     * show prompt with message
+     *
+     *
      */
-    public function ask($prompt, $validAnswers = null )
+    public function choose($prompt, $choices ) 
     {
-        if( $validAnswers ) {
-            $prompt .= ' [' . join('/',$validAnswers) . ']';
+        echo $prompt . ": \n";
+
+        $choicesMap = array();
+        $i = 0;
+        foreach( $choices as $choice => $value ) {
+            $i++;
+            $choicesMap[ $i ] = $value;
+            echo "\t" . ($i) . "  $choice\n";
         }
-        $prompt .= ': ';
 
         if( $this->style ) {
             echo $this->formatter->getStartMark( $this->style );
-            // $prompt = $this->formatter->getStartMark( $this->style ) . $prompt . $this->formatter->getClearMark();
         }
 
-        $answer = null;
+        $choosePrompt = "Please Choose (1-$i): ";
         while(1) {
             if( extension_loaded('readline') ) {
-                $answer = readline($prompt);
+                $answer = readline($choosePrompt);
                 readline_add_history($answer);
             } else {
-                echo $prompt;
+                echo $choosePrompt;
                 $answer = rtrim( fgets( STDIN ), "\n" );
             }
-            $answer = trim( $answer );
-            if( $validAnswers ) {
-                if( in_array($answer,$validAnswers) ) {
-                    echo $this->formatter->getClearMark();
-                    break;
+
+            $answer = (int) trim( $answer );
+            if( is_integer( $answer ) ) {
+                if( isset( $choicesMap[$answer] ) ) {
+
+                    if( $this->style )
+                        echo $this->formatter->getClearMark();
+
+                    return $choicesMap[$answer];
                 } else {
                     continue;
                 }
             }
             break;
         }
-        return $answer;
     }
+
 }
+
+
