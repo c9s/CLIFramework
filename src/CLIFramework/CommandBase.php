@@ -10,6 +10,7 @@
  */
 namespace CLIFramework;
 use GetOptionKit\OptionSpecCollection;
+use CLIFramework\Prompter;
 use Exception;
 use ReflectionObject;
 
@@ -314,33 +315,9 @@ abstract class CommandBase
      */
     public function ask($prompt, $validAnswers = null )
     {
-        if( $validAnswers ) {
-            $prompt .= ' [' . join('/',$validAnswers) . ']';
-        }
-        $prompt .= ': ';
-
-        $answer = null;
-        while(1) {
-            if( extension_loaded('readline') ) {
-                $answer = readline($prompt);
-                readline_add_history($answer);
-            } else {
-                echo $prompt;
-                $answer = rtrim( fgets( STDIN ), "\n" );
-            }
-            $answer = trim( $answer );
-            if( $validAnswers ) {
-                if( in_array($answer,$validAnswers) ) {
-                    break;
-                } else {
-                    continue;
-                }
-            }
-            break;
-        }
-        return $answer;
+        $prompter = new Prompter;
+        return $prompter->ask( $prompt , $validAnswers );
     }
-
 
 }
 

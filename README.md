@@ -188,7 +188,7 @@ Please check `example/demo.php`
     $ php example/demo.php
 
 
-Message style format
+Message style formatter
 --------------------
 
 ```php

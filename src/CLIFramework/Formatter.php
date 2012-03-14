@@ -79,6 +79,31 @@ class Formatter
     }
 
 
+    public function getStartMark($style)
+    {
+
+        $parameters = $this->styles[$style];
+        $codes = array();
+
+        if (isset($parameters['fg']))
+            $codes[] = $this->foreground[$parameters['fg']];
+
+        if (isset($parameters['bg']))
+            $codes[] = $this->background[$parameters['bg']];
+
+        foreach ( $this->options as $option => $value ) {
+            if (isset($parameters[$option]) && $parameters[$option]) {
+                $codes[] = $value;
+            }
+        }
+        return "\033[".implode(';', $codes).'m';
+    }
+
+    public function getClearMark()
+    {
+        return "\033[0m";
+    }
+
     /**
      * Formats a text according to the given style or parameters.
      *
@@ -95,22 +120,10 @@ class Formatter
         if ( $style == 'none' || ! isset($this->styles[$style]) )
             return $text;
 
-        $parameters = $this->styles[$style];
-        $codes = array();
-
-        if (isset($parameters['fg']))
-            $codes[] = $this->foreground[$parameters['fg']];
-
-        if (isset($parameters['bg']))
-            $codes[] = $this->background[$parameters['bg']];
-
-        foreach ( $this->options as $option => $value ) {
-            if (isset($parameters[$option]) && $parameters[$option]) {
-                $codes[] = $value;
-            }
-        }
-
-        return "\033[".implode(';', $codes).'m'.$text."\033[0m";
+        return 
+            $this->getStartMark($style)
+            . $text 
+            . $this->getClearMark();
     }
 
 }
