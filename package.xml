@@ -10,8 +10,8 @@
     <email>cornelius.howl@gmail.com</email>
     <active>yes</active>
   </lead>
-  <date>2012-03-14</date>
-  <time>18:11:50</time>
+  <date>2012-03-15</date>
+  <time>17:37:28</time>
   <version>
     <release>1.3.1</release>
     <api>1.3.1</api>
@@ -24,14 +24,14 @@
   <notes>-</notes>
   <contents>
     <dir name="/">
+      <file name="tests/bootstrap.php" role="test" md5sum="28ae6a550c6a3eeed4bfd5e2622703c9"/>
       <file name="tests/CLIFramework/ApplicationTest.php" role="test" md5sum="54bec5e072cc65fae6845a4a33b47e7e"/>
       <file name="tests/CLIFramework/CommandLoaderTest.php" role="test" md5sum="860fcd7d805d2fa7335ab10b866e1ae3"/>
       <file name="tests/CLIFramework/LoggerTest.php" role="test" md5sum="01fae1d4f94c8c1be13f3e5d32ff7946"/>
+      <file name="tests/helpers.php" role="test" md5sum="1a1fff7b0a332a46bf19fe20b61ff3df"/>
       <file name="tests/TestApp/Application.php" role="test" md5sum="c0fb3479314b79d8a2ac8611d45067fe"/>
       <file name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="c8af5aee3eca83a28b00a4f59ce8c78c"/>
       <file name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="490f0e6a6aa0366fe5feb8edb2e268d1"/>
-      <file name="tests/bootstrap.php" role="test" md5sum="28ae6a550c6a3eeed4bfd5e2622703c9"/>
-      <file name="tests/helpers.php" role="test" md5sum="1a1fff7b0a332a46bf19fe20b61ff3df"/>
       <file name="src/CLIFramework/Application.php" role="php" md5sum="b6d6055b22e9f8481a39862ecd9d3123"/>
       <file name="src/CLIFramework/Chooser.php" role="php" md5sum="1a7724f894548d0692d2d94d64bcffdd"/>
       <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b4ed17440f63028673237f3a8323e0cf"/>
@@ -67,14 +67,14 @@
   </dependencies>
   <phprelease>
     <filelist>
+      <install name="tests/bootstrap.php" as="bootstrap.php"/>
       <install name="tests/CLIFramework/ApplicationTest.php" as="CLIFramework/ApplicationTest.php"/>
       <install name="tests/CLIFramework/CommandLoaderTest.php" as="CLIFramework/CommandLoaderTest.php"/>
       <install name="tests/CLIFramework/LoggerTest.php" as="CLIFramework/LoggerTest.php"/>
+      <install name="tests/helpers.php" as="helpers.php"/>
       <install name="tests/TestApp/Application.php" as="TestApp/Application.php"/>
       <install name="tests/TestApp/Command/ListCommand/FooCommand.php" as="TestApp/Command/ListCommand/FooCommand.php"/>
       <install name="tests/TestApp/Command/ListCommand.php" as="TestApp/Command/ListCommand.php"/>
-      <install name="tests/bootstrap.php" as="bootstrap.php"/>
-      <install name="tests/helpers.php" as="helpers.php"/>
       <install name="src/CLIFramework/Application.php" as="CLIFramework/Application.php"/>
       <install name="src/CLIFramework/Chooser.php" as="CLIFramework/Chooser.php"/>
       <install name="src/CLIFramework/Command/HelpCommand.php" as="CLIFramework/Command/HelpCommand.php"/>
