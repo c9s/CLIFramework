@@ -148,9 +148,10 @@ abstract class CommandBase
         }
         else {
             if ( $this->parent ) {
+                // get class name by subcommand rules.
                 $class = $this->loader->loadSubcommand($command,$this);
-            }
-            else {
+            } else {
+                // get class name by command rules.
                 $class = $this->loader->load($command);
             }
         }
