@@ -120,15 +120,17 @@ class Application extends CommandBase
 
             $command_stack = array();
             $arguments = array();
-            $subcommand_list = $current_cmd->getCommandList();
-            while( ! $getopt->isEnd() ) {
 
-                // check current argument is a subcommand name 
-                // or normal arguments by given a subcommand list.
+            // get command list from application self
+            $subcommand_list = $current_cmd->getCommandList();
+            while( ! $getopt->isEnd() ) 
+            {
+
+                // if current command is in subcommand list.
                 if( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) 
                 {
                     $subcommand = $getopt->getCurrentArgument();
-                    $getopt->advance();
+                    $getopt->advance(); // advance position
 
                     $current_cmd = $current_cmd->getCommand( $subcommand );
 
