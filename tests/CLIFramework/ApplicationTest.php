@@ -40,7 +40,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $argv = explode(' ','app -v -d list extra');
         $ret = $app->run($argv);
-
         ok( $ret );
     }
 

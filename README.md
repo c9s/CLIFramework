@@ -247,3 +247,36 @@ Todo
 * exception renderer.
 * alias
 * interact
+
+
+Hacking
+=======
+
+Setup
+-------
+
+1. Download & install Onion from http://github.com/c9s/Onion
+
+2. Use Onion to bundle the dependencies:
+
+    $ onion bundle
+
+3. Run tests, it should pass.
+
+4. Hack hack hack.
+
+5. Run tests.
+
+6. Send a pull request.
+
+
+How command class register works
+--------------------------------
+
+- CLIApplication is inherited from CommandBase.
+- Command is also inherited from CommandBase.
+- To register a subcommand, we use the `registerCommand` method to register commands or subcommands.
+    - The command class is optional, if command class name is omitted, then the `registerCommand` method
+      will try to guess the *real* command class, and try to load the command class.
+
+

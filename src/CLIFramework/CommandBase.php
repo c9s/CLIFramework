@@ -140,8 +140,8 @@ abstract class CommandBase
     public function registerCommand($command,$class = null)
     {
 
-
-        // try to load the class/subclass.
+        // try to load the class/subclass,
+        // or generate command class name automatically.
         if( $class ) {
             if( $this->loader->loadClass( $class ) === false )
                 throw Exception("Command class not found.");

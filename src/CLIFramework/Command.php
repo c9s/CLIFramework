@@ -25,7 +25,7 @@ abstract class Command extends CommandBase
      *
      * @return string command name
      */
-    function getCommandName()
+    public function getCommandName()
     {
         $class = get_class($this);
         $class = preg_replace( '/Command$/','', $class );
@@ -34,13 +34,13 @@ abstract class Command extends CommandBase
         return strtolower( preg_replace( '/(?<=[a-z])([A-Z])/', '-\1' , $class ) );
     }
 
-    function getLogger()
+    public function getLogger()
     {
         $app = $this->application;
         return $app::getLogger();
     }
 
-    function __get($k)
+    public function __get($k)
     {
         if( $k == 'logger' ) {
             return $this->getLogger();
