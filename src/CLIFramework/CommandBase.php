@@ -124,6 +124,18 @@ abstract class CommandBase
 
 
 
+
+    /**
+     * A short alias for registerCommand method
+     *
+     * @param string $command
+     * @param string $class
+     */
+    public function addCommand($command,$class = null)
+    {
+        return $this->registerCommand($command,$class);
+    }
+
     /**
      * register command to application, in init() method stage,
      * we save command classes in property `commands`.
