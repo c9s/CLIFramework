@@ -42,10 +42,10 @@ abstract class Command extends CommandBase
 
     public function __get($k)
     {
-        if( $k == 'logger' ) {
+        if( $k === 'logger' ) {
             return $this->getLogger();
         }
-        elseif( $k == 'options' ) {
+        elseif( $k === 'options' ) {
             return $this->getOptions();
         }
         throw new Exception( "$k is not defined." );

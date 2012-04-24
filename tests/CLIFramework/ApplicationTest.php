@@ -38,7 +38,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app = new Application;
         ok( $app );
 
-        $argv = explode(' ','app -v -d list extra');
+        $argv = explode(' ','app -v -d list extra --as AS ARG1 ARG2');
         $ret = $app->run($argv);
         ok( $ret );
     }

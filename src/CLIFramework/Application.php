@@ -125,20 +125,19 @@ class Application extends CommandBase
             $subcommand_list = $current_cmd->getCommandList();
             while( ! $getopt->isEnd() ) 
             {
-
                 // if current command is in subcommand list.
                 if( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) 
                 {
                     $subcommand = $getopt->getCurrentArgument();
                     $getopt->advance(); // advance position
 
+                    // get command object
                     $current_cmd = $current_cmd->getCommand( $subcommand );
 
                     $getopt->setSpecs($current_cmd->optionSpecs);
 
                     // parse options for command.
                     $current_cmd_options = $getopt->continueParse();
-
 
                     // run subcommand prepare
                     $current_cmd->options = $current_cmd_options;
@@ -150,9 +149,11 @@ class Application extends CommandBase
                     $subcommand_list = $current_cmd->getCommandList();
 
                 } else {
-                    $arguments[] = $getopt->advance();
+                    $a = $getopt->advance();
+                    $arguments[] = $a;
                 }
             }
+
 
             // get last command and run
             if( $last_cmd = array_pop( $command_stack ) ) {
