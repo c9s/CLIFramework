@@ -19,7 +19,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         ok( $app );
 
         $argv = explode(' ','app -v -d list foo arg1 arg2 arg3');
-        $app->run($argv);
+        $ret = $app->run($argv);
+        ok( $ret );
 
         $logger = $app::getLogger();
         ok( $logger );
@@ -31,4 +32,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         ok( $_execute );
         ok( $_finish );
     }
+
+    function testExtraArguments()
+    {
+        $app = new Application;
+        ok( $app );
+
+        $argv = explode(' ','app -v -d list extra');
+        $ret = $app->run($argv);
+
+        ok( $ret );
+    }
+
 }

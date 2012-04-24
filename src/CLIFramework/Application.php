@@ -165,7 +165,9 @@ class Application extends CommandBase
         catch( Exception $e ) 
         {
             $this->getLogger()->error( $e->getMessage() );
+            return false;
         }
+        return true;
     }
 
     public function prepare()

@@ -10,8 +10,6 @@ class ExtraArgumentTestCommand extends \CLIFramework\Command
         $opts->add('as:','required value');
     }
 
-
-
     function execute()
     {
         if( null === $this->options->as )
