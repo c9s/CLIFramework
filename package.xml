@@ -10,8 +10,8 @@
     <email>cornelius.howl@gmail.com</email>
     <active>yes</active>
   </lead>
-  <date>2012-03-15</date>
-  <time>17:37:28</time>
+  <date>2012-04-09</date>
+  <time>02:12:42</time>
   <version>
     <release>1.3.1</release>
     <api>1.3.1</api>
@@ -35,7 +35,7 @@
       <file name="src/CLIFramework/Application.php" role="php" md5sum="b6d6055b22e9f8481a39862ecd9d3123"/>
       <file name="src/CLIFramework/Chooser.php" role="php" md5sum="1a7724f894548d0692d2d94d64bcffdd"/>
       <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b4ed17440f63028673237f3a8323e0cf"/>
-      <file name="src/CLIFramework/Command.php" role="php" md5sum="40931f4cb42ea62d2732bb15002e65be"/>
+      <file name="src/CLIFramework/Command.php" role="php" md5sum="481a71ab6dfbe3fca53108ade3804e3d"/>
       <file name="src/CLIFramework/CommandBase.php" role="php" md5sum="96b1c7ab1a89017fdeb06a46b7b7fd9a"/>
       <file name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
       <file name="src/CLIFramework/CommandLoader.php" role="php" md5sum="247353d829e3ae95f64039efb01846ce"/>

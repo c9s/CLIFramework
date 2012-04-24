@@ -11,6 +11,7 @@
 namespace TestApp\Command\ListCommand;
 use CLIFramework\Command;
 
+/** Test process stage **/
 class FooCommand extends Command
 {
 
