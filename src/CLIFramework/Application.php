@@ -108,7 +108,13 @@ class Application extends CommandBase
             // save options specs
             $current_cmd->optionSpecs = $specs;
 
-            // save options result
+            // parse the first part options (options after script name)
+            // option parser should stop before next command name.
+            //
+            //    $ app.php -v -d next
+            //                  |
+            //                  |->> parser
+            //
             $current_cmd->options = $getopt->parse( $argv );
             $current_cmd->prepare();
 
