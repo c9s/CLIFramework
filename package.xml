@@ -11,7 +11,7 @@
     <active>yes</active>
   </lead>
   <date>2012-04-25</date>
-  <time>04:37:27</time>
+  <time>20:07:57</time>
   <version>
     <release>1.3.2</release>
     <api>1.3.2</api>
@@ -25,18 +25,19 @@
   <contents>
     <dir name="/">
       <file name="tests/bootstrap.php" role="test" md5sum="28ae6a550c6a3eeed4bfd5e2622703c9"/>
-      <file name="tests/CLIFramework/ApplicationTest.php" role="test" md5sum="1f59b206933dbabd97f92ecf548a4273"/>
+      <file name="tests/CLIFramework/ApplicationTest.php" role="test" md5sum="964d8a0edca385ccae264b152e832d24"/>
       <file name="tests/CLIFramework/CommandLoaderTest.php" role="test" md5sum="860fcd7d805d2fa7335ab10b866e1ae3"/>
       <file name="tests/CLIFramework/LoggerTest.php" role="test" md5sum="01fae1d4f94c8c1be13f3e5d32ff7946"/>
       <file name="tests/helpers.php" role="test" md5sum="1a1fff7b0a332a46bf19fe20b61ff3df"/>
-      <file name="tests/TestApp/Application.php" role="test" md5sum="c0fb3479314b79d8a2ac8611d45067fe"/>
+      <file name="tests/TestApp/Application.php" role="test" md5sum="b9edcd704de3104daeb23f3787a64b89"/>
       <file name="tests/TestApp/Command/ListCommand/ExtraArgumentTestCommand.php" role="test" md5sum="2dc3050beedad1b41453aa5b5333da26"/>
       <file name="tests/TestApp/Command/ListCommand/FooCommand.php" role="test" md5sum="b535ced73b8b5749b4e1324f7f016e1b"/>
       <file name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="79abd40fabfe244232851999c9814a45"/>
-      <file name="src/CLIFramework/Application.php" role="php" md5sum="2d4f7d9c6fad904928226cfd38f5a775"/>
+      <file name="tests/TestApp/Command/Test1Command.php" role="test" md5sum="713ed6d4187354034fa361a9d5b73526"/>
+      <file name="src/CLIFramework/Application.php" role="php" md5sum="4a000d1486cc67c6e701698bedf31e32"/>
       <file name="src/CLIFramework/Chooser.php" role="php" md5sum="1a7724f894548d0692d2d94d64bcffdd"/>
       <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="b4ed17440f63028673237f3a8323e0cf"/>
-      <file name="src/CLIFramework/Command.php" role="php" md5sum="8039d979726c14829f4a80e878bb9479"/>
+      <file name="src/CLIFramework/Command.php" role="php" md5sum="69228dbd6d3e315cf45d3366caf3eec6"/>
       <file name="src/CLIFramework/CommandBase.php" role="php" md5sum="f90cc46a082dbb02b6a65f89d659a189"/>
       <file name="src/CLIFramework/CommandInterface.php" role="php" md5sum="2a9ba04e645a5a09c7ade2db5a426f64"/>
       <file name="src/CLIFramework/CommandLoader.php" role="php" md5sum="247353d829e3ae95f64039efb01846ce"/>
@@ -57,12 +58,12 @@
       <package>
         <name>GetOptionKit</name>
         <channel>pear.corneltek.com</channel>
-        <min>0.0.1</min>
+        <min>1.1.2</min>
       </package>
       <package>
         <name>Universal</name>
         <channel>pear.corneltek.com</channel>
-        <min>0.0.1</min>
+        <min>0.0.0</min>
       </package>
     </required>
   </dependencies>
@@ -77,6 +78,7 @@
       <install name="tests/TestApp/Command/ListCommand/ExtraArgumentTestCommand.php" as="TestApp/Command/ListCommand/ExtraArgumentTestCommand.php"/>
       <install name="tests/TestApp/Command/ListCommand/FooCommand.php" as="TestApp/Command/ListCommand/FooCommand.php"/>
       <install name="tests/TestApp/Command/ListCommand.php" as="TestApp/Command/ListCommand.php"/>
+      <install name="tests/TestApp/Command/Test1Command.php" as="TestApp/Command/Test1Command.php"/>
       <install name="src/CLIFramework/Application.php" as="CLIFramework/Application.php"/>
       <install name="src/CLIFramework/Chooser.php" as="CLIFramework/Chooser.php"/>
       <install name="src/CLIFramework/Command/HelpCommand.php" as="CLIFramework/Command/HelpCommand.php"/>
