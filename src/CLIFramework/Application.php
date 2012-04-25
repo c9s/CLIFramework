@@ -115,7 +115,7 @@ class Application extends CommandBase
             //                  |
             //                  |->> parser
             //
-            $current_cmd->options = $getopt->parse( $argv );
+            $current_cmd->setOptions( $getopt->parse( $argv ) );
             $current_cmd->prepare();
 
             $command_stack = array();
@@ -125,6 +125,8 @@ class Application extends CommandBase
             $subcommand_list = $current_cmd->getCommandList();
             while( ! $getopt->isEnd() ) 
             {
+                $a = $getopt->getCurrentArgument();
+
                 // if current command is in subcommand list.
                 if( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) 
                 {
@@ -140,8 +142,9 @@ class Application extends CommandBase
                     $current_cmd_options = $getopt->continueParse();
 
                     // run subcommand prepare
-                    $current_cmd->options = $current_cmd_options;
-                    $current_cmd->prepare();
+                    $current_cmd->setOptions( $current_cmd_options );
+
+                    // echo get_class($current_cmd) , ' => ' , print_r($current_cmd_options);
 
                     $command_stack[] = $current_cmd; // save command object into the stack
 
@@ -152,6 +155,10 @@ class Application extends CommandBase
                     $a = $getopt->advance();
                     $arguments[] = $a;
                 }
+            }
+
+            foreach($command_stack as $cmd) {
+                $cmd->prepare();
             }
 
 

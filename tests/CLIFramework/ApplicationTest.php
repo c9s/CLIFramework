@@ -34,7 +34,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    function test1()
+    function testOptionParsing()
     {
         $app = new Application;
         ok( $app );

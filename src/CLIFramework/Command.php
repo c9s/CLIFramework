@@ -45,9 +45,6 @@ abstract class Command extends CommandBase
         if( $k === 'logger' ) {
             return $this->getLogger();
         }
-        elseif( $k === 'options' ) {
-            return $this->getOptions();
-        }
         throw new Exception( "$k is not defined." );
     }
 
