@@ -33,11 +33,20 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         ok( $_finish );
     }
 
+
+    function test1()
+    {
+        $app = new Application;
+        ok( $app );
+        $argv = explode(' ','app -v -d test1 --as AS ARG1 ARG2');
+        $ret = $app->run($argv);
+        ok( $ret );
+    }
+
     function testExtraArguments()
     {
         $app = new Application;
         ok( $app );
-
         $argv = explode(' ','app -v -d list extra --as AS ARG1 ARG2');
         $ret = $app->run($argv);
         ok( $ret );
