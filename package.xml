@@ -11,10 +11,10 @@
     <active>yes</active>
   </lead>
   <date>2012-05-11</date>
-  <time>22:27:18</time>
+  <time>22:35:00</time>
   <version>
-    <release>1.4.0</release>
-    <api>1.4.0</api>
+    <release>1.4.1</release>
+    <api>1.4.1</api>
   </version>
   <stability>
     <release>stable</release>
@@ -43,7 +43,7 @@
       <file name="src/CLIFramework/CommandLoader.php" role="php" md5sum="247353d829e3ae95f64039efb01846ce"/>
       <file name="src/CLIFramework/Formatter.php" role="php" md5sum="e176aafd6b84b92e9628f93d2d21da81"/>
       <file name="src/CLIFramework/Logger.php" role="php" md5sum="74d7994fde846db383ec20d03e97fc82"/>
-      <file name="src/CLIFramework/Prompter.php" role="php" md5sum="f389a2be039705d7c717f3ade6c4e27a"/>
+      <file name="src/CLIFramework/Prompter.php" role="php" md5sum="d67d8815c4c854a7bc3c834359369ce3"/>
       <file name="src/CLIFramework/Utils.php" role="php" md5sum="c1e1498ebc1eac966da1fbda153eb1e3"/>
     </dir>
   </contents>
