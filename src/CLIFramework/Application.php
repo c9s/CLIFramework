@@ -200,6 +200,21 @@ class Application extends CommandBase
         }
     }
 
+    public function getCoreVersion()
+    {
+        return static::core_version;
+    }
+
+    public function getVersion()
+    {
+        return static::version;
+    }
+
+    public function getName()
+    {
+        return static::name;
+    }
+
     public function execute()
     {
         $options = $this->getOptions();
