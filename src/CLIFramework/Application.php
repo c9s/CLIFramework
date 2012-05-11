@@ -220,8 +220,8 @@ class Application extends CommandBase
         $options = $this->getOptions();
 
         if( $options->version ) {
-            echo static::name , ' - ' , static::version , "\n";
-            echo "cliframework core: ", self::core_version , "\n";
+            echo $this->getName() , ' - ' , $this->getVersion() , "\n";
+            echo "cliframework core: ", $this->getCoreVersion() , "\n";
             return;
         }
 
