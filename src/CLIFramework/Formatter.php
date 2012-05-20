@@ -35,6 +35,15 @@ class Formatter
         'strong_white' => array('fg' => 'white',   'bold' => 1),
         'ask'          => array('fg' => 'white',   'bold' => 1 , 'underscore' => 4 ),
         'choose'       => array('fg' => 'white',   'bold' => 1 , 'underscore' => 4 ),
+
+        // generic styles
+        'info'  => array('fg' => 'white', 'bold' => 1 ),
+        'debug' => array('fg' => 'white' ),
+        'warn'  => array('fg' => 'yellow' ),
+        'error' => array('fg' => 'red' ),
+
+        'success' => array('fg' => 'black', 'bg' => 'green' ),
+        'fail'    => array('fg' => 'black', 'bg' => 'red' ),
     );
 
     protected $options = array(

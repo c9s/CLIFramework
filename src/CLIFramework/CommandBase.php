@@ -99,11 +99,22 @@ abstract class CommandBase
      *
      * @return string helpText
      */
-    function help()
+    public function help()
     {
         return '';
     }
 
+    public function getFormattedHelpText()
+    {
+        $text = $this->help();
+
+        // format text styles
+
+
+
+    }
+
+    
     /**
      * Subcommand can override this method to define its option spec here 
      *
