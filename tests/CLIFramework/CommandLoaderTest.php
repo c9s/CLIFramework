@@ -19,6 +19,8 @@ class CommandLoaderTest extends PHPUnit_Framework_TestCase
         $text = $command->getFormattedHelpText();
         ok( $text );
 
+        // echo $text;
+        
         $return = $command->execute(123);
         ok( $return );
     }

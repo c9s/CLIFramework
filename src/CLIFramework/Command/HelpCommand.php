@@ -32,30 +32,27 @@ class HelpCommand extends Command
         if( $subcommand ) {
             // get command object.
             $cmd = $this->application->getCommand( $subcommand );
-            $brief_line = $cmd->brief();
-            $usage_line = $cmd->usage();
+            $brief = $cmd->brief();
+            $usage = $cmd->usage();
             $option_lines = $cmd->optionSpecs->outputOptions();
 
-            if( $brief_line ) {
-                echo "\t" . $brief_line;
-                echo "\n";
+            if( $brief ) {
+                echo $brief, "\n";
             }
 
-            if( $usage_line ) {
+            if( $usage ) {
                 echo "Usage:\n";
-                echo "\t" . $usage_line;
-                echo "\n";
+                echo $usage, "\n";
             }
 
 
             if( $option_lines ) {
                 echo "Options:\n";
                 echo join("\n",$option_lines);
+				echo "\n";
             }
 
-            echo "\n";
-            echo $cmd->help();
-
+            echo $cmd->getFormattedHelpText();
 
         } else {
             // print application subcommands
