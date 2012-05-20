@@ -40,15 +40,18 @@ abstract class CommandBase
     public $loader;
 
     /**
-     * application commands 
+     * @var application commands 
+     *
+     * which is an associative array, contains command class mapping info
+     *
+     *     command name => command class name
+     *
      * */
     public $commands = array();
 
 
     /**
-     * parsed options
-     *
-     * @var GetOptionKit\OptionResult
+     * @var GetOptionKit\OptionResult parsed options
      */
     public $options;
 
@@ -92,7 +95,7 @@ abstract class CommandBase
 
 
     /**
-     * detailed help text
+     * Detailed help text
      *
      * @return string helpText
      */
@@ -101,11 +104,21 @@ abstract class CommandBase
         return '';
     }
 
-    /* 
-     * sub command override this method to define its option spec here 
+    /**
+     * Subcommand can override this method to define its option spec here 
      *
-     * it's spec collection object.
-     * */
+     * @code
+     *
+     *      function options($opts) {
+     *          $opts->add('v|verbose','Verbose messages');
+     *          $opts->add('d|debug',  'Debug messages');
+     *          $opts->add('level:',  'Level takes a value.');
+     *      }
+     *
+     * @param GetOptionKit\OptionSpecCollection Spec collection object.
+     *
+     * @see GetOptionKit\OptionSpecCollection
+     */
     function options($getopt)
     {
 
@@ -261,8 +274,10 @@ abstract class CommandBase
     }
 
 
-    /* 
-     * @return comand options (parsed) 
+    /**
+     * Get Option Results
+     *
+     * @return GetOptionKit\OptionSpecCollection command options object (parsed, and a option results) 
      */
     function getOptions()
     {
@@ -270,10 +285,10 @@ abstract class CommandBase
     }
 
 
-    /* 
-     * set options
+    /**
+     * Set option results
      *
-     * @param OptionResult $options 
+     * @param GetOptionKit\OptionResult $options 
      */
     function setOptions( $options )
     {
@@ -281,9 +296,10 @@ abstract class CommandBase
     }
 
 
-    /*
+    /**
+     * Get Command-line Option spec
      *
-     * get option spec 
+     * @return GetOptionKit\OptionSpecCollection
      */
     function getOptionSpec()
     {
@@ -299,8 +315,6 @@ abstract class CommandBase
 
     /* main command execute method */
     // abstract function execute($arguments);
-
-
 
     /**
      * Execute command, wrapper method for execute.
