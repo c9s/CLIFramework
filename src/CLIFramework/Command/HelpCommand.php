@@ -32,19 +32,17 @@ class HelpCommand extends Command
         if( $subcommand ) {
             // get command object.
             $cmd = $this->application->getCommand( $subcommand );
-            $brief = $cmd->brief();
             $usage = $cmd->usage();
             $option_lines = $cmd->optionSpecs->outputOptions();
 
-            if( $brief ) {
+            if( $brief = $cmd->brief() ) {
                 echo $brief, "\n";
             }
 
-            if( $usage ) {
+            if( $usage = $cmd->usage() ) {
                 echo "Usage:\n";
                 echo $usage, "\n";
             }
-
 
             if( $option_lines ) {
                 echo "Options:\n";
@@ -70,8 +68,9 @@ class HelpCommand extends Command
             $classes = get_declared_classes();
             $command_classes = array();
             foreach( $classes as $class ) {
-                if( is_subclass_of($class,'CLIFramework\Command') ) 
+                if( is_subclass_of($class,'CLIFramework\Command') ) {
                     $command_classes[] = $class;
+				}
             }
 
             // print command brief list
