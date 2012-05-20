@@ -301,6 +301,16 @@ abstract class CommandBase
     // abstract function execute($arguments);
 
 
+
+    /**
+     * Execute command, wrapper method for execute.
+     *
+     * In this method, we check the command arguments by the Reflection feature 
+     * provided by PHP.
+     *
+     * @param array $args command argument list (not associative array).
+     * @return mixed the value of execution result.
+     */
     public function executeWrapper($args) 
     {
         // call_user_func_array(  );
@@ -326,6 +336,11 @@ abstract class CommandBase
 
     /**
      * show prompt with message
+     *
+     * @param string $prompt Prompt message.
+     * @param array  $validAnswers an array of valid values (optional)
+     *
+     * @return string user input value
      */
     public function ask($prompt, $validAnswers = null )
     {
@@ -334,6 +349,26 @@ abstract class CommandBase
         return $prompter->ask( $prompt , $validAnswers );
     }
 
+
+    /**
+     * Provide a simple console menu for choices,
+     * which gives values an index number for user to choose items.
+     *
+     * @code
+     *
+     *      $val = $app->choose('Your versions' , array( 
+     *          'php-5.4.0' => '5.4.0',
+     *          'php-5.4.1' => '5.4.1',
+     *          'system' => '5.3.0',
+     *      ));
+     *      var_dump($val); 
+     *
+     * @code
+     *
+     * @param string $prompt Prompt message
+     * @param array $choices 
+     * @return mixed value
+     */
     public function choose($prompt, $choices ) {
         $chooser = new Chooser;
         $chooser->style = 'choose';
