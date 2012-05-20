@@ -109,9 +109,31 @@ abstract class CommandBase
         $text = $this->help();
 
         // format text styles
+        $formatter = new Formatter;
+        $text = preg_replace_callback( '#<(\w+)>(.*?)</\1>#i', function($matches) use ($formatter) { 
+            $style = $matches[1];
+            $text = $matches[2];
 
+            switch($style) {
+                case 'b': $style = 'bold'; break;
+                case 'u': $style = 'underline'; break;
+            }
 
+            if( $formatter->hasStyle($style) ) {
+                return $formatter->format( $text , $style );
+            }
+            return $matches[0];
+        }, $text );
 
+        // support simple markdown style
+        $text = preg_replace_callback( '#[*]([^*]*?)[*]#' , function($matches) use ($formatter) { 
+            return $formatter->format( $matches[1] , 'bold' );
+        } , $text );
+
+        $text = preg_replace_callback( '#[_]([^_]*?)[_]#' , function($matches) use ($formatter) { 
+            return $formatter->format( $matches[1] , 'underline' );
+        } , $text );
+        return $text;
     }
 
     

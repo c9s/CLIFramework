@@ -87,10 +87,14 @@ class Formatter
                 && function_exists('posix_isatty') && @posix_isatty(STDOUT);
     }
 
-
     public function addStyle( $name, $style )
     {
         $this->styles[ $name ] = $style;
+    }
+
+    public function hasStyle( $name )
+    {
+        return isset($this->styles[ $name ]);
     }
 
 
