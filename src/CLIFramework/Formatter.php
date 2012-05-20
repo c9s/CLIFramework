@@ -33,8 +33,11 @@ class Formatter
         'strong_red'   => array('fg' => 'red',     'bold'  => 1),
         'strong_green' => array('fg' => 'green',   'bold' => 1),
         'strong_white' => array('fg' => 'white',   'bold' => 1),
-        'ask'          => array('fg' => 'white',   'bold' => 1 , 'underscore' => 4 ),
-        'choose'       => array('fg' => 'white',   'bold' => 1 , 'underscore' => 4 ),
+        'ask'          => array('fg' => 'white',   'bold' => 1 , 'underline' => 1 ),
+        'choose'       => array('fg' => 'white',   'bold' => 1 , 'underline' => 1 ),
+
+        'bold' => array('fg' => 'white', 'bold' => 1 ),
+        'underline' => array( 'fg' => 'white' , 'underline' => 1 ),
 
         // generic styles
         'info'  => array('fg' => 'white', 'bold' => 1 ),
@@ -48,7 +51,7 @@ class Formatter
 
     protected $options = array(
         'bold' => 1, 
-        'underscore' => 4, 
+        'underline' => 4, 
         'blink' => 5, 
         'reverse' => 7, 
         'conceal' => 8
