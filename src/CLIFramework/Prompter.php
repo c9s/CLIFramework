@@ -28,6 +28,17 @@ class Prompter
         return $this->style = $style;
     }
 
+    public function readline($prompt) 
+    {
+        if( extension_loaded('readline') ) {
+            $answer = readline($prompt);
+            readline_add_history($answer);
+        } else {
+            echo $prompt;
+            $answer = rtrim( fgets( STDIN ), "\n" );
+        }
+        return trim( $answer );
+    }
 
     /**
      * show prompt with message
@@ -37,7 +48,7 @@ class Prompter
         if( $validAnswers ) {
             $prompt .= ' [' . join('/',$validAnswers) . ']';
         }
-        $prompt .= ': ';
+        $prompt .= ' ';
 
         if( $this->style ) {
             echo $this->formatter->getStartMark( $this->style );
@@ -46,23 +57,18 @@ class Prompter
 
         $answer = null;
         while(1) {
-            if( extension_loaded('readline') ) {
-                $answer = readline($prompt);
-                readline_add_history($answer);
-            } else {
-                echo $prompt;
-                $answer = rtrim( fgets( STDIN ), "\n" );
-            }
-            $answer = trim( $answer );
+            $answer = $this->readline( $prompt );
             if( $validAnswers ) {
                 if( in_array($answer,$validAnswers) ) {
-                    echo $this->formatter->getClearMark();
                     break;
                 } else {
                     continue;
                 }
             }
             break;
+        }
+        if( $this->style ) {
+            echo $this->formatter->getClearMark();
         }
         return $answer;
     }
