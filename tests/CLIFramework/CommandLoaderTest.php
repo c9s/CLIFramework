@@ -13,6 +13,10 @@ class CommandLoaderTest extends PHPUnit_Framework_TestCase
 {
     function test()
     {
+        $command = new TestApp\Command\SimpleCommand;
+        ok( $command );
 
+        $return = $command->execute(123);
+        ok( $return );
     }
 }
