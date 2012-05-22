@@ -6,7 +6,7 @@
  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
  <target name="build"
-   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
+   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb,onion"/>
 
  <target name="build-parallel"
    depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
@@ -119,7 +119,27 @@
  </target>
 
  <target name="phpdox" description="Generate API documentation using phpDox">
-  <exec executable="phpdox"/>
+    <exec executable="phpdox"/>
+ </target>
+
+ <target name="onion">
+     <if>
+         <available file="scripts/compile.sh">
+         <then>
+            <exec executable="bash" failonerror="true">
+                <arg value="scripts/compile.sh"/>
+            </exec>
+         </then>
+     </if>
+     <if>
+         <available file="package.ini">
+        <then>
+            <exec executable="onion" failonerror="true">
+                <arg value="-d"/>
+                <arg value="build"/>
+            </exec>
+        </then>
+     </if>
  </target>
 
  <!-- may we have a simple condition for phpunit.xml and phpunit-ci.xml ? -->
