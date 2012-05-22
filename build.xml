@@ -124,7 +124,7 @@
 
  <target name="onion">
      <if>
-         <available file="scripts/compile.sh">
+         <available file="scripts/compile.sh"/>
          <then>
             <exec executable="bash" failonerror="true">
                 <arg value="scripts/compile.sh"/>
@@ -132,7 +132,7 @@
          </then>
      </if>
      <if>
-         <available file="package.ini">
+         <available file="package.ini"/>
         <then>
             <exec executable="onion" failonerror="true">
                 <arg value="-d"/>
