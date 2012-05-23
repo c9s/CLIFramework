@@ -6,7 +6,7 @@
  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
  <target name="build"
-   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb,onion"/>
+   depends="prepare,bundle,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb,package"/>
 
  <target name="build-parallel"
    depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
@@ -122,7 +122,19 @@
     <exec executable="phpdox"/>
  </target>
 
- <target name="onion">
+ <target name="bundle">
+     <if>
+        <available file="package.ini"/>
+        <then>
+            <exec executable="onion" failonerror="true">
+                <arg value="-d"/>
+                <arg value="bundle"/>
+            </exec>
+        </then>
+     </if>
+ </target>
+
+ <target name="package">
      <if>
          <available file="scripts/compile.sh"/>
          <then>
