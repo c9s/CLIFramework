@@ -67,7 +67,7 @@ abstract class CommandBase
 
     function __construct()
     {
-		$this->formatter    = new Formatter;
+        $this->formatter    = new Formatter;
     }
 
 
@@ -79,7 +79,7 @@ abstract class CommandBase
      */
     function brief() 
     {
-        return 'undefined.';
+        return 'your awesome brief.';
     }
 
 

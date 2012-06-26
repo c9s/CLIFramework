@@ -36,8 +36,9 @@ abstract class Command extends CommandBase
 
     public function getLogger()
     {
-        $app = $this->application;
-        return $app::getLogger();
+        if( $app = $this->application ) {
+            return $app::getLogger();
+        }
     }
 
     public function __get($k)
