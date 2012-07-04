@@ -98,7 +98,7 @@ class Logger
     function __call($method,$args)
     {
         $msg = $args[0];
-        $indent = @$args[1];
+        $indent = isset($args[1]) ? $args[1] : 0;
         $level = $this->getLevelByName($method);
         $style = $this->getStyleByName($method);
         if( $level > $this->level ) {
