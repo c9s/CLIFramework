@@ -36,6 +36,13 @@ class Application extends CommandBase
     */
     public static $logger;
 
+
+    /**
+     *
+     * @var CLIFramework\Formatter
+     */
+    public $formatter;
+
     public function __construct()
     {
         parent::__construct();
@@ -43,6 +50,8 @@ class Application extends CommandBase
         // get current class namespace, add {App}\Command\ to loader
         $app_ref_class = new \ReflectionClass($this);
         $app_ns = $app_ref_class->getNamespaceName();
+
+        $this->formatter = new Formatter;
 
         // initliaze command loader
         $this->loader = new CommandLoader();
@@ -236,9 +245,17 @@ class Application extends CommandBase
     public static function getLogger()
     {
         if( static::$logger )
-
             return static::$logger;
         return static::$logger = new Logger;
     }
+
+    public static function getInstance()
+    {
+        static $app;
+        if( $app )
+            return $app;
+        return $app = new static;
+    }
+    
 
 }

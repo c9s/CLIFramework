@@ -26,11 +26,6 @@ abstract class CommandBase
     implements ArrayAccess, IteratorAggregate
 {
 
-    /**
-     *
-     * @var CLIFramework\Formatter
-     */
-    public $formatter;
 
     /**
      * command class loader
@@ -62,11 +57,6 @@ abstract class CommandBase
     public $parent;
 
     public $optionSpecs;
-
-    public function __construct()
-    {
-        $this->formatter = new Formatter;
-    }
 
     /**
      * Returns one line brief for this command.
@@ -284,7 +274,7 @@ abstract class CommandBase
         }
 
         // $cmd->logger = get_class($cmd->application)::getLogger();
-        $cmd->formatter = $cmd->application->formatter;
+        $cmd->formatter = $cmd->application->getFormatter();
 
         // get option parser, init specs from the command.
         $specs = new OptionSpecCollection;
