@@ -273,9 +273,6 @@ abstract class CommandBase
             $cmd->parent = $this;
         }
 
-        // $cmd->logger = get_class($cmd->application)::getLogger();
-        $cmd->formatter = $cmd->application->getFormatter();
-
         // get option parser, init specs from the command.
         $specs = new OptionSpecCollection;
 

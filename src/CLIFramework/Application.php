@@ -226,7 +226,6 @@ class Application extends CommandBase
         if ($options->version) {
             echo $this->getName() , ' - ' , $this->getVersion() , "\n";
             echo "cliframework core: ", $this->getCoreVersion() , "\n";
-
             return;
         }
 
