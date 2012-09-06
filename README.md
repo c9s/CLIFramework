@@ -57,10 +57,11 @@ Installation
 From pear:
 
     $ pear channel-discover pear.corneltek.com
-    $ pear install corneltek/CLIFramework
+    $ pear install -a corneltek/CLIFramework
 
-Or install through source:
+Or install from repository:
 
+    $ git clone http://github.com/c9s/CLIFramework.git
     $ pear install -f package.xml
 
 Tutorial

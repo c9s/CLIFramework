@@ -186,7 +186,7 @@ abstract class CommandBase
      * register command to application, in init() method stage,
      * we save command classes in property `commands`.
      *
-     * when command is needed, get the command from property `commands`, and 
+     * When command is needed, get the command from property `commands`, and 
      * initialize the command object.
      *
      * class name could be full-qualified or subclass name (under App\Command\ )
@@ -220,6 +220,14 @@ abstract class CommandBase
     }
 
 
+
+    /**
+     * Check if a command name is registered in this application / command object.
+     *
+     * @param string $command command name
+     *
+     * @return CLIFramework\Command
+     */
     public function hasCommand($command)
     {
         return isset($this->commands[ $command ]);
@@ -227,9 +235,9 @@ abstract class CommandBase
 
 
     /**
-     * return command name list
+     * Get command name list
      *
-     * @return Array
+     * @return Array command name list
      */
     public function getCommandList()
     {
@@ -237,9 +245,11 @@ abstract class CommandBase
     }
 
 
-    /*
-     * return the command class name
+    /**
+     * Return the command class name by command name
      *
+     * @param string $command command name.
+     * @return string command class.
      */
     public function getCommandClass($command)
     {
@@ -279,7 +289,7 @@ abstract class CommandBase
         $cmd = new $command_class;
 
         // check self 
-        if( is_a($this, '\CLIFramework\Application' ) ) {
+        if( is_a($this, '\CLIFramework\Application',true) ) {
             $cmd->application = $this;
             $cmd->parent = $this;
         } else {
