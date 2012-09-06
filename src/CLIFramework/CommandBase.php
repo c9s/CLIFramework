@@ -58,6 +58,8 @@ abstract class CommandBase
 
     public $optionSpecs;
 
+    public function __construct() {  }
+
     /**
      * Returns one line brief for this command.
      *
