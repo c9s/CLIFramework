@@ -268,30 +268,29 @@ abstract class CommandBase
     public function getCommand($command)
     {
         // keep scope here. (hate)
-        $command_class = $this->getCommandClass($command);
-        if( ! $command_class ) {
-            throw new Exception("command $command not found.");
+        if( $commandClass = $this->getCommandClass($command) ) {
+            return $this->createCommand($commandClass);
         }
-        return $this->createCommand($command_class);
+        throw new Exception("command $command not found.");
     }
 
 
     /**
      * create and initialize command object.
      *
-     * @param string $command_class Command class.
+     * @param string $commandClass Command class.
      * @return Command command object.
      */
-    function createCommand($command_class)
+    function createCommand($commandClass)
     {
         // if current_cmd is not application, we should save parent command object.
 
         // check self 
         if( is_a($this, '\CLIFramework\Application',true) ) {
-            $cmd = new $command_class($this);
+            $cmd = new $commandClass($this);
             $cmd->parent = $this;
         } else {
-            $cmd = new $command_class;
+            $cmd = new $commandClass;
             $cmd->application = $this->application;
             $cmd->parent = $this;
         } 
