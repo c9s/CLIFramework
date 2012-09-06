@@ -44,6 +44,7 @@ class Application extends CommandBase
         $app_ref_class = new \ReflectionClass($this);
         $app_ns = $app_ref_class->getNamespaceName();
 
+        // initliaze command loader
         $this->loader = new CommandLoader();
         $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
         $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
@@ -231,8 +232,7 @@ class Application extends CommandBase
         // show list and help by default
         $help_class = $this->getCommandClass( 'help' );
         if( $help_class || $options->help ) {
-            $help = new $help_class;
-            $help->application = $this;
+            $help = new $help_class($this);
             $help->parent = $this;
             $help->executeWrapper($arguments);
         }

@@ -170,8 +170,6 @@ abstract class CommandBase
     }
 
 
-
-
     /**
      * A short alias for registerCommand method
      *
@@ -287,13 +285,13 @@ abstract class CommandBase
     function createCommand($command_class)
     {
         // if current_cmd is not application, we should save parent command object.
-        $cmd = new $command_class;
 
         // check self 
         if( is_a($this, '\CLIFramework\Application',true) ) {
-            $cmd->application = $this;
+            $cmd = new $command_class($this);
             $cmd->parent = $this;
         } else {
+            $cmd = new $command_class;
             $cmd->application = $this->application;
             $cmd->parent = $this;
         } 
@@ -361,7 +359,7 @@ abstract class CommandBase
     // abstract function execute($arguments);
 
     /**
-     * Execute command, wrapper method for execute.
+     * Execute command object, this is a wrapper method for execution.
      *
      * In this method, we check the command arguments by the Reflection feature 
      * provided by PHP.

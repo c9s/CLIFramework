@@ -27,6 +27,15 @@ abstract class Command extends CommandBase
      */
     public $alias;
 
+    public function __construct($application = null)
+    {
+        // this variable is optional (for backward compatibility)
+        if( $application ) {
+            $this->application = $application;
+        }
+        parent::__construct();
+    }
+
     /**
      * translate current class name to command name.
      *
