@@ -34,9 +34,9 @@ class Application extends CommandBase
     *
     * @var CLIFramework\Logger
     */
-    static $logger;
+    public static $logger;
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
 
@@ -49,13 +49,11 @@ class Application extends CommandBase
         $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
         $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
 
-
         // init option parser
         $this->getoptParser = new ContinuousOptionParser;
 
         $this->supportReadline = extension_loaded('readline');
     }
-
 
     /**
      * register application option specs to the parser
@@ -69,8 +67,7 @@ class Application extends CommandBase
         $opts->add('version'  ,'show version');
     }
 
-
-    /* 
+    /*
      * init application,
      *
      * users register command mapping here. (command to class name)
@@ -81,20 +78,20 @@ class Application extends CommandBase
         $this->registerCommand('help','\\CLIFramework\\Command\\HelpCommand');
     }
 
-
-    public function runWithTry($argv) 
+    public function runWithTry($argv)
     {
         try {
             return $this->run($argv);
-        } catch( Exception $e ) {
+        } catch ( Exception $e ) {
             $this->getLogger()->error( $e->getMessage() );
         }
+
         return false;
     }
 
     /**
-     * Run application with 
-     * list argv 
+     * Run application with
+     * list argv
      *
      * @param Array $argv
      *
@@ -133,13 +130,11 @@ class Application extends CommandBase
 
         // get command list from application self
         $subcommand_list = $current_cmd->getCommandList();
-        while( ! $getopt->isEnd() ) 
-        {
+        while ( ! $getopt->isEnd() ) {
             $a = $getopt->getCurrentArgument();
 
             // if current command is in subcommand list.
-            if( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) 
-            {
+            if ( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) {
                 $subcommand = $getopt->getCurrentArgument();
                 $getopt->advance(); // advance position
 
@@ -167,38 +162,35 @@ class Application extends CommandBase
             }
         }
 
-        foreach($command_stack as $cmd) {
+        foreach ($command_stack as $cmd) {
             $cmd->prepare();
         }
 
-
         // get last command and run
-        if( $last_cmd = array_pop( $command_stack ) ) {
+        if ( $last_cmd = array_pop( $command_stack ) ) {
             $return = $last_cmd->executeWrapper( $arguments );
             $last_cmd->finish();
-            while( $cmd = array_pop( $command_stack ) ) {
+            while ( $cmd = array_pop( $command_stack ) ) {
                 // call finish stage.. of every command.
                 $cmd->finish();
             }
-        }
-        else {
+        } else {
             // no command specified.
             return $this->executeWrapper( $arguments );
         }
         $current_cmd->finish();
+
         return true;
     }
 
     public function prepare()
     {
         $options = $this->getOptions();
-        if( $options->verbose ) {
+        if ($options->verbose) {
             static::getLogger()->setVerbose();
-        }
-        elseif( $options->debug ) {
+        } elseif ($options->debug) {
             static::getLogger()->setDebug();
-        }
-        elseif( $options->quiet ) {
+        } elseif ($options->quiet) {
             static::getLogger()->setLevel(2);
         }
     }
@@ -222,31 +214,31 @@ class Application extends CommandBase
     {
         $options = $this->getOptions();
 
-        if( $options->version ) {
+        if ($options->version) {
             echo $this->getName() , ' - ' , $this->getVersion() , "\n";
             echo "cliframework core: ", $this->getCoreVersion() , "\n";
+
             return;
         }
 
         $arguments = func_get_args();
         // show list and help by default
         $help_class = $this->getCommandClass( 'help' );
-        if( $help_class || $options->help ) {
+        if ($help_class || $options->help) {
             $help = new $help_class($this);
             $help->parent = $this;
             $help->executeWrapper($arguments);
-        }
-        else {
+        } else {
             throw new Exception("Help command is not defined.");
         }
     }
 
-    static function getLogger()
+    public static function getLogger()
     {
         if( static::$logger )
+
             return static::$logger;
         return static::$logger = new Logger;
     }
 
 }
-

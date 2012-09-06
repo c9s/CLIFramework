@@ -8,7 +8,6 @@
  * file that was distributed with this source code.
  */
 namespace CLIFramework;
-use GetOptionKit\GetOptionKit;
 
 /**
  * abstract command class
@@ -21,7 +20,6 @@ abstract class Command extends CommandBase
      */
     public $application;
 
-
     /**
      * @var string Command alias string.
      */
@@ -30,7 +28,7 @@ abstract class Command extends CommandBase
     public function __construct($application = null)
     {
         // this variable is optional (for backward compatibility)
-        if( $application ) {
+        if ($application) {
             $this->application = $application;
         }
         parent::__construct();
@@ -47,9 +45,9 @@ abstract class Command extends CommandBase
         $class = preg_replace( '/Command$/','', $class );
         $parts = explode('\\',$class);
         $class = end($parts);
+
         return strtolower( preg_replace( '/(?<=[a-z])([A-Z])/', '-\1' , $class ) );
     }
-
 
     /**
      * Returns logger object.
@@ -58,11 +56,10 @@ abstract class Command extends CommandBase
      */
     public function getLogger()
     {
-        if( $app = $this->application ) {
+        if ($app = $this->application) {
             return $app::getLogger();
         }
     }
-
 
     /**
      * Alias setter
@@ -72,9 +69,9 @@ abstract class Command extends CommandBase
     public function alias($alias)
     {
         $this->alias = $alias;
+
         return $this;
     }
-
 
     /**
      * Provide a shorthand property for retrieving logger object.
@@ -83,11 +80,10 @@ abstract class Command extends CommandBase
      */
     public function __get($k)
     {
-        if( $k === 'logger' ) {
+        if ($k === 'logger') {
             return $this->getLogger();
         }
         throw new Exception( "$k is not defined." );
     }
 
 }
-

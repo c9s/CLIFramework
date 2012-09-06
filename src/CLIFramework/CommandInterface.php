@@ -10,7 +10,7 @@
  */
 namespace CLIFramework;
 
-interface CommandInterface 
+interface CommandInterface
 {
     // function execute($context);
 }

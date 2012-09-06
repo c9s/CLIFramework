@@ -2,7 +2,6 @@
 namespace CLIFramework;
 use CLIFramework\Formatter;
 
-
 /**
  * Prompter class
  *
@@ -28,30 +27,29 @@ class Chooser
         return $this->style = $style;
     }
 
-
     /**
      *
      *
      */
-    public function choose($prompt, $choices ) 
+    public function choose($prompt, $choices )
     {
         echo $prompt . ": \n";
 
         $choicesMap = array();
         $i = 0;
-        foreach( $choices as $choice => $value ) {
+        foreach ($choices as $choice => $value) {
             $i++;
             $choicesMap[ $i ] = $value;
             echo "\t" . ($i) . "  $choice\n";
         }
 
-        if( $this->style ) {
+        if ($this->style) {
             echo $this->formatter->getStartMark( $this->style );
         }
 
         $choosePrompt = "Please Choose (1-$i): ";
-        while(1) {
-            if( extension_loaded('readline') ) {
+        while (1) {
+            if ( extension_loaded('readline') ) {
                 $answer = readline($choosePrompt);
                 readline_add_history($answer);
             } else {
@@ -60,8 +58,8 @@ class Chooser
             }
 
             $answer = (int) trim( $answer );
-            if( is_integer( $answer ) ) {
-                if( isset( $choicesMap[$answer] ) ) {
+            if ( is_integer( $answer ) ) {
+                if ( isset( $choicesMap[$answer] ) ) {
 
                     if( $this->style )
                         echo $this->formatter->getClearMark();
@@ -76,5 +74,3 @@ class Chooser
     }
 
 }
-
-

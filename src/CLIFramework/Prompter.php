@@ -2,7 +2,6 @@
 namespace CLIFramework;
 use CLIFramework\Formatter;
 
-
 /**
  * Prompter class
  *
@@ -28,15 +27,16 @@ class Prompter
         return $this->style = $style;
     }
 
-    public function readline($prompt) 
+    public function readline($prompt)
     {
-        if( extension_loaded('readline') ) {
+        if ( extension_loaded('readline') ) {
             $answer = readline($prompt);
             readline_add_history($answer);
         } else {
             echo $prompt;
             $answer = rtrim( fgets( STDIN ), "\n" );
         }
+
         return trim( $answer );
     }
 
@@ -45,21 +45,21 @@ class Prompter
      */
     public function ask($prompt, $validAnswers = null )
     {
-        if( $validAnswers ) {
+        if ($validAnswers) {
             $prompt .= ' [' . join('/',$validAnswers) . ']';
         }
         $prompt .= ' ';
 
-        if( $this->style ) {
+        if ($this->style) {
             echo $this->formatter->getStartMark( $this->style );
             // $prompt = $this->formatter->getStartMark( $this->style ) . $prompt . $this->formatter->getClearMark();
         }
 
         $answer = null;
-        while(1) {
+        while (1) {
             $answer = $this->readline( $prompt );
-            if( $validAnswers ) {
-                if( in_array($answer,$validAnswers) ) {
+            if ($validAnswers) {
+                if ( in_array($answer,$validAnswers) ) {
                     break;
                 } else {
                     continue;
@@ -67,9 +67,10 @@ class Prompter
             }
             break;
         }
-        if( $this->style ) {
+        if ($this->style) {
             echo $this->formatter->getClearMark();
         }
+
         return $answer;
     }
 }

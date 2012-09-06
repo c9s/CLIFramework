@@ -13,23 +13,20 @@ namespace CLIFramework;
 class Utils
 {
 
-
     /**
-     * translate command name to class name 
+     * translate command name to class name
      *
      * so something like:   to-list will be ToListCommand
      *
      * */
-    static function translateCommandClassName($command)
+    public static function translateCommandClassName($command)
     {
         $args = explode('-',$command);
         foreach($args as & $a)
             $a = ucfirst($a);
         $subclass = join('',$args) . 'Command';
+
         return $subclass;
     }
 
-
-
 }
-
