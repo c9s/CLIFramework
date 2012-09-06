@@ -14,6 +14,8 @@ use CLIFramework\Prompter;
 use CLIFramework\Chooser;
 use Exception;
 use ReflectionObject;
+use ArrayAccess;
+use IteratorAggregate;
 
 /**
  * Command based class
@@ -21,6 +23,7 @@ use ReflectionObject;
  * register subcommands.
  */
 abstract class CommandBase 
+    implements ArrayAccess, IteratorAggregate
 {
 
     /**
@@ -67,13 +70,11 @@ abstract class CommandBase
 
     function __construct()
     {
-        $this->formatter    = new Formatter;
+        $this->formatter = new Formatter;
     }
 
-
-
     /**
-     * return one line brief for this command.
+     * Returns one line brief for this command.
      *
      * @return string brief 
      */
@@ -84,7 +85,7 @@ abstract class CommandBase
 
 
     /**
-     * usage string  (one-line)
+     * Usage string  (one-line)
      *
      * @return string usage
      */
@@ -430,6 +431,31 @@ abstract class CommandBase
         $chooser = new Chooser;
         $chooser->style = 'choose';
         return $chooser->choose( $prompt, $choices );
+    }
+
+    public function offsetExists($key) 
+    {
+        return isset($this->commands[$key]);
+    }
+
+    public function offsetSet($key,$value) 
+    {
+        $this->commands[$key] = $value;
+    }
+
+    public function offsetGet($key) 
+    {
+        return $this->commands[$key];
+    }
+
+    public function offsetUnset($key)
+    {
+        unset($this->commands[$key]);
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->commands);
     }
 
 }
