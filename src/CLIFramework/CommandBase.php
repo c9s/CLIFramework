@@ -196,10 +196,8 @@ abstract class CommandBase
                 $class = $this->loader->load($command);
             }
         }
-
         if( ! $class )
             throw new Exception("command class $class for command $command not found");
-
         return $this->commands[ $command ] = $class;
     }
 
@@ -266,12 +264,11 @@ abstract class CommandBase
         // if current_cmd is not application, we should save parent command object.
 
         // check self
-        if ( is_a($this, '\CLIFramework\Application',true) ) {
+        if ( $this instanceof \CLIFramework\Application ) {
             $cmd = new $commandClass($this);
             $cmd->parent = $this;
         } else {
-            $cmd = new $commandClass;
-            $cmd->application = $this->application;
+            $cmd = new $commandClass($this->application);
             $cmd->parent = $this;
         }
 
