@@ -56,6 +56,18 @@ abstract class Command extends CommandBase
 
 
     /**
+     * Alias setter
+     *
+     * @param string $alias
+     */
+    public function alias($alias)
+    {
+        $this->alias = $alias;
+        return $this;
+    }
+
+
+    /**
      * Provide a shorthand property for retrieving logger object.
      *
      * @param string $k property name
