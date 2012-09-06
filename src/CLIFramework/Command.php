@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of the CLIFramework package.
  *
@@ -17,8 +16,16 @@ use GetOptionKit\GetOptionKit;
  */
 abstract class Command extends CommandBase
 {
+    /**
+     * @var CLIFramework\Application Application object.
+     */
     public $application;
 
+
+    /**
+     * @var string Command alias string.
+     */
+    public $alias;
 
     /**
      * translate current class name to command name.
@@ -34,6 +41,12 @@ abstract class Command extends CommandBase
         return strtolower( preg_replace( '/(?<=[a-z])([A-Z])/', '-\1' , $class ) );
     }
 
+
+    /**
+     * Returns logger object.
+     *
+     * @return CLIFramework\Logger
+     */
     public function getLogger()
     {
         if( $app = $this->application ) {
@@ -41,6 +54,12 @@ abstract class Command extends CommandBase
         }
     }
 
+
+    /**
+     * Provide a shorthand property for retrieving logger object.
+     *
+     * @param string $k property name
+     */
     public function __get($k)
     {
         if( $k === 'logger' ) {
