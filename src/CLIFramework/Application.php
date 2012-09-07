@@ -16,10 +16,12 @@ use GetOptionKit\OptionSpecCollection;
 use CLIFramework\CommandLoader;
 use CLIFramework\CommandBase;
 use CLIFramework\Logger;
+use CLIFramework\CommandInterface;
 
 use Exception;
 
 class Application extends CommandBase
+    implements CommandInterface
 {
     const core_version = '1.5.1';
     const version  = '1.5.1';
@@ -34,7 +36,7 @@ class Application extends CommandBase
     *
     * @var CLIFramework\Logger
     */
-    public static $logger;
+    public $logger;
 
 
     /**
@@ -52,6 +54,8 @@ class Application extends CommandBase
         $app_ns = $app_ref_class->getNamespaceName();
 
         $this->formatter = new Formatter;
+
+        $this->logger = new Logger;
 
         // initliaze command loader
         $this->loader = new CommandLoader();
@@ -196,11 +200,11 @@ class Application extends CommandBase
     {
         $options = $this->getOptions();
         if ($options->verbose) {
-            static::getLogger()->setVerbose();
+            $this->getLogger()->setVerbose();
         } elseif ($options->debug) {
-            static::getLogger()->setDebug();
+            $this->getLogger()->setDebug();
         } elseif ($options->quiet) {
-            static::getLogger()->setLevel(2);
+            $this->getLogger()->setLevel(2);
         }
     }
 
@@ -241,11 +245,14 @@ class Application extends CommandBase
         }
     }
 
-    public static function getLogger()
+    public function getFormatter()
     {
-        if( static::$logger )
-            return static::$logger;
-        return static::$logger = new Logger;
+        return $this->formatter;
+    }
+
+    public function getLogger()
+    {
+        return $this->logger;
     }
 
     public static function getInstance()

@@ -23,7 +23,7 @@ use IteratorAggregate;
  * register subcommands.
  */
 abstract class CommandBase
-    implements ArrayAccess, IteratorAggregate
+    implements ArrayAccess, IteratorAggregate, CommandInterface
 {
 
 

@@ -22,15 +22,23 @@ class HelpCommand extends Command
      */
     public function brief()
     {
-        return 'show help message.';
+        return 'show help message of a command';
     }
 
-    public function execute($subcommand = null)
+    /**
+     * Show command help message
+     *
+     * @param string $subcommand command name
+     */
+    public function execute()
     {
         // if there is no subcommand to render help, show all available commands.
-        if ($subcommand) {
+        $subcommands = func_get_args();
+        if ($subcommands) {
+            $subcommand = array_shift($subcommands);
             // get command object.
             $cmd = $this->application->getCommand( $subcommand );
+            $formatter = $this->application->getFormatter();
             $usage = $cmd->usage();
             $option_lines = $cmd->optionSpecs->outputOptions();
 

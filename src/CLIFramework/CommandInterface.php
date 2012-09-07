@@ -12,5 +12,6 @@ namespace CLIFramework;
 
 interface CommandInterface
 {
-    // function execute($context);
+    public function getLogger();
+    public function getFormatter();
 }

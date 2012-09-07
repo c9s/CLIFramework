@@ -8,12 +8,15 @@
  * file that was distributed with this source code.
  */
 namespace CLIFramework;
+use Exception;
+use CLIFramework\CommandInterface;
 
 /**
  * abstract command class
  *
  */
 abstract class Command extends CommandBase
+    implements CommandInterface
 {
     /**
      * @var CLIFramework\Application Application object.
@@ -56,9 +59,19 @@ abstract class Command extends CommandBase
      */
     public function getLogger()
     {
-        if ($app = $this->application) {
-            return $app::getLogger();
-        }
+        return $this->application->getLogger();
+    }
+
+
+
+    /**
+     * Returns text style formatter.
+     *
+     * @return CLIFramework\Formatter
+     */
+    public function getFormatter()
+    {
+        return $this->application->getFormatter();
     }
 
     /**

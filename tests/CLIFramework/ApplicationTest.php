@@ -22,7 +22,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $ret = $app->run($argv);
         ok( $ret );
 
-        $logger = $app::getLogger();
+        $logger = $app->getLogger();
         ok( $logger );
 
         global $_prepare;
