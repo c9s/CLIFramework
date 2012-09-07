@@ -1,13 +1,4 @@
 <?php
-/*
- * This file is part of the {{ }} package.
- *
- * (c) Yo-An Lin <cornelius.howl@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- */
 require 'Universal/ClassLoader/BasePathClassLoader.php';
 $classloader = new \Universal\ClassLoader\BasePathClassLoader(array( 
     'src', 'tests' , 'vendor/pear' ));
@@ -16,4 +7,8 @@ $classloader->register();
 require 'example/app.php';
 
 $app = new ExampleApplication;
-$app->run($argv);
+$logger = $app->getLogger();
+$logger->info('info message');
+$logger->debug('debug message');
+$logger->notice('notice message');
+$logger->warn('warning message');

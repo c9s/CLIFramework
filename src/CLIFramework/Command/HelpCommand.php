@@ -44,7 +44,7 @@ class HelpCommand extends Command
             $option_lines = $cmd->optionSpecs->outputOptions();
 
             if ( $brief = $cmd->brief() ) {
-                echo $this->getFormatter()->format($brief,'yellow'),"\n";
+                echo $this->getFormatter()->format(ucfirst($brief),'yellow'),"\n\n";
             }
 
             if ( $usage = $cmd->usage() ) {
