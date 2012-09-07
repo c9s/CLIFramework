@@ -86,7 +86,7 @@ class HelpCommand extends Command
             foreach ($this->application->commands as $name => $class) {
                 $cmd = new $class;
                 $brief = $cmd->brief();
-                printf("     %-12s - %s\n",
+                printf("%24s   %s\n",
                     $name,
                     $brief );
             }
