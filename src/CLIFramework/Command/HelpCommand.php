@@ -95,6 +95,9 @@ class HelpCommand extends Command
                     $name,
                     $brief );
             }
+
+            echo "\n";
+            echo $this->getFormattedHelpText();
         }
 
         // if empty command list
