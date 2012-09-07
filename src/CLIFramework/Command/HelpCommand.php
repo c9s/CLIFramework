@@ -64,7 +64,12 @@ class HelpCommand extends Command
             // print application subcommands
 
             // print application brief
-            echo $this->getFormatter()->format( ucfirst($this->brief()) ,'yellow'),"\n\n";
+            echo $this->getFormatter()->format( ucfirst($this->parent->brief()) ,'yellow'),"\n\n";
+
+            if( $usage = $this->parent->usage() ) {
+                echo $this->getFormatter()->format("Usage",'yellow'),"\n";
+                echo "\t", $_SERVER['SCRIPT_FILENAME'] , ' ' , $usage , "\n\n";
+            }
 
             // print application options
             echo $this->getFormatter()->format("Options",'yellow'),"\n";

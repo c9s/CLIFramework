@@ -67,6 +67,16 @@ class Application extends CommandBase
         $this->supportReadline = extension_loaded('readline');
     }
 
+    public function brief()
+    {
+        return 'application brief';
+    }
+
+    public function usage()
+    {
+        return '[options] [command] [argument1 argument2...]';
+    }
+
     /**
      * register application option specs to the parser
      */

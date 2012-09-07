@@ -14,6 +14,7 @@ class FooCommand extends CLIFramework\Command {
 }
 
 class ExampleApplication extends CLIFramework\Application {
+
     public function init()
     {
         parent::init();
