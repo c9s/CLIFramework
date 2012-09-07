@@ -71,7 +71,10 @@ abstract class Command extends CommandBase
      */
     public function getFormatter()
     {
-        return $this->application->getFormatter();
+        if($this->application)
+            return $this->application->getFormatter();
+        else
+            return new Formatter;
     }
 
     /**
