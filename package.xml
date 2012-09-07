@@ -11,7 +11,7 @@
     <active>yes</active>
   </lead>
   <date>2012-09-07</date>
-  <time>21:40:33</time>
+  <time>21:42:44</time>
   <version>
     <release>1.5.4</release>
     <api>1.5.4</api>
@@ -38,7 +38,7 @@
       <file name="src/CLIFramework/Application.php" role="php" md5sum="64bc4c275601da6f39ee64569424e7b8"/>
       <file name="src/CLIFramework/Chooser.php" role="php" md5sum="21e1b3b99fb8129145e3d5f87d571d1d"/>
       <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="c08c493ac03a41bdbbca3ef42ef8bb4e"/>
-      <file name="src/CLIFramework/Command.php" role="php" md5sum="a97a1d207da42cc124f1ee01612c0d6b"/>
+      <file name="src/CLIFramework/Command.php" role="php" md5sum="c74bb7aa48b790d8548021999eb85fbc"/>
       <file name="src/CLIFramework/CommandBase.php" role="php" md5sum="eac0072a2742aaaf1d80964f0e711846"/>
       <file name="src/CLIFramework/CommandException.php" role="php" md5sum="2086857d1d9a64d164b4de2e7598135b"/>
       <file name="src/CLIFramework/CommandInterface.php" role="php" md5sum="e56b95666c01a67e3fa85668e28ea79b"/>
