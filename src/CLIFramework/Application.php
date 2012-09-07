@@ -54,7 +54,6 @@ class Application extends CommandBase
         $app_ns = $app_ref_class->getNamespaceName();
 
         $this->formatter = new Formatter;
-
         $this->logger = new Logger;
 
         // initliaze command loader
@@ -87,8 +86,8 @@ class Application extends CommandBase
      */
     public function init()
     {
-        // $this->registerCommand('list','\\CLIFramework\\Command\\ListCommand');
-        $this->registerCommand('help','\\CLIFramework\\Command\\HelpCommand');
+        // $this->registerCommand('list','CLIFramework\\Command\\ListCommand');
+        $this->registerCommand('help','CLIFramework\\Command\\HelpCommand');
     }
 
     public function runWithTry($argv)

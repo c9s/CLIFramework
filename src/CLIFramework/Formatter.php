@@ -39,11 +39,13 @@ class Formatter
         'underline' => array( 'fg' => 'white' , 'underline' => 1 ),
 
         // generic styles
-        'info'  => array('fg' => 'white', 'bold' => 1 ),
-        'debug' => array('fg' => 'white' ),
-        'warn'  => array('fg' => 'yellow' ),
-        'error' => array('fg' => 'red' ),
+        'info'   => array('fg'  => 'white', 'bold' => 1 ),
+        'debug'  => array('fg'  => 'white' ),
+        'notice' => array('fg'  => 'yellow' ),
+        'warn'   => array('fg'  => 'red' ),
+        'error'  => array('fg'  => 'red', 'bold'   => 1 ),
 
+        'done'    => array('fg' => 'black', 'bg' => 'green' ),
         'success' => array('fg' => 'black', 'bg' => 'green' ),
         'fail'    => array('fg' => 'black', 'bg' => 'red' ),
     );

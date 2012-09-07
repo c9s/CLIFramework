@@ -90,12 +90,18 @@ abstract class CommandBase
         return '';
     }
 
+
+
+    /**
+     * Returns help message text of a command object.
+     *
+     */
     public function getFormattedHelpText()
     {
         $text = $this->help();
 
         // format text styles
-        $formatter = new Formatter;
+        $formatter = $this->getFormatter();
         $text = preg_replace_callback( '#<(\w+)>(.*?)</\1>#i', function($matches) use ($formatter) {
             $style = $matches[1];
             $text = $matches[2];

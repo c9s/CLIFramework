@@ -38,21 +38,22 @@ class HelpCommand extends Command
             $subcommand = array_shift($subcommands);
             // get command object.
             $cmd = $this->application->getCommand( $subcommand );
-            $formatter = $this->application->getFormatter();
+            $formatter = $this->getFormatter();
+
             $usage = $cmd->usage();
             $option_lines = $cmd->optionSpecs->outputOptions();
 
             if ( $brief = $cmd->brief() ) {
-                echo $brief, "\n";
+                echo $this->getFormatter()->format($brief,'yellow'),"\n";
             }
 
             if ( $usage = $cmd->usage() ) {
-                echo "Usage:\n";
+                echo $this->getFormatter()->format('Usage','yellow'),"\n";
                 echo $usage, "\n";
             }
 
             if ($option_lines) {
-                echo "Options:\n";
+                echo $this->getFormatter()->format('Options','yellow'),"\n";
                 echo join("\n",$option_lines);
                 echo "\n";
             }
@@ -63,10 +64,10 @@ class HelpCommand extends Command
             // print application subcommands
 
             // print application brief
-            echo $this->parent->brief() . "\n\n";
+            echo $this->getFormatter()->format( ucfirst($this->brief()) ,'yellow'),"\n\n";
 
             // print application options
-            echo $this->formatter->format("Available options:\n",'info2');
+            echo $this->getFormatter()->format("Options",'yellow'),"\n";
             $this->parent->optionSpecs->printOptions();
 
             echo "\n\n";
@@ -75,13 +76,13 @@ class HelpCommand extends Command
             $classes = get_declared_classes();
             $command_classes = array();
             foreach ($classes as $class) {
-                if ( is_subclass_of($class,'CLIFramework\Command') ) {
+                if ( is_subclass_of($class,'CLIFramework\Command',true) ) {
                     $command_classes[] = $class;
                 }
             }
 
             // print command brief list
-            echo $this->formatter->format("Available commands:\n",'info2');
+            echo $this->getFormatter()->format("Commands\n",'yellow');
             foreach ($this->application->commands as $name => $class) {
                 $cmd = new $class;
                 $brief = $cmd->brief();
