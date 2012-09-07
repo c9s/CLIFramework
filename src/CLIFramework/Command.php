@@ -96,6 +96,9 @@ abstract class Command extends CommandBase
         if ($k === 'logger') {
             return $this->getLogger();
         }
+        elseif( $k === 'formatter' ) {
+            return $this->getFormatter();
+        }
         throw new Exception( "$k is not defined." );
     }
 
