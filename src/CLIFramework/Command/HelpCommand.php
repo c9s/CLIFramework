@@ -68,7 +68,7 @@ class HelpCommand extends Command
 
             if( $usage = $this->parent->usage() ) {
                 echo $this->getFormatter()->format("Usage",'yellow'),"\n";
-                echo "\t", $_SERVER['SCRIPT_FILENAME'] , ' ' , $usage , "\n\n";
+                echo "\t", basename($_SERVER['SCRIPT_FILENAME']) , ' ' , $usage , "\n\n";
             }
 
             // print application options
