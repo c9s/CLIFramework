@@ -23,8 +23,8 @@ use Exception;
 class Application extends CommandBase
     implements CommandInterface
 {
-    const core_version = '1.5.1';
-    const version  = '1.5.1';
+    const core_version = '1.5.7';
+    const version  = '1.5.7';
     const name = 'CLIFramework';
 
     // options parser

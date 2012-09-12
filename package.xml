@@ -10,11 +10,11 @@
     <email>cornelius.howl@gmail.com</email>
     <active>yes</active>
   </lead>
-  <date>2012-09-08</date>
-  <time>00:06:32</time>
+  <date>2012-09-12</date>
+  <time>23:55:05</time>
   <version>
-    <release>1.5.6</release>
-    <api>1.5.6</api>
+    <release>1.5.7</release>
+    <api>1.5.7</api>
   </version>
   <stability>
     <release>stable</release>
@@ -35,7 +35,8 @@
       <file name="tests/TestApp/Command/ListCommand.php" role="test" md5sum="79abd40fabfe244232851999c9814a45"/>
       <file name="tests/TestApp/Command/SimpleCommand.php" role="test" md5sum="6884925242cf4b4a6545b3662d25c3bf"/>
       <file name="tests/TestApp/Command/Test1Command.php" role="test" md5sum="713ed6d4187354034fa361a9d5b73526"/>
-      <file name="src/CLIFramework/Application.php" role="php" md5sum="4f8558b82824aa5334afd86258e5d1fd"/>
+      <file name="src/CLIFramework/Application.php" role="php" md5sum="893f3a6691b473f7d0670053d25419e7"/>
+      <file name="src/CLIFramework/ChainedCommand.php" role="php" md5sum="1ad5c65ddea36d14aecbe4b8dd29d186"/>
       <file name="src/CLIFramework/Chooser.php" role="php" md5sum="21e1b3b99fb8129145e3d5f87d571d1d"/>
       <file name="src/CLIFramework/Command/HelpCommand.php" role="php" md5sum="6dc31a5b7cb305d93f2d796787f4474c"/>
       <file name="src/CLIFramework/Command.php" role="php" md5sum="c74bb7aa48b790d8548021999eb85fbc"/>
@@ -83,6 +84,7 @@
       <install name="tests/TestApp/Command/SimpleCommand.php" as="TestApp/Command/SimpleCommand.php"/>
       <install name="tests/TestApp/Command/Test1Command.php" as="TestApp/Command/Test1Command.php"/>
       <install name="src/CLIFramework/Application.php" as="CLIFramework/Application.php"/>
+      <install name="src/CLIFramework/ChainedCommand.php" as="CLIFramework/ChainedCommand.php"/>
       <install name="src/CLIFramework/Chooser.php" as="CLIFramework/Chooser.php"/>
       <install name="src/CLIFramework/Command/HelpCommand.php" as="CLIFramework/Command/HelpCommand.php"/>
       <install name="src/CLIFramework/Command.php" as="CLIFramework/Command.php"/>
