@@ -6,7 +6,6 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
  */
 namespace CLIFramework;
 use GetOptionKit\OptionSpecCollection;
@@ -260,7 +259,7 @@ abstract class CommandBase
     }
 
     /**
-     * create and initialize command object.
+     * Create and initialize command object.
      *
      * @param  string  $commandClass Command class.
      * @return Command command object.
@@ -325,14 +324,15 @@ abstract class CommandBase
         return $this->optionSpecs;
     }
 
-    /* prepare stage */
+    /**
+     * Prepare stage method 
+     */
     public function prepare() { }
 
-    /* for finalize stage */
+    /**
+     * Finalize stage method
+     */
     public function finish() { }
-
-    /* main command execute method */
-    // abstract function execute($arguments);
 
     /**
      * Execute command object, this is a wrapper method for execution.
@@ -368,7 +368,8 @@ abstract class CommandBase
     }
 
     /**
-     * show prompt with message
+     * Show prompt with message, you can provide valid options
+     * for the simple validation.
      *
      * @param string $prompt       Prompt message.
      * @param array  $validAnswers an array of valid values (optional)

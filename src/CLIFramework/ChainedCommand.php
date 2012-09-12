@@ -2,6 +2,14 @@
 namespace CLIFramework;
 use CLIFramework\Command;
 
+
+
+/**
+ * A ChainedCommand contains multiple commands together,
+ *
+ * Subcommands of a chained command use the same options,
+ * same logger, same application and are executed by sequence.
+ */
 class ChainedCommand extends Command
 {
     /**
@@ -22,11 +30,11 @@ class ChainedCommand extends Command
         foreach( $this->commands as $command ) {
             $cmd = new $command($this->application);
             $cmd->logger = $this->logger;
+            $cmd->parent = $this;
             $cmds[] = $cmd;
         }
         return $cmds;
     }
-
 
     public function execute() 
     {
@@ -39,8 +47,5 @@ class ChainedCommand extends Command
         }
         $this->logger->info('Done');
     }
-
 }
-
-
 
