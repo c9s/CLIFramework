@@ -1,5 +1,5 @@
 {
-    "name": "c9s/cliframework",
+    "name": "corneltek/cliframework",
     "homepage": "http://github.com/c9s/CLIFramework",
     "description": "Command-line framework for PHP",
     "require": {
