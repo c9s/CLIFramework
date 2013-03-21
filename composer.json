@@ -6,6 +6,9 @@
         "php": ">=5.3.0",
         "corneltek/getoptionkit": "dev-master"
     },
+    "require-dev": {
+        "corneltek/phpunit-testmore": "*"
+    },
     "license": "MIT",
     "authors": [
         {
@@ -14,5 +17,8 @@
             "homepage": "http://c9s.me"
         }
     ],
-    "autoload": { "psr-0": { "CLIFramework": "src" } }
+    "autoload": { "psr-0": { 
+        "CLIFramework": "src" ,
+        "TestApp": "tests"
+    } }
 }

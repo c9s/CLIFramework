@@ -1,5 +1,5 @@
 {
-    "hash": "c5da638c7f41645fa7c18039ed792366",
+    "hash": "d064939f1cca47c5dbe76d6c6f752865",
     "packages": [
         {
             "name": "corneltek/getoptionkit",
@@ -40,9 +40,7 @@
             "time": "2013-03-21 01:26:32"
         }
     ],
-    "packages-dev": [
-
-    ],
+    "packages-dev": null,
     "aliases": [
 
     ],
