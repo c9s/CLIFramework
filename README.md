@@ -1,6 +1,8 @@
 CLIFramework
 ============
 
+[![Build Status](https://travis-ci.org/c9s/php-CLIFramework.png?branch=master)](https://travis-ci.org/c9s/php-CLIFramework)
+
 CLIFramework is a command-line application framework, for building flexiable, simple command-line applications.
 
 In one CLIFramework application, each command is a class file, a command class can have many subcommands,
