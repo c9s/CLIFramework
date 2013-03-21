@@ -6,6 +6,7 @@ php:
 before_script:
   - phpenv rehash
   - curl -O https://raw.github.com/c9s/Onion/master/onion
+  - pear install pear.corneltek.com/PHPUnit_TestMore
   - php onion install
   - composer install
 #   - ./scripts/compile.sh
