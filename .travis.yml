@@ -8,10 +8,6 @@ before_script:
   - curl -O https://raw.github.com/c9s/Onion/master/onion
   - pear install pear.corneltek.com/PHPUnit_TestMore
   - php onion install
-  - composer install
-#   - ./scripts/compile.sh
-#  - php onion.phar -d build --pyrus
+  - composer install --dev
 
 script: phpunit
-#  notifications:
-#    irc: "irc.freenode.org#onion-dev"
