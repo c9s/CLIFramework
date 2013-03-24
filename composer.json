@@ -19,7 +19,6 @@
         }
     ],
     "autoload": { "psr-0": { 
-        "CLIFramework": "src" ,
-        "TestApp": "tests"
+        "CLIFramework": "src"
     } }
 }
