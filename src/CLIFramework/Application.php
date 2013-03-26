@@ -17,15 +17,14 @@ use CLIFramework\CommandLoader;
 use CLIFramework\CommandBase;
 use CLIFramework\Logger;
 use CLIFramework\CommandInterface;
-
 use Exception;
 
 class Application extends CommandBase
     implements CommandInterface
 {
-    const core_version = '1.5.7';
-    const version  = '1.5.7';
-    const name = 'CLIFramework';
+    const CORE_VERSION = '1.6.0';
+    const VERSION  = '1.6.0';
+    const NAME = 'CLIFramework';
 
     // options parser
     public $getoptParser;
@@ -219,17 +218,17 @@ class Application extends CommandBase
 
     public function getCoreVersion()
     {
-        return static::core_version;
+        return static::CORE_VERSION;
     }
 
     public function getVersion()
     {
-        return static::version;
+        return static::VERSION;
     }
 
     public function getName()
     {
-        return static::name;
+        return static::NAME;
     }
 
     public function execute()
