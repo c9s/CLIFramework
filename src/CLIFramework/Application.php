@@ -218,29 +218,32 @@ class Application extends CommandBase
 
     public function getCoreVersion()
     {
-        if ( defined('static::CORE_VERSION') ) {
-            return static::CORE_VERSION;
-        }
         if ( defined('static::core_version') ) {
             return static::core_version;
+        }
+        if ( defined('static::CORE_VERSION') ) {
+            return static::CORE_VERSION;
         }
     }
 
     public function getVersion()
     {
+        if ( defined('static::version') ) {
+            return static::version;
+        }
         if ( defined('static::VERSION') ) {
             return static::VERSION;
         }
-        return static::version;
-
     }
 
     public function getName()
     {
+        if ( defined('static::name') ) {
+            return static::name;
+        }
         if ( defined('static::NAME') ) {
             return static::NAME;
         }
-        return static::name;
     }
 
     public function execute()
