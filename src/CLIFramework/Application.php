@@ -22,8 +22,8 @@ use Exception;
 class Application extends CommandBase
     implements CommandInterface
 {
-    const CORE_VERSION = '1.6.0';
-    const VERSION  = '1.6.0';
+    const CORE_VERSION = '1.5.12';
+    const VERSION  = '1.5.12';
     const NAME = 'CLIFramework';
 
     // options parser
@@ -218,17 +218,29 @@ class Application extends CommandBase
 
     public function getCoreVersion()
     {
-        return static::CORE_VERSION;
+        if ( defined('static::CORE_VERSION') ) {
+            return static::CORE_VERSION;
+        }
+        if ( defined('static::core_version') ) {
+            return static::core_version;
+        }
     }
 
     public function getVersion()
     {
-        return static::VERSION;
+        if ( defined('static::VERSION') ) {
+            return static::VERSION;
+        }
+        return static::version;
+
     }
 
     public function getName()
     {
-        return static::NAME;
+        if ( defined('static::NAME') ) {
+            return static::NAME;
+        }
+        return static::name;
     }
 
     public function execute()
