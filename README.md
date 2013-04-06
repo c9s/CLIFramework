@@ -146,7 +146,6 @@ class ListCommand extends Command {
 To start your Application:
 
 ```php
-
 // include your PSR-0 autoloader to load classes here...
 $app = new \YourApp\Application;
 $app->run( $argv );
@@ -157,8 +156,8 @@ Console Prompt (Readline)
 
 simple prompt:
 
-```
-    $input = $this->ask("Your name please");
+```php
+$input = $this->ask("Your name please");
 ```
 
     $ php demo.php
@@ -166,8 +165,8 @@ simple prompt:
 
 prompt and except valid values:
 
-```
-    $input = $this->ask("Your name please", array('John', 'Pedro'));
+```php
+$input = $this->ask("Your name please", array('John', 'Pedro'));
 ```
 
 
@@ -178,11 +177,10 @@ you can simply override a const in your application class to setup version strin
 
 
 ```php
-<?
 class ConsoleApp extends CLIFramework\Application
 {
-    const name = 'YourApp';
-    const version = '1.2.1';
+    const NAME = 'YourApp';
+    const VERSION = '1.2.1';
 }
 ```
 
@@ -190,9 +188,6 @@ This shows:
 
     $ yourapp.php --version
     YourApp - version 1.2.1
-
-
-
 
 
 Example
@@ -226,14 +221,13 @@ Prompter Component
 
 
 ```php
-<?
-    $prompter = new CLIFramework\Prompter;
+$prompter = new CLIFramework\Prompter;
 
-    $prompter->style = 'strong_white';
+$prompter->style = 'strong_white';
 
-    $value = $prompter->ask( "Please enter your email" );
+$value = $prompter->ask( "Please enter your email" );
 
-    $value = $prompter->ask( "Apple or Banana" , array( 'Apple', 'Banana' ) );
+$value = $prompter->ask( "Apple or Banana" , array( 'Apple', 'Banana' ) );
 ```
 
 
@@ -241,13 +235,12 @@ Chooser Component
 -----------------
 
 ```php
-<?
-    $chooser = new CLIFramework\Chooser;
-    $value = $chooser->choose( "System Options" , array( 
-        'use php-5.4.0' => '5.4.0',
-        'use php-5.4.1' => '5.4.1',
-        'use system' => '5.3.0',
-    ));
+$chooser = new CLIFramework\Chooser;
+$value = $chooser->choose( "System Options" , array( 
+    'use php-5.4.0' => '5.4.0',
+    'use php-5.4.1' => '5.4.1',
+    'use system' => '5.3.0',
+));
 ```
 
 Todo
