@@ -56,6 +56,16 @@ Requirement
 Installation
 ------------
 
+From composer
+
+```json
+{
+    "require": {
+        "corneltek/cliframework": "~1.5"
+    }
+}
+```
+
 From pear:
 
     $ pear channel-discover pear.corneltek.com
