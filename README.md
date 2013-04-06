@@ -74,7 +74,6 @@ To use CLIFramework, please define the application class first,
 `src/YourApp/CLIApplication.php`:
 
 ```php
-<?php
 namespace YourApp;
 use CLIFramework\Application;
 
@@ -106,7 +105,6 @@ Then define your command class:
 `src/YourApp/Command/ListCommand.php`:
 
 ```php
-<?php
 namespace YourApp\Command;
 use CLIFramework\Command;
 class ListCommand extends Command {
@@ -138,7 +136,6 @@ class ListCommand extends Command {
 To start your Application:
 
 ```php
-<?php
 
 // include your PSR-0 autoloader to load classes here...
 $app = new \YourApp\Application;
@@ -199,7 +196,6 @@ Message style formatter
 --------------------
 
 ```php
-<?php
 $formatter = new CLIFramework\Formatter;
 $formatter->format( 'message' , 'green' );
 ```
