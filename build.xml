@@ -6,7 +6,7 @@
  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
  <target name="build"
-   depends="prepare,bundle,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb,package"/>
+   depends="prepare,composer,phpunit,lint,phploc,pdepend,phpmd-ci,doxygen,phpcs-ci,phpcpd,phpdox,phpwiki,phpcb,package"/>
 
  <target name="build-parallel"
    depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
@@ -30,15 +30,30 @@
   <delete dir="${basedir}/build/coverage"/>
   <delete dir="${basedir}/build/logs"/>
   <delete dir="${basedir}/build/pdepend"/>
+  <delete dir="${basedir}/build/wiki"/>
+  <delete dir="${basedir}/build/doxygen"/>
  </target>
 
  <target name="prepare" depends="clean" description="Prepare for build">
   <mkdir dir="${basedir}/build/api"/>
+  <mkdir dir="${basedir}/build/wiki"/>
   <mkdir dir="${basedir}/build/code-browser"/>
   <mkdir dir="${basedir}/build/coverage"/>
   <mkdir dir="${basedir}/build/logs"/>
   <mkdir dir="${basedir}/build/pdepend"/>
   <mkdir dir="${basedir}/build/phpdox"/>
+  <mkdir dir="${basedir}/build/doxygen"/>
+ </target>
+
+ <target name="doxygen">
+     <if>
+        <available file="Doxyfile"/>
+        <then>
+            <exec executable="doxygen" failonerror="true">
+                <arg value="Doxyfile"/>
+            </exec>
+        </then>
+     </if>
  </target>
 
  <target name="lint" description="Perform syntax check of sourcecode files">
@@ -54,6 +69,7 @@
     <include name="**/*.php" />
     <modified />
    </fileset>
+
   </apply>
  </target>
 
@@ -122,13 +138,32 @@
     <exec executable="phpdox"/>
  </target>
 
- <target name="bundle">
+ <target name="phpwiki" description="Generate PHP Wiki">
+    <exec executable="phpwiki">
+        <arg value="doc"/>
+        <arg value="build/wiki"/>
+    </exec>
+ </target>
+
+ <target name="composer">
+     <if>
+        <available file="composer.json"/>
+        <then>
+            <exec executable="composer" failonerror="true">
+                <arg value="install"/>
+                <arg value="--dev"/>
+            </exec>
+        </then>
+     </if>
+ </target>
+
+ <target name="onion">
      <if>
         <available file="package.ini"/>
         <then>
             <exec executable="onion" failonerror="true">
                 <arg value="-q"/>
-                <arg value="bundle"/>
+                <arg value="install"/>
             </exec>
         </then>
      </if>
@@ -147,7 +182,7 @@
          <available file="package.ini"/>
         <then>
             <exec executable="onion" failonerror="true">
-                <arg value="-d"/>
+                <arg value="-q"/>
                 <arg value="build"/>
             </exec>
         </then>
