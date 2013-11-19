@@ -228,21 +228,21 @@ class Application extends CommandBase
 
     public function getVersion()
     {
-        if ( defined('static::version') ) {
-            return static::version;
-        }
         if ( defined('static::VERSION') ) {
             return static::VERSION;
+        }
+        if ( defined('static::version') ) {
+            return static::version;
         }
     }
 
     public function getName()
     {
-        if ( defined('static::name') ) {
-            return static::name;
-        }
         if ( defined('static::NAME') ) {
             return static::NAME;
+        }
+        if ( defined('static::name') ) {
+            return static::name;
         }
     }
 
