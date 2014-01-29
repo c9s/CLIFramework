@@ -37,6 +37,8 @@ abstract class CommandBase
      * */
     public $commands = array();
 
+    public $aliases = array();
+
     /**
      * @var GetOptionKit\OptionResult parsed options
      */
@@ -84,6 +86,13 @@ abstract class CommandBase
     }
 
 
+    public function aliases() {
+        // methods for user to define alias.
+    }
+
+    public function addAlias($alias, $cmdName) {
+        $this->aliases[$alias] = $cmdName;
+    }
 
     /**
      * Returns help message text of a command object.
@@ -183,6 +192,7 @@ abstract class CommandBase
         return CommandLoader::getInstance();
     }
 
+
     /**
      * register command to application, in init() method stage,
      * we save command classes in property `commands`.
@@ -212,8 +222,9 @@ abstract class CommandBase
                 $class = $this->getLoader()->load($command);
             }
         }
-        if( ! $class )
+        if ( ! $class ) {
             throw new Exception("command class $class for command $command not found");
+        }
         return $this->commands[ $command ] = $class;
     }
 
@@ -247,6 +258,10 @@ abstract class CommandBase
      */
     public function getCommandClass($command)
     {
+        // translate alias to actual command name.
+        if ( isset($this->aliases[$command]) ) {
+            $command = $this->aliases[$command];
+        }
         if ( isset($this->commands[ $command ]) ) {
             return $this->commands[ $command ];
         }

@@ -76,9 +76,11 @@ abstract class Command extends CommandBase
 
         // get default command name
         $class = get_class($this);
-        $class = preg_replace( '/Command$/','', $class );
+
+        // strip command suffix
         $parts = explode('\\',$class);
         $class = end($parts);
+        $class = preg_replace( '/Command$/','', $class );
         return strtolower( preg_replace( '/(?<=[a-z])([A-Z])/', '-\1' , $class ) );
     }
 
