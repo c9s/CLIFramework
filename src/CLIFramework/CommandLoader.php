@@ -105,4 +105,12 @@ class CommandLoader
         return $this->loadClass($class);
     }
 
+    static public function getInstance() {
+        static $instance;
+        if ( $instance ) {
+            return $instance;
+        }
+        return $instance = new self;
+    }
+
 }

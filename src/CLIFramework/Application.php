@@ -56,7 +56,7 @@ class Application extends CommandBase
         $this->logger = new Logger;
 
         // initliaze command loader
-        $this->loader = new CommandLoader();
+        $this->loader = CommandLoader::getInstance();
         $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
         $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
 
