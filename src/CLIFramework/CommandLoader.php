@@ -33,9 +33,9 @@ class CommandLoader
     public function translate($command)
     {
         $args = explode('-',$command);
-        foreach($args as & $a)
+        foreach($args as & $a) {
             $a = ucfirst($a);
-
+        }
         return join('',$args) . 'Command';
     }
 
@@ -48,7 +48,6 @@ class CommandLoader
     public function load($command)
     {
         $subclass = $this->translate($command);
-
         return $this->loadClass( $subclass );
     }
 
@@ -57,40 +56,31 @@ class CommandLoader
      */
     public function loadClass($class)
     {
-        if( class_exists($class ))
-
+        if ( class_exists($class, true)) {
             return $class;
+        }
 
         // if it's a full-qualified class name.
         if ($class[0] == '\\') {
-            spl_autoload_call( $class );
-            if( class_exists($class) )
-
+            if( class_exists($class, true) ) {
                 return $class;
-            else
+            } else {
                 throw new Exception("Command class $class not found.");
+            }
         } else {
             // for subcommand class name (under any subcommand namespace)
             // has application command class ?
             foreach ($this->namespaces as $ns) {
                 $fullclass = $ns . '\\' . $class;
-
-                # echo "\nLooking for $fullclass\n";
-                if( class_exists($fullclass) )
-
+                if ( class_exists($fullclass, true) ) {
                     return $fullclass;
-
-                spl_autoload_call( $fullclass );
-                if( class_exists($fullclass) )
-
-                    return $fullclass;
+                }
             }
         }
     }
 
 
-
-    /*
+    /**
      * load subcommand class from command name
      *
      * @param $command
