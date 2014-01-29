@@ -11,6 +11,7 @@ namespace CLIFramework;
 use GetOptionKit\OptionSpecCollection;
 use CLIFramework\Prompter;
 use CLIFramework\Chooser;
+use CLIFramework\CommandLoader;
 use Exception;
 use ReflectionObject;
 use ArrayAccess;
