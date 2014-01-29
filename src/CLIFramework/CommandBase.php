@@ -8,14 +8,15 @@
  * file that was distributed with this source code.
  */
 namespace CLIFramework;
-use GetOptionKit\OptionSpecCollection;
-use CLIFramework\Prompter;
-use CLIFramework\Chooser;
-use CLIFramework\CommandLoader;
 use Exception;
 use ReflectionObject;
 use ArrayAccess;
 use IteratorAggregate;
+use GetOptionKit\OptionSpecCollection;
+use CLIFramework\Prompter;
+use CLIFramework\Chooser;
+use CLIFramework\CommandLoader;
+use CLIFramework\Exception\CommandNotFoundException;
 
 /**
  * Command based class
@@ -192,7 +193,7 @@ abstract class CommandBase
         // or generate command class name automatically.
         if ($class) {
             if( $this->getLoader()->loadClass( $class ) === false )
-                throw Exception("Command class not found.");
+                throw Exception("Command class $class not found.");
         } else {
             if ($this->parent) {
                 // get class name by subcommand rules.
