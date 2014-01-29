@@ -57,7 +57,7 @@ abstract class CommandBase
      */
     public function brief()
     {
-        return 'your awesome brief.';
+        return 'awesome brief for your app.';
     }
 
     /**
@@ -67,7 +67,7 @@ abstract class CommandBase
      */
     public function usage()
     {
-        // return usage
+        return 'usage for your app.';
     }
 
     /**
