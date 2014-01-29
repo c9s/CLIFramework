@@ -25,10 +25,17 @@ class CommandLoader
     }
 
     /**
-     * translate command name to class name
+     * Translate command name to class name.
      *
-     * list => ListCommand
-     * list-all => ListAllCommand
+     * This method convert "foo-bar" to "FooBar", so if you have command name like "foo-bar",
+     * this method returns FooBar class. e.g.,
+     *
+     *    list => ListCommand
+     *    list-all => ListAllCommand
+     *
+     * @param string $command command name.
+     * @return string class name.
+     *
      **/
     public function translate($command)
     {
@@ -91,7 +98,6 @@ class CommandLoader
     {
         $parent_class = get_class($parent);
         $class = '\\' . $parent_class . '\\' . $this->translate($subcommand);
-
         return $this->loadClass($class);
     }
 
