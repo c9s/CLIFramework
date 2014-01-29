@@ -35,8 +35,7 @@ class CommandLoader
      *
      * @param string $command command name.
      * @return string class name.
-     *
-     **/
+     */
     public function translate($command)
     {
         $args = explode('-',$command);

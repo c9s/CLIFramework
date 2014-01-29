@@ -24,15 +24,6 @@ use IteratorAggregate;
 abstract class CommandBase
     implements ArrayAccess, IteratorAggregate, CommandInterface
 {
-
-
-    /**
-     * command class loader
-     *
-     * @var CLIFramework\CommandLoader
-     */
-    public $loader;
-
     /**
      * @var application commands
      *
@@ -171,6 +162,16 @@ abstract class CommandBase
         return $this->registerCommand($command,$class);
     }
 
+
+
+    /**
+     * Returns command loader object.
+     */
+    public function getLoader() 
+    {
+        return CommandLoader::getInstance();
+    }
+
     /**
      * register command to application, in init() method stage,
      * we save command classes in property `commands`.
@@ -186,19 +187,18 @@ abstract class CommandBase
      */
     public function registerCommand($command,$class = null)
     {
-
         // try to load the class/subclass,
         // or generate command class name automatically.
         if ($class) {
-            if( $this->loader->loadClass( $class ) === false )
+            if( $this->getLoader()->loadClass( $class ) === false )
                 throw Exception("Command class not found.");
         } else {
             if ($this->parent) {
                 // get class name by subcommand rules.
-                $class = $this->loader->loadSubcommand($command,$this);
+                $class = $this->getLoader()->loadSubcommand($command,$this);
             } else {
                 // get class name by command rules.
-                $class = $this->loader->load($command);
+                $class = $this->getLoader()->load($command);
             }
         }
         if( ! $class )
@@ -285,12 +285,7 @@ abstract class CommandBase
 
         // save options specs
         $cmd->optionSpecs = $specs;
-
-        // let command has the command loader to register subcommand (load class)
-        $cmd->loader = $this->loader;
-
         $cmd->init();
-
         return $cmd;
     }
 
