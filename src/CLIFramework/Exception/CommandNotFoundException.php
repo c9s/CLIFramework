@@ -4,8 +4,8 @@ use Exception;
 
 class CommandNotFoundException extends Exception
 {
-    public function __construct($class) {
-        parent::__construct("Command class $class not found.");
+    public function __construct($name) {
+        parent::__construct("Command $name not found.");
     }
 }
 

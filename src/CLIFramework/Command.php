@@ -28,27 +28,57 @@ abstract class Command extends CommandBase
      */
     public $alias;
 
-    public function __construct($application = null)
+    public $name;
+
+    public function __construct($parent = null)
     {
         // this variable is optional (for backward compatibility)
-        if ($application) {
-            $this->application = $application;
+        if ($parent) {
+            $this->setParent($parent);
         }
         parent::__construct();
     }
 
+    public function setName($name) {
+        $this->name = $name;
+    }
+
+    public function setApplication($application)
+    {
+        $this->application = $application;
+    }
+
+    public function getApplication() {
+        if ( $this->application ) {
+            return $this->application;
+        }
+        while ( true ) {
+            $p = $this->parent;
+            if ( ! $p ) {
+                return null;
+            }
+            if ( $p instanceof \CLIFramework\Application ) {
+                return $p;
+            }
+        }
+    }
+
     /**
-     * translate current class name to command name.
+     * Translate current class name to command name.
      *
      * @return string command name
      */
-    public function getCommandName()
+    public function getName()
     {
+        if ( $this->name ) {
+            return $this->name;
+        }
+
+        // get default command name
         $class = get_class($this);
         $class = preg_replace( '/Command$/','', $class );
         $parts = explode('\\',$class);
         $class = end($parts);
-
         return strtolower( preg_replace( '/(?<=[a-z])([A-Z])/', '-\1' , $class ) );
     }
 

@@ -14,6 +14,7 @@ use ArrayAccess;
 use IteratorAggregate;
 use GetOptionKit\OptionSpecCollection;
 use CLIFramework\Prompter;
+use CLIFramework\Application;
 use CLIFramework\Chooser;
 use CLIFramework\CommandLoader;
 use CLIFramework\Exception\CommandNotFoundException;
@@ -50,7 +51,7 @@ abstract class CommandBase
 
     public $optionSpecs;
 
-    public function __construct() {  }
+    public function __construct() { }
 
     /**
      * Returns one line brief for this command.
@@ -164,7 +165,15 @@ abstract class CommandBase
         return $this->registerCommand($command,$class);
     }
 
+    public function setParent($parent)
+    {
+        $this->parent = $parent;
+    }
 
+    public function getParent() 
+    {
+        return $this->parent;
+    }
 
     /**
      * Returns command loader object.
@@ -238,26 +247,25 @@ abstract class CommandBase
      */
     public function getCommandClass($command)
     {
-        if( isset($this->commands[ $command ]) )
-
+        if ( isset($this->commands[ $command ]) ) {
             return $this->commands[ $command ];
+        }
     }
 
     /*
-     * get subcommand object from current command
-     * by command name
+     * Get subcommand object from current command
+     * by command name.
      *
      * @param string $command
      *
      * @return Command initialized command object.
      */
-    public function getCommand($command)
+    public function getCommand($commandName)
     {
-        // keep scope here. (hate)
-        if ( $commandClass = $this->getCommandClass($command) ) {
+        if ( $commandClass = $this->getCommandClass($commandName) ) {
             return $this->createCommand($commandClass);
         }
-        throw new Exception("command $command not found.");
+        throw new CommandNotFoundException($command);
     }
 
     /**
@@ -269,8 +277,6 @@ abstract class CommandBase
     public function createCommand($commandClass)
     {
         // if current_cmd is not application, we should save parent command object.
-
-        // check self
         if ( $this instanceof \CLIFramework\Application ) {
             $cmd = new $commandClass($this);
             $cmd->parent = $this;
