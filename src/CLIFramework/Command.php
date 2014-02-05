@@ -91,7 +91,7 @@ abstract class Command extends CommandBase
      */
     public function getLogger()
     {
-        return $this->application->getLogger();
+        return $this->getApplication()->getLogger();
     }
 
 
@@ -103,10 +103,7 @@ abstract class Command extends CommandBase
      */
     public function getFormatter()
     {
-        if($this->application)
-            return $this->application->getFormatter();
-        else
-            return new Formatter;
+        return $this->getApplication()->getFormatter();
     }
 
     /**
