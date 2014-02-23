@@ -94,7 +94,7 @@ class HelpCommand extends Command
 
             // print command brief list
             echo $this->getFormatter()->format("Commands\n",'yellow');
-            foreach ($this->application->commands as $name => $class) {
+            foreach ($this->getApplication()->commands as $name => $class) {
                 $cmd = new $class;
                 $brief = $cmd->brief();
                 printf("%24s   %s\n",
