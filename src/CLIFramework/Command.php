@@ -52,14 +52,15 @@ abstract class Command extends CommandBase
         if ( $this->application ) {
             return $this->application;
         }
+        $p = $this->parent;
         while ( true ) {
-            $p = $this->parent;
             if ( ! $p ) {
                 return null;
             }
             if ( $p instanceof \CLIFramework\Application ) {
                 return $p;
             }
+            $p = $p->parent;
         }
     }
 
