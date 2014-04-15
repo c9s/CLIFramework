@@ -243,13 +243,14 @@ $value = $chooser->choose( "System Options" , array(
 ));
 ```
 
-Todo
-----
-* autocompleter.
-* exception renderer.
-* alias
-* interact
-
+Todos in the next release
+-------------------------
+[ ] provide a easy way to define chained commands
+[ ] inheritable options for subcommands.
+[ ] bash completion generator
+[ ] human readable exception renderer.
+[ ] command alias
+[ ] interact utilities
 
 Hacking
 =======
