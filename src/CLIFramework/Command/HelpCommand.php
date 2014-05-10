@@ -37,7 +37,7 @@ class HelpCommand extends Command
         if ($subcommands) {
             $subcommand = array_shift($subcommands);
             // get command object.
-            $cmd = $this->application->getCommand( $subcommand );
+            $cmd = $this->getApplication()->getCommand( $subcommand );
             $formatter = $this->getFormatter();
 
             $usage = $cmd->usage();
