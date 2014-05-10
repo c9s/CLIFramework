@@ -7,8 +7,7 @@
         "corneltek\/getoptionkit": "1.*"
     },
     "require-dev": {
-        "corneltek\/phpunit-testmore": "dev-master",
-        "corneltek\/universal": "dev-master"
+        "corneltek\/phpunit-testmore": "dev-master"
     },
     "license": "MIT",
     "authors": [
