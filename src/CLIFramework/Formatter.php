@@ -25,6 +25,7 @@ class Formatter
 
     // Refactor style builder out.
     protected $styles = array(
+        'dim'          => array('dim' => 1),
         'red'          => array('fg' => 'red'),
         'green'        => array('fg' => 'green'),
         'white'        => array('fg' => 'white'),
@@ -52,6 +53,7 @@ class Formatter
 
     protected $options = array(
         'bold' => 1,
+        'dim' => 2,
         'underline' => 4,
         'blink' => 5,
         'reverse' => 7,

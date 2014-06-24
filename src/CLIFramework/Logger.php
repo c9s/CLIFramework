@@ -105,7 +105,7 @@ class Logger
         }
 
         if( $this->level <= 4 && $level >= 4 )
-            $style = 'white';
+            $style = 'dim';
 
         if( $indent )
             echo str_repeat("\t", $indent);
