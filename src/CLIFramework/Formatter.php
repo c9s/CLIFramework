@@ -90,6 +90,11 @@ class Formatter
                 && function_exists('posix_isatty') && @posix_isatty(STDOUT);
     }
 
+    public function preferRawOutput()
+    {
+        $this->supportsColors = false;
+    }
+
     public function addStyle( $name, $style )
     {
         $this->styles[ $name ] = $style;
