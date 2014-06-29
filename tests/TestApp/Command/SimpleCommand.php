@@ -6,7 +6,7 @@ use Exception;
 class SimpleCommand extends Command
 {
 
-    function help()
+    public function help()
     {
         return <<<HELP
 <info>Info Style</info>
@@ -16,7 +16,7 @@ class SimpleCommand extends Command
 HELP;
     }
 
-    function execute($var)
+    public function execute($var)
     {
         return $var;
     }

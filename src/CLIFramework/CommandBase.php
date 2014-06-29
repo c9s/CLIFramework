@@ -388,7 +388,7 @@ abstract class CommandBase
 
     public function arg($name) {
         $info = new ArgumentInfo($name);
-        $this->argInfos = $info;
+        $this->argInfos[] = $info;
         return $info;
     }
 
@@ -421,10 +421,10 @@ abstract class CommandBase
         $parameters = $method->getParameters();
         foreach ($parameters as $param) {
             // TODO: add description to the argument
-            $arg = new ArgumentInfo($param->getName());
+            $a = new ArgumentInfo($param->getName());
             if ($param->isOptional())
-                $arg->optional(true);
-            $argInfo[] = $arg;
+                $a->optional(true);
+            $argInfo[] = $a;
         }
         return $argInfo;
     }
