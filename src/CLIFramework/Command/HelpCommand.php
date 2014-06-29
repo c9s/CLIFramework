@@ -54,6 +54,10 @@ class HelpCommand extends Command
 
             echo $formatter->format('Synopsis','yellow'),"\n";
             echo "\t" . $progname . ' ' . $cmd->getName();
+
+            if ( ! empty($cmd->getOptionSpecs()->options) ) {
+                echo " [options]";
+            }
             if ($cmd->hasCommands() ) {
                 echo " <command> ...";
             } else {
@@ -81,11 +85,15 @@ class HelpCommand extends Command
         } else {
             // print application subcommands
             // print application brief
-            echo $formatter->format( ucfirst($this->parent->brief()) ,'yellow'),"\n\n";
+            $cmd = $this->parent;
+            echo $formatter->format( ucfirst($cmd->brief()) ,'yellow'),"\n\n";
 
             echo $formatter->format('Synopsis','yellow'),"\n";
             echo "\t" . $progname;
-            if ($this->parent->hasCommands() ) {
+            if ( ! empty($cmd->getOptionSpecs()->options) ) {
+                echo " [options]";
+            }
+            if ($cmd->hasCommands() ) {
                 echo " <command>";
             } else {
                 $argInfos = $cmd->getArgumentsInfo();
@@ -95,7 +103,7 @@ class HelpCommand extends Command
             }
             echo "\n\n";
 
-            if( $usage = $this->parent->usage() ) {
+            if( $usage = $cmd->usage() ) {
                 echo $formatter->format("Usage",'yellow'),"\n";
                 echo $usage;
                 echo "\n\n";
@@ -103,7 +111,7 @@ class HelpCommand extends Command
 
             // print application options
             echo $formatter->format("Options",'yellow'),"\n";
-            $this->parent->optionSpecs->printOptions();
+            $cmd->optionSpecs->printOptions();
             echo "\n\n";
 
             // get command list, command classes should be preloaded.
