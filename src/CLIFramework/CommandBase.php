@@ -369,6 +369,29 @@ abstract class CommandBase
      */
     public function finish() { }
 
+
+
+    public function getArgumentsInfo() { 
+        $argInfo = array();
+
+        // call_user_func_array(  );
+        $ro = new ReflectionObject($this);
+
+        if ( ! method_exists( $this,'execute' ) ) {
+            throw new Exception('execute method is not defined.');
+        }
+
+        $method = $ro->getMethod('execute');
+        $requiredNumber = $method->getNumberOfRequiredParameters();
+        $parameters = $method->getParameters();
+        foreach ($parameters as $param) {
+            // TODO: add description to the argument
+            $argInfo[] = $param->getName();
+        }
+        return $argInfo;
+    }
+
+
     /**
      * Execute command object, this is a wrapper method for execution.
      *
