@@ -9,7 +9,6 @@
  *
  */
 namespace CLIFramework\Command;
-
 use CLIFramework\Command;
 use CLIFramework\CommandInterface;
 
@@ -22,7 +21,7 @@ class HelpCommand extends Command
      */
     public function brief()
     {
-        return 'show help message of a command';
+        return 'Show help message of a command';
     }
 
     /**

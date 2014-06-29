@@ -20,7 +20,7 @@ use CLIFramework\CommandLoader;
 use CLIFramework\Exception\CommandNotFoundException;
 
 /**
- * Command based class
+ * Command based class (application & subcommands inherit from this class)
  *
  * register subcommands.
  */
@@ -45,7 +45,7 @@ abstract class CommandBase
     public $options;
 
     /**
-     * parent commmand
+     * Parent commmand object. (the command caller)
      *
      * @var CLIFramework\CommandBase or CLIFramework\Application
      */
@@ -169,7 +169,7 @@ abstract class CommandBase
      * @param string $command
      * @param string $class
      */
-    public function addCommand($command,$class = null)
+    public function add($command,$class = null)
     {
         return $this->registerCommand($command,$class);
     }
@@ -250,6 +250,7 @@ abstract class CommandBase
         return array_keys( $this->commands );
     }
 
+
     /**
      * Return the command class name by command name
      *
@@ -265,6 +266,22 @@ abstract class CommandBase
         if ( isset($this->commands[ $command ]) ) {
             return $this->commands[ $command ];
         }
+    }
+
+
+    /**
+     * Return the objects of all sub commands.
+     *
+     * @return Command[]
+     */
+    public function getCommandObjects() 
+    {
+        $cmds = array();
+        foreach( $this->commands as $n => $cls ) {
+            $cmd = $this->createCommand($cls);
+            $cmds[ $n ] = $cmd;
+        }
+        return $cmds;
     }
 
     /*
@@ -337,7 +354,7 @@ abstract class CommandBase
      *
      * @return GetOptionKit\OptionSpecCollection
      */
-    public function getOptionSpec()
+    public function getOptionSpecs()
     {
         return $this->optionSpecs;
     }

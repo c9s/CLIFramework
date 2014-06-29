@@ -1,5 +1,8 @@
 <?php
 class BarCommand extends CLIFramework\Command {
+
+    public function brief() { return 'brief of bar'; }
+
 	public function options($opts) {
 		$opts->add('x|extra','extra options');
 	}
@@ -8,6 +11,9 @@ class BarCommand extends CLIFramework\Command {
 	}
 }
 class FooCommand extends CLIFramework\Command { 
+
+    public function brief() { return 'brief of foo'; }
+
 	public function execute() {
 		$this->getLogger()->warn('executing foo command.');
 	}
