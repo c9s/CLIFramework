@@ -66,11 +66,6 @@ From composer
 }
 ```
 
-From pear:
-
-    $ pear channel-discover pear.corneltek.com
-    $ pear install -a corneltek/CLIFramework
-
 Or install from repository:
 
     $ git clone http://github.com/c9s/CLIFramework.git
@@ -150,6 +145,28 @@ To start your Application:
 $app = new \YourApp\Application;
 $app->run( $argv );
 ```
+
+Defining Command Argument Info
+--------------------------------
+
+```php
+namespace YourApp\Command;
+use CLIFramework\Command;
+class FooCommand extends Command {
+    function arginfo() {
+        $this->arg('name')->desc('name parameter');
+        $this->arg('email')->desc('email parameter');
+        $this->arg('phone')->desc('phone parameter')->optional();
+    }
+
+    function init()
+    {
+        // register your subcommand here ..
+    }
+}
+```
+
+
 
 Console Prompt (Readline)
 -------------------------
