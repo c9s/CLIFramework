@@ -168,7 +168,14 @@ HEREDOC;
             $_code = '';
             $_code .= "(" . $k . ")\n";
 
-            // TODO: get argument spec from command class -> execute method
+            /* TODO: get argument spec from command class -> execute method 
+             * to the argument spec below:
+             *
+                _arguments \
+                    '1: :_github_users' \
+                    '2: :_github_branches' \
+                    && ret=0
+            */
 
             if ($_args) {
             $_code .= "  _arguments \\\n";
