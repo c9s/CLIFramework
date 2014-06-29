@@ -54,6 +54,8 @@ abstract class CommandBase
 
     public $optionSpecs;
 
+    public $argInfos = array();
+
     public function __construct() { }
 
     /**
@@ -379,9 +381,26 @@ abstract class CommandBase
      */
     public function finish() { }
 
+    /**
+     * abstract method let user define their own argument info.
+     */
+    public function arginfo() { }
+
+    public function arg($name) {
+        $info = new ArgumentInfo($name);
+        $this->argInfos = $info;
+        return $info;
+    }
 
     public function getArgumentsInfo() {
-        return $this->getArgumentsInfoByReflection();
+        if (empty($this->argInfos)) {
+            $this->arginfo();
+        }
+        // if it still empty
+        if (empty($this->argInfos)) {
+            $this->argInfos = $this->getArgumentsInfoByReflection();
+        }
+        return $this->argInfos;
     }
 
     /**

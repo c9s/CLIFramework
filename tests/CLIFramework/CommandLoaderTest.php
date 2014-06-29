@@ -11,7 +11,7 @@
 
 class CommandLoaderTest extends PHPUnit_Framework_TestCase 
 {
-    function test()
+    public function test()
     {
         $command = new TestApp\Command\SimpleCommand( new TestApp\Application );
         ok( $command );
