@@ -97,9 +97,9 @@ class CLIApplication extends Application
     /* register your command here */
     function init()
     {
-        $this->registerCommand( 'list', '\YourApp\Command\ListCommand' );
-        $this->registerCommand( 'foo', '\YourApp\Command\FooCommand' );
-        $this->registerCommand( 'bar' );    // initialize with \YourApp\Command\BarCommand
+        $this->addCommand( 'list', '\YourApp\Command\ListCommand' );
+        $this->addCommand( 'foo', '\YourApp\Command\FooCommand' );
+        $this->addCommand( 'bar' );    // initialize with \YourApp\Command\BarCommand
     }
 
 }
@@ -148,20 +148,18 @@ $app->run( $argv );
 
 Defining Command Argument Info
 --------------------------------
+In order to provide more information about your command, and generate
+meaningful completion script, CLIFramework provides a way for you to define the
+argument info of a command:
 
 ```php
 namespace YourApp\Command;
 use CLIFramework\Command;
 class FooCommand extends Command {
-    function arginfo() {
+    public function arginfo() {
         $this->arg('name')->desc('name parameter');
         $this->arg('email')->desc('email parameter');
         $this->arg('phone')->desc('phone parameter')->optional();
-    }
-
-    function init()
-    {
-        // register your subcommand here ..
     }
 }
 ```
@@ -295,8 +293,8 @@ How command class register works
 
 - CLIApplication is inherited from CommandBase.
 - Command is also inherited from CommandBase.
-- To register a subcommand, we use the `registerCommand` method to register commands or subcommands.
-    - The command class is optional, if command class name is omitted, then the `registerCommand` method
+- To register a subcommand, we use the `addCommand` method to register commands or subcommands.
+    - The command class is optional, if command class name is omitted, then the `addCommand` method
       will try to guess the *real* command class, and try to load the command class.
 
 

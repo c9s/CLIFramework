@@ -172,7 +172,7 @@ abstract class CommandBase
      * @param string $command
      * @param string $class
      */
-    public function add($command,$class = null)
+    public function addCommand($command,$class = null)
     {
         return $this->registerCommand($command,$class);
     }
