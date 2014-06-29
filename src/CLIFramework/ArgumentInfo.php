@@ -7,6 +7,8 @@ class ArgumentInfo
 
     public $type;
 
+    public $optional;
+
     public function __construct($name, $desc = null)
     {
         $this->name = $name;
@@ -22,6 +24,11 @@ class ArgumentInfo
 
     public function desc($desc) {
         $this->desc = $desc;
+        return $this;
+    }
+
+    public function optional($optional = true) {
+        $this->optional = $optional;
         return $this;
     }
 

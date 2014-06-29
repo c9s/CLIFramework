@@ -18,6 +18,7 @@ use CLIFramework\Application;
 use CLIFramework\Chooser;
 use CLIFramework\CommandLoader;
 use CLIFramework\Exception\CommandNotFoundException;
+use CLIFramework\ArgumentInfo;
 
 /**
  * Command based class (application & subcommands inherit from this class)
@@ -370,8 +371,14 @@ abstract class CommandBase
     public function finish() { }
 
 
+    public function getArgumentsInfo() {
+        return $this->getArgumentsInfoByReflection();
+    }
 
-    public function getArgumentsInfo() { 
+    /**
+     * The default behaviour: get argument info from method parameters
+     */
+    public function getArgumentsInfoByReflection() { 
         $argInfo = array();
 
         // call_user_func_array(  );
@@ -386,7 +393,10 @@ abstract class CommandBase
         $parameters = $method->getParameters();
         foreach ($parameters as $param) {
             // TODO: add description to the argument
-            $argInfo[] = $param->getName();
+            $arg = new ArgumentInfo($param->getName());
+            if ($param->isOptional())
+                $arg->optional(true);
+            $argInfo[] = $arg;
         }
         return $argInfo;
     }
