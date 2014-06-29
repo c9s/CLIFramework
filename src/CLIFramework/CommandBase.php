@@ -75,7 +75,7 @@ abstract class CommandBase
      */
     public function usage()
     {
-        return 'usage for your app.';
+    
     }
 
     /**

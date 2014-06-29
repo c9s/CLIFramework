@@ -70,10 +70,20 @@ function zsh_option_flag_item($opt) {
 }
 
 
+function zsh_command_args($cmd) {
+    $args = array();
+    $arginfos = $cmd->getArgumentsInfo();
+    $idx = 1;
+    foreach($arginfos as $arginfo) {
+        $args[] = $idx . ':' . $arginfo->name;
+    }
+    return $args;
+}
+
 /**
  * Return the zsh array code of the flags of a command.
  */
-function zsh_command_flag_args($cmd) {
+function zsh_command_flags($cmd) {
     $args = array();
     $specs = $cmd->getOptionSpecs();
 
@@ -163,8 +173,10 @@ HEREDOC;
         ;;
         */
         foreach ($cmds as $k => $cmd) {
+            $_args = $arginfos;
+
             // XXX: support alias
-            $_args = zsh_command_flag_args($cmd);
+            $_flags = zsh_command_flags($cmd);
             $_code = '';
             $_code .= "(" . $k . ")\n";
 
@@ -177,9 +189,9 @@ HEREDOC;
                     && ret=0
             */
 
-            if ($_args) {
+            if ($_flags) {
             $_code .= "  _arguments \\\n";
-            $_code .= "    " . join(" \\\n",$_args) . "\\\n";
+            $_code .= "    " . join(" \\\n",$_flags) . "\\\n";
             $_code .= "    && ret=0\n";
             }
 

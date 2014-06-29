@@ -8,7 +8,7 @@ class BarCommand extends CLIFramework\Command {
 		$opts->add('x|extra','extra flag');
 		$opts->add('f|file:','file option')->is('file');
 	}
-	public function execute() {
+	public function execute($user,$repo) {
 		$this->getLogger()->notice('executing bar command.');
 	}
 }

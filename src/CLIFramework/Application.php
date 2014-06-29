@@ -73,7 +73,6 @@ class Application extends CommandBase
 
     public function usage()
     {
-        return '[options] [command] [argument1 argument2...]';
     }
 
     /**
