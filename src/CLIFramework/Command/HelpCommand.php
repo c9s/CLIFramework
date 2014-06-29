@@ -94,6 +94,12 @@ class HelpCommand extends Command
             // print command brief list
             echo $this->getFormatter()->format("Commands\n",'yellow');
             foreach ($this->getApplication()->commands as $name => $class) {
+                // skip subcommand with prefix underscore.
+                if ( preg_match('#^_#', $name) ) {
+                    continue;
+                }
+
+
                 $cmd = new $class;
                 $brief = $cmd->brief();
                 printf("%24s   %s\n",

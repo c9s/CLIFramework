@@ -27,6 +27,9 @@ function zsh_command_desc_item($name, $cmd) {
 function zsh_command_desc_array($cmds) {
     $code = "local commands; commands=(\n";
     foreach ( $cmds as $name => $cmd ) {
+        if ( preg_match('#^_#', $name) ) {
+            continue;
+        }
         $code .= "  " . zsh_command_desc_item($name, $cmd) . "\n";
     }
     $code .= ")\n";
