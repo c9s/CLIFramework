@@ -48,6 +48,12 @@ abstract class Command extends CommandBase
         $this->application = $application;
     }
 
+
+    /**
+     * Get the main application object from parents
+     *
+     * @return Application
+     */
     public function getApplication() {
         if ( $this->application ) {
             return $this->application;
