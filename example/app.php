@@ -4,7 +4,9 @@ class BarCommand extends CLIFramework\Command {
     public function brief() { return 'brief of bar'; }
 
 	public function options($opts) {
-		$opts->add('x|extra','extra options');
+		$opts->add('v','verbose flag')->is('boolean');
+		$opts->add('x|extra','extra flag');
+		$opts->add('f|file:','file option')->is('file');
 	}
 	public function execute() {
 		$this->getLogger()->notice('executing bar command.');

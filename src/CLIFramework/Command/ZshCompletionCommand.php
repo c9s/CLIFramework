@@ -35,10 +35,53 @@ function zsh_command_desc_array($cmds) {
 
 
 /**
+ *
+ *
+ * Generate an zsh option format like this:
+ *
+ *  '(-v --invert-match)'{-v,--invert-match}'[invert match: select non-matching lines]'
+ *
+ * Or:
+ *
+    '-gcflags[flags for 5g/6g/8g]:flags'
+    '-p[number of parallel builds]:number'
+ *
+ *
+ */
+function zsh_option_flag_item($opt) {
+    // TODO: Check conflict options
+    $str = '';
+    if ($opt->short && $opt->long) {
+        $str .= '{' . '-' . $opt->short . ',' . '--' . $opt->long . "}" . "'";
+    } else if ($opt->long) {
+        $str .= "'--" . $opt->long;
+    } else if ($opt->short) {
+        $str .= "'-" . $opt->short;
+    }
+    $str .= "[" . $opt->description . "]";
+    if ($opt->valueType) {
+        $str .= ":" . $opt->valueType;
+    }
+    $str .= "'";
+    return $str;
+}
+
+
+/**
  * Return the zsh array code of the flags of a command.
  */
-function zsh_command_flag_array($cmd) {
-    return $cmd->getOptionSpecs();
+function zsh_command_flag_args($cmd) {
+    $args = array();
+    $specs = $cmd->getOptionSpecs();
+
+    /*
+    '(- 1 *)--version[display version and copyright information]' \
+    '(- 1 *)--help[print a short help statement]' \
+    */
+    foreach ($specs->options as $opt ) {
+        $args[] = zsh_option_flag_item($opt);
+    }
+    return $args;
 }
 
 
@@ -53,6 +96,11 @@ class ZshCompletionCommand extends Command
         $programName = $argv[0];
         $compName = "_" . preg_replace('#\W+#','_',$programName);
 
+        /* for debug
+            $programName = 'foo';
+            $compName = '_foo';
+         */
+
         // var_dump( $argv ); 
         $code = "";
         $code .= "# THIS IS AN AUTO-GENERATED FILE, PLEASE DON'T MODIFY THIS FILE DIRECTLY.\n";
@@ -65,22 +113,20 @@ class ZshCompletionCommand extends Command
         $zCmds .= "_describe -t commands 'command' commands && ret=0\n";
         $zCmds = indent_str($zCmds, 3);
 
+        /*
+        (create)
+          _arguments \
+            '1:repo name' \
+            '--markdown[create README.markdown]' \
+            '--mdown[create README.mdown]' \
+            '--private[create private repository]' \
+            '--rdoc[create README.rdoc]' \
+            '--rst[create README.rst]' \
+            '--textile[create README.textile]' \
+          && ret=0
+        ;;
+        */
 
-        foreach ($cmds as $cmd) {
-            $specs = $cmd->getOptionSpecs();
-            foreach( $specs->longOptions as $opt ) {
-                $opt->isAttributeFlag();
-                $opt->isAttributeRequire();
-                $opt->isAttributeOptional();
-                var_dump( $opt->short, $opt->long, $opt->description );
-            }
-            foreach( $specs->shortOptions as $opt ) {
-                $opt->isAttributeFlag();
-                $opt->isAttributeRequire();
-                $opt->isAttributeOptional();
-                var_dump( $opt->short, $opt->long, $opt->description );
-            }
-        }
 
         $code .=<<<HEREDOC
 {$compName}() {
@@ -97,6 +143,43 @@ class ZshCompletionCommand extends Command
   case "\$state" in
     (cmds)
 {$zCmds}
+    ;;
+    (args)
+      curcontext="\${curcontext%:*:*}:$programName-cmd-\$words[1]:"
+      case \$words[1] in
+    
+HEREDOC;
+
+        // generate subcommand section
+        /*
+        (browse)
+          _arguments \
+            '1: :_github_users' \
+            '2: :_github_branches' \
+          && ret=0
+        ;;
+        */
+        foreach ($cmds as $k => $cmd) {
+            // XXX: support alias
+            $_args = zsh_command_flag_args($cmd);
+            $_code = '';
+            $_code .= "(" . $k . ")\n";
+
+            // TODO: get argument spec from command class -> execute method
+
+            if ($_args) {
+            $_code .= "  _arguments \\\n";
+            $_code .= "    " . join(" \\\n",$_args) . "\\\n";
+            $_code .= "    && ret=0\n";
+            }
+
+            $_code .= "   ;;\n";
+            $code .= indent_str($_code,2);
+        }
+
+
+        $code .=<<<HEREDOC
+      esac
     ;;
   esac
   return ret
