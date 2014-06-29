@@ -8,12 +8,7 @@
  * file that was distributed with this source code.
  *
  */
-require 'Universal/ClassLoader/BasePathClassLoader.php';
-$classloader = new \Universal\ClassLoader\BasePathClassLoader(array( 
-    'src', 'tests' , 'vendor/pear' ));
-$classloader->useIncludePath(true);
-$classloader->register();
+require 'vendor/autoload.php';
 require 'example/app.php';
-
 $app = new ExampleApplication;
 $app->run($argv);
