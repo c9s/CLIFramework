@@ -7,13 +7,21 @@ class ArgumentInfo
 
     public $type;
 
-    public function __construct($name)
+    public function __construct($name, $desc = null)
     {
         $this->name = $name;
+        if ($desc) {
+            $this->desc = $desc;
+        }
     }
 
     public function type($type) {
         $this->type = $type;
+        return $this;
+    }
+
+    public function desc($desc) {
+        $this->desc = $desc;
         return $this;
     }
 
