@@ -230,6 +230,15 @@ abstract class CommandBase
     }
 
     /**
+     * Return true if this command has subcommands.
+     *
+     * @return boolean
+     */
+    public function hasCommands() {
+        return ! empty($this->commands);
+    }
+
+    /**
      * Check if a command name is registered in this application / command object.
      *
      * @param string $command command name
