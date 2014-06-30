@@ -47,6 +47,8 @@ class ZshCompletionCommand extends Command
         $cmdsDescs  = Zsh::describe_commands($cmds);
         $cmdsDescs  = Zsh::indent_str($cmdsDescs, 3);
 
+
+        $comp = Zsh::complete_subcommands($app);
         /*
         (create)
           _arguments \
@@ -67,67 +69,7 @@ class ZshCompletionCommand extends Command
   typeset -A opt_args
   local context state line curcontext="\$curcontext"
   local ret=1
-
-  _arguments -C \
-    '1:cmd:->cmds' \
-    '*::arg:->args' \
-  && ret=0
-
-  case "\$state" in
-    (cmds)
-{$cmdsDescs}
-    ;;
-    (args)
-      case \$words[1] in
-
-HEREDOC;
-
-        // generate subcommand section
-        /*
-        (browse)
-          _arguments \
-            '1: :_github_users' \
-            '2: :_github_branches' \
-          && ret=0
-        ;;
-        */
-        foreach ($cmds as $k => $cmd) {
-            $_args  = Zsh::indent_array(Zsh::command_args($cmd), 3);
-
-            // XXX: support alias
-            $_flags = Zsh::indent_array(Zsh::command_flags($cmd), 3);
-            $_code = '';
-            $_code .= "(" . $k . ")\n";
-
-            /* TODO: get argument spec from command class -> execute method 
-             * to the argument spec below:
-             *
-                _arguments \
-                    '1: :_github_users' \
-                    '2: :_github_branches' \
-                    && ret=0
-            */
-            if (!empty($_flags) || !empty($_args) ) {
-                $_code .= "  _arguments -s -w : \\\n";
-
-                if (!empty($_args))
-                    $_code .= join(" \\\n",$_args) . "\\\n";
-
-                if (!empty($_flags))
-                    $_code .= join(" \\\n",$_flags) . "\\\n";
-
-                $_code .= "    && ret=0\n";
-            }
-
-            $_code .= "   ;;\n";
-            $code .= Zsh::indent_str($_code,2);
-        }
-
-
-        $code .=<<<HEREDOC
-      esac
-    ;;
-  esac
+  $comp
   return ret
 }
 

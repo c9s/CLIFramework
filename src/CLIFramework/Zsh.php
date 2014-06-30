@@ -1,6 +1,10 @@
 <?php
 namespace CLIFramework;
 
+function indent($level) {
+    return str_repeat('  ', $level);
+}
+
 class Zsh
 {
 
@@ -17,6 +21,7 @@ class Zsh
             return $space . $line;
         }, $lines);
     }
+
 
 
     public static function command_desc_item($name, $cmd) {
@@ -145,6 +150,59 @@ class Zsh
         return $args;
     }
 
+
+    public static function complete_subcommands($mainCmd, $level = 1) {
+        $cmds = self::visible_commands($mainCmd->getCommandObjects());
+        $descs  = Zsh::describe_commands($cmds);
+        $descs  = Zsh::indent_str($descs, $level + 1);
+
+        $code = array();
+
+        $code[] = "_arguments -C \
+'1:cmd:->cmds' \
+'*::arg:->args' \
+&& ret=0";
+
+        $code[] = "case \"\$state\" in";
+        $code[] = indent($level) . "(cmds)";
+        $code[] = $descs;
+        $code[] = indent($level) . ";;";
+
+        $code[] = "(args)";
+        $code[] = "case \$words[{$level}] in";
+
+        foreach ($cmds as $k => $cmd) {
+            $_args  = self::indent_array(self::command_args($cmd), $level);
+
+            // XXX: support alias
+            $_flags = self::indent_array(self::command_flags($cmd), $level);
+            $code[] = "(" . $k . ")";
+
+            /* TODO: get argument spec from command class -> execute method 
+             * to the argument spec below:
+             *
+                _arguments \
+                    '1: :_github_users' \
+                    '2: :_github_branches' \
+                    && ret=0
+            */
+            if (!empty($_flags) || !empty($_args) ) {
+                $code[] = indent($level) . "_arguments -s -w : \\";
+                if (!empty($_args))
+                    $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_args) . " \\";
+                if (!empty($_flags))
+                    $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_flags) . " \\";
+                $code[] = indent($level + 1) . " && ret=0";
+            }
+            $code[] = ";;";
+        }
+
+        $code[] = "esac";
+        $code[] = ";;";
+
+        $code[] = "esac"; // close state
+        return join("\n", $code);
+    }
 
 
 }
