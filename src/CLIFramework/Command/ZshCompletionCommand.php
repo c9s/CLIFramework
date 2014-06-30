@@ -12,122 +12,7 @@ namespace CLIFramework\Command;
 
 use CLIFramework\Command;
 use CLIFramework\CommandInterface;
-
-function indent_str($content, $level = 1) {
-    $space = str_repeat('  ', $level);
-    $lines = explode("\n", $content);
-    $lines = array_map(function($line) use ($space) { return $space . $line; }, $lines);
-    return join("\n", $lines);
-}
-
-function indent_array($lines, $level = 1) {
-    $space = str_repeat('  ', $level);
-    return array_map(function($line) use ($space) {
-        return $space . $line;
-    }, $lines);
-}
-
-
-function zsh_command_desc_item($name, $cmd) {
-    return "'$name:" . addslashes($cmd->brief()) . "'";
-}
-
-function zsh_command_desc_array($cmds) {
-    $code = "local commands; commands=(\n";
-    foreach ( $cmds as $name => $cmd ) {
-        $code .= "  " . zsh_command_desc_item($name, $cmd) . "\n";
-    }
-    $code .= ")\n";
-    return $code;
-}
-
-
-/**
- *
- *
- * Generate an zsh option format like this:
- *
- *  '(-v --invert-match)'{-v,--invert-match}'[invert match: select non-matching lines]'
- *
- * Or:
- *
-    '-gcflags[flags for 5g/6g/8g]:flags'
-    '-p[number of parallel builds]:number'
- *
- *
- */
-function zsh_option_flag_item($opt) {
-    // TODO: Check conflict options
-    $str = "'";
-    if ($opt->short && $opt->long) {
-        $str .= "(-" . $opt->short . " --" . $opt->long . ")'";
-        $str .= "{-" . $opt->short . ',' . '--' . $opt->long . "}" . "'";
-    } else if ($opt->long) {
-        $str .= "--" . $opt->long;
-    } else if ($opt->short) {
-        $str .= "-" . $opt->short;
-    }
-    $str .= "[" . $opt->description . "]";
-
-    // TODO: translate arginfo type into zsh completion type
-    /*
-    if ($opt->valueType) {
-        $str .= ":" . $opt->valueType;
-    }
-     */
-    $str .= "'"; // close quote
-    return $str;
-}
-
-
-/**
- * Return args as a alternative
- *
- *  "*:args:{ _alternative ':importpaths:__go_list' ':files:_path_files -g \"*.go\"' }"
- */
-function zsh_command_args($cmd) {
-    $args = array();
-    $arginfos = $cmd->getArgumentsInfo();
-    $idx = 1;
-    foreach($arginfos as $arginfo) {
-
-        /*
-        '1:issue-status:->issue-statuses' \
-        '2:: :_github_users' \
-         */
-        // $str = "'" . $idx++ . ":" . $arginfo->name . "'";
-        $str = sprintf("':%s:->%s'", $arginfo->name, $arginfo->name);
-
-        // TODO: translate arginfo type into zsh completion type
-        // TODO: translate argument valid values into zsh/bash functions so that we 
-        //       can hook it with zsh completion 
-        /*
-        if ($arginfo->type) {
-            $str .= ':' . $arginfo->type;
-        }
-        */
-        $args[] = $str;
-    }
-    return $args;
-}
-
-/**
- * Return the zsh array code of the flags of a command.
- */
-function zsh_command_flags($cmd) {
-    $args = array();
-    $specs = $cmd->getOptionSpecs();
-
-    /*
-    '(- 1 *)--version[display version and copyright information]' \
-    '(- 1 *)--help[print a short help statement]' \
-    */
-    foreach ($specs->options as $opt ) {
-        $args[] = zsh_option_flag_item($opt);
-    }
-    return $args;
-}
-
+use CLIFramework\Zsh;
 
 class ZshCompletionCommand extends Command
     implements CommandInterface
@@ -157,11 +42,10 @@ class ZshCompletionCommand extends Command
 
 
         $app = $this->getApplication();
-        $cmds = $app->getCommandObjects();
+        $cmds = Zsh::visible_commands($app->getCommandObjects());
 
-        $zCmds  = zsh_command_desc_array($cmds);
-        $zCmds .= "_describe -t commands 'command' commands && ret=0\n";
-        $zCmds = indent_str($zCmds, 3);
+        $cmdsDescs  = Zsh::describe_commands($cmds);
+        $cmdsDescs  = Zsh::indent_str($cmdsDescs, 3);
 
         /*
         (create)
@@ -182,7 +66,6 @@ class ZshCompletionCommand extends Command
 {$compName}() {
   typeset -A opt_args
   local context state line curcontext="\$curcontext"
-
   local ret=1
 
   _arguments -C \
@@ -192,12 +75,11 @@ class ZshCompletionCommand extends Command
 
   case "\$state" in
     (cmds)
-{$zCmds}
+{$cmdsDescs}
     ;;
     (args)
-      curcontext="\${curcontext%:*:*}:$programName-cmd-\$words[1]:"
       case \$words[1] in
-    
+
 HEREDOC;
 
         // generate subcommand section
@@ -210,10 +92,10 @@ HEREDOC;
         ;;
         */
         foreach ($cmds as $k => $cmd) {
-            $_args  = indent_array(zsh_command_args($cmd), 3);
+            $_args  = Zsh::indent_array(Zsh::command_args($cmd), 3);
 
             // XXX: support alias
-            $_flags = indent_array(zsh_command_flags($cmd), 3);
+            $_flags = Zsh::indent_array(Zsh::command_flags($cmd), 3);
             $_code = '';
             $_code .= "(" . $k . ")\n";
 
@@ -238,7 +120,7 @@ HEREDOC;
             }
 
             $_code .= "   ;;\n";
-            $code .= indent_str($_code,2);
+            $code .= Zsh::indent_str($_code,2);
         }
 
 
