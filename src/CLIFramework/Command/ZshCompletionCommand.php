@@ -20,6 +20,14 @@ function indent_str($content, $level = 1) {
     return join("\n", $lines);
 }
 
+function indent_array($lines, $level = 1) {
+    $space = str_repeat('  ', $level);
+    return array_map(function($line) use ($space) {
+        return $space . $line;
+    }, $lines);
+}
+
+
 function zsh_command_desc_item($name, $cmd) {
     return "'$name:" . addslashes($cmd->brief()) . "'";
 }
@@ -27,9 +35,6 @@ function zsh_command_desc_item($name, $cmd) {
 function zsh_command_desc_array($cmds) {
     $code = "local commands; commands=(\n";
     foreach ( $cmds as $name => $cmd ) {
-        if ( preg_match('#^_#', $name) ) {
-            continue;
-        }
         $code .= "  " . zsh_command_desc_item($name, $cmd) . "\n";
     }
     $code .= ")\n";
@@ -53,29 +58,55 @@ function zsh_command_desc_array($cmds) {
  */
 function zsh_option_flag_item($opt) {
     // TODO: Check conflict options
-    $str = '';
+    $str = "'";
     if ($opt->short && $opt->long) {
-        $str .= '{' . '-' . $opt->short . ',' . '--' . $opt->long . "}" . "'";
+        $str .= "(-" . $opt->short . " --" . $opt->long . ")'";
+        $str .= "{-" . $opt->short . ',' . '--' . $opt->long . "}" . "'";
     } else if ($opt->long) {
-        $str .= "'--" . $opt->long;
+        $str .= "--" . $opt->long;
     } else if ($opt->short) {
-        $str .= "'-" . $opt->short;
+        $str .= "-" . $opt->short;
     }
     $str .= "[" . $opt->description . "]";
+
+    // TODO: translate arginfo type into zsh completion type
+    /*
     if ($opt->valueType) {
         $str .= ":" . $opt->valueType;
     }
-    $str .= "'";
+     */
+    $str .= "'"; // close quote
     return $str;
 }
 
 
+/**
+ * Return args as a alternative
+ *
+ *  "*:args:{ _alternative ':importpaths:__go_list' ':files:_path_files -g \"*.go\"' }"
+ */
 function zsh_command_args($cmd) {
     $args = array();
     $arginfos = $cmd->getArgumentsInfo();
     $idx = 1;
     foreach($arginfos as $arginfo) {
-        $args[] = $idx . ':' . $arginfo->name;
+
+        /*
+        '1:issue-status:->issue-statuses' \
+        '2:: :_github_users' \
+         */
+        // $str = "'" . $idx++ . ":" . $arginfo->name . "'";
+        $str = sprintf("':%s:->%s'", $arginfo->name, $arginfo->name);
+
+        // TODO: translate arginfo type into zsh completion type
+        // TODO: translate argument valid values into zsh/bash functions so that we 
+        //       can hook it with zsh completion 
+        /*
+        if ($arginfo->type) {
+            $str .= ':' . $arginfo->type;
+        }
+        */
+        $args[] = $str;
     }
     return $args;
 }
@@ -104,9 +135,15 @@ class ZshCompletionCommand extends Command
 
     public function brief() { return 'This function generate a zsh-completion script automatically'; }
 
-    public function execute() {
+    public function execute($as = null) {
         global $argv;
-        $programName = $argv[0];
+
+        if ($as) {
+            $programName = $as;
+        } else {
+            $programName = $argv[0];
+        }
+
         $compName = "_" . preg_replace('#\W+#','_',$programName);
 
         /* for debug
@@ -173,10 +210,10 @@ HEREDOC;
         ;;
         */
         foreach ($cmds as $k => $cmd) {
-            $_args = $arginfos;
+            $_args  = indent_array(zsh_command_args($cmd), 3);
 
             // XXX: support alias
-            $_flags = zsh_command_flags($cmd);
+            $_flags = indent_array(zsh_command_flags($cmd), 3);
             $_code = '';
             $_code .= "(" . $k . ")\n";
 
@@ -188,11 +225,16 @@ HEREDOC;
                     '2: :_github_branches' \
                     && ret=0
             */
+            if (!empty($_flags) || !empty($_args) ) {
+                $_code .= "  _arguments -s -w : \\\n";
 
-            if ($_flags) {
-            $_code .= "  _arguments \\\n";
-            $_code .= "    " . join(" \\\n",$_flags) . "\\\n";
-            $_code .= "    && ret=0\n";
+                if (!empty($_args))
+                    $_code .= join(" \\\n",$_args) . "\\\n";
+
+                if (!empty($_flags))
+                    $_code .= join(" \\\n",$_flags) . "\\\n";
+
+                $_code .= "    && ret=0\n";
             }
 
             $_code .= "   ;;\n";

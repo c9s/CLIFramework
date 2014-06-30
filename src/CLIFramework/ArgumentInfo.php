@@ -9,6 +9,8 @@ class ArgumentInfo
 
     public $optional;
 
+    public $suggests;
+
     public function __construct($name, $desc = null)
     {
         $this->name = $name;
@@ -30,6 +32,20 @@ class ArgumentInfo
     public function optional($optional = true) {
         $this->optional = $optional;
         return $this;
+    }
+
+
+    /**
+     * Assign suggestions
+     *
+     * @param string[]|string|Closure $value
+     *
+     * $value can be an array of strings, or a closure
+     *
+     * If $value is string, the prefix "zsh:" will be translated into zsh function call.
+     */
+    public function suggests($values) {
+        $this->suggests = $values;
     }
 
     /**

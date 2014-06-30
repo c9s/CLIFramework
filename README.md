@@ -48,10 +48,6 @@ Requirement
 -----------
 
 * PHP5.3
-* PSR-0 Autoloader
-* pear.corneltek.com/Universal
-* pear.corneltek.com/GetOptionKit
-
 
 Installation
 ------------
@@ -157,7 +153,7 @@ namespace YourApp\Command;
 use CLIFramework\Command;
 class FooCommand extends Command {
     public function arginfo() {
-        $this->arg('name')->desc('name parameter');
+        $this->arg('name')->desc('name parameter')->suggests([ 'c9s', 'foo', 'bar' ]);
         $this->arg('email')->desc('email parameter');
         $this->arg('phone')->desc('phone parameter')->optional();
     }
@@ -165,6 +161,17 @@ class FooCommand extends Command {
 ```
 
 
+Zsh Completion Generator
+----------------------------
+
+```sh
+example/demo _zsh demo > _demo
+source _demo
+```
+
+```sh
+demo <TAB>
+```
 
 Console Prompt (Readline)
 -------------------------
