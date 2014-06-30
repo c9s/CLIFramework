@@ -309,7 +309,7 @@ abstract class CommandBase
         if ( $commandClass = $this->getCommandClass($commandName) ) {
             return $this->createCommand($commandClass);
         }
-        throw new CommandNotFoundException($command);
+        throw new CommandNotFoundException($commandName);
     }
 
     /**
