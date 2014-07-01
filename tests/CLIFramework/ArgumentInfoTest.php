@@ -8,7 +8,7 @@ class ArgumentInfoTest extends PHPUnit_Framework_TestCase
         $info = new ArgumentInfo('user');
         ok($info);
 
-        $info->type('number');
+        $info->isa('number');
         ok($info->test('123'));
 
         ok(!$info->test('foo'));

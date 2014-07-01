@@ -67,6 +67,9 @@ class MetaCommand extends Command
                 throw new Exception("Option $arg not found");
             }
             switch ($attr) {
+            case 'isa':
+                return output_values([$option->isa]);
+                break;
             case 'valid-values':
                 if ($values = $option->getValidValues()) {
                     return output_values($values);

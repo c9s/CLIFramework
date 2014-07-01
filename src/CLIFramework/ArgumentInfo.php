@@ -5,7 +5,7 @@ class ArgumentInfo
 {
     public $name;
 
-    public $type;
+    public $isa;
 
     public $optional;
 
@@ -21,8 +21,8 @@ class ArgumentInfo
         }
     }
 
-    public function type($type) {
-        $this->type = $type;
+    public function isa($isa) {
+        $this->isa = $isa;
         return $this;
     }
 
@@ -82,8 +82,8 @@ class ArgumentInfo
      * Test a value if it match the spec
      */
     public function test($value) {
-        if ($this->type) {
-            switch($this->type) {
+        if ($this->isa) {
+            switch($this->isa) {
             case "number":
             case "numeric":
                 return is_numeric($value);
