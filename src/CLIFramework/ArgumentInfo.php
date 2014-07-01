@@ -85,10 +85,8 @@ class ArgumentInfo
         if ($this->isa) {
             switch($this->isa) {
             case "number":
-            case "numeric":
                 return is_numeric($value);
             case "boolean":
-            case "bool":
                 return is_bool($value);
             case "string":
                 return is_string($value);

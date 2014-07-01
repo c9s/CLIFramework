@@ -89,7 +89,7 @@ class Zsh
         } else if ($opt->short) {
             $str .= "-" . $opt->short;
         }
-        $str .= "[" . $opt->description . "]";
+        $str .= "[" . $opt->desc . "]";
 
         // TODO: translate arginfo type into zsh completion type
         /*
