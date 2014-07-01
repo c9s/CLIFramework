@@ -5,6 +5,10 @@ use CLIFramework\CommandInterface;
 use CLIFramework\Zsh;
 use Exception;
 
+function output($str) {
+    echo $str;
+}
+
 function output_values($values) {
     echo join(" ", $values);
 }
@@ -68,7 +72,7 @@ class MetaCommand extends Command
             }
             switch ($attr) {
             case 'isa':
-                return output_values([$option->isa]);
+                return output($option->isa);
                 break;
             case 'valid-values':
                 if ($values = $option->getValidValues()) {
