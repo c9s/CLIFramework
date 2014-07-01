@@ -12,7 +12,7 @@ use Exception;
 use ReflectionObject;
 use ArrayAccess;
 use IteratorAggregate;
-use GetOptionKit\OptionSpecCollection;
+use GetOptionKit\OptionCollection;
 use CLIFramework\Prompter;
 use CLIFramework\Application;
 use CLIFramework\Chooser;
@@ -146,9 +146,9 @@ abstract class CommandBase
      *          $opts->add('level:',  'Level takes a value.');
      *      }
      *
-     * @param GetOptionKit\OptionSpecCollection Spec collection object.
+     * @param GetOptionKit\OptionCollection Spec collection object.
      *
-     * @see GetOptionKit\OptionSpecCollection
+     * @see GetOptionKit\OptionCollection
      */
     public function options($getopt)
     {
@@ -330,7 +330,7 @@ abstract class CommandBase
         }
 
         // get option parser, init specs from the command.
-        $specs = new OptionSpecCollection;
+        $specs = new OptionCollection;
 
         // init application options
         $cmd->options($specs);
@@ -344,7 +344,7 @@ abstract class CommandBase
     /**
      * Get Option Results
      *
-     * @return GetOptionKit\OptionSpecCollection command options object (parsed, and a option results)
+     * @return GetOptionKit\OptionCollection command options object (parsed, and a option results)
      */
     public function getOptions()
     {
@@ -364,9 +364,9 @@ abstract class CommandBase
     /**
      * Get Command-line Option spec
      *
-     * @return GetOptionKit\OptionSpecCollection
+     * @return GetOptionKit\OptionCollection
      */
-    public function getOptionSpecs()
+    public function getOptionCollection()
     {
         return $this->optionSpecs;
     }

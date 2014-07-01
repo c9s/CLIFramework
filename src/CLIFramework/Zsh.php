@@ -138,7 +138,7 @@ class Zsh
     */
     public static function command_flags($cmd) {
         $args = array();
-        $specs = $cmd->getOptionSpecs();
+        $specs = $cmd->getOptionCollection();
 
         /*
         '(- 1 *)--version[display version and copyright information]' \

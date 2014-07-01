@@ -11,7 +11,7 @@
 namespace CLIFramework;
 
 use GetOptionKit\ContinuousOptionParser;
-use GetOptionKit\OptionSpecCollection;
+use GetOptionKit\OptionCollection;
 
 use CLIFramework\CommandLoader;
 use CLIFramework\CommandBase;
@@ -127,7 +127,7 @@ class Application extends CommandBase
 
         // use getoption kit to parse application options
         $getopt = $this->getoptParser;
-        $specs = new OptionSpecCollection;
+        $specs = new OptionCollection;
         $getopt->setSpecs( $specs );
 
         // init application options

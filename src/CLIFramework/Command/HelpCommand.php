@@ -55,7 +55,7 @@ class HelpCommand extends Command
             echo $formatter->format('Synopsis','yellow'),"\n";
             echo "\t" . $progname . ' ' . $cmd->getName();
 
-            if ( ! empty($cmd->getOptionSpecs()->options) ) {
+            if ( ! empty($cmd->getOptionCollection()->options) ) {
                 echo " [options]";
             }
             if ($cmd->hasCommands() ) {
@@ -90,7 +90,7 @@ class HelpCommand extends Command
 
             echo $formatter->format('Synopsis','yellow'),"\n";
             echo "\t" . $progname;
-            if ( ! empty($cmd->getOptionSpecs()->options) ) {
+            if ( ! empty($cmd->getOptionCollection()->options) ) {
                 echo " [options]";
             }
             if ($cmd->hasCommands() ) {
