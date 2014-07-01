@@ -13,10 +13,8 @@ $classloader = new \Universal\ClassLoader\BasePathClassLoader(array(
     'src', 'tests' , 'vendor/pear' ));
 $classloader->useIncludePath(true);
 $classloader->register();
-require 'example/app.php';
 
 $app = new ExampleApplication;
-
 $line = $app->ask('Your Name:',array('John','Mary'));
 echo "input value: ";
 var_dump($line); 
