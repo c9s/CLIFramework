@@ -9,7 +9,9 @@ class ArgumentInfo
 
     public $optional;
 
-    public $suggests;
+    public $suggestions;
+
+    public $validValues;
 
     public function __construct($name, $desc = null)
     {
@@ -34,6 +36,10 @@ class ArgumentInfo
         return $this;
     }
 
+    public function validValues($val) {
+        $this->validValues = $val;
+        return $this;
+    }
 
     /**
      * Assign suggestions
@@ -44,9 +50,33 @@ class ArgumentInfo
      *
      * If $value is string, the prefix "zsh:" will be translated into zsh function call.
      */
-    public function suggests($values) {
-        $this->suggests = $values;
+    public function suggestions($values) {
+        $this->suggestions = $values;
+        return $this;
     }
+
+
+    public function getSuggestions() {
+        if ($this->suggestions) {
+            if (is_callable($this->suggestions)) {
+                return call_user_func($this->suggestions);
+            }
+            return $this->suggestions;
+        }
+    }
+
+
+    public function getValidValues() {
+        if ($this->validValues) {
+            if (is_callable($this->validValues)) {
+                return call_user_func($this->validValues);
+            }
+            return $this->validValues;
+        }
+    }
+
+
+
 
     /**
      * Test a value if it match the spec

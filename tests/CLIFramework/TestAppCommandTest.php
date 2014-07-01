@@ -16,9 +16,9 @@ class TestAppCommandTest extends PHPUnit_Framework_TestCase
     }
 
     public function testArginfoCommand() {
-
         $cmd = new TestApp\Command\ArginfoCommand(new TestApp\Application);
         ok($cmd);
+
         $argInfos = $cmd->getArgumentsInfo();
         ok($argInfos);
         count_ok(3, $argInfos);

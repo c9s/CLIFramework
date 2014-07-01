@@ -97,6 +97,7 @@ class Application extends CommandBase
         // $this->registerCommand('list','CLIFramework\\Command\\ListCommand');
         $this->registerCommand('help','CLIFramework\\Command\\HelpCommand');
         $this->registerCommand('_zsh', 'CLIFramework\\Command\\ZshCompletionCommand');
+        $this->registerCommand('_meta', 'CLIFramework\\Command\\MetaCommand');
     }
 
     public function runWithTry($argv)

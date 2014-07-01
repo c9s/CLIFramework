@@ -15,10 +15,21 @@ class BarCommand extends CLIFramework\Command {
 
     public function brief() { return 'brief of bar'; }
 
+    public function arginfo() {
+        $this->arg('user')
+            ->validValues(['c9s','bar','foo']);
+        $this->arg('repo')
+            ->validValues(['CLIFramework','GetOptionKit']);
+    }
+
     public function options($opts) {
-        $opts->add('v','verbose flag')->is('boolean');
+        $opts->add('v','verbose flag')->isa('boolean');
         $opts->add('x|extra','extra flag');
-        $opts->add('f|file:','file option')->is('file');
+        $opts->add('f|file:','file option')->isa('file');
+        $opts->add('name','name')
+            ->isa('string')
+            ->validValues([ 'name1', 'name2', 'name3' ])
+            ;
     }
     public function execute($user,$repo) {
         $this->getLogger()->notice('executing bar command.');
