@@ -18,6 +18,8 @@ use CLIFramework\Application;
 use CLIFramework\Chooser;
 use CLIFramework\CommandLoader;
 use CLIFramework\Exception\CommandNotFoundException;
+use CLIFramework\Exception\InvalidCommandArgumentException;
+use CLIFramework\Exception\CommandArgumentNotEnoughException;
 use CLIFramework\ArgumentInfo;
 
 /**
@@ -450,6 +452,8 @@ abstract class CommandBase
         $reflMethod = $refl->getMethod('execute');
         $requiredNumber = $reflMethod->getNumberOfRequiredParameters();
         if ( count($args) < $requiredNumber ) {
+            throw new CommandArgumentNotEnoughException($this, count($args), $requiredNumber);
+            /*
             $this->getLogger()->error( "Command requires at least $requiredNumber arguments." );
             $this->getLogger()->error( "Command prototype:" );
             $params = $reflMethod->getParameters();
@@ -458,6 +462,7 @@ abstract class CommandBase
                     $param->getPosition() . ' => $' . $param->getName() , 1 );
             }
             throw new Exception('Wrong Parameter, Can not execute command.');
+            */
         }
 
         return call_user_func_array(array($this,'execute'), $args);

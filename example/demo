@@ -76,6 +76,5 @@ class ExampleApplication extends CLIFramework\Application {
     }
 }
 
-
 $app = new ExampleApplication;
-$app->run($argv);
+$app->runWithTry($argv);
