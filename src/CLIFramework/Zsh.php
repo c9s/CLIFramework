@@ -99,6 +99,7 @@ class Zsh
             throw new Exception('undefined option type');
         }
 
+        // output description
         $str .= "[" . $opt->desc . "]";
 
 
