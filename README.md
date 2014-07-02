@@ -24,7 +24,7 @@ Features
 Synopsis
 --------------------
 
-```
+```php
 class CommitCommand extends CLIFramework\Command {
 
     public function brief() { return 'brief of bar'; }
@@ -61,6 +61,13 @@ class CommitCommand extends CLIFramework\Command {
     }
 }
 ```
+
+Automatic Zsh Completion:
+
+![Imgur](http://imgur.com/bg2PPIF.png)
+
+![Imgur](http://imgur.com/DLmzKD4.png)
+
 
 Command Forms
 ---------------------
@@ -227,13 +234,13 @@ source _demo
 demo <TAB>
 ```
 
-![Imgur](http://i.imgur.com/BOZRFJT)
+![Imgur](http://imgur.com/BOZRFJT.png)
 
-![Imgur](http://i.imgur.com/AXUji1T)
+![Imgur](http://imgur.com/AXUji1T.png)
 
-![Imgur](http://i.imgur.com/bg2PPIF)
+![Imgur](http://imgur.com/bg2PPIF.png)
 
-![Imgur](http://i.imgur.com/DLmzKD4)
+![Imgur](http://imgur.com/DLmzKD4.png)
 
 
 Console Prompt (Readline)
