@@ -13,6 +13,74 @@ Commands and Subcommands can be registered from outside of an application or you
 
 Defining a new command is pretty simple, all you need to is declare a class which is inherited from `CLIFramework\Command` class.
 
+Features
+--------------------
+
+- Intuitive command class and option spec
+- GetOpt supported, powered by GetOptionKit. supports long option, short option, required|optional|default value.
+- Automatic zsh completion generator.
+- Hierarchical subcommand support.
+
+Synopsis
+--------------------
+
+```
+class CommitCommand extends CLIFramework\Command {
+
+    public function brief() { return 'brief of bar'; }
+
+    public function options($opts) {
+        $opts->add('a|all','Tell the command to automatically stage files that have been modified and deleted, but new files you have not told Git about are not affected.');
+
+        $opts->add('p|patch','Use the interactive patch selection interface to chose which changes to commit. See git-add(1) for details.');
+
+        $opts->add('C|reuse-message:','Take an existing commit object, and reuse the log message and the authorship information (including the timestamp) when creating the commit.')
+            ->isa('string')
+            ->validValues([ '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'])
+            ;
+
+        $opts->add('c|reedit-message:','like -C, but with -c the editor is invoked, so that the user can further edit the commit message.')
+            ->isa('string')
+            ->validValues([ '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'])
+            ;
+
+        $opts->add('author:', 'Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.')
+            ->suggestions([ 'c9s', 'foo' , 'bar' ])
+            ;
+    }
+
+    public function arginfo() {
+        $this->arg('user')
+            ->validValues(['c9s','bar','foo']);
+        $this->arg('repo')
+            ->validValues(['CLIFramework','GetOptionKit']);
+    }
+
+    public function execute($user,$repo) {
+        $this->getLogger()->notice('executing bar command.');
+    }
+}
+```
+
+Command Forms
+---------------------
+
+CLIFramework supports many command-line forms, for example:
+
+    $ app [app-opts] [subcommand1] [subcommand1-opts] [subcommand2] [subcommand2-opts] .... [arguments] 
+
+If the subcommand is not defined, you can still use the simple form:
+
+    $ app [app-opts] [arguments]
+
+For example,
+
+    $ app db schema --clean dbname
+    $ app gen controller --opt1 --opt2 ControllerName 
+
+Subcommand Hierarchy
+------------------------
+
 Commands have methods for stages, like `prepare`, `execute`, `finish`, for a command like below:
 
     $ app foo_cmd bar_cmd arg1 arg2 arg3
@@ -28,21 +96,7 @@ The call graph is like:
       - foo_cmd->finish
     - app->finish
 
-Command Forms
--------------
 
-CLIFramework supports many command-line forms, for example:
-
-    $ app [app-opts] [subcommand1] [subcommand1-opts] [subcommand2] [subcommand2-opts] .... [arguments] 
-
-If the subcommand is not defined, you can still use the simple form:
-
-    $ app [app-opts] [arguments]
-
-For example,
-
-    $ app db schema --clean dbname
-    $ app gen controller --opt1 --opt2 ControllerName 
 
 Requirement
 -----------
@@ -172,6 +226,15 @@ source _demo
 ```sh
 demo <TAB>
 ```
+
+![Imgur](http://i.imgur.com/BOZRFJT)
+
+![Imgur](http://i.imgur.com/AXUji1T)
+
+![Imgur](http://i.imgur.com/bg2PPIF)
+
+![Imgur](http://i.imgur.com/DLmzKD4)
+
 
 Console Prompt (Readline)
 -------------------------
