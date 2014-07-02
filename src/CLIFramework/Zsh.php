@@ -108,15 +108,34 @@ class Zsh
             $str .= $opt->isa;
         }
 
-        $values = array();
-        if ($opt->validValues) {
-            $values = $opt->getValidValues();
-        } elseif ($opt->suggestions) {
-            $values = $opt->getSuggestions();
+
+        if ($opt->validValues || $opt->suggestions) {
+            $values = array();
+            if ($opt->validValues) {
+                $values = $opt->getValidValues();
+            } elseif ($opt->suggestions) {
+                $values = $opt->getSuggestions();
+            }
+            if ($values) {
+                $str .= ':(' . join(' ', $values) . ')';
+            }
+        } elseif ( in_array($opt->isa, array('file', 'dir', 'path')) ) {
+            switch($opt->isa) {
+                case 'file':
+                    $str .= ':_files';
+                break;
+                case 'dir':
+                    $str .= ':_directories';
+                break;
+                case 'path':
+                    $str .= ':_path_files';
+                break;
+            }
+            if ( isset($opt->glob) ) {
+                $str .= ' -g "' . $opt->glob . '"';
+            }
         }
-        if ($values) {
-            $str .= ':(' . join(' ', $values) . ')';
-        }
+
 
         $str .= "'"; // close quote
         return $str;
@@ -149,16 +168,37 @@ class Zsh
         $idx = 1;
 
         $code[] = "case \$state in";
-        foreach($arginfos as $arginfo) {
-            $values = array();
-            if ($arginfo->validValues) {
-                $values = $arginfo->getValidValues();
-            } elseif ($arginfo->suggestions ) {
-                $values = $arginfo->getSuggestions();
+        foreach($arginfos as $a) {
+            $code[] = "  (" . $a->name . ")";
+
+            if ($a->validValues || $a->suggestions) {
+                $values = array();
+                if ($a->validValues) {
+                    $values = $a->getValidValues();
+                } elseif ($a->suggestions ) {
+                    $values = $a->getSuggestions();
+                }
+                $code[] = "     _values " . join(" ", $values) . ' && ret=0';
+            } elseif (in_array($a->isa,array('file','path','dir'))) {
+                $comp = '  ';
+                switch($a->isa) {
+                    case "file":
+                        $comp .= "_files";
+                        break;
+                    case "path":
+                        $comp .= "_path_files";
+                        break;
+                    case "dir":
+                        $comp .= "_directories";
+                        break;
+                }
+                if ($a->glob) {
+                    $comp .= " -g \"{$a->glob}\"";
+                }
+                $comp .= ' && ret=0';
+                $code[] = $comp;
             }
 
-            $code[] = "  (" . $arginfo->name . ")";
-            $code[] = "  _values " . join(" ", $values) . ' && ret=0';
             $code[] = "  ;;";
         }
         $code[] = "esac";

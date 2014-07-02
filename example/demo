@@ -44,13 +44,25 @@ class CommitCommand extends CLIFramework\Command {
         $opts->add('author:', 'Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.')
             ->suggestions([ 'c9s', 'foo' , 'bar' ])
             ;
+
+        $opts->add('output:', 'Output file')
+            ->isa('file')
+            ;
     }
 
     public function arginfo() {
         $this->arg('user')
-            ->validValues(['c9s','bar','foo']);
+            ->validValues(['c9s','bar','foo'])
+            ;
+
         $this->arg('repo')
-            ->validValues(['CLIFramework','GetOptionKit']);
+            ->validValues(['CLIFramework','GetOptionKit'])
+            ;
+
+        $this->arg('file')
+            ->isa('file')
+            ->glob('*.php')
+            ;
     }
 
     public function execute($user,$repo) {

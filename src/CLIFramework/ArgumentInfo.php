@@ -13,6 +13,9 @@ class ArgumentInfo
 
     public $validValues;
 
+    /* file/path glob pattern */
+    public $glob;
+
     public function __construct($name, $desc = null)
     {
         $this->name = $name;
@@ -56,6 +59,15 @@ class ArgumentInfo
     }
 
 
+    /**
+     * Specify argument glob pattern
+     */
+    public function glob($g) {
+        $this->glob = $g;
+        return $this;
+    }
+
+
     public function getSuggestions() {
         if ($this->suggestions) {
             if (is_callable($this->suggestions)) {
@@ -74,9 +86,6 @@ class ArgumentInfo
             return $this->validValues;
         }
     }
-
-
-
 
     /**
      * Test a value if it match the spec
