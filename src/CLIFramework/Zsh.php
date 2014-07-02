@@ -50,7 +50,7 @@ class Zsh
         return $args;
     }
 
-    
+
     public static function describe_commands($cmds) {
         $array  = Zsh::command_desc_array($cmds);
         $code  = "local commands; commands=(\n";
@@ -101,38 +101,42 @@ class Zsh
 
         $str .= "[" . $opt->desc . "]";
 
-        $str .= ':'; // for the value name
-        if ($opt->valueName) {
-            $str .= $opt->valueName;
-        } elseif ($opt->isa) {
-            $str .= $opt->isa;
-        }
 
+        // has anything to complete
+        if ($opt->validValues || $opt->suggestions || $opt->isa) {
 
-        if ($opt->validValues || $opt->suggestions) {
-            $values = array();
-            if ($opt->validValues) {
-                $values = $opt->getValidValues();
-            } elseif ($opt->suggestions) {
-                $values = $opt->getSuggestions();
+            $str .= ':'; // for the value name
+            if ($opt->valueName) {
+                $str .= $opt->valueName;
+            } elseif ($opt->isa) {
+                $str .= $opt->isa;
             }
-            if ($values) {
-                $str .= ':(' . join(' ', $values) . ')';
-            }
-        } elseif ( in_array($opt->isa, array('file', 'dir', 'path')) ) {
-            switch($opt->isa) {
-                case 'file':
-                    $str .= ':_files';
-                break;
-                case 'dir':
-                    $str .= ':_directories';
-                break;
-                case 'path':
-                    $str .= ':_path_files';
-                break;
-            }
-            if ( isset($opt->glob) ) {
-                $str .= ' -g "' . $opt->glob . '"';
+
+            if ($opt->validValues || $opt->suggestions) {
+                $values = array();
+                if ($opt->validValues) {
+                    $values = $opt->getValidValues();
+                } elseif ($opt->suggestions) {
+                    $values = $opt->getSuggestions();
+                }
+                if ($values) {
+                    $str .= '::(' . join(' ', $values) . ')';
+                }
+            } elseif ( in_array($opt->isa, array('file', 'dir', 'path')) ) {
+                switch($opt->isa) {
+                    case 'file':
+                        $str .= ':_files';
+                    break;
+                    case 'dir':
+                        $str .= ':_directories';
+                    break;
+                    case 'path':
+                        $str .= ':_path_files';
+                    break;
+                }
+                if ( isset($opt->glob) ) {
+                    $str .= ' -g "' . $opt->glob . '"';
+                }
             }
         }
 
@@ -150,6 +154,7 @@ class Zsh
     public static function command_args_states($cmd) {
         $args = array();
         $arginfos = $cmd->getArgumentsInfo();
+
         $idx = 1;
         foreach($arginfos as $arginfo) {
             /*
@@ -222,26 +227,77 @@ class Zsh
         return $args;
     }
 
+    public static function command_subcommand_states($cmd) {
+        $args = array();
+        $cmds = self::visible_commands($cmd->getCommandObjects());
+        foreach($cmds as $c) {
+            $args[] = sprintf("'%s:->%s'", $c->getName(), $c->getName(), $c->getName()); // generate argument states
+        }
+        return $args;
+    }
 
-    public static function complete_subcommands($mainCmd, $level = 1) {
+
+    public static function complete_command($cmd, $level = 1) {
+        $code = array();
+
+        $_args  = self::indent_array(self::command_args_states($cmd), $level);
+        $_flags = self::indent_array(self::command_flags($cmd), $level);
+        if (!empty($_flags) || !empty($_args) ) {
+
+            $code[] = indent($level) . "_arguments -C -s -w : \\";
+
+            if (!empty($_flags)) {
+                $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_flags) . " \\";
+            }
+
+            if (!empty($_args)) {
+                $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_args) . " \\";
+            }
+
+            $code[] = indent($level + 1) . " && ret=0";
+
+            // complete arguments here...
+            $code[] = join("\n", self::indent_array( self::command_args_case($cmd), $level) );
+        }
+        return $code;
+    }
+
+    public static function complete_subcommands($programName, $mainCmd, $level = 1) {
         $cmds = self::visible_commands($mainCmd->getCommandObjects());
         $descs  = Zsh::describe_commands($cmds);
         $descs  = Zsh::indent_str($descs, $level + 1);
 
         $code = array();
 
-        $code[] = "_arguments -C \
-'1:cmd:->cmds' \
-'*::arg:->args' \
-&& ret=0";
+        // $code[] = 'echo $words[$CURRENT-1]';
 
-        $code[] = "case \"\$state\" in";
+
+        $code[] = "_arguments -C \\";
+        if ($args = self::indent_array(self::command_flags($mainCmd), $level)) {
+            if (!empty($args)) {
+                $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1), $args) . " \\";
+            }
+        }
+
+        $code[] = "': :->cmds' \\";
+        $code[] = "'*:: :->option-or-argument' \\";
+        $code[] = " && return";
+
+
+        $code[] = "case \$state in";
         $code[] = indent($level) . "(cmds)";
         $code[] = $descs;
         $code[] = indent($level) . ";;";
 
-        $code[] = "(args)";
-        $code[] = "case \$words[{$level}] in";
+
+        $code[] = "(option-or-argument)";
+
+        $code[] = "  curcontext=\${curcontext%:*}-\$line[1]:";
+
+        // $code[] = "  curcontext=\${curcontext%:*:*}:$programName-\$words[1]:";
+        // $code[] = "  case \$words[1] in";
+        $code[] = "  case \$line[1] in";
+
 
         foreach ($cmds as $k => $cmd) {
             $_args  = self::indent_array(self::command_args_states($cmd), $level);
@@ -259,7 +315,7 @@ class Zsh
                     && ret=0
             */
             if (!empty($_flags) || !empty($_args) ) {
-                $code[] = indent($level) . "_arguments -C -s -w : \\";
+                $code[] = indent($level) . "_arguments -w -S -s \\";
                 if (!empty($_flags))
                     $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_flags) . " \\";
                 if (!empty($_args))
@@ -273,8 +329,8 @@ class Zsh
             $code[] = ";;";
         }
 
-        $code[] = "esac";
-        $code[] = ";;";
+        $code[] = "  esac";
+        $code[] = "  ;;";
 
         $code[] = "esac"; // close state
         return join("\n", $code);

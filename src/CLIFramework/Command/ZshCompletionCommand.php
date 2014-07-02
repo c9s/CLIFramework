@@ -42,15 +42,8 @@ class ZshCompletionCommand extends Command
         $code .= "# Web: http://github.com/c9s/php-CLIFramework\n";
         $code .= "# THIS IS AN AUTO-GENERATED FILE, PLEASE DON'T MODIFY THIS FILE DIRECTLY.\n";
 
-
         $app = $this->getApplication();
-        $cmds = Zsh::visible_commands($app->getCommandObjects());
-
-        $cmdsDescs  = Zsh::describe_commands($cmds);
-        $cmdsDescs  = Zsh::indent_str($cmdsDescs, 3);
-
-
-        $comp = Zsh::complete_subcommands($app);
+        $comp = Zsh::complete_subcommands($programName, $app);
         /*
         (create)
           _arguments \
@@ -68,8 +61,8 @@ class ZshCompletionCommand extends Command
 
         $code .=<<<HEREDOC
 {$compName}() {
+  local curcontext=\$curcontext state line
   typeset -A opt_args
-  local context state line curcontext="\$curcontext"
   local ret=1
   $comp
   return ret

@@ -73,8 +73,21 @@ class FooCommand extends CLIFramework\Command {
 
     public function brief() { return 'brief of foo'; }
 
+    public function init() {
+        $this->addCommand('subfoo','SubFooCommand');
+    }
+
     public function execute() {
-        $this->getLogger()->warn('executing foo command.');
+        $this->getLogger()->info('executing foo command.');
+    }
+}
+
+class SubFooCommand extends CLIFramework\Command {
+
+    public function brief() { return 'brief of subfoo'; }
+
+    public function execute() {
+        $this->getLogger()->info('executing subfoo command.');
     }
 }
 
