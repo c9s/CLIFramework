@@ -118,7 +118,7 @@ From composer
 ```json
 {
     "require": {
-        "corneltek/cliframework": "~1.5"
+        "corneltek/cliframework": "*"
     }
 }
 ```
