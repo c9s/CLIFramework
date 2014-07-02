@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework;
+use Exception;
 
 function indent($level) {
     return str_repeat('  ', $level);
@@ -80,23 +81,43 @@ class Zsh
     */
     public static function option_flag_item($opt) {
         // TODO: Check conflict options
-        $str = "'";
+        $str = "";
+
+        $optspec = $opt->flag || $opt->optional ? '' : '=';
+
         if ($opt->short && $opt->long) {
-            $str .= "(-" . $opt->short . " --" . $opt->long . ")'";
-            $str .= "{-" . $opt->short . ',' . '--' . $opt->long . "}" . "'";
+            if (!$opt->multiple) {
+                $str .= "'(-" . $opt->short . " --" . $opt->long . ")'"; // conflict options
+            }
+            $str .= "{-" . $opt->short . ',' . '--' . $opt->long . $optspec . "}";
+            $str .= "'";
         } else if ($opt->long) {
-            $str .= "--" . $opt->long;
+            $str .= "'--" . $opt->long . $optspec;
         } else if ($opt->short) {
-            $str .= "-" . $opt->short;
+            $str .= "'-" . $opt->short . $optspec;
+        } else {
+            throw new Exception('undefined option type');
         }
+
         $str .= "[" . $opt->desc . "]";
 
-        // TODO: translate arginfo type into zsh completion type
-        /*
-        if ($opt->valueType) {
-            $str .= ":" . $opt->valueType;
+        $str .= ':'; // for the value name
+        if ($opt->valueName) {
+            $str .= $opt->valueName;
+        } elseif ($opt->isa) {
+            $str .= $opt->isa;
         }
-        */
+
+        $values = array();
+        if ($opt->validValues) {
+            $values = $opt->getValidValues();
+        } elseif ($opt->suggestions) {
+            $values = $opt->getSuggestions();
+        }
+        if ($values) {
+            $str .= ':(' . join(' ', $values) . ')';
+        }
+
         $str .= "'"; // close quote
         return $str;
     }
@@ -107,30 +128,41 @@ class Zsh
     *
     *  "*:args:{ _alternative ':importpaths:__go_list' ':files:_path_files -g \"*.go\"' }"
     */
-    public static function command_args($cmd) {
+    public static function command_args_states($cmd) {
         $args = array();
         $arginfos = $cmd->getArgumentsInfo();
         $idx = 1;
         foreach($arginfos as $arginfo) {
-
             /*
             '1:issue-status:->issue-statuses' \
             '2:: :_github_users' \
             */
-            // $str = "'" . $idx++ . ":" . $arginfo->name . "'";
-            $str = sprintf("':%s:->%s'", $arginfo->name, $arginfo->name);
-
-            // TODO: translate arginfo type into zsh completion type
-            // TODO: translate argument valid values into zsh/bash functions so that we 
-            //       can hook it with zsh completion 
-            /*
-            if ($arginfo->type) {
-                $str .= ':' . $arginfo->type;
-            }
-            */
+            $str = sprintf("':%s:->%s'", $arginfo->name, $arginfo->name); // generate argument states
             $args[] = $str;
         }
         return $args;
+    }
+
+    public static function command_args_case($cmd) {
+        $code = array();
+        $arginfos = $cmd->getArgumentsInfo();
+        $idx = 1;
+
+        $code[] = "case \$state in";
+        foreach($arginfos as $arginfo) {
+            $values = array();
+            if ($arginfo->validValues) {
+                $values = $arginfo->getValidValues();
+            } elseif ($arginfo->suggestions ) {
+                $values = $arginfo->getSuggestions();
+            }
+
+            $code[] = "  (" . $arginfo->name . ")";
+            $code[] = "  _values " . join(" ", $values) . ' && ret=0';
+            $code[] = "  ;;";
+        }
+        $code[] = "esac";
+        return $code;
     }
 
     /**
@@ -172,7 +204,7 @@ class Zsh
         $code[] = "case \$words[{$level}] in";
 
         foreach ($cmds as $k => $cmd) {
-            $_args  = self::indent_array(self::command_args($cmd), $level);
+            $_args  = self::indent_array(self::command_args_states($cmd), $level);
 
             // XXX: support alias
             $_flags = self::indent_array(self::command_flags($cmd), $level);
@@ -187,12 +219,16 @@ class Zsh
                     && ret=0
             */
             if (!empty($_flags) || !empty($_args) ) {
-                $code[] = indent($level) . "_arguments -s -w : \\";
-                if (!empty($_args))
-                    $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_args) . " \\";
+                $code[] = indent($level) . "_arguments -C -s -w : \\";
                 if (!empty($_flags))
                     $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_flags) . " \\";
+                if (!empty($_args))
+                    $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_args) . " \\";
                 $code[] = indent($level + 1) . " && ret=0";
+
+                // complete arguments here...
+                $code[] = join("\n", self::indent_array( self::command_args_case($cmd), $level) );
+
             }
             $code[] = ";;";
         }
