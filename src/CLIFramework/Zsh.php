@@ -6,22 +6,55 @@ function indent($level) {
     return str_repeat('  ', $level);
 }
 
+function quote($str) {
+    return addcslashes($str , '"');
+}
+
+function single_quote($str) {
+    return addslashes($str);
+}
+
+function array_quote($array) {
+    return array_map("quote", $array);
+}
+
+function array_single_quote($array) {
+    return array_map("single_quote", $array);
+}
+
+function str_indent($content, $level = 1) {
+    $space = str_repeat('  ', $level);
+    $lines = explode("\n", $content);
+    $lines = array_map(function($line) use ($space) { return $space . $line; }, $lines);
+    return join("\n", $lines);
+}
+
+function array_indent($lines, $level = 1) {
+    $space = str_repeat('  ', $level);
+    return array_map(function($line) use ($space) {
+        return $space . $line;
+    }, $lines);
+}
+
+
+
+/**
+ * wrap zsh code with function
+ */
+function zsh_comp_function($name, $code) {
+    return "(( \$+functions[$name] )) ||\n"
+        . "$name () {\n"
+        . str_indent($code, 1) . "\n"
+        . "}\n"
+        ;
+}
+
+
+
 class Zsh
 {
 
-    public static function indent_str($content, $level = 1) {
-        $space = str_repeat('  ', $level);
-        $lines = explode("\n", $content);
-        $lines = array_map(function($line) use ($space) { return $space . $line; }, $lines);
-        return join("\n", $lines);
-    }
 
-    public static function indent_array($lines, $level = 1) {
-        $space = str_repeat('  ', $level);
-        return array_map(function($line) use ($space) {
-            return $space . $line;
-        }, $lines);
-    }
 
 
 
@@ -54,7 +87,7 @@ class Zsh
     public static function describe_commands($cmds) {
         $array  = Zsh::command_desc_array($cmds);
         $code  = "local commands; commands=(\n";
-        $code .= join("\n", self::indent_array($array, 1) );
+        $code .= join("\n", array_indent($array, 1) );
         $code .= ")\n";
         $code .= "_describe -t commands 'command' commands && ret=0\n";
         return $code;
@@ -241,8 +274,8 @@ class Zsh
     public static function complete_command($cmd, $level = 1) {
         $code = array();
 
-        $_args  = self::indent_array(self::command_args_states($cmd), $level);
-        $_flags = self::indent_array(self::command_flags($cmd), $level);
+        $_args  = array_indent(self::command_args_states($cmd), $level);
+        $_flags = array_indent(self::command_flags($cmd), $level);
         if (!empty($_flags) || !empty($_args) ) {
 
             $code[] = indent($level) . "_arguments -C -s -w : \\";
@@ -258,15 +291,15 @@ class Zsh
             $code[] = indent($level + 1) . " && ret=0";
 
             // complete arguments here...
-            $code[] = join("\n", self::indent_array( self::command_args_case($cmd), $level) );
+            $code[] = join("\n", array_indent( self::command_args_case($cmd), $level) );
         }
         return $code;
     }
 
-    public static function complete_subcommands($programName, $mainCmd, $level = 1) {
-        $cmds = self::visible_commands($mainCmd->getCommandObjects());
-        $descs  = Zsh::describe_commands($cmds);
-        $descs  = Zsh::indent_str($descs, $level + 1);
+    public static function complete_subcommands($programName, $cmd, $level = 1) {
+        $subcmds = self::visible_commands($cmd->getCommandObjects());
+        $descs  = Zsh::describe_commands($subcmds);
+        $descs  = str_indent($descs, $level + 1);
 
         $code = array();
 
@@ -274,7 +307,7 @@ class Zsh
 
 
         $code[] = "_arguments -C \\";
-        if ($args = self::indent_array(self::command_flags($mainCmd), $level)) {
+        if ($args = array_indent(self::command_flags($cmd), $level)) {
             if (!empty($args)) {
                 $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1), $args) . " \\";
             }
@@ -290,7 +323,6 @@ class Zsh
         $code[] = $descs;
         $code[] = indent($level) . ";;";
 
-
         $code[] = "(option-or-argument)";
 
         $code[] = "  curcontext=\${curcontext%:*}-\$line[1]:";
@@ -300,11 +332,11 @@ class Zsh
         $code[] = "  case \$line[1] in";
 
 
-        foreach ($cmds as $k => $cmd) {
-            $_args  = self::indent_array(self::command_args_states($cmd), $level);
+        foreach ($subcmds as $k => $subcmd) {
+            $_args  = array_indent(self::command_args_states($subcmd), $level);
 
             // XXX: support alias
-            $_flags = self::indent_array(self::command_flags($cmd), $level);
+            $_flags = array_indent(self::command_flags($subcmd), $level);
             $code[] = "(" . $k . ")";
 
             /* TODO: get argument spec from command class -> execute method 
@@ -324,7 +356,7 @@ class Zsh
                 $code[] = indent($level + 1) . " && ret=0";
 
                 // complete arguments here...
-                $code[] = join("\n", self::indent_array( self::command_args_case($cmd), $level) );
+                $code[] = join("\n", array_indent( self::command_args_case($subcmd), $level) );
 
             }
             $code[] = ";;";

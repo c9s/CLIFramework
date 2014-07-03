@@ -60,6 +60,8 @@ class ZshCompletionCommand extends Command
 
 
         $code .=<<<HEREDOC
+
+
 {$compName}() {
   local curcontext=\$curcontext state line
   typeset -A opt_args
