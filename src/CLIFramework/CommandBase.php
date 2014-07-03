@@ -386,7 +386,7 @@ abstract class CommandBase
     /**
      * abstract method let user define their own argument info.
      */
-    public function arginfo() { }
+    public function arguments() { }
 
     public function arg($name) {
         $info = new ArgumentInfo($name);
@@ -396,7 +396,7 @@ abstract class CommandBase
 
     public function getArgumentsInfo() {
         if (empty($this->argInfos)) {
-            $this->arginfo();
+            $this->arguments();
         }
         // if it still empty
         if (empty($this->argInfos)) {

@@ -49,7 +49,7 @@ class CommitCommand extends CLIFramework\Command {
             ;
     }
 
-    public function arginfo() {
+    public function arguments() {
         $this->arg('user')
             ->validValues(['c9s','bar','foo']);
         $this->arg('repo')
@@ -213,7 +213,7 @@ argument info of a command:
 namespace YourApp\Command;
 use CLIFramework\Command;
 class FooCommand extends Command {
-    public function arginfo() {
+    public function arguments() {
         $this->arg('name')->desc('name parameter')->suggests([ 'c9s', 'foo', 'bar' ]);
         $this->arg('email')->desc('email parameter');
         $this->arg('phone')->desc('phone parameter')->optional();
