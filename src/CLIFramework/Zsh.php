@@ -36,6 +36,13 @@ function array_indent($lines, $level = 1) {
     }, $lines);
 }
 
+function join_indent($lines, $level = 1) {
+    return join("\n",array_indent($lines, $level));
+}
+
+function join_indent_continued($lines, $level = 1) {
+    return join("\\\n", array_indent($lines, $level));
+}
 
 
 /**
@@ -49,6 +56,20 @@ function zsh_comp_function($name, $code) {
         ;
 }
 
+function case_in($name, $code) {
+    return "case $name in\n"
+        . str_indent($code, 1) . "\n"
+        . "esac\n"
+        ;
+}
+
+
+function case_case($pattern, $code) {
+    return "($pattern)\n"
+        . str_indent($code, 1) . "\n"
+        . ";;\n"
+        ;
+}
 
 
 class Zsh
@@ -133,7 +154,7 @@ class Zsh
         }
 
         // output description
-        $str .= "[" . $opt->desc . "]";
+        $str .= "[" . addslashes($opt->desc) . "]";
 
 
         // has anything to complete
@@ -198,9 +219,39 @@ class Zsh
             $str = sprintf("':%s:->%s'", $arginfo->name, $arginfo->name); // generate argument states
             $args[] = $str;
         }
-        return $args;
+        return empty($args) ? NULL : $args;
     }
 
+
+    /**
+     * Complete commands with options and its arguments (without subcommands)
+     */
+    public static function complete_command_options_arguments($subcmd, $level = 1) {
+        $code = array();
+        $_args  = self::command_args_states($subcmd);
+        $_flags = self::command_flags($subcmd);
+
+        if ( $_flags || $_args ) {
+            $code[] = indent($level) . "_arguments -w -S -s \\";
+            if ($_flags) {
+                $code[] = join_indent_continued($_flags, $level + 1) . " \\";
+            }
+            if ($_args) {
+                $code[] = join_indent_continued($_args, $level + 1) . " \\";
+            }
+            $code[] = indent($level + 1) . " && ret=0";
+
+            // complete arguments here...
+            $code[] = join_indent( self::command_args_case($subcmd), $level);
+        }
+        return join_indent($code, $level);
+    }
+
+
+
+    /**
+     * complete argument cases
+     */
     public static function command_args_case($cmd) {
         $code = array();
         $arginfos = $cmd->getArgumentsInfo();
@@ -250,7 +301,6 @@ class Zsh
     public static function command_flags($cmd) {
         $args = array();
         $specs = $cmd->getOptionCollection();
-
         /*
         '(- 1 *)--version[display version and copyright information]' \
         '(- 1 *)--help[print a short help statement]' \
@@ -258,7 +308,7 @@ class Zsh
         foreach ($specs->options as $opt ) {
             $args[] = self::option_flag_item($opt);
         }
-        return $args;
+        return empty($args) ? NULL : $args;
     }
 
     public static function command_subcommand_states($cmd) {
@@ -270,33 +320,47 @@ class Zsh
         return $args;
     }
 
-
-    public static function complete_command($cmd, $level = 1) {
+    public static function command_complete_function($cmd, $prefix = null, $name = null) {
         $code = array();
 
-        $_args  = array_indent(self::command_args_states($cmd), $level);
-        $_flags = array_indent(self::command_flags($cmd), $level);
-        if (!empty($_flags) || !empty($_args) ) {
+        $code[] = "local curcontext=\$curcontext state line ret=1";
+        $code[] = "declare -A opt_args";
+        $code[] = "local ret=1";
 
-            $code[] = indent($level) . "_arguments -C -s -w : \\";
+        $args  = self::command_args_states($cmd);
+        $flags = self::command_flags($cmd);
 
-            if (!empty($_flags)) {
-                $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_flags) . " \\";
+        if ($flags || $args) {
+            $code[] = indent(1) . "_arguments -w -C -S -s \\";
+
+            if ($flags) {
+                $code[] = join_indent_continued($flags, 1) . " \\";
             }
 
-            if (!empty($_args)) {
-                $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_args) . " \\";
+            if ($args) {
+                $code[] = join_indent_continued($args, 1) . " \\";
             }
 
-            $code[] = indent($level + 1) . " && ret=0";
+            $code[] = indent(1) . " && ret=0";
 
             // complete arguments here...
-            $code[] = join("\n", array_indent( self::command_args_case($cmd), $level) );
+            $code[] = join("\n", array_indent( self::command_args_case($cmd), 1) );
         }
-        return $code;
+        $code[] = "return ret";
+
+        if ($name) {
+            $funcName = $name;
+        } elseif ($prefix) {
+            $funcName = $prefix . $cmd->getName();
+        } else {
+            $funcName =$cmd->getName();
+        }
+        return zsh_comp_function($funcName, join_indent($code) );
     }
 
-    public static function complete_subcommands($programName, $cmd, $level = 1) {
+
+
+    public static function complete_with_subcommands($programName, $cmd, $level = 1) {
         $subcmds = self::visible_commands($cmd->getCommandObjects());
         $descs  = Zsh::describe_commands($subcmds);
         $descs  = str_indent($descs, $level + 1);
@@ -307,10 +371,9 @@ class Zsh
 
 
         $code[] = "_arguments -C \\";
-        if ($args = array_indent(self::command_flags($cmd), $level)) {
-            if (!empty($args)) {
-                $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1), $args) . " \\";
-            }
+        if ($args = self::command_flags($cmd)) {
+            // $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1), $args) . " \\";
+            $code[] = join_indent_continued($args, 1) . " \\";
         }
 
         $code[] = "': :->cmds' \\";
@@ -325,39 +388,22 @@ class Zsh
 
         $code[] = "(option-or-argument)";
 
-        $code[] = "  curcontext=\${curcontext%:*}-\$line[1]:";
 
         // $code[] = "  curcontext=\${curcontext%:*:*}:$programName-\$words[1]:";
         // $code[] = "  case \$words[1] in";
+
+        $code[] = "  curcontext=\${curcontext%:*}-\$line[1]:";
         $code[] = "  case \$line[1] in";
 
 
         foreach ($subcmds as $k => $subcmd) {
-            $_args  = array_indent(self::command_args_states($subcmd), $level);
-
-            // XXX: support alias
-            $_flags = array_indent(self::command_flags($subcmd), $level);
+            // TODO: support alias
             $code[] = "(" . $k . ")";
 
-            /* TODO: get argument spec from command class -> execute method 
-             * to the argument spec below:
-             *
-                _arguments \
-                    '1: :_github_users' \
-                    '2: :_github_branches' \
-                    && ret=0
-            */
-            if (!empty($_flags) || !empty($_args) ) {
-                $code[] = indent($level) . "_arguments -w -S -s \\";
-                if (!empty($_flags))
-                    $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_flags) . " \\";
-                if (!empty($_args))
-                    $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1),$_args) . " \\";
-                $code[] = indent($level + 1) . " && ret=0";
-
-                // complete arguments here...
-                $code[] = join("\n", array_indent( self::command_args_case($subcmd), $level) );
-
+            if ($subcmd->hasCommands()) {
+                $code[] = self::complete_with_subcommands($programName, $subcmd, $level + 1);
+            } else {
+                $code[] = self::complete_command_options_arguments($subcmd, $level + 1);
             }
             $code[] = ";;";
         }
@@ -366,7 +412,7 @@ class Zsh
         $code[] = "  ;;";
 
         $code[] = "esac"; // close state
-        return join("\n", $code);
+        return join_indent($code);
     }
 
 

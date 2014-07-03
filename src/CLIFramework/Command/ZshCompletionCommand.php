@@ -43,25 +43,11 @@ class ZshCompletionCommand extends Command
         $code .= "# THIS IS AN AUTO-GENERATED FILE, PLEASE DON'T MODIFY THIS FILE DIRECTLY.\n";
 
         $app = $this->getApplication();
-        $comp = Zsh::complete_subcommands($programName, $app);
-        /*
-        (create)
-          _arguments \
-            '1:repo name' \
-            '--markdown[create README.markdown]' \
-            '--mdown[create README.mdown]' \
-            '--private[create private repository]' \
-            '--rdoc[create README.rdoc]' \
-            '--rst[create README.rst]' \
-            '--textile[create README.textile]' \
-          && ret=0
-        ;;
-        */
+        $comp = Zsh::complete_with_subcommands($programName, $app);
 
+        // $code .= Zsh::command_complete_function($app, null, $compName);
 
         $code .=<<<HEREDOC
-
-
 {$compName}() {
   local curcontext=\$curcontext state line
   typeset -A opt_args
@@ -70,9 +56,8 @@ class ZshCompletionCommand extends Command
   return ret
 }
 
-compdef $compName $programName
-
 HEREDOC;
+        $code .= "compdef $compName $programName\n";
 
 
 

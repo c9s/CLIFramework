@@ -86,6 +86,17 @@ class SubFooCommand extends CLIFramework\Command {
 
     public function brief() { return 'brief of subfoo'; }
 
+    public function options($opts) {
+        $opts->add('x', 'x desc');
+        $opts->add('y', 'y desc');
+        $opts->add('z', 'z desc');
+    }
+
+    public function arginfo() {
+        $this->arg('p1');
+        $this->arg('p2');
+    }
+
     public function execute() {
         $this->getLogger()->info('executing subfoo command.');
     }
