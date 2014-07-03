@@ -206,7 +206,7 @@ class Zsh
     *
     *  "*:args:{ _alternative ':importpaths:__go_list' ':files:_path_files -g \"*.go\"' }"
     */
-    public static function command_args_states($cmd) {
+    public static function command_args($cmd) {
         $args = array();
         $arginfos = $cmd->getArgumentsInfo();
 
@@ -255,7 +255,7 @@ class Zsh
      */
     public static function complete_command_options_arguments($subcmd, $level = 1) {
         $code = array();
-        $args  = self::command_args_states($subcmd);
+        $args  = self::command_args($subcmd);
         $flags = self::command_flags($subcmd);
 
         if ( $flags || $args ) {
@@ -352,7 +352,7 @@ class Zsh
         $code[] = "local ret=1";
 
         $flags = self::command_flags($cmd);
-        $args  = self::command_args_states($cmd);
+        $args  = self::command_args($cmd);
 
         if ($flags || $args) {
             $code[] = indent(1) . "_arguments -w -C -S -s \\";
