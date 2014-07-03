@@ -124,18 +124,11 @@ class Application extends CommandBase
 
         // init application,
         // before parsing options, we have to known the registered commands.
-        $current_cmd->init();
+        $current_cmd->_init();
 
         // use getoption kit to parse application options
         $getopt = $this->getoptParser;
-        $specs = new OptionCollection;
-        $getopt->setSpecs( $specs );
-
-        // init application options
-        $current_cmd->options($specs);
-
-        // save options specs
-        $current_cmd->optionSpecs = $specs;
+        $getopt->setSpecs( $current_cmd->optionSpecs );
 
         // parse the first part options (options after script name)
         // option parser should stop before next command name.

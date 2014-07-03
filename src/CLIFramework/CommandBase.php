@@ -59,7 +59,9 @@ abstract class CommandBase
 
     public $argInfos = array();
 
-    public function __construct() { }
+    public function __construct() {
+    }
+
 
     /**
      * Returns one line brief for this command.
@@ -90,6 +92,8 @@ abstract class CommandBase
     {
         return '';
     }
+
+
 
 
     public function aliases() {
@@ -159,7 +163,7 @@ abstract class CommandBase
     }
 
     /**
-     * init function
+     * user-defined init function
      *
      * register custom subcommand here
      *
@@ -168,6 +172,17 @@ abstract class CommandBase
     {
 
     }
+
+
+    public function _init() {
+        // get option parser, init specs from the command.
+        $this->optionSpecs = new OptionCollection;
+        // init application options
+        $this->options($this->optionSpecs);
+        $this->init();
+    }
+
+
 
     /**
      * A short alias for registerCommand method
@@ -331,16 +346,7 @@ abstract class CommandBase
             $cmd = new $commandClass($this->application);
             $cmd->parent = $this;
         }
-
-        // get option parser, init specs from the command.
-        $specs = new OptionCollection;
-
-        // init application options
-        $cmd->options($specs);
-
-        // save options specs
-        $cmd->optionSpecs = $specs;
-        $cmd->init();
+        $cmd->_init();
         return $cmd;
     }
 
