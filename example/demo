@@ -43,6 +43,7 @@ class CommitCommand extends CLIFramework\Command {
 
         $opts->add('author:', 'Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.')
             ->suggestions([ 'c9s', 'foo' , 'bar' ])
+            ->valueName('author name')
             ;
 
         $opts->add('output:', 'Output file')
