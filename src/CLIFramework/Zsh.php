@@ -212,12 +212,12 @@ class Zsh
 
         $idx = 1;
         foreach($arginfos as $arginfo) {
-            /*
-            '1:issue-status:->issue-statuses' \
-            '2:: :_github_users' \
-            */
-            $str = sprintf("':%s:->%s'", $arginfo->name, $arginfo->name); // generate argument states
-            $args[] = $str;
+            if ($arginfo->multiple) {
+                $args[] = sprintf("'*:%s:->%s'", $arginfo->name, $arginfo->name); // generate argument states
+                break;
+            } else {
+                $args[] = sprintf("':%s:->%s'", $arginfo->name, $arginfo->name); // generate argument states
+            }
         }
         return empty($args) ? NULL : $args;
     }
@@ -327,8 +327,8 @@ class Zsh
         $code[] = "declare -A opt_args";
         $code[] = "local ret=1";
 
-        $args  = self::command_args_states($cmd);
         $flags = self::command_flags($cmd);
+        $args  = self::command_args_states($cmd);
 
         if ($flags || $args) {
             $code[] = indent(1) . "_arguments -w -C -S -s \\";

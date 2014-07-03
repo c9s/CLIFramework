@@ -50,16 +50,16 @@ class CommitCommand extends CLIFramework\Command {
             ;
     }
 
-    public function arguments() {
-        $this->arg('user')
+    public function arguments($args) {
+        $args->add('user')
             ->validValues(['c9s','bar','foo'])
             ;
 
-        $this->arg('repo')
+        $args->add('repo')
             ->validValues(['CLIFramework','GetOptionKit'])
             ;
 
-        $this->arg('file')
+        $args->add('file')
             ->isa('file')
             ->glob('*.php')
             ;
@@ -92,9 +92,9 @@ class SubFooCommand extends CLIFramework\Command {
         $opts->add('z', 'z desc');
     }
 
-    public function arguments() {
-        $this->arg('p1');
-        $this->arg('p2');
+    public function arguments($args) {
+        $args->add('p1');
+        $args->add('p2');
     }
 
     public function execute() {
