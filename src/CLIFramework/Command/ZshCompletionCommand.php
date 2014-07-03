@@ -45,7 +45,10 @@ class ZshCompletionCommand extends Command
         $app = $this->getApplication();
         $comp = Zsh::complete_with_subcommands($programName, $app);
 
-        // $code .= Zsh::command_complete_function($app, null, $compName);
+        $cmds = Zsh::visible_commands($app->getCommandObjects());
+        foreach($cmds as $cmd) {
+            $code .= Zsh::command_lazy_complete_function($cmd, $compName . '_');
+        }
 
         $code .=<<<HEREDOC
 {$compName}() {

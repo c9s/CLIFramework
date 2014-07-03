@@ -344,7 +344,7 @@ class Zsh
         return $args;
     }
 
-    public static function command_complete_function($cmd, $prefix = null, $name = null) {
+    public static function command_lazy_complete_function($cmd, $prefix = null, $name = null) {
         $code = array();
 
         $code[] = "local curcontext=\$curcontext state line ret=1";
