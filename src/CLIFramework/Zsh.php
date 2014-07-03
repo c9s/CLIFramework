@@ -7,11 +7,11 @@ function indent($level) {
 }
 
 function quote($str) {
-    return addcslashes($str , '"');
+    return '"' . addcslashes($str , '"') . '"';
 }
 
 function single_quote($str) {
-    return addslashes($str);
+    return "'" . addslashes($str) . "'";
 }
 
 function array_quote($array) {
@@ -175,7 +175,7 @@ class Zsh
                     $values = $opt->getSuggestions();
                 }
                 if ($values) {
-                    $str .= '::(' . join(' ', $values) . ')';
+                    $str .= ':(' . join(' ', $values) . ')';
                 }
             } elseif ( in_array($opt->isa, array('file', 'dir', 'path')) ) {
                 switch($opt->isa) {
@@ -211,13 +211,40 @@ class Zsh
         $arginfos = $cmd->getArgumentsInfo();
 
         $idx = 1;
-        foreach($arginfos as $arginfo) {
-            if ($arginfo->multiple) {
-                $args[] = sprintf("'*:%s:->%s'", $arginfo->name, $arginfo->name); // generate argument states
-                break;
+        foreach($arginfos as $a) {
+            $comp = '';
+
+            if ($a->multiple) {
+                $comp .= '*:' . $a->name;
             } else {
-                $args[] = sprintf("':%s:->%s'", $arginfo->name, $arginfo->name); // generate argument states
+                $comp .= ':' . $a->name;
             }
+
+            if ($a->validValues || $a->suggestions) {
+                $values = array();
+                if ($a->validValues) {
+                    $values = $a->getValidValues();
+                } elseif ($a->suggestions ) {
+                    $values = $a->getSuggestions();
+                }
+                $comp .= ':(' . join(" ", $values) . ')';
+            } elseif (in_array($a->isa,array('file','path','dir'))) {
+                switch($a->isa) {
+                    case "file":
+                        $comp .= ":_files";
+                        break;
+                    case "path":
+                        $comp .= ":_path_files";
+                        break;
+                    case "dir":
+                        $comp .= ":_directories";
+                        break;
+                }
+                if ($a->glob) {
+                    $comp .= " -g \"{$a->glob}\"";
+                }
+            }
+            $args[] = single_quote($comp);
         }
         return empty($args) ? NULL : $args;
     }
@@ -242,7 +269,7 @@ class Zsh
             $code[] = indent($level + 1) . " && ret=0";
 
             // complete arguments here...
-            $code[] = join_indent( self::command_args_case($subcmd), $level);
+            // $code[] = join_indent( self::command_args_case($subcmd), $level);
         }
         return join_indent($code, $level);
     }
