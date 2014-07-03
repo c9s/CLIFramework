@@ -9,9 +9,13 @@ class ArgInfo
 
     public $optional;
 
+    public $multiple;
+
     public $suggestions;
 
     public $validValues;
+
+
 
     /* file/path glob pattern */
     public $glob;
@@ -36,6 +40,11 @@ class ArgInfo
 
     public function optional($optional = true) {
         $this->optional = $optional;
+        return $this;
+    }
+
+    public function multiple($a = true) {
+        $this->multiple = $a;
         return $this;
     }
 
