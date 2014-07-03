@@ -267,9 +267,6 @@ class Zsh
                 $code[] = join_indent_continued($args, $level + 1) . " \\";
             }
             $code[] = indent($level + 1) . " && ret=0";
-
-            // complete arguments here...
-            // $code[] = join_indent( self::command_args_case($subcmd), $level);
         }
         return join_indent($code, $level);
     }
