@@ -1,11 +1,11 @@
 <?php
-use CLIFramework\ArgumentInfo;
+use CLIFramework\ArgInfo;
 
-class ArgumentInfoTest extends PHPUnit_Framework_TestCase
+class ArgInfoTest extends PHPUnit_Framework_TestCase
 {
     public function test()
     {
-        $info = new ArgumentInfo('user');
+        $info = new ArgInfo('user');
         ok($info);
 
         $info->isa('number');

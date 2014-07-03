@@ -20,7 +20,8 @@ use CLIFramework\CommandLoader;
 use CLIFramework\Exception\CommandNotFoundException;
 use CLIFramework\Exception\InvalidCommandArgumentException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
-use CLIFramework\ArgumentInfo;
+use CLIFramework\ArgInfo;
+use CLIFramework\ArgInfoList;
 
 /**
  * Command based class (application & subcommands inherit from this class)
@@ -386,20 +387,18 @@ abstract class CommandBase
     /**
      * abstract method let user define their own argument info.
      */
-    public function arguments() { }
-
-    public function arg($name) {
-        $info = new ArgumentInfo($name);
-        $this->argInfos[] = $info;
-        return $info;
-    }
+    public function arguments($args) { }
 
     public function getArgumentsInfo() {
-        if (empty($this->argInfos)) {
-            $this->arguments();
+        if (!$this->argInfos || empty($this->argInfos)) {
+            $args = new ArgInfoList;
+            $this->arguments($args);
+            if (count($args)) {
+                $this->argInfos = $args;
+            }
         }
         // if it still empty
-        if (empty($this->argInfos)) {
+        if (!$this->argInfos || empty($this->argInfos)) {
             $this->argInfos = $this->getArgumentsInfoByReflection();
         }
         return $this->argInfos;
@@ -409,7 +408,7 @@ abstract class CommandBase
      * The default behaviour: get argument info from method parameters
      */
     public function getArgumentsInfoByReflection() { 
-        $argInfo = array();
+        $argInfo = new ArgInfoList;
 
         // call_user_func_array(  );
         $ro = new ReflectionObject($this);
@@ -423,10 +422,10 @@ abstract class CommandBase
         $parameters = $method->getParameters();
         foreach ($parameters as $param) {
             // TODO: add description to the argument
-            $a = new ArgumentInfo($param->getName());
+            $a = new ArgInfo($param->getName());
             if ($param->isOptional())
                 $a->optional(true);
-            $argInfo[] = $a;
+            $argInfo->append($a);
         }
         return $argInfo;
     }

@@ -6,10 +6,10 @@ use Countable;
 use ArrayIterator;
 use ArrayObject;
 
-class ArgumentInfoList extends ArrayObject {
+class ArgInfoList extends ArrayObject {
 
     public function add($name) {
-        $arginfo = new ArgumentInfo($name);
+        $arginfo = new ArgInfo($name);
         $this->append($arginfo);
         return $arginfo;
     }

@@ -1,5 +1,5 @@
 <?php
-use CLIFramework\ArgumentInfo;
+use CLIFramework\ArgInfo;
 
 class TestAppCommandTest extends PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class TestAppCommandTest extends PHPUnit_Framework_TestCase
         count_ok(3, $argInfos);
 
         foreach( $argInfos as $arginfo ) {
-            ok( $arginfo instanceof ArgumentInfo);
+            ok( $arginfo instanceof ArgInfo);
         }
     }
 }

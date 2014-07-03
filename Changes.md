@@ -2,7 +2,7 @@
 Version 1.7   - Mon Jun 30 11:41:33 2014
 
 - Added zsh completion generator.
-- Added ArgumentInfo class.
+- Added ArgInfo class.
 - Added arginfo() method to command class.
 - Improved help information generator.
 

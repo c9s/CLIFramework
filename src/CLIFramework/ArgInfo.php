@@ -1,7 +1,7 @@
 <?php
 namespace CLIFramework;
 
-class ArgumentInfo
+class ArgInfo
 {
     public $name;
 
