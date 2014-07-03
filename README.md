@@ -49,10 +49,10 @@ class CommitCommand extends CLIFramework\Command {
             ;
     }
 
-    public function arguments() {
-        $this->arg('user')
+    public function arguments($args) {
+        $args->add('user')
             ->validValues(['c9s','bar','foo']);
-        $this->arg('repo')
+        $args->add('repo')
             ->validValues(['CLIFramework','GetOptionKit']);
     }
 
