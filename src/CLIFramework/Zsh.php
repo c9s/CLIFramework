@@ -228,16 +228,16 @@ class Zsh
      */
     public static function complete_command_options_arguments($subcmd, $level = 1) {
         $code = array();
-        $_args  = self::command_args_states($subcmd);
-        $_flags = self::command_flags($subcmd);
+        $args  = self::command_args_states($subcmd);
+        $flags = self::command_flags($subcmd);
 
-        if ( $_flags || $_args ) {
+        if ( $flags || $args ) {
             $code[] = indent($level) . "_arguments -w -S -s \\";
-            if ($_flags) {
-                $code[] = join_indent_continued($_flags, $level + 1) . " \\";
+            if ($flags) {
+                $code[] = join_indent_continued($flags, $level + 1) . " \\";
             }
-            if ($_args) {
-                $code[] = join_indent_continued($_args, $level + 1) . " \\";
+            if ($args) {
+                $code[] = join_indent_continued($args, $level + 1) . " \\";
             }
             $code[] = indent($level + 1) . " && ret=0";
 
