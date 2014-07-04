@@ -271,6 +271,41 @@ class Zsh
         return join_indent($code, $level);
     }
 
+    public static function render_argument_completion_handler($a) {
+        $comp = '';
+        switch($a->isa) {
+            case "file":
+                $comp .= "_files";
+                break;
+            case "path":
+                $comp .= "_path_files";
+                break;
+            case "dir":
+                $comp .= "_directories";
+                break;
+        }
+        if ($a->glob) {
+            $comp .= " -g \"{$a->glob}\"";
+        }
+        return $comp;
+    }
+
+
+
+    public static function render_argument_completion_values($a) {
+        if ($a->validValues || $a->suggestions) {
+            $values = array();
+            if ($a->validValues) {
+                $values = $a->getValidValues();
+            } elseif ($a->suggestions ) {
+                $values = $a->getSuggestions();
+            }
+            return join(" ", $values);
+        }
+        return '';
+    }
+
+
 
 
     /**
@@ -284,35 +319,11 @@ class Zsh
         $code[] = "case \$state in";
         foreach($arginfos as $a) {
             $code[] = "  (" . $a->name . ")";
-
             if ($a->validValues || $a->suggestions) {
-                $values = array();
-                if ($a->validValues) {
-                    $values = $a->getValidValues();
-                } elseif ($a->suggestions ) {
-                    $values = $a->getSuggestions();
-                }
-                $code[] = "     _values " . join(" ", $values) . ' && ret=0';
+                $code[] = "     _values " . self::render_argument_completion_values($a) . ' && ret=0';
             } elseif (in_array($a->isa,array('file','path','dir'))) {
-                $comp = '  ';
-                switch($a->isa) {
-                    case "file":
-                        $comp .= "_files";
-                        break;
-                    case "path":
-                        $comp .= "_path_files";
-                        break;
-                    case "dir":
-                        $comp .= "_directories";
-                        break;
-                }
-                if ($a->glob) {
-                    $comp .= " -g \"{$a->glob}\"";
-                }
-                $comp .= ' && ret=0';
-                $code[] = $comp;
+                $code[] = self::render_argument_completion_handler($a) . ' && ret=0';
             }
-
             $code[] = "  ;;";
         }
         $code[] = "esac";
