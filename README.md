@@ -62,11 +62,9 @@ class CommitCommand extends CLIFramework\Command {
 }
 ```
 
-Automatic Zsh Completion:
+Automatic Zsh Completion Generator:
 
-![Imgur](http://imgur.com/bg2PPIF.png)
-
-![Imgur](http://imgur.com/DLmzKD4.png)
+![Imgur](http://imgur.com/sU3mrDe.gif)
 
 
 Command Forms
