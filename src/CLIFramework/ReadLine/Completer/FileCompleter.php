@@ -4,11 +4,10 @@ namespace CLIFramework\ReadLine\Completer;
 class FileCompleter implements Completer
 {
 
-    /**
-     * @param string $input
-     * @param string $token
-     * @param integer $index
-     */
+    public function canComplete($input, $token, $index) {
+        return true;
+    }
+
     public function complete($input, $token, $index) {
         // If the user is typing: 
         // mv file.txt directo[TAB] 

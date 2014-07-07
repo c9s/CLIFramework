@@ -13,8 +13,7 @@ class ReadLine
 
     public function complete($token, $index) {
         $info = readline_info();
-        $fullInput = substr($info['line_buffer'], 0, $info['end']);
-
+        $input = substr($info['line_buffer'], 0, $info['end']);
         $matches = array();
         foreach( $this->completers as $completer ) {
             if ($completer->canComplete($input, $token, $index)) {
