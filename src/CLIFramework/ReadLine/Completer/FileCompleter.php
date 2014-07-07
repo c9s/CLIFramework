@@ -1,7 +1,7 @@
 <?php
 namespace CLIFramework\ReadLine\Completer;
 
-class FileCompleter implements Completer
+class FileCompleter extends BaseCompleter implements Completer
 {
 
     public function canComplete($input, $token, $index) {

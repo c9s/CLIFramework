@@ -7,7 +7,6 @@ class FileCompleterTest extends PHPUnit_Framework_TestCase
     {
         $completer = new FileCompleter;
         ok($completer);
-        
     }
 }
 

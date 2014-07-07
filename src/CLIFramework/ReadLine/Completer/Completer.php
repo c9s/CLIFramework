@@ -2,8 +2,6 @@
 namespace CLIFramework\ReadLine\Completer;
 
 interface Completer {
-
-
     /**
      * Check if the context matches this completer's context
      *
