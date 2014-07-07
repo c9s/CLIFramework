@@ -4,10 +4,10 @@ namespace CLIFramework;
 class ReadLine
 {
 
-    public $autoCompleters = array();
+    public $completers = array();
 
-    public function registerAutoCompleter($autoCompleter) {
-        $this->autoCompleters[] = $autoCompleter;
+    public function registerCompleter($completer) {
+        $this->completers[] = $completer;
     }
 
 
@@ -16,9 +16,9 @@ class ReadLine
         $fullInput = substr($info['line_buffer'], 0, $info['end']);
 
         $matches = array();
-        foreach( $this->autoCompleters as $completer ) {
-            if ($completer->canComplete($token, $index)) {
-                $_matches = $completer->complete($token, $index);
+        foreach( $this->completers as $completer ) {
+            if ($completer->canComplete($input, $token, $index)) {
+                $_matches = $completer->complete($input, $token, $index);
                 foreacH ($_matches as $_m) {
                     $matches[] = $m;
                 }

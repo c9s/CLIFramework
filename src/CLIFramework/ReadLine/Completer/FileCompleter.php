@@ -4,10 +4,12 @@ namespace CLIFramework\ReadLine\Completer;
 class FileCompleter implements Completer
 {
 
-    public function complete($lastToken, $index) {
-        $info = readline_info();
-        $fullInput = substr($info['line_buffer'], 0, $info['end']);
-
+    /**
+     * @param string $input
+     * @param string $token
+     * @param integer $index
+     */
+    public function complete($input, $token, $index) {
         // If the user is typing: 
         // mv file.txt directo[TAB] 
         // then: 
@@ -27,10 +29,10 @@ class FileCompleter implements Completer
             $ls = `ls`; 
             $lines = explode("\n", $ls); 
             foreach ($lines AS $key => $line) { 
-            if (is_dir($line)) { 
-                $lines[$key] .= '/'; 
-            } 
-            $array[] = $lines[$key]; 
+                if (is_dir($line)) { 
+                    $lines[$key] .= '/'; 
+                } 
+                $array[] = $lines[$key]; 
             } 
         } 
         // This will return both our list of functions, and, possibly, a list of files in the current filesystem. 
