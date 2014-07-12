@@ -8,6 +8,10 @@ class Buffer {
 
     public $indent = 0;
 
+    protected $indentCache = '';
+
+    public $indentChar = '  ';
+
     public $format;
 
     const FORMAT_UNIX = 0;
@@ -22,43 +26,134 @@ class Buffer {
 
     public function indent() {
         $this->indent++;
+        $this->_updateIndentCache();
+    }
+
+    /**
+     * Set indent level
+     *
+     * @param integer $indent
+     */
+    public function setIndent($indent) {
+        $this->indent = $indent;
+        $this->_updateIndentCache();
+    }
+
+    /**
+     * Get current indent level
+     *
+     * @return integer
+     */
+    public function getIndent() {
+        return $this->indent;
+    }
+
+    public function setIndentChar($char) {
+        $this->indentChar = $char;
+    }
+
+    public function getIndentChar() {
+        return $this->indentChar;
     }
 
     public function unindent() {
-        if ($this->indent > 0)
+        if ($this->indent > 0) {
             $this->indent--;
+            $this->_updateIndentCache();
+        }
     }
 
+    public function _updateIndentCache() {
+        $this->indentCache = str_repeat($this->indentChar, $this->indent);
+    }
+
+    public function makeIndent($level) {
+        return str_repeat($this->indentChar, $level);
+    }
+
+    /**
+     * Append a text to the buffer
+     */
     public function append($text) {
         $this->content .= $text;
     }
 
-    public function appendRow($str) {
-        $this->content .= $str;
-    }
 
+    /**
+     * Append a line with indent to the buffer
+     *
+     * @param string $line
+     * @param integer $indent
+     */
     public function appendLine($line, $indent = 0) {
-        $this->content .= str_repeat(' ', $indent ? $indent : $this->indent) . $line . $this->newline;
+        $this->content .= ($indent ? $this->makeIndent($indent) : $this->indentCache) . $line . $this->newline;
     }
 
+
+    /**
+     * Append multiple lines with indent to the buffer
+     *
+     * @param string[] $lines
+     * @param integer $indent
+     */
     public function appendLines($lines, $indent = 0) {
         foreach($lines as $line) {
             $this->appendLine($line, $indent);
         }
     }
 
-    public function appendEscape($line, $escape) {
-        $this->content .= addcslashes($line, $escape);
+    /**
+     * Append a string and escape with charlist
+     *
+     * @param string $line
+     * @param string $charlist
+     */
+    public function appendEscape($line, $charlist) {
+        $this->content .= addcslashes($line, $charlist);
     }
 
+    /**
+     * Append a string with addslashes function to the buffer
+     *
+     * @param string $line
+     */
     public function appendEscapeSlash($line) {
         $this->content .= addslashes($line);
     }
 
+    /**
+     * Append a string with double quotes 
+     *
+     * @param string $str
+     */
+    public function appendQuoteString($str) {
+        $this->content .= '"' . addcslashes($str , '"') . '"';
+    }
+
+
+    /**
+     * Append a string with single quotes
+     *
+     * @param string $str
+     */
+    public function appendSingleQuoteString($str) {
+        $this->content .= "'" . addslashes($str) . "'";
+    }
+
+
+    /**
+     * Append a new line to the buffer
+     */
     public function newLine() {
         $this->content .= $this->newline;
     }
 
+
+    /**
+     * Set line format
+     *
+     * @param integer $format Buffer::FORMAT_UNIX or Buffer::FORMAT_DOS
+     */
     public function setFormat($format) {
         $this->format = $format;
         if ($this->format == self::FORMAT_UNIX) {
@@ -75,14 +170,10 @@ class Buffer {
         }
     }
 
-    public function setIndent($indent) {
-        $this->indent = $indent;
-    }
 
-    public function getIndent() {
-        return $this->indent;
-    }
-
+    /**
+     * Output the buffer as a string
+     */
     public function __toString() {
         return $this->content;
     }
