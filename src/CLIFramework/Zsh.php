@@ -2,41 +2,6 @@
 namespace CLIFramework;
 use Exception;
 
-class CodeBuffer {
-    public $content = '';
-
-    public $indent = 0;
-
-    public function __construct() {
-
-    }
-
-    public function indent() {
-        $this->indent++;
-    }
-
-    public function unindent() {
-        if ($this->indent > 0)
-            $this->indent--;
-    }
-
-    public function appendLine($line, $indent = 0) {
-        $this->content .= str_repeat(' ', $indent ? $indent : $this->indent) . $line . "\n";
-    }
-
-    public function appendBlock($block, $indent = 0) {
-        $lines = explode("\n", $block);
-        foreach($lines as $line) {
-            $this->appendLine($line, $indent);
-        }
-    }
-
-    public function appendRow($str) {
-        $this->content .= $str;
-    }
-}
-
-
 function indent($level) {
     return str_repeat('  ', $level);
 }
@@ -79,6 +44,93 @@ function join_indent_continued($lines, $level = 1) {
     return join("\\\n", array_indent($lines, $level));
 }
 
+class Buffer {
+    public $content = '';
+
+    public $indent = 0;
+
+    public $format;
+
+    const FORMAT_UNIX = 0;
+    const FORMAT_DOS = 1;
+
+    public $newline = "\n";
+
+    public function __construct($content = '') {
+        $this->content = $content;
+        $this->format = self::FORMAT_UNIX;
+    }
+
+    public function indent() {
+        $this->indent++;
+    }
+
+    public function unindent() {
+        if ($this->indent > 0)
+            $this->indent--;
+    }
+
+    public function append($text) {
+        $this->content .= $text;
+    }
+
+    public function appendRow($str) {
+        $this->content .= $str;
+    }
+
+    public function appendLine($line, $indent = 0) {
+        $this->content .= str_repeat(' ', $indent ? $indent : $this->indent) . $line . $this->newline;
+    }
+
+    public function appendLines($lines, $indent = 0) {
+        foreach($lines as $line) {
+            $this->appendLine($line, $indent);
+        }
+    }
+
+    public function appendEscape($line, $escape) {
+        $this->content .= addcslashes($line, $escape);
+    }
+
+    public function appendEscapeSlash($line) {
+        $this->content .= addslashes($line);
+    }
+
+    public function newLine() {
+        $this->content .= $this->newline;
+    }
+
+    public function setFormat($format) {
+        $this->format = $format;
+        if ($this->format == self::FORMAT_UNIX) {
+            $this->newline = "\n";
+        } elseif ($this->format == self::FORMAT_DOS) {
+            $this->newline = "\r\n";
+        }
+    }
+
+    public function appendBlock($block, $indent = 0) {
+        $lines = explode("\n", $block);
+        foreach($lines as $line) {
+            $this->appendLine($line, $indent);
+        }
+    }
+
+    public function setIndent($indent) {
+        $this->indent = $indent;
+    }
+
+    public function getIndent() {
+        return $this->indent;
+    }
+
+    public function __toString() {
+        return $this->content;
+    }
+}
+
+
+
 
 /**
  * wrap zsh code with function
@@ -109,11 +161,6 @@ function case_case($pattern, $code) {
 
 class Zsh
 {
-
-
-
-
-
     public static function command_desc_item($name, $cmd) {
         return "'$name:" . addslashes($cmd->brief()) . "'";
     }
@@ -391,32 +438,33 @@ class Zsh
     }
 
     public static function command_lazy_complete_function($cmd, $prefix = null, $name = null) {
-        $code = array();
-
-        $code[] = "local curcontext=\$curcontext state line ret=1";
-        $code[] = "declare -A opt_args";
-        $code[] = "local ret=1";
+        $buf = new Buffer;
+        $buf->appendLine("local curcontext=\$curcontext state line ret=1");
+        $buf->appendLine("declare -A opt_args");
+        $buf->appendLine("local ret=1");
 
         $flags = self::command_flags($cmd);
         $args  = self::command_args($cmd);
 
         if ($flags || $args) {
-            $code[] = indent(1) . "_arguments -w -C -S -s \\";
-
+            $buf->appendLine("_arguments -w -C -S -s \\");
             if ($flags) {
-                $code[] = join_indent_continued($flags, 1) . " \\";
+                foreach( $flags as $flag ) {
+                    $buf->appendLine($flag . "\\");
+                }
             }
 
             if ($args) {
-                $code[] = join_indent_continued($args, 1) . " \\";
+                foreach( $args as $arg ) {
+                    $buf->appendLine($arg . "\\");
+                }
             }
 
-            $code[] = indent(1) . " && ret=0";
+            $buf->appendLine("&& ret=0");
 
-            // complete arguments here...
-            $code[] = join("\n", array_indent( self::command_args_case($cmd), 1) );
+            $buf->appendLines(self::command_args_case($cmd));
         }
-        $code[] = "return ret";
+        $buf->appendLine("return ret");
 
         if ($name) {
             $funcName = $name;
@@ -425,7 +473,7 @@ class Zsh
         } else {
             $funcName =$cmd->getName();
         }
-        return zsh_comp_function($funcName, join_indent($code) );
+        return zsh_comp_function($funcName, $buf->__toString());
     }
 
 
