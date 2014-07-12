@@ -2,6 +2,41 @@
 namespace CLIFramework;
 use Exception;
 
+class CodeBuffer {
+    public $content = '';
+
+    public $indent = 0;
+
+    public function __construct() {
+
+    }
+
+    public function indent() {
+        $this->indent++;
+    }
+
+    public function unindent() {
+        if ($this->indent > 0)
+            $this->indent--;
+    }
+
+    public function appendLine($line, $indent = 0) {
+        $this->content .= str_repeat(' ', $indent ? $indent : $this->indent) . $line . "\n";
+    }
+
+    public function appendBlock($block, $indent = 0) {
+        $lines = explode("\n", $block);
+        foreach($lines as $line) {
+            $this->appendLine($line, $indent);
+        }
+    }
+
+    public function appendRow($str) {
+        $this->content .= $str;
+    }
+}
+
+
 function indent($level) {
     return str_repeat('  ', $level);
 }
