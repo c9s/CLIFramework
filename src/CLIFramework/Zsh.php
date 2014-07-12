@@ -387,7 +387,12 @@ class Zsh
      *
      * TODO: Use _values to provide completion
      */
-    public static function command_lazy_complete_function($cmd, $prefix = null, $name = null) {
+    public static function command_meta_callback_function($cmd, $prefix = null, $cmdNameStack = array()) {
+        if (! $cmd instanceof Application) {
+            $cmdNameStack[] = $cmd->getName();
+        }
+        $cmdSignature = self::command_signature($cmdNameStack);
+        
         $buf = new Buffer;
         $buf->indent();
 
@@ -418,14 +423,31 @@ class Zsh
         }
         $buf->appendLine("return ret");
 
-        if ($name) {
-            $funcName = $name;
-        } elseif ($prefix) {
-            $funcName = $prefix . $cmd->getName();
-        } else {
-            $funcName =$cmd->getName();
+        $funcName = preg_replace('#\W#','_',join('_', $cmdNameStack));
+
+        if ($prefix) {
+            $funcName = $prefix . $funcName;
         }
         return zsh_comp_function($funcName, $buf->__toString());
+    }
+
+    public static function command_meta_callback_functions($programName, $cmd, $cmdNameStack = array() ) {
+        if (! $cmd instanceof Application) {
+            $cmdNameStack[] = $cmd->getName();
+        }
+        $cmdSignature = self::command_signature($cmdNameStack);
+
+
+        $buf = new Buffer;
+        $subcmds = Zsh::visible_commands($cmd->getCommandObjects());
+        foreach($subcmds as $subcmd) {
+            $buf->append(self::command_meta_callback_function($subcmd, '__', $cmdNameStack));
+
+            if ($subcmd->hasCommands()) {
+                $buf->appendBuffer( self::command_meta_callback_functions($programName, $subcmd, $cmdNameStack) );
+            }
+        }
+        return $buf;
     }
 
     public static function complete_application($app, $programName, $compName) {
@@ -436,10 +458,7 @@ class Zsh
             "# THIS IS AN AUTO-GENERATED FILE, PLEASE DON'T MODIFY THIS FILE DIRECTLY.",
         ]);
 
-        $cmds = Zsh::visible_commands($app->getCommandObjects());
-        foreach($cmds as $cmd) {
-            $buf->append(Zsh::command_lazy_complete_function($cmd, $compName . '_'));
-        }
+        $buf->appendBuffer( self::command_meta_callback_functions($programName, $app) );
 
         $buf->appendLines([
             "{$compName}() {",
@@ -455,9 +474,9 @@ class Zsh
     }
 
 
-    public static function command_signature($nameStack = array()) {
+    public static function command_signature($cmdNameStack = array()) {
         if (!empty($cmdNameStack)) {
-            return join('.', $cmdNameStack);
+            return preg_replace('#[^.]#','_', join('.', $cmdNameStack));
         }
         return '';
     }
