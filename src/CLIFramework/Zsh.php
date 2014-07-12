@@ -249,7 +249,13 @@ class Zsh
     /**
      * Complete commands with options and its arguments (without subcommands)
      */
-    public static function complete_command_options_arguments($subcmd, $level = 1) {
+    public static function complete_command_options_arguments($subcmd, $level = 1, $cmdNameStack = array() ) {
+        if (!$subcmd instanceof Application) {
+            $cmdNameStack[] = $subcmd->getName();
+        }
+        $cmdSignature = self::command_signature($cmdNameStack);
+
+
         $buf = new Buffer;
         $buf->setIndent($level);
 
@@ -338,8 +344,10 @@ class Zsh
     }
 
     /**
-    * Return the zsh array code of the flags of a command.
-    */
+     * Return the zsh array code of the flags of a command.
+     *
+     * @return string[]
+     */
     public static function command_flags($cmd) {
         $args = array();
         $specs = $cmd->getOptionCollection();
@@ -353,6 +361,14 @@ class Zsh
         return empty($args) ? NULL : $args;
     }
 
+
+    /**
+     * Return subcommand completion status as an array of string
+     *
+     * @param Command $cmd The command object
+     *
+     * @return string[]
+     */
     public static function command_subcommand_states($cmd) {
         $args = array();
         $cmds = self::visible_commands($cmd->getCommandObjects());
@@ -364,6 +380,11 @@ class Zsh
 
 
     /**
+     * Zsh function usage
+     *
+     * example/demo _meta commit arg 1 valid-values
+     * appName _meta sub1.sub2.sub3 opt email valid-values
+     *
      * TODO: Use _values to provide completion
      */
     public static function command_lazy_complete_function($cmd, $prefix = null, $name = null) {
@@ -415,7 +436,6 @@ class Zsh
             "# THIS IS AN AUTO-GENERATED FILE, PLEASE DON'T MODIFY THIS FILE DIRECTLY.",
         ]);
 
-        $comp = Zsh::complete_with_subcommands($programName, $app);
         $cmds = Zsh::visible_commands($app->getCommandObjects());
         foreach($cmds as $cmd) {
             $buf->append(Zsh::command_lazy_complete_function($cmd, $compName . '_'));
@@ -426,7 +446,7 @@ class Zsh
             "local curcontext=\$curcontext state line",
             "typeset -A opt_args",
             "local ret=1",
-            $comp,
+            self::complete_with_subcommands($programName, $app), // create an empty command name stack and 1 level indent
             "return ret",
             "}",
             "compdef $compName $programName"
@@ -435,7 +455,20 @@ class Zsh
     }
 
 
-    public static function complete_with_subcommands($programName, $cmd, $level = 1) {
+    public static function command_signature($nameStack = array()) {
+        if (!empty($cmdNameStack)) {
+            return join('.', $cmdNameStack);
+        }
+        return '';
+    }
+
+
+    public static function complete_with_subcommands($programName, $cmd, $level = 1, $cmdNameStack = array() ) {
+        if (! $cmd instanceof Application) {
+            $cmdNameStack[] = $cmd->getName();
+        }
+        $cmdSignature = self::command_signature($cmdNameStack);
+
         $buf = new Buffer;
         $buf->setIndent($level);
 
@@ -481,9 +514,9 @@ class Zsh
             $buf->appendLine("($k)");
 
             if ($subcmd->hasCommands()) {
-                $buf->appendBlock(self::complete_with_subcommands($programName, $subcmd, $level + 1));
+                $buf->appendBlock(self::complete_with_subcommands($programName, $subcmd, $level + 1, $cmdNameStack));
             } else {
-                $buf->appendBlock(self::complete_command_options_arguments($subcmd, $level + 1));
+                $buf->appendBlock(self::complete_command_options_arguments($subcmd, $level + 1, $cmdNameStack));
             }
             $buf->appendLine(";;");
         }

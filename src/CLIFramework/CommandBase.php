@@ -104,6 +104,11 @@ abstract class CommandBase
         $this->aliases[$alias] = $cmdName;
     }
 
+
+    public function isApplication() {
+        return $this instanceof Application;
+    }
+
     /**
      * Returns help message text of a command object.
      *
