@@ -163,6 +163,13 @@ class Buffer {
         }
     }
 
+
+    /**
+     * Append a string block (multilines)
+     *
+     * @param string $block
+     * @param integer $indent = 0
+     */
     public function appendBlock($block, $indent = 0) {
         $lines = explode("\n", $block);
         foreach($lines as $line) {
@@ -170,6 +177,33 @@ class Buffer {
         }
     }
 
+
+    /**
+     * Append a buffer object
+     *
+     * @param Buffer $buf
+     * @param integer $indent = 0
+     */
+    public function appendBuffer(Buffer $buf, $indent = 0) {
+        if ( $indent ) {
+            $lines = $buf->lines();
+            foreach( $lines as $line ) {
+                $this->appendLine($line);
+            }
+        } else {
+            $this->content .= $buf->__toString();
+        }
+    }
+
+
+    /**
+     * Split buffer content into lines
+     *
+     * @return string[] lines
+     */
+    public function lines() {
+        return $this->explode($this->newline, $this->content);
+    }
 
     /**
      * Output the buffer as a string

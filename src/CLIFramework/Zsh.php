@@ -308,22 +308,24 @@ class Zsh
      * complete argument cases
      */
     public static function command_args_case($cmd) {
-        $code = array();
+        $buf = new Buffer;
         $arginfos = $cmd->getArgumentsInfo();
         $idx = 1;
 
-        $code[] = "case \$state in";
+        $buf->appendLine("case \$state in");
+
         foreach($arginfos as $a) {
-            $code[] = "  (" . $a->name . ")";
+            $buf->appendLine("({$a->name})");
+
             if ($a->validValues || $a->suggestions) {
-                $code[] = "     _values " . self::render_argument_completion_values($a) . ' && ret=0';
+                $buf->appendLine("_values " . self::render_argument_completion_values($a) . ' && ret=0');
             } elseif (in_array($a->isa,array('file','path','dir'))) {
-                $code[] = self::render_argument_completion_handler($a) . ' && ret=0';
+                $buf->appendLine(self::render_argument_completion_handler($a) . ' && ret=0');
             }
-            $code[] = "  ;;";
+            $buf->appendLine(";;");
         }
-        $code[] = "esac";
-        return $code;
+        $buf->appendLine("esac");
+        return $buf->__toString();
     }
 
     /**
@@ -353,6 +355,9 @@ class Zsh
 
     public static function command_lazy_complete_function($cmd, $prefix = null, $name = null) {
         $buf = new Buffer;
+
+        $buf->indent();
+
         $buf->appendLine("local curcontext=\$curcontext state line ret=1");
         $buf->appendLine("declare -A opt_args");
         $buf->appendLine("local ret=1");
@@ -362,6 +367,7 @@ class Zsh
 
         if ($flags || $args) {
             $buf->appendLine("_arguments -w -C -S -s \\");
+            $buf->indent();
             if ($flags) {
                 foreach( $flags as $flag ) {
                     $buf->appendLine($flag . "\\");
@@ -373,10 +379,9 @@ class Zsh
                     $buf->appendLine($arg . "\\");
                 }
             }
-
             $buf->appendLine("&& ret=0");
-
-            $buf->appendLines(self::command_args_case($cmd));
+            $buf->unindent();
+            $buf->appendBlock(self::command_args_case($cmd));
         }
         $buf->appendLine("return ret");
 
