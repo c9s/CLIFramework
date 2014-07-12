@@ -250,21 +250,30 @@ class Zsh
      * Complete commands with options and its arguments (without subcommands)
      */
     public static function complete_command_options_arguments($subcmd, $level = 1) {
-        $code = array();
+        $buf = new Buffer;
+        $buf->setIndent($level);
+
         $args  = self::command_args($subcmd);
         $flags = self::command_flags($subcmd);
 
         if ( $flags || $args ) {
-            $code[] = indent($level) . "_arguments -w -S -s \\";
+            $buf->appendLine("_arguments -w -S -s \\");
+            $buf->indent();
+
             if ($flags) {
-                $code[] = join_indent_continued($flags, $level + 1) . " \\";
+                foreach($flags as $line) {
+                    $buf->appendLine($line . " \\");
+                }
             }
             if ($args) {
-                $code[] = join_indent_continued($args, $level + 1) . " \\";
+                foreach($args as $line) {
+                    $buf->appendLine($line . " \\");
+                }
             }
-            $code[] = indent($level + 1) . " && ret=0";
+            $buf->appendLine(" && ret=0");
+            $buf->unindent();
         }
-        return join_indent($code, $level);
+        return $buf->__toString();
     }
 
     public static function render_argument_completion_handler($a) {
@@ -398,6 +407,9 @@ class Zsh
 
 
     public static function complete_with_subcommands($programName, $cmd, $level = 1) {
+        $buf = new Buffer;
+        $buf->setIndent($level);
+
         $subcmds = self::visible_commands($cmd->getCommandObjects());
         $descs  = Zsh::describe_commands($subcmds);
         $descs  = str_indent($descs, $level + 1);
@@ -406,50 +418,52 @@ class Zsh
 
         // $code[] = 'echo $words[$CURRENT-1]';
 
+        $buf->appendLine("_arguments -C \\");
+        $buf->indent();
 
-        $code[] = "_arguments -C \\";
         if ($args = self::command_flags($cmd)) {
-            // $code[] = indent($level + 1) . join( " \\\n" . indent($level + 1), $args) . " \\";
-            $code[] = join_indent_continued($args, 1) . " \\";
+            foreach ($args as $arg) {
+                $buf->appendLine($arg . "\\");
+            }
         }
+        $buf->appendLine("': :->cmds' \\");
+        $buf->appendLine("'*:: :->option-or-argument' \\");
+        $buf->appendLine(" && return");
+        $buf->unindent();
 
-        $code[] = "': :->cmds' \\";
-        $code[] = "'*:: :->option-or-argument' \\";
-        $code[] = " && return";
+        $buf->appendLine("case \$state in");
+        $buf->indent();
 
+        $buf->appendLine("(cmds)");
+        $buf->appendLine($descs);
+        $buf->appendLine(";;");
 
-        $code[] = "case \$state in";
-        $code[] = indent($level) . "(cmds)";
-        $code[] = $descs;
-        $code[] = indent($level) . ";;";
-
-        $code[] = "(option-or-argument)";
-
+        $buf->appendLine("(option-or-argument)");
 
         // $code[] = "  curcontext=\${curcontext%:*:*}:$programName-\$words[1]:";
         // $code[] = "  case \$words[1] in";
 
-        $code[] = "  curcontext=\${curcontext%:*}-\$line[1]:";
-        $code[] = "  case \$line[1] in";
-
-
+        $buf->indent();
+        $buf->appendLine("curcontext=\${curcontext%:*}-\$line[1]:");
+        $buf->appendLine("case \$line[1] in");
+        $buf->indent();
         foreach ($subcmds as $k => $subcmd) {
             // TODO: support alias
-            $code[] = "(" . $k . ")";
+            $buf->appendLine("($k)");
 
             if ($subcmd->hasCommands()) {
-                $code[] = self::complete_with_subcommands($programName, $subcmd, $level + 1);
+                $buf->appendBlock(self::complete_with_subcommands($programName, $subcmd, $level + 1));
             } else {
-                $code[] = self::complete_command_options_arguments($subcmd, $level + 1);
+                $buf->appendBlock(self::complete_command_options_arguments($subcmd, $level + 1));
             }
-            $code[] = ";;";
+            $buf->appendLine(";;");
         }
-
-        $code[] = "  esac";
-        $code[] = "  ;;";
-
-        $code[] = "esac"; // close state
-        return join_indent($code);
+        $buf->unindent();
+        $buf->appendLine("esac");
+        $buf->appendLine(";;");
+        $buf->unindent();
+        $buf->appendLine("esac");
+        return $buf->__toString();
     }
 
 
