@@ -186,6 +186,7 @@ class Buffer {
      */
     public function appendBuffer(Buffer $buf, $indent = 0) {
         if ( $indent ) {
+            $this->setIndent($indent);
             $lines = $buf->lines();
             foreach( $lines as $line ) {
                 $this->appendLine($line);
