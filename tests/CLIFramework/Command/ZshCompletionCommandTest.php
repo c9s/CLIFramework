@@ -99,7 +99,7 @@ class ZshCompletionCommandTest extends PHPUnit_Framework_TestCase
     {
         $this->expectOutputRegex('/compdef _demo demo/');
         $app = ExampleApplication::getInstance();
-        $app->run(array('demo','_zsh', 'demo'));
+        $app->run(array('demo','_zsh', '--program' , 'demo', '--bind' , 'demo'));
     }
 }
 
