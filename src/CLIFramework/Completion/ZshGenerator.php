@@ -438,7 +438,9 @@ class ZshGenerator
         $buf = new Buffer;
         $buf->indent();
         $buf->appendLine("local curcontext=\$curcontext state line ret=1");
-        $buf->appendLine("declare -A opt_args");
+        $buf->appendLine("typeset -A opt_args");
+        $buf->appendLine("typeset -A val_args");
+
         $buf->appendLine("declare -a lines");
         $buf->appendLine("declare -a args");
 
