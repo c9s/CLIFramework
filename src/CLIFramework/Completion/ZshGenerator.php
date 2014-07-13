@@ -42,11 +42,6 @@ function join_indent($lines, $level = 1) {
     return join("\n",array_indent($lines, $level));
 }
 
-function join_indent_continued($lines, $level = 1) {
-    return join("\\\n", array_indent($lines, $level));
-}
-
-
 /**
  * wrap zsh code with function
  */
@@ -465,13 +460,13 @@ class ZshGenerator
             $buf->indent();
             if ($flags) {
                 foreach( $flags as $flag ) {
-                    $buf->appendLine($flag . "\\");
+                    $buf->appendLine($flag . " \\");
                 }
             }
 
             if ($args) {
                 foreach( $args as $arg ) {
-                    $buf->appendLine($arg . "\\");
+                    $buf->appendLine($arg . " \\");
                 }
             }
             $buf->appendLine("&& ret=0");
@@ -578,7 +573,7 @@ $metaName . ' () {',
 
         if ($args = $this->command_flags($cmd, $cmdSignature)) {
             foreach ($args as $arg) {
-                $buf->appendLine($arg . "\\");
+                $buf->appendLine($arg . " \\");
             }
         }
         $buf->appendLine("': :->cmds' \\");
