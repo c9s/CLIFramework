@@ -310,10 +310,7 @@ class ZshGenerator
     /**
      * Complete commands with options and its arguments (without subcommands)
      */
-    public function complete_command_options_arguments($subcmd, $level = 1, $cmdNameStack = array() ) {
-        if (!$subcmd instanceof Application) {
-            $cmdNameStack[] = $subcmd->getName();
-        }
+    public function complete_command_options_arguments($subcmd, $level = 1) {
         $cmdSignature = $subcmd->getSignature();
 
 
@@ -482,10 +479,7 @@ class ZshGenerator
      * example/demo _meta commit arg 1 valid-values
      * appName _meta sub1.sub2.sub3 opt email valid-values
      */
-    public function command_meta_callback_function($cmd, $cmdNameStack = array()) {
-        if (! $cmd instanceof Application) {
-            $cmdNameStack[] = $cmd->getName();
-        }
+    public function command_meta_callback_function($cmd) {
         $cmdSignature = $cmd->getSignature();
         
         
@@ -516,10 +510,7 @@ class ZshGenerator
         return zsh_comp_function($funcName, $buf);
     }
 
-    public function command_meta_callback_functions($cmd, $cmdNameStack = array() ) {
-        if (! $cmd instanceof Application) {
-            $cmdNameStack[] = $cmd->getName();
-        }
+    public function command_meta_callback_functions($cmd) {
         $cmdSignature = $cmd->getSignature();
         
 
@@ -527,10 +518,10 @@ class ZshGenerator
         $buf = new Buffer;
         $subcmds = $this->visible_commands($cmd->getCommandObjects());
         foreach($subcmds as $subcmd) {
-            $buf->append($this->command_meta_callback_function($subcmd, $cmdNameStack));
+            $buf->append($this->command_meta_callback_function($subcmd));
 
             if ($subcmd->hasCommands()) {
-                $buf->appendBuffer( $this->command_meta_callback_functions($subcmd, $cmdNameStack) );
+                $buf->appendBuffer( $this->command_meta_callback_functions($subcmd) );
             }
         }
         return $buf;
@@ -572,10 +563,7 @@ class ZshGenerator
     }
 
 
-    public function complete_with_subcommands($cmd, $level = 1, $cmdNameStack = array() ) {
-        if (! $cmd instanceof Application) {
-            $cmdNameStack[] = $cmd->getName();
-        }
+    public function complete_with_subcommands($cmd, $level = 1) {
         $cmdSignature = $cmd->getSignature();
 
         $buf = new Buffer;
@@ -622,9 +610,9 @@ class ZshGenerator
             $buf->appendLine("($k)");
 
             if ($subcmd->hasCommands()) {
-                $buf->appendBlock($this->complete_with_subcommands($subcmd, $level + 1, $cmdNameStack));
+                $buf->appendBlock($this->complete_with_subcommands($subcmd, $level + 1));
             } else {
-                $buf->appendBlock($this->complete_command_options_arguments($subcmd, $level + 1, $cmdNameStack));
+                $buf->appendBlock($this->complete_command_options_arguments($subcmd, $level + 1));
             }
             $buf->appendLine(";;");
         }
