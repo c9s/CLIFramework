@@ -38,7 +38,10 @@ class CommitCommand extends CLIFramework\Command {
 
         $opts->add('c|reedit-message:','like -C, but with -c the editor is invoked, so that the user can further edit the commit message.')
             ->isa('string')
-            ->validValues([ '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'])
+            ->validValues(function() {
+                exec("git rev-list --abbrev-commit HEAD -n 20", $output);
+                return $output;
+            })
             ;
 
         $opts->add('author:', 'Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.')

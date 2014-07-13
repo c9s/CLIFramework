@@ -45,12 +45,17 @@ function join_indent($lines, $level = 1) {
 /**
  * wrap zsh code with function
  */
-function zsh_comp_function($name, $code) {
-    return "(( \$+functions[$name] )) ||\n"
-        . "$name () {\n"
-        . str_indent($code, 1) . "\n"
-        . "}\n"
-        ;
+function zsh_comp_function($name, $code , $guard = false) {
+    $buf = new Buffer;
+    if ($guard) {
+        $buf->appendLine("(( \$+functions[$name] )) ||");
+    }
+    $buf->appendLine("$name () {");
+    $buf->indent();
+    $buf->appendBuffer($code);
+    $buf->unindent();
+    $buf->appendLine("}");
+    return $buf;
 }
 
 function case_in($name, $code) {
@@ -83,13 +88,19 @@ class ZshGenerator
      */
     public $compName;
 
+    /**
+     * @var string $bindName
+     */
+    public $bindName;
+
     public $buffer;
 
-    public function __construct($app, $programName, $compName)
+    public function __construct($app, $programName, $bindName, $compName)
     {
         $this->app = $app;
         $this->programName = $programName;
         $this->compName = $compName;
+        $this->bindName = $bindName;
         $this->buffer = new Buffer;
     }
 
@@ -161,6 +172,7 @@ class ZshGenerator
         $str = "";
 
         $optspec = $opt->flag || $opt->optional ? '' : '=';
+        $optName = $opt->long ? $opt->long : $opt->short;
 
         if ($opt->short && $opt->long) {
             if (!$opt->multiple) {
@@ -179,31 +191,30 @@ class ZshGenerator
         // output description
         $str .= "[" . addslashes($opt->desc) . "]";
 
+        $placeholder = ($opt->valueName) ? $opt->valueName : $opt->isa ? $opt->isa : null;
 
         // has anything to complete
         if ($opt->validValues || $opt->suggestions || $opt->isa) {
 
             $str .= ':'; // for the value name
-            if ($opt->valueName) {
-                $str .= $opt->valueName;
-            } elseif ($opt->isa) {
-                $str .= $opt->isa;
+
+            if ($placeholder) {
+                $str .= $placeholder;
             }
 
             if ($opt->validValues || $opt->suggestions) {
                 $values = array();
 
                 if ($opt->validValues) {
-                    if ( is_callable($opt->suggestions) ) {
-                        // XXX:
-                        // $str .= ':';
+                    if ( is_callable($opt->validValues) ) {
+                        $str .= ':{' . join(' ', array($this->meta_command_name(), $placeholder, $cmdSignature, 'opt', $optName, 'valid-values')) . '}';
                     } elseif ($values = $opt->getValidValues()) {
                         // not callable, generate static array
                         $str .= ':(' . join(' ', $values) . ')';
                     }
                 } elseif ($opt->suggestions) {
                     if ( is_callable($opt->suggestions) ) {
-                        // XXX:
+                        $str .= ':{' . join(' ', array($this->meta_command_name(), $placeholder, $cmdSignature, 'opt', $optName, 'suggestions') ) . '}';
                     } elseif ($values = $opt->getSuggestions()) {
                         // not callable, generate static array
                         $str .= ':(' . join(' ', $values) . ')';
@@ -243,8 +254,9 @@ class ZshGenerator
         $args = array();
         $arginfos = $cmd->getArgumentsInfo();
 
-        $idx = 1;
+        $idx = 0;
         foreach($arginfos as $a) {
+            $idx++;
             $comp = '';
 
             if ($a->multiple) {
@@ -256,11 +268,18 @@ class ZshGenerator
             if ($a->validValues || $a->suggestions) {
                 $values = array();
                 if ($a->validValues) {
-                    $values = $a->getValidValues();
+                    if (is_callable($a->validValues)) {
+                        $comp .= ':{' . join(' ', array($this->meta_command_name(), $a->name, $cmdSignature, 'arg', $idx, 'valid-values')) . '}';
+                    } elseif ($values = $a->getValidValues()) {
+                        $comp .= ':(' . join(" ", $values) . ')';
+                    }
                 } elseif ($a->suggestions ) {
-                    $values = $a->getSuggestions();
+                    if (is_callable($a->suggestions)) {
+                        $comp .= ':{' . join(' ', array($this->meta_command_name(), $a->name, $cmdSignature, 'arg', $idx, 'suggestions')) . '}';
+                    } elseif ($values = $a->getSuggestions()) {
+                        $comp .= ':(' . join(" ", $values) . ')';
+                    }
                 }
-                $comp .= ':(' . join(" ", $values) . ')';
             } elseif (in_array($a->isa,array('file','path','dir'))) {
                 switch($a->isa) {
                     case "file":
@@ -290,7 +309,6 @@ class ZshGenerator
         if (!$subcmd instanceof Application) {
             $cmdNameStack[] = $subcmd->getName();
         }
-        // $cmdSignature = $this->command_signature($cmdNameStack);
         $cmdSignature = $subcmd->getSignature();
 
 
@@ -363,8 +381,6 @@ class ZshGenerator
     public function command_args_case($cmd) {
         $buf = new Buffer;
         $arginfos = $cmd->getArgumentsInfo();
-        $idx = 1;
-
         $buf->appendLine("case \$state in");
 
         foreach($arginfos as $a) {
@@ -416,16 +432,43 @@ class ZshGenerator
         return $args;
     }
 
+    public function command_meta_function() {
+        $buf = new Buffer;
+        $buf->indent();
+        $buf->appendLine("local curcontext=\$curcontext state line ret=1");
+        # $buf->appendLine("declare -A opt_args");
+        $buf->appendLine("declare -A values");
+        $buf->appendLine("local ret=1");
+        /*
+        values=$(example/demo _meta commit arg 1 valid-values)
+        _values "description" ${=values} && ret=0
+        return ret
+        */
+        $buf->appendLine("local desc=\$1");
+        $buf->appendLine("local cmdsig=\$2");
+        $buf->appendLine("local valtype=\$3");
+        $buf->appendLine("local pos=\$4");
+        $buf->appendLine("local completion=\$5");
+
+        $metaCommand = array($this->programName, '_meta', '$cmdsig', '$valtype', '$pos', '$completion');
+        $buf->appendLine('values=$(' . join(" ",$metaCommand) . ')');
+        $buf->appendLine('_values $desc ${=values} && ret=0'); // expand value array as arguments
+        $buf->appendLine('return ret');
+        return zsh_comp_function($this->meta_command_name(), $buf);
+    }
+
+    public function meta_command_name() {
+        return '__' . preg_replace('/\W/','_',$this->compName) . '_meta';
+    }
+
 
     /**
      * Zsh function usage
      *
      * example/demo _meta commit arg 1 valid-values
      * appName _meta sub1.sub2.sub3 opt email valid-values
-     *
-     * TODO: Use _values to provide completion
      */
-    public function command_meta_callback_function($cmd, $prefix = null, $cmdNameStack = array()) {
+    public function command_meta_callback_function($cmd, $cmdNameStack = array()) {
         if (! $cmd instanceof Application) {
             $cmdNameStack[] = $cmd->getName();
         }
@@ -437,53 +480,29 @@ class ZshGenerator
 
         $buf->appendLine("local curcontext=\$curcontext state line ret=1");
         $buf->appendLine("declare -A opt_args");
+        $buf->appendLine("declare -A values");
         $buf->appendLine("local ret=1");
 
         /*
-        local curcontext=$curcontext state line ret=1
-        declare -A opt_args
-        local ret=1
-        declare -a values
         values=$(example/demo _meta commit arg 1 valid-values)
-
-        # =values to expand values
         _values "description" ${=values} && ret=0
         return ret
-         */
+        */
+        $buf->appendLine("local desc=\$1");
+        $buf->appendLine("local valtype=\$3");
+        $buf->appendLine("local pos=\$4");
+        $buf->appendLine("local completion=\$5");
 
+        $metaCommand = array($this->programName,'_meta', $cmdSignature, '$valtype', '$pos', '$completion');
+        $buf->appendLine('$(' . join(" ",$metaCommand) . ')');
+        $buf->appendLine('_values $desc ${=values} && ret=0'); // expand value array as arguments
+        $buf->appendLine('return ret');
 
-        $flags = $this->command_flags($cmd, $cmdSignature);
-        $args  = $this->command_args($cmd, $cmdSignature);
-
-        if ($flags || $args) {
-            $buf->appendLine("_arguments -w -C -S -s \\");
-            $buf->indent();
-            if ($flags) {
-                foreach( $flags as $flag ) {
-                    $buf->appendLine($flag . " \\");
-                }
-            }
-
-            if ($args) {
-                foreach( $args as $arg ) {
-                    $buf->appendLine($arg . " \\");
-                }
-            }
-            $buf->appendLine("&& ret=0");
-            $buf->unindent();
-            $buf->appendBlock($this->command_args_case($cmd));
-        }
-        $buf->appendLine("return ret");
-
-        $funcName = preg_replace('#\W#','_',join('_', $cmdNameStack));
-
-        if ($prefix) {
-            $funcName = $prefix . $funcName;
-        }
-        return zsh_comp_function($funcName, $buf->__toString());
+        $funcName = $this->command_function_name($cmdSignature);
+        return zsh_comp_function($funcName, $buf);
     }
 
-    public function command_meta_callback_functions($programName, $cmd, $cmdNameStack = array() ) {
+    public function command_meta_callback_functions($cmd, $cmdNameStack = array() ) {
         if (! $cmd instanceof Application) {
             $cmdNameStack[] = $cmd->getName();
         }
@@ -494,10 +513,10 @@ class ZshGenerator
         $buf = new Buffer;
         $subcmds = $this->visible_commands($cmd->getCommandObjects());
         foreach($subcmds as $subcmd) {
-            $buf->append($this->command_meta_callback_function($subcmd, '__', $cmdNameStack));
+            $buf->append($this->command_meta_callback_function($subcmd, $cmdNameStack));
 
             if ($subcmd->hasCommands()) {
-                $buf->appendBuffer( $this->command_meta_callback_functions($programName, $subcmd, $cmdNameStack) );
+                $buf->appendBuffer( $this->command_meta_callback_functions($subcmd, $cmdNameStack) );
             }
         }
         return $buf;
@@ -513,50 +532,37 @@ class ZshGenerator
 
         $metaName = '_' . $this->programName . '_meta';
 
-        $buf->appendLines(array(
-'(( $+functions['.$metaName.'] )) ||',
-$metaName . ' () {',
-    'local curcontext=$curcontext state line ret=1',
-    'declare -A opt_args',
-    'local ret=1',
-    'declare -a values',
-    'values=$(example/demo _meta $2 $3 $4 $5)',
-    '# =values to expand values',
-    '_values $1 ${=values} && ret=0',
-    'return ret',
-'}',
-        ));
-
-
-        $buf->appendBuffer( $this->command_meta_callback_functions($this->programName, $this->app) );
+        $buf->append( $this->command_meta_function() );
 
         $buf->appendLines(array(
             "{$this->compName}() {",
             "local curcontext=\$curcontext state line",
             "typeset -A opt_args",
             "local ret=1",
-            $this->complete_with_subcommands($this->programName, $this->app), // create an empty command name stack and 1 level indent
+            $this->complete_with_subcommands($this->app), // create an empty command name stack and 1 level indent
             "return ret",
             "}",
-            "compdef {$this->compName} {$this->programName}"
+            "compdef {$this->compName} {$this->bindName}"
         ));
         return $buf->__toString();
     }
 
 
-    public function command_signature($cmdNameStack = array()) {
-        if (!empty($cmdNameStack)) {
-            return preg_replace('#[^.]#','_', join('.', $cmdNameStack));
-        }
-        return '';
+    /**
+     * Convert command signature "foo.bar-top" into zsh function name "__foo_bar_top"
+     *
+     * @param string $sig
+     */
+    public function command_function_name($signature) {
+        return '__' . $this->compName . '_' . preg_replace('#\W#','_', $signature);
     }
 
 
-    public function complete_with_subcommands($programName, $cmd, $level = 1, $cmdNameStack = array() ) {
+    public function complete_with_subcommands($cmd, $level = 1, $cmdNameStack = array() ) {
         if (! $cmd instanceof Application) {
             $cmdNameStack[] = $cmd->getName();
         }
-        $cmdSignature = $this->command_signature($cmdNameStack);
+        $cmdSignature = $cmd->getSignature();
 
         $buf = new Buffer;
         $buf->setIndent($level);
@@ -602,7 +608,7 @@ $metaName . ' () {',
             $buf->appendLine("($k)");
 
             if ($subcmd->hasCommands()) {
-                $buf->appendBlock($this->complete_with_subcommands($programName, $subcmd, $level + 1, $cmdNameStack));
+                $buf->appendBlock($this->complete_with_subcommands($subcmd, $level + 1, $cmdNameStack));
             } else {
                 $buf->appendBlock($this->complete_command_options_arguments($subcmd, $level + 1, $cmdNameStack));
             }
