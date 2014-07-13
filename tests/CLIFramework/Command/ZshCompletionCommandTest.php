@@ -11,16 +11,16 @@ class CommitCommand extends CLIFramework\Command {
 
         $opts->add('C|reuse-message:','Take an existing commit object, and reuse the log message and the authorship information (including the timestamp) when creating the commit.')
             ->isa('string')
-            ->validValues([ '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'])
+            ->validValues(array( '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'))
             ;
 
         $opts->add('c|reedit-message:','like -C, but with -c the editor is invoked, so that the user can further edit the commit message.')
             ->isa('string')
-            ->validValues([ '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'])
+            ->validValues(array( '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'))
             ;
 
         $opts->add('author:', 'Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.')
-            ->suggestions([ 'c9s', 'foo' , 'bar' ])
+            ->suggestions(array( 'c9s', 'foo' , 'bar' ))
             ->valueName('author name')
             ;
 
@@ -31,11 +31,11 @@ class CommitCommand extends CLIFramework\Command {
 
     public function arguments($args) {
         $args->add('user')
-            ->validValues(['c9s','bar','foo'])
+            ->validValues(array('c9s','bar','foo'))
             ;
 
         $args->add('repo')
-            ->validValues(['CLIFramework','GetOptionKit'])
+            ->validValues(array('CLIFramework','GetOptionKit'))
             ;
 
         $args->add('file')
