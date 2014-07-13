@@ -45,7 +45,7 @@ function join_indent($lines, $level = 1) {
 /**
  * wrap zsh code with function
  */
-function zsh_comp_function($name, $code , $guard = false) {
+function zsh_comp_function($name, $code , $guard = true) {
     $buf = new Buffer;
     if ($guard) {
         $buf->appendLine("(( \$+functions[$name] )) ||");
@@ -436,14 +436,9 @@ class ZshGenerator
         $buf = new Buffer;
         $buf->indent();
         $buf->appendLine("local curcontext=\$curcontext state line ret=1");
-        # $buf->appendLine("declare -A opt_args");
+        $buf->appendLine("declare -A opt_args");
         $buf->appendLine("declare -A values");
         $buf->appendLine("local ret=1");
-        /*
-        values=$(example/demo _meta commit arg 1 valid-values)
-        _values "description" ${=values} && ret=0
-        return ret
-        */
         $buf->appendLine("local desc=\$1");
         $buf->appendLine("local cmdsig=\$2");
         $buf->appendLine("local valtype=\$3");
