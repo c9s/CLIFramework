@@ -66,6 +66,10 @@ Automatic Zsh Completion Generator:
 
 ![Imgur](http://imgur.com/sU3mrDe.gif)
 
+With Lazy Completion Values:
+
+![Imgur](http://i.imgur.com/ItYGDIu.gif)
+
 
 Command Forms
 ---------------------
