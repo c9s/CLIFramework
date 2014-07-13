@@ -33,7 +33,7 @@ class CommitCommand extends CLIFramework\Command {
 
         $opts->add('C|reuse-message:','Take an existing commit object, and reuse the log message and the authorship information (including the timestamp) when creating the commit.')
             ->isa('string')
-            ->validValues([ '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'])
+            ->validValues([ 'static-50768ab', 'static-c2efdc2', 'static-ed5ba6a', 'static-cf0b1eb'])
             ;
 
         $opts->add('c|reedit-message:','like -C, but with -c the editor is invoked, so that the user can further edit the commit message.')
