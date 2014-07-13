@@ -10,7 +10,25 @@ function output($str) {
 }
 
 function output_values($values) {
-    echo join("\n", $values);
+    // indexed array
+    if (empty($values)) {
+        return;
+    }
+    if (isset($values[0]) && is_array($values[0])) {
+        echo "#descriptions\n";
+        foreach($values as $value) {
+            list($key,$val) = $value;
+            echo "$key:" . addcslashes($val,":") . "\n";
+        }
+    } elseif (isset($values[0])) {
+        echo "#values\n";
+        echo join("\n", $values);
+    } else {
+        echo "#descriptions\n";
+        foreach($values as $key => $val) {
+            echo "$key:" . addcslashes($val,":") . "\n";
+        }
+    }
 }
 
 class MetaCommand extends Command

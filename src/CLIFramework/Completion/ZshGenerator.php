@@ -45,7 +45,7 @@ function join_indent($lines, $level = 1) {
 /**
  * wrap zsh code with function
  */
-function zsh_comp_function($name, $code , $guard = true) {
+function zsh_comp_function($name, $code , $guard = false) {
     $buf = new Buffer;
     if ($guard) {
         $buf->appendLine("(( \$+functions[$name] )) ||");
@@ -71,6 +71,18 @@ function case_case($pattern, $code) {
         . str_indent($code, 1) . "\n"
         . ";;\n"
         ;
+}
+
+function zsh_comp_desc_array($array) {
+    $out = new Buffer;
+    $out->appendLine('(');
+    $out->indent();
+    foreach($array as $item => $desc) {
+        $out->appendLine("'" . addslashes("$item:$desc") . "'");
+    }
+    $out->unindent();
+    $out->appendLine(')');
+    return $out;
 }
 
 
@@ -203,8 +215,6 @@ class ZshGenerator
             }
 
             if ($opt->validValues || $opt->suggestions) {
-                $values = array();
-
                 if ($opt->validValues) {
                     if ( is_callable($opt->validValues) ) {
                         $str .= ':{' . join(' ', array($this->meta_command_name(), $placeholder, $cmdSignature, 'opt', $optName, 'valid-values')) . '}';
@@ -437,7 +447,9 @@ class ZshGenerator
         $buf->indent();
         $buf->appendLine("local curcontext=\$curcontext state line ret=1");
         $buf->appendLine("declare -A opt_args");
-        $buf->appendLine("declare -A values");
+        $buf->appendLine("declare -a lines");
+        $buf->appendLine("declare -a args");
+
         $buf->appendLine("local ret=1");
         $buf->appendLine("local desc=\$1");
         $buf->appendLine("local cmdsig=\$2");
@@ -446,8 +458,20 @@ class ZshGenerator
         $buf->appendLine("local completion=\$5");
 
         $metaCommand = array($this->programName, '_meta', '$cmdsig', '$valtype', '$pos', '$completion');
-        $buf->appendLine('values=$(' . join(" ",$metaCommand) . ')');
-        $buf->appendLine('_values $desc ${=values} && ret=0'); // expand value array as arguments
+
+        // ${(@f)$( )} expand lines to array
+        $buf->appendLine('lines=("${(@f)$(' . join(" ",$metaCommand) . ')}")');
+
+        $buf->appendLine('if [[ $lines[1] == "#values" ]] ; then');
+        $buf->appendLine('    args=(${lines:1})');
+        $buf->appendLine('   _values $desc ${=args} && ret=0');
+        $buf->appendLine('elif [[ $lines[1] == "#descriptions" ]] ; then');
+        $buf->appendLine('    args=(${lines:1})');
+        $buf->appendLine('    _describe $desc args && ret=0');
+        $buf->appendLine('else');
+        $buf->appendLine('   _values $desc ${=lines} && ret=0');
+        $buf->appendLine('fi');
+        // $buf->appendLine('_values $desc ${=values} && ret=0'); // expand value array as arguments
         $buf->appendLine('return ret');
         return zsh_comp_function($this->meta_command_name(), $buf);
     }
