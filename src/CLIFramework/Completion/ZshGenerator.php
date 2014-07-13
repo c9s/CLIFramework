@@ -8,20 +8,20 @@ function indent($level) {
     return str_repeat('  ', $level);
 }
 
-function quote($str) {
+function qq($str) {
     return '"' . addcslashes($str , '"') . '"';
 }
 
-function single_quote($str) {
-    return "'" . addslashes($str) . "'";
+function q($str) {
+    return "'" . addcslashes($str, "'") . "'";
 }
 
-function array_quote($array) {
-    return array_map("quote", $array);
+function array_qq($array) {
+    return array_map("CLIFramework\\Completion\\qq", $array);
 }
 
-function array_single_quote($array) {
-    return array_map("single_quote", $array);
+function array_q($array) {
+    return array_map("CLIFramework\\Completion\\q", $array);
 }
 
 function str_indent($content, $level = 1) {
@@ -121,10 +121,6 @@ class ZshGenerator
         return $this->complete_application();
     }
 
-    public function command_desc_item($name, $cmd) {
-        return "'$name:" . addslashes($cmd->brief()) . "'";
-    }
-
     public function visible_commands($cmds) {
         $visible = array();
         foreach ( $cmds as $name => $cmd ) {
@@ -141,7 +137,7 @@ class ZshGenerator
             if ( preg_match('#^_#', $name) ) {
                 continue;
             }
-            $args[] = $this->command_desc_item($name, $cmd);
+            $args[] = "$name:" . q($cmd->brief());
         }
         return $args;
     }
@@ -150,10 +146,9 @@ class ZshGenerator
     public function describe_commands($cmds, $level = 0) {
         $buf = new Buffer;
         $buf->setIndent($level);
-        $array  = $this->command_desc_array($cmds);
         $buf->appendLine("local commands; commands=(");
         $buf->indent();
-        $buf->appendLines($array);
+        $buf->appendLines($this->command_desc_array($cmds));
         $buf->unindent();
         $buf->appendLine(")");
         $buf->appendLine("_describe -t commands 'command' commands && ret=0");
@@ -201,7 +196,7 @@ class ZshGenerator
         }
 
         // output description
-        $str .= "[" . addslashes($opt->desc) . "]";
+        $str .= "[" . addcslashes($opt->desc,'[]:') . "]";
 
         $placeholder = ($opt->valueName) ? $opt->valueName : $opt->isa ? $opt->isa : null;
 
@@ -217,17 +212,17 @@ class ZshGenerator
             if ($opt->validValues || $opt->suggestions) {
                 if ($opt->validValues) {
                     if ( is_callable($opt->validValues) ) {
-                        $str .= ':{' . join(' ', array($this->meta_command_name(), $placeholder, $cmdSignature, 'opt', $optName, 'valid-values')) . '}';
+                        $str .= ':{' . join(' ', array($this->meta_command_name(), qq($placeholder), $cmdSignature, 'opt', $optName, 'valid-values')) . '}';
                     } elseif ($values = $opt->getValidValues()) {
                         // not callable, generate static array
-                        $str .= ':(' . join(' ', $values) . ')';
+                        $str .= ':(' . join(' ', array_qq($values)) . ')';
                     }
                 } elseif ($opt->suggestions) {
                     if ( is_callable($opt->suggestions) ) {
-                        $str .= ':{' . join(' ', array($this->meta_command_name(), $placeholder, $cmdSignature, 'opt', $optName, 'suggestions') ) . '}';
+                        $str .= ':{' . join(' ', array($this->meta_command_name(), qq($placeholder), $cmdSignature, 'opt', $optName, 'suggestions') ) . '}';
                     } elseif ($values = $opt->getSuggestions()) {
                         // not callable, generate static array
-                        $str .= ':(' . join(' ', $values) . ')';
+                        $str .= ':(' . join(' ', array_qq($values)) . ')';
                     }
                 }
 
@@ -266,7 +261,6 @@ class ZshGenerator
 
         $idx = 0;
         foreach($arginfos as $a) {
-            $idx++;
             $comp = '';
 
             if ($a->multiple) {
@@ -279,15 +273,15 @@ class ZshGenerator
                 $values = array();
                 if ($a->validValues) {
                     if (is_callable($a->validValues)) {
-                        $comp .= ':{' . join(' ', array($this->meta_command_name(), $a->name, $cmdSignature, 'arg', $idx, 'valid-values')) . '}';
+                        $comp .= ':{' . join(' ', array($this->meta_command_name(), qq($a->name), $cmdSignature, 'arg', $idx, 'valid-values')) . '}';
                     } elseif ($values = $a->getValidValues()) {
-                        $comp .= ':(' . join(" ", $values) . ')';
+                        $comp .= ':(' . join(" ", array_qq($values)) . ')';
                     }
                 } elseif ($a->suggestions ) {
                     if (is_callable($a->suggestions)) {
-                        $comp .= ':{' . join(' ', array($this->meta_command_name(), $a->name, $cmdSignature, 'arg', $idx, 'suggestions')) . '}';
+                        $comp .= ':{' . join(' ', array($this->meta_command_name(), qq($a->name), $cmdSignature, 'arg', $idx, 'suggestions')) . '}';
                     } elseif ($values = $a->getSuggestions()) {
-                        $comp .= ':(' . join(" ", $values) . ')';
+                        $comp .= ':(' . join(" ", array_qq($values)) . ')';
                     }
                 }
             } elseif (in_array($a->isa,array('file','path','dir'))) {
@@ -306,7 +300,8 @@ class ZshGenerator
                     $comp .= " -g \"{$a->glob}\"";
                 }
             }
-            $args[] = single_quote($comp);
+            $args[] = q($comp);
+            $idx++;
         }
         return empty($args) ? NULL : $args;
     }
@@ -464,12 +459,12 @@ class ZshGenerator
 
         $buf->appendLine('if [[ $lines[1] == "#values" ]] ; then');
         $buf->appendLine('    args=(${lines:1})');
-        $buf->appendLine('   _values $desc ${=args} && ret=0');
+        $buf->appendLine('   _values "$desc" ${=args} && ret=0');
         $buf->appendLine('elif [[ $lines[1] == "#descriptions" ]] ; then');
         $buf->appendLine('    args=(${lines:1})');
-        $buf->appendLine('    _describe $desc args && ret=0');
+        $buf->appendLine('    _describe "$desc" args && ret=0');
         $buf->appendLine('else');
-        $buf->appendLine('   _values $desc ${=lines} && ret=0');
+        $buf->appendLine('   _values "$desc" ${=lines} && ret=0');
         $buf->appendLine('fi');
         // $buf->appendLine('_values $desc ${=values} && ret=0'); // expand value array as arguments
         $buf->appendLine('return ret');
