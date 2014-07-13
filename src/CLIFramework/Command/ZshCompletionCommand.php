@@ -12,7 +12,7 @@ namespace CLIFramework\Command;
 
 use CLIFramework\Command;
 use CLIFramework\CommandInterface;
-use CLIFramework\Zsh;
+use CLIFramework\Completion\ZshGenerator;
 
 class ZshCompletionCommand extends Command
     implements CommandInterface
@@ -30,7 +30,8 @@ class ZshCompletionCommand extends Command
         }
 
         $compName = "_" . preg_replace('#\W+#','_',$programName);
-        echo Zsh::complete_application($this->getApplication(), $programName, $compName);
+        $generator = new ZshGenerator($this->getApplication(), $programName, $compName);
+        echo $generator->output();
     }
 
 

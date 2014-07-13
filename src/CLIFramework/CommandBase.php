@@ -305,6 +305,28 @@ abstract class CommandBase
 
 
     /**
+     * Return the command name stack
+     *
+     * @return string[]
+     */
+    public function getCommandNameStack() {
+        $cmdStacks = array( $this->getName() );
+        $p = $this->parent;
+        while($p) {
+            if (! $p instanceof Application) {
+                $cmdStacks[] = $p->getName();
+            }
+            $p = $p->parent;
+        }
+        return array_reverse($cmdStacks);
+    }
+
+    public function getSignature() {
+        return join('.', $this->getCommandNameStack());
+    }
+
+
+    /**
      * Return the objects of all sub commands.
      *
      * @return Command[]

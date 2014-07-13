@@ -1,7 +1,8 @@
 <?php
-namespace CLIFramework;
+namespace CLIFramework\Completion;
 use CLIFramework\Buffer;
 use Exception;
+use CLIFramework\Application;
 
 function indent($level) {
     return str_repeat('  ', $level);
@@ -73,13 +74,40 @@ function case_case($pattern, $code) {
 }
 
 
-class Zsh
+class ZshGenerator
 {
-    public static function command_desc_item($name, $cmd) {
+    public $app;
+
+    /**
+     * @var string $program
+     */
+    public $programName;
+
+    /**
+     * @var string $compName
+     */
+    public $compName;
+
+    public $buffer;
+
+    public function __construct($app, $programName, $compName)
+    {
+        $this->app = $app;
+        $this->programName = $programName;
+        $this->compName = $compName;
+        $this->buffer = new Buffer;
+    }
+
+
+    public function output() {
+        return $this->complete_application();
+    }
+
+    public function command_desc_item($name, $cmd) {
         return "'$name:" . addslashes($cmd->brief()) . "'";
     }
 
-    public static function visible_commands($cmds) {
+    public function visible_commands($cmds) {
         $visible = array();
         foreach ( $cmds as $name => $cmd ) {
             if ( ! preg_match('#^_#', $name) ) {
@@ -89,25 +117,29 @@ class Zsh
         return $visible;
     }
 
-    public static function command_desc_array($cmds) {
+    public function command_desc_array($cmds) {
         $args = array();
         foreach ( $cmds as $name => $cmd ) {
             if ( preg_match('#^_#', $name) ) {
                 continue;
             }
-            $args[] = self::command_desc_item($name, $cmd);
+            $args[] = $this->command_desc_item($name, $cmd);
         }
         return $args;
     }
 
 
-    public static function describe_commands($cmds) {
-        $array  = Zsh::command_desc_array($cmds);
-        $code  = "local commands; commands=(\n";
-        $code .= join("\n", array_indent($array, 1) );
-        $code .= ")\n";
-        $code .= "_describe -t commands 'command' commands && ret=0\n";
-        return $code;
+    public function describe_commands($cmds, $level = 0) {
+        $buf = new Buffer;
+        $buf->setIndent($level);
+        $array  = $this->command_desc_array($cmds);
+        $buf->appendLine("local commands; commands=(");
+        $buf->indent();
+        $buf->appendLines($array);
+        $buf->unindent();
+        $buf->appendLine(")");
+        $buf->appendLine("_describe -t commands 'command' commands && ret=0");
+        return $buf;
     }
 
 
@@ -129,7 +161,7 @@ class Zsh
                                                                             strip\:"remove both whitespace and commentary lines"
                                                                             default\:"act as '\''strip'\'' if the message is to be edited and as '\''whitespace'\'' otherwise"))' \
     */
-    public static function option_flag_item($opt) {
+    public function option_flag_item($opt, $cmdSignature) {
         // TODO: Check conflict options
         $str = "";
 
@@ -165,14 +197,24 @@ class Zsh
 
             if ($opt->validValues || $opt->suggestions) {
                 $values = array();
+
                 if ($opt->validValues) {
-                    $values = $opt->getValidValues();
+                    if ( is_callable($opt->suggestions) ) {
+                        // XXX:
+                        // $str .= ':';
+                    } elseif ($values = $opt->getValidValues()) {
+                        // not callable, generate static array
+                        $str .= ':(' . join(' ', $values) . ')';
+                    }
                 } elseif ($opt->suggestions) {
-                    $values = $opt->getSuggestions();
+                    if ( is_callable($opt->suggestions) ) {
+                        // XXX:
+                    } elseif ($values = $opt->getSuggestions()) {
+                        // not callable, generate static array
+                        $str .= ':(' . join(' ', $values) . ')';
+                    }
                 }
-                if ($values) {
-                    $str .= ':(' . join(' ', $values) . ')';
-                }
+
             } elseif ( in_array($opt->isa, array('file', 'dir', 'path')) ) {
                 switch($opt->isa) {
                     case 'file':
@@ -202,7 +244,7 @@ class Zsh
     *
     *  "*:args:{ _alternative ':importpaths:__go_list' ':files:_path_files -g \"*.go\"' }"
     */
-    public static function command_args($cmd) {
+    public function command_args($cmd, $cmdSignature) {
         $args = array();
         $arginfos = $cmd->getArgumentsInfo();
 
@@ -249,18 +291,19 @@ class Zsh
     /**
      * Complete commands with options and its arguments (without subcommands)
      */
-    public static function complete_command_options_arguments($subcmd, $level = 1, $cmdNameStack = array() ) {
+    public function complete_command_options_arguments($subcmd, $level = 1, $cmdNameStack = array() ) {
         if (!$subcmd instanceof Application) {
             $cmdNameStack[] = $subcmd->getName();
         }
-        $cmdSignature = self::command_signature($cmdNameStack);
+        // $cmdSignature = $this->command_signature($cmdNameStack);
+        $cmdSignature = $subcmd->getSignature();
 
 
         $buf = new Buffer;
         $buf->setIndent($level);
 
-        $args  = self::command_args($subcmd);
-        $flags = self::command_flags($subcmd);
+        $args  = $this->command_args($subcmd, $cmdSignature);
+        $flags = $this->command_flags($subcmd, $cmdSignature);
 
         if ( $flags || $args ) {
             $buf->appendLine("_arguments -w -S -s \\");
@@ -282,7 +325,7 @@ class Zsh
         return $buf->__toString();
     }
 
-    public static function render_argument_completion_handler($a) {
+    public function render_argument_completion_handler($a) {
         $comp = '';
         switch($a->isa) {
             case "file":
@@ -303,7 +346,7 @@ class Zsh
 
 
 
-    public static function render_argument_completion_values($a) {
+    public function render_argument_completion_values($a) {
         if ($a->validValues || $a->suggestions) {
             $values = array();
             if ($a->validValues) {
@@ -322,7 +365,7 @@ class Zsh
     /**
      * complete argument cases
      */
-    public static function command_args_case($cmd) {
+    public function command_args_case($cmd) {
         $buf = new Buffer;
         $arginfos = $cmd->getArgumentsInfo();
         $idx = 1;
@@ -333,9 +376,9 @@ class Zsh
             $buf->appendLine("({$a->name})");
 
             if ($a->validValues || $a->suggestions) {
-                $buf->appendLine("_values " . self::render_argument_completion_values($a) . ' && ret=0');
+                $buf->appendLine("_values " . $this->render_argument_completion_values($a) . ' && ret=0');
             } elseif (in_array($a->isa,array('file','path','dir'))) {
-                $buf->appendLine(self::render_argument_completion_handler($a) . ' && ret=0');
+                $buf->appendLine($this->render_argument_completion_handler($a) . ' && ret=0');
             }
             $buf->appendLine(";;");
         }
@@ -348,7 +391,7 @@ class Zsh
      *
      * @return string[]
      */
-    public static function command_flags($cmd) {
+    public function command_flags($cmd, $cmdSignature) {
         $args = array();
         $specs = $cmd->getOptionCollection();
         /*
@@ -356,7 +399,7 @@ class Zsh
         '(- 1 *)--help[print a short help statement]' \
         */
         foreach ($specs->options as $opt ) {
-            $args[] = self::option_flag_item($opt);
+            $args[] = $this->option_flag_item($opt, $cmdSignature);
         }
         return empty($args) ? NULL : $args;
     }
@@ -369,9 +412,9 @@ class Zsh
      *
      * @return string[]
      */
-    public static function command_subcommand_states($cmd) {
+    public function command_subcommand_states($cmd) {
         $args = array();
-        $cmds = self::visible_commands($cmd->getCommandObjects());
+        $cmds = $this->visible_commands($cmd->getCommandObjects());
         foreach($cmds as $c) {
             $args[] = sprintf("'%s:->%s'", $c->getName(), $c->getName(), $c->getName()); // generate argument states
         }
@@ -387,11 +430,12 @@ class Zsh
      *
      * TODO: Use _values to provide completion
      */
-    public static function command_meta_callback_function($cmd, $prefix = null, $cmdNameStack = array()) {
+    public function command_meta_callback_function($cmd, $prefix = null, $cmdNameStack = array()) {
         if (! $cmd instanceof Application) {
             $cmdNameStack[] = $cmd->getName();
         }
-        $cmdSignature = self::command_signature($cmdNameStack);
+        $cmdSignature = $cmd->getSignature();
+        
         
         $buf = new Buffer;
         $buf->indent();
@@ -400,8 +444,21 @@ class Zsh
         $buf->appendLine("declare -A opt_args");
         $buf->appendLine("local ret=1");
 
-        $flags = self::command_flags($cmd);
-        $args  = self::command_args($cmd);
+        /*
+        local curcontext=$curcontext state line ret=1
+        declare -A opt_args
+        local ret=1
+        declare -a values
+        values=$(example/demo _meta commit arg 1 valid-values)
+
+        # =values to expand values
+        _values "description" ${=values} && ret=0
+        return ret
+         */
+
+
+        $flags = $this->command_flags($cmd, $cmdSignature);
+        $args  = $this->command_args($cmd, $cmdSignature);
 
         if ($flags || $args) {
             $buf->appendLine("_arguments -w -C -S -s \\");
@@ -419,7 +476,7 @@ class Zsh
             }
             $buf->appendLine("&& ret=0");
             $buf->unindent();
-            $buf->appendBlock(self::command_args_case($cmd));
+            $buf->appendBlock($this->command_args_case($cmd));
         }
         $buf->appendLine("return ret");
 
@@ -431,50 +488,68 @@ class Zsh
         return zsh_comp_function($funcName, $buf->__toString());
     }
 
-    public static function command_meta_callback_functions($programName, $cmd, $cmdNameStack = array() ) {
+    public function command_meta_callback_functions($programName, $cmd, $cmdNameStack = array() ) {
         if (! $cmd instanceof Application) {
             $cmdNameStack[] = $cmd->getName();
         }
-        $cmdSignature = self::command_signature($cmdNameStack);
+        $cmdSignature = $cmd->getSignature();
+        
 
 
         $buf = new Buffer;
-        $subcmds = Zsh::visible_commands($cmd->getCommandObjects());
+        $subcmds = $this->visible_commands($cmd->getCommandObjects());
         foreach($subcmds as $subcmd) {
-            $buf->append(self::command_meta_callback_function($subcmd, '__', $cmdNameStack));
+            $buf->append($this->command_meta_callback_function($subcmd, '__', $cmdNameStack));
 
             if ($subcmd->hasCommands()) {
-                $buf->appendBuffer( self::command_meta_callback_functions($programName, $subcmd, $cmdNameStack) );
+                $buf->appendBuffer( $this->command_meta_callback_functions($programName, $subcmd, $cmdNameStack) );
             }
         }
         return $buf;
     }
 
-    public static function complete_application($app, $programName, $compName) {
+    public function complete_application() {
         $buf = new Buffer;
-        $buf->appendLines([
-            "# $programName zsh completion script generated by CLIFramework",
+        $buf->appendLines(array(
+            "# {$this->programName} zsh completion script generated by CLIFramework",
             "# Web: http://github.com/c9s/php-CLIFramework",
             "# THIS IS AN AUTO-GENERATED FILE, PLEASE DON'T MODIFY THIS FILE DIRECTLY.",
-        ]);
+        ));
 
-        $buf->appendBuffer( self::command_meta_callback_functions($programName, $app) );
+        $metaName = '_' . $this->programName . '_meta';
 
-        $buf->appendLines([
-            "{$compName}() {",
+        $buf->appendLines(array(
+'(( $+functions['.$metaName.'] )) ||',
+$metaName . ' () {',
+    'local curcontext=$curcontext state line ret=1',
+    'declare -A opt_args',
+    'local ret=1',
+    'declare -a values',
+    'values=$(example/demo _meta $2 $3 $4 $5)',
+    '# =values to expand values',
+    '_values $1 ${=values} && ret=0',
+    'return ret',
+'}',
+        ));
+
+
+        $buf->appendBuffer( $this->command_meta_callback_functions($this->programName, $this->app) );
+
+        $buf->appendLines(array(
+            "{$this->compName}() {",
             "local curcontext=\$curcontext state line",
             "typeset -A opt_args",
             "local ret=1",
-            self::complete_with_subcommands($programName, $app), // create an empty command name stack and 1 level indent
+            $this->complete_with_subcommands($this->programName, $this->app), // create an empty command name stack and 1 level indent
             "return ret",
             "}",
-            "compdef $compName $programName"
-        ]);
+            "compdef {$this->compName} {$this->programName}"
+        ));
         return $buf->__toString();
     }
 
 
-    public static function command_signature($cmdNameStack = array()) {
+    public function command_signature($cmdNameStack = array()) {
         if (!empty($cmdNameStack)) {
             return preg_replace('#[^.]#','_', join('.', $cmdNameStack));
         }
@@ -482,18 +557,17 @@ class Zsh
     }
 
 
-    public static function complete_with_subcommands($programName, $cmd, $level = 1, $cmdNameStack = array() ) {
+    public function complete_with_subcommands($programName, $cmd, $level = 1, $cmdNameStack = array() ) {
         if (! $cmd instanceof Application) {
             $cmdNameStack[] = $cmd->getName();
         }
-        $cmdSignature = self::command_signature($cmdNameStack);
+        $cmdSignature = $this->command_signature($cmdNameStack);
 
         $buf = new Buffer;
         $buf->setIndent($level);
 
-        $subcmds = self::visible_commands($cmd->getCommandObjects());
-        $descs  = Zsh::describe_commands($subcmds);
-        $descs  = str_indent($descs, $level + 1);
+        $subcmds = $this->visible_commands($cmd->getCommandObjects());
+        $descsBuf  = $this->describe_commands($subcmds, $level);
 
         $code = array();
 
@@ -502,7 +576,7 @@ class Zsh
         $buf->appendLine("_arguments -C \\");
         $buf->indent();
 
-        if ($args = self::command_flags($cmd)) {
+        if ($args = $this->command_flags($cmd, $cmdSignature)) {
             foreach ($args as $arg) {
                 $buf->appendLine($arg . "\\");
             }
@@ -516,7 +590,7 @@ class Zsh
         $buf->indent();
 
         $buf->appendLine("(cmds)");
-        $buf->appendLine($descs);
+        $buf->appendBuffer($descsBuf);
         $buf->appendLine(";;");
 
         $buf->appendLine("(option-or-argument)");
@@ -533,9 +607,9 @@ class Zsh
             $buf->appendLine("($k)");
 
             if ($subcmd->hasCommands()) {
-                $buf->appendBlock(self::complete_with_subcommands($programName, $subcmd, $level + 1, $cmdNameStack));
+                $buf->appendBlock($this->complete_with_subcommands($programName, $subcmd, $level + 1, $cmdNameStack));
             } else {
-                $buf->appendBlock(self::complete_command_options_arguments($subcmd, $level + 1, $cmdNameStack));
+                $buf->appendBlock($this->complete_command_options_arguments($subcmd, $level + 1, $cmdNameStack));
             }
             $buf->appendLine(";;");
         }
@@ -546,9 +620,6 @@ class Zsh
         $buf->appendLine("esac");
         return $buf->__toString();
     }
-
-
 }
-
 
 

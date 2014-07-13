@@ -10,9 +10,8 @@ function output($str) {
 }
 
 function output_values($values) {
-    echo join(" ", $values);
+    echo join("\n", $values);
 }
-
 
 class MetaCommand extends Command
 {
