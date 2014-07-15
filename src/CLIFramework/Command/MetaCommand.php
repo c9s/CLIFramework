@@ -24,6 +24,9 @@ function as_shell_string($str) {
     return '"' . addcslashes($str, '"') . '"';
 }
 
+/**
+ * currenty it supports zsh format encode "label:desc"
+ */
 function encode_array_as_shell_string($array) {
     if (is_assoc_array($array)) {
         $output = array();
@@ -48,7 +51,9 @@ function output_values($values, $opts) {
 
     // encode complex data structure to shell
     if ($values instanceof ValueCollection) {
-        if ($opts->zsh) {
+
+        // this output format works both in zsh & bash
+        if ($opts->zsh || $opts->bash) {
             $buf = new Buffer;
             $buf->appendLine("#groups");
             $buf->appendLine("declare -A groups");
@@ -58,7 +63,7 @@ function output_values($values, $opts) {
             foreach( $values as $groupId => $groupValues) {
                 $buf->appendLine("groups[$groupId]=" . encode_array_as_shell_string($groupValues));
             }
-            foreach( $values->getLabels() as $groupId => $label) {
+            foreach( $values->getGroupLabels() as $groupId => $label) {
                 $buf->appendLine("labels[$groupId]=" . as_shell_string($label));
             }
             echo $buf;
@@ -69,7 +74,6 @@ function output_values($values, $opts) {
         }
         return;
     }
-
 
     if (isset($values[0]) && is_array($values[0])) {
         echo "#descriptions\n";
