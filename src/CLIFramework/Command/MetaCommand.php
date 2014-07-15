@@ -25,7 +25,6 @@ function as_shell_string($str) {
 }
 
 function encode_array_as_shell_string($array) {
-    var_dump( $array );
     if (is_assoc_array($array)) {
         $output = array();
         foreach($array as $key => $val) {

@@ -12,7 +12,7 @@ class ValueGroupCollection implements IteratorAggregate
 
     public $labels = array();
 
-    public function add($groupId, $value) {
+    public function add($groupId, $label, $value) {
         // for indexed array
         if (is_array($value)) {
             if ( !isset($this->groups[ $groupId ])) {
@@ -24,6 +24,7 @@ class ValueGroupCollection implements IteratorAggregate
         } else {
             $this->groups[ $groupId ][] = $value;
         }
+        $this->setLabel($groupId, $label);
     }
 
 

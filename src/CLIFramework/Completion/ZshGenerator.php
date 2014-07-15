@@ -463,6 +463,7 @@ class ZshGenerator
 
         // TODO: support title
         $buf->appendLine('if [[ $lines[1] == "#groups" ]] ; then');
+
         $buf->appendLine('    eval $output');
         $buf->appendLine('    for tag in ${(k)groups} ; do');
         $buf->appendLine('        complete_values=(${(z)${groups[$tag]}})');
