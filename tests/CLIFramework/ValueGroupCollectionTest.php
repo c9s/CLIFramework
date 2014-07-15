@@ -9,6 +9,10 @@ class ValueGroupCollectionTest extends PHPUnit_Framework_TestCase
         $groups->add('extension-commands', 'Extension Commands', array( 'install', 'enable', 'disable' ));
         $groups->add('version-related', 'Version Related Commands', array('use', 'switch', 'off' ));
 
+        foreach( $groups as $groupId => $values) {
+            ok($values);
+        }
+
         $values = $groups->get('extension-commands');
         ok($values);
         ok(is_array($values));
