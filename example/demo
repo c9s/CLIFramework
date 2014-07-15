@@ -21,6 +21,7 @@
  *
  */
 require 'vendor/autoload.php';
+use CLIFramework\ValueCollection;
 
 class CommitCommand extends CLIFramework\Command {
 
@@ -67,12 +68,14 @@ class CommitCommand extends CLIFramework\Command {
     public function arguments($args) {
         $args->add('user')
             ->validValues(function() {
-                $values = new CLIFramework\ValueCollection;
+                $values = new ValueCollection;
                 $values->group('authors', 'Authors', array(
-                    'author1' => 'ABBA',
-                    'author2' => 'Michael Jackson',
-                    'author3' => 'Adele',
-                    'author4' => 'Air'
+                    'abba' => 'ABBA',
+                    'michael' => 'Michael Jackson',
+                    'adele' => 'Adele',
+                    'air' => 'Air',
+                    'alicia' => 'Alicia Keys',
+                    'andras' => 'Andras Schiff',
                 ));
                 $values->group('admins', 'Administrators', array( 'admin1', 'admin2' , 'admin3' ));
                 $values->group('users', 'Users', array( 'userA', 'userB' , 'userC' ));
