@@ -15,13 +15,7 @@ class ValueGroupCollection implements IteratorAggregate
     public function add($groupId, $value) {
         // for indexed array
         if (is_array($value)) {
-            if (isset($value[0])) {
-                foreach( $value as $item ) {
-                    $this->groups[ $groupId ][] = $item;
-                }
-            } else {
-                $this->groups[ $groupId ] = $value;
-            }
+            $this->groups[ $groupId ] = array_merge($this->groups[ $groupId ], $value);
         } else {
             $this->groups[ $groupId ][] = $value;
         }
