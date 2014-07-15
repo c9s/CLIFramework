@@ -55,7 +55,7 @@ class CommitCommand extends CLIFramework\Command {
             ;
 
         $opts->add('author:', 'Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.')
-            ->suggestions([ 'c9s', 'foo' , 'bar' ])
+            ->suggestions(array( 'c9s', 'foo' , 'bar' ))
             ->valueName('author name')
             ;
 
@@ -74,14 +74,14 @@ class CommitCommand extends CLIFramework\Command {
                     'author3' => 'Adele',
                     'author4' => 'Air'
                 ));
-                $groups->add('admins', [ 'admin1', 'admin2' , 'admin3' ]);
-                $groups->add('user', [ 'userA', 'userB' , 'userC' ]);
+                $groups->add('admins', array( 'admin1', 'admin2' , 'admin3' ));
+                $groups->add('user', array( 'userA', 'userB' , 'userC' ));
                 return $groups;
             })
             ;
 
         $args->add('repo')
-            ->validValues(['CLIFramework','GetOptionKit'])
+            ->validValues(array('CLIFramework','GetOptionKit'))
             ;
 
         $args->add('file')

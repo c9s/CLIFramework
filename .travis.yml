@@ -9,8 +9,8 @@ before_script:
 
 script:
   - phpunit
-  - php example/demo _meta --zsh commit arg 0 valid-values
-  - php example/demo _meta --zsh commit arg 1 valid-values
+  - example/demo _meta --zsh commit arg 0 suggestions
+  - example/demo _meta --zsh commit arg 1 valid-values
 
 notifications:
   webhooks:
