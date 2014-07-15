@@ -11,6 +11,7 @@ script:
   - phpunit
   - example/demo _meta --zsh commit arg 0 suggestions
   - example/demo _meta --zsh commit arg 1 valid-values
+  - example/demo _zsh --bind demo > _zsh
 
 notifications:
   webhooks:
