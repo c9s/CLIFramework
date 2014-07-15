@@ -13,9 +13,14 @@ class ValueGroupCollection implements IteratorAggregate
     public $labels = array();
 
     public function add($groupId, $value) {
+        // for indexed array
         if (is_array($value)) {
-            foreach( $value as $item ) {
-                $this->groups[ $groupId ][] = $item;
+            if (isset($value[0])) {
+                foreach( $value as $item ) {
+                    $this->groups[ $groupId ][] = $item;
+                }
+            } else {
+                $this->groups[ $groupId ] = $value;
             }
         } else {
             $this->groups[ $groupId ][] = $value;
@@ -39,6 +44,10 @@ class ValueGroupCollection implements IteratorAggregate
         if ( isset($this->labels[ $groupId ]) ) {
             return $this->labels[ $groupId ];
         }
+    }
+
+    public function getLabels() {
+        return $this->labels;
     }
 
     public function toJson() {

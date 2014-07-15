@@ -66,7 +66,18 @@ class CommitCommand extends CLIFramework\Command {
 
     public function arguments($args) {
         $args->add('user')
-            ->validValues(['c9s','bar','foo'])
+            ->validValues(function() {
+                $groups = new CLIFramework\ValueGroupCollection;
+                $groups->add('authors', array(
+                    'author1' => 'ABBA',
+                    'author2' => 'Michael Jackson',
+                    'author3' => 'Adele',
+                    'author4' => 'Air'
+                ));
+                $groups->add('admins', [ 'admin1', 'admin2' , 'admin3' ]);
+                $groups->add('user', [ 'userA', 'userB' , 'userC' ]);
+                return $groups;
+            })
             ;
 
         $args->add('repo')

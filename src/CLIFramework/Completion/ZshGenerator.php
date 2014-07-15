@@ -451,12 +451,25 @@ class ZshGenerator
         $buf->appendLine("local pos=\$4");
         $buf->appendLine("local completion=\$5");
 
-        $metaCommand = array($this->programName, '_meta', '$cmdsig', '$valtype', '$pos', '$completion');
+        $metaCommand = array($this->programName, '_meta', '--zsh', '$cmdsig', '$valtype', '$pos', '$completion');
 
+        $buf->appendLine('output=$(' . join(" ",$metaCommand) . ')');
+
+        // zsh: split lines into array
+        // lines=("${(@f)output}") ; echo ${lines[1]}
         // ${(@f)$( )} expand lines to array
-        $buf->appendLine('lines=("${(@f)$(' . join(" ",$metaCommand) . ')}")');
+        $buf->appendLine('lines=("${(@f)output}")');
+        $buf->appendLine('output_type=${lines[1]}');
 
-        $buf->appendLine('if [[ $lines[1] == "#values" ]] ; then');
+        // TODO: support title
+        $buf->appendLine('if [[ $lines[1] == "#groups" ]] ; then');
+        $buf->appendLine('    eval $output');
+        $buf->appendLine('    for tag in ${(k)groups} ; do');
+        $buf->appendLine('        complete_values=(${(z)${groups[$tag]}})');
+        $buf->appendLine('        _describe -t $tag $tag complete_values && ret=0');
+        $buf->appendLine('    done');
+
+        $buf->appendLine('elif [[ $lines[1] == "#values" ]] ; then');
         $buf->appendLine('    args=(${lines:1})');
         $buf->appendLine('   _values "$desc" ${=args} && ret=0');
         $buf->appendLine('elif [[ $lines[1] == "#descriptions" ]] ; then');

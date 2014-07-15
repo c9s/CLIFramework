@@ -3,10 +3,41 @@ namespace CLIFramework\Command;
 use CLIFramework\Command;
 use CLIFramework\CommandInterface;
 use CLIFramework\Zsh;
+use CLIFramework\ValueGroupCollection;
 use Exception;
+use CLIFramework\Buffer;
 
 function output($str, $opts) {
     echo $str;
+}
+
+
+function is_assoc_array($array) {
+    if (empty($array)) {
+        return false;
+    }
+    $keys = array_keys($array);
+    return ! is_integer($keys[0]);
+}
+
+function as_shell_string($str) {
+    return '"' . addcslashes($str, '"') . '"';
+}
+
+function encode_array_as_shell_string($array) {
+    if (is_assoc_array($array)) {
+        $output = array();
+        foreach($array as $key => $val) {
+            $output[] = $key . ":" . addcslashes($val,": ");
+        }
+        return '"' . addcslashes(join(" ",$output), '"') . '"';
+    } else {
+        $output = array();
+        foreach($array as $val) {
+            $output[] = addcslashes($val,": ");
+        }
+        return '"' . addcslashes(join(" ",$output), '"') . '"';
+    }
 }
 
 function output_values($values, $opts) {
@@ -14,6 +45,31 @@ function output_values($values, $opts) {
     if (empty($values)) {
         return;
     }
+
+    // encode complex data structure to shell
+    if ($values instanceof ValueGroupCollection) {
+        if ($opts->zsh) {
+            $buf = new Buffer;
+            $buf->appendLine("#groups");
+            $buf->appendLine("declare -A groups");
+            $buf->appendLine("declare -A labels");
+
+            // zsh and bash only supports one dimensional array, so we can only output values in string and separate these values with space.
+            foreach( $values as $groupId => $groupValues) {
+                $buf->appendLine("groups[$groupId]=" . encode_array_as_shell_string($groupValues));
+            }
+            foreach( $values->getLabels() as $groupId => $label) {
+                $buf->appendLine("labels[$groupId]=" . as_shell_string($label));
+            }
+            echo $buf;
+        } elseif ($opts->json) {
+            echo $values->toJson();
+        } else {
+            throw new Exception('Unsupported shell');
+        }
+        return;
+    }
+
 
     if (isset($values[0]) && is_array($values[0])) {
         echo "#descriptions\n";
