@@ -3,7 +3,7 @@ namespace CLIFramework\Command;
 use CLIFramework\Command;
 use CLIFramework\CommandInterface;
 use CLIFramework\Zsh;
-use CLIFramework\ValueGroupCollection;
+use CLIFramework\ValueCollection;
 use Exception;
 use CLIFramework\Buffer;
 
@@ -47,7 +47,7 @@ function output_values($values, $opts) {
     }
 
     // encode complex data structure to shell
-    if ($values instanceof ValueGroupCollection) {
+    if ($values instanceof ValueCollection) {
         if ($opts->zsh) {
             $buf = new Buffer;
             $buf->appendLine("#groups");

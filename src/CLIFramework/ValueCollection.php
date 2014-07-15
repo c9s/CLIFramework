@@ -6,13 +6,13 @@ use ArrayIterator;
 /**
  * 
  */
-class ValueGroupCollection implements IteratorAggregate
+class ValueCollection implements IteratorAggregate
 {
     public $groups = array();
 
     public $labels = array();
 
-    public function add($groupId, $label, $value) {
+    public function group($groupId, $label, $value) {
         // for indexed array
         if (is_array($value)) {
             if ( !isset($this->groups[ $groupId ])) {
@@ -28,25 +28,25 @@ class ValueGroupCollection implements IteratorAggregate
     }
 
 
-    public function set($groupId, $values) {
+    public function setGroup($groupId, $values) {
         $this->groups[ $groupId ] = $values;
     }
 
-    public function get($groupId) {
+    public function getGroup($groupId) {
         return $this->groups[ $groupId ];
     }
 
-    public function setLabel($groupId, $label) {
+    public function setGroupLabel($groupId, $label) {
         $this->labels[ $groupId ] = $label;
     }
 
-    public function getLabel($groupId) {
+    public function getGroupLabel($groupId) {
         if ( isset($this->labels[ $groupId ]) ) {
             return $this->labels[ $groupId ];
         }
     }
 
-    public function getLabels() {
+    public function getGroupLabels() {
         return $this->labels;
     }
 
