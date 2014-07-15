@@ -24,7 +24,7 @@ class ValueCollection implements IteratorAggregate
         } else {
             $this->groups[ $groupId ][] = $value;
         }
-        $this->setLabel($groupId, $label);
+        $this->setGroupLabel($groupId, $label);
     }
 
 
