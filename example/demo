@@ -79,6 +79,11 @@ class CommitCommand extends CLIFramework\Command {
                 ));
                 $values->group('admins', 'Administrators', array( 'admin1', 'admin2' , 'admin3' ));
                 $values->group('users', 'Users', array( 'userA', 'userB' , 'userC' ));
+                $values->group('extension', 'PHP Extensions', get_loaded_extensions());
+
+                $funcs = get_defined_functions();
+                $values->group('internal-functions', 'PHP Internal Functions', $funcs['internal']);
+                $values->group('user-functions', 'PHP User-defined Functions', $funcs['user']);
                 return $values;
             })
             ;
