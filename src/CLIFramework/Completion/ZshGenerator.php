@@ -467,7 +467,11 @@ class ZshGenerator
         $buf->appendLine('    eval $output');
         $buf->appendLine('    for tag in ${(k)groups} ; do');
         $buf->appendLine('        complete_values=(${(z)${groups[$tag]}})');
-        $buf->appendLine('        _describe -t $tag $tag complete_values && ret=0');
+        $buf->appendLine('        label=${labels[$tag]}');
+        $buf->appendLine('        if [[ -z $label ]] ; then');
+        $buf->appendLine('            label=$tag');
+        $buf->appendLine('        fi');
+        $buf->appendLine('        _describe -t $tag $label complete_values && ret=0');
         $buf->appendLine('    done');
 
         $buf->appendLine('elif [[ $lines[1] == "#values" ]] ; then');
