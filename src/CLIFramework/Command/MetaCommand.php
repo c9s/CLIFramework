@@ -5,15 +5,16 @@ use CLIFramework\CommandInterface;
 use CLIFramework\Zsh;
 use Exception;
 
-function output($str) {
+function output($str, $opts) {
     echo $str;
 }
 
-function output_values($values) {
+function output_values($values, $opts) {
     // indexed array
     if (empty($values)) {
         return;
     }
+
     if (isset($values[0]) && is_array($values[0])) {
         echo "#descriptions\n";
         foreach($values as $value) {
@@ -35,6 +36,12 @@ class MetaCommand extends Command
 {
 
     public function brief() { return 'meta command of cli framework'; }
+
+    public function options($opts) {
+        $opts->add('zsh', 'output for zsh');
+        $opts->add('bash', 'output for bash');
+        $opts->add('json', 'output in JSON format (un-implemented)');
+    }
     
     /**
      * Enable a way to get meta information of argument or option from a command.
@@ -70,13 +77,13 @@ class MetaCommand extends Command
             switch($attr) {
             case 'suggestions':
                 if ($values = $arginfo->getSuggestions()) {
-                    return output_values($values);
+                    return output_values($values, $this->options);
                 }
                 break;
 
             case 'valid-values':
                 if ($values = $arginfo->getValidValues()) {
-                    return output_values($values);
+                    return output_values($values, $this->options);
                 }
                 break;
             }
@@ -93,12 +100,12 @@ class MetaCommand extends Command
                 break;
             case 'valid-values':
                 if ($values = $option->getValidValues()) {
-                    return output_values($values);
+                    return output_values($values, $this->options);
                 }
                 break;
             case 'suggestions':
                 if ($values = $option->getSuggestions()) {
-                    return output_values($values);
+                    return output_values($values, $this->options);
                 }
                 break;
             }
