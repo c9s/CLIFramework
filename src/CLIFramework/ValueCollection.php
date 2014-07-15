@@ -8,10 +8,23 @@ use ArrayIterator;
  */
 class ValueCollection implements IteratorAggregate
 {
+
     public $groups = array();
 
+    /**
+     * @var label[group id] group labels
+     */
     public $labels = array();
 
+
+
+    /**
+     * Add Grouped Values:
+     *
+     *     ->group('id', 'ID', [ 'a', 'b', 'c' ]);
+     *     ->group('id', 'ID', [ 'label' => 'desc' ]);
+     *
+     */
     public function group($groupId, $label, $value) {
         // for indexed array
         if (is_array($value)) {
