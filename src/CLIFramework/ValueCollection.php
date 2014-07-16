@@ -41,6 +41,12 @@ class ValueCollection implements IteratorAggregate
     }
 
 
+
+    public function getGroups() {
+        return $this->groups;
+    }
+
+
     public function setGroup($groupId, $values) {
         $this->groups[ $groupId ] = $values;
     }
