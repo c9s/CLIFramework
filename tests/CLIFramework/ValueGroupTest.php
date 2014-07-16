@@ -13,6 +13,9 @@ class ValueGroupTest extends PHPUnit_Framework_TestCase
             ->add('bar')
             ->add('zoo');
 
+        $keys = $group->keys();
+        ok($keys);
+
         ok($group);
         is(4, $group->count());
     }
