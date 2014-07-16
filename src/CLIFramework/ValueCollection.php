@@ -25,17 +25,17 @@ class ValueCollection implements IteratorAggregate
      *     ->group('id', 'ID', [ 'label' => 'desc' ]);
      *
      */
-    public function group($groupId, $label, $value) {
+    public function group($groupId, $label, $values) {
         // for indexed array
-        if (is_array($value)) {
+        if (is_array($values)) {
             if ( !isset($this->groups[ $groupId ])) {
-                $this->groups[$groupId] = $value;
+                $this->groups[$groupId] = $values;
             } else {
                 $this->groups[ $groupId ] = array_merge(
-                    $this->groups[ $groupId ], $value );
+                    $this->groups[ $groupId ], $values );
             }
         } else {
-            $this->groups[ $groupId ][] = $value;
+            $this->groups[ $groupId ][] = $values;
         }
         $this->setGroupLabel($groupId, $label);
     }
