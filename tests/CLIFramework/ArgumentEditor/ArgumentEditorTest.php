@@ -9,8 +9,12 @@ class ArgumentEditorTest extends PHPUnit_Framework_TestCase
         $editor->append('--enable-zip');
         is("./configure --enable-debug --enable-zip", $editor->__toString() );
 
+
         $editor->remove('--enable-zip');
         is("./configure --enable-debug", $editor->__toString() );
+
+        $editor->append('--with-sqlite','--with-postgres');
+        is("./configure --enable-debug --with-sqlite --with-postgres", $editor->__toString() );
     }
 
     public function testRemoveRegExp() {

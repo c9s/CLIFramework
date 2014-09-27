@@ -11,7 +11,10 @@ class ArgumentEditor
     }
 
     public function append($arg) {
-        $this->args[] = trim($arg);
+        $args = func_get_args();
+        foreach($args as $arg) {
+            $this->args[] = trim($arg);
+        }
         return $this;
     }
 
@@ -43,19 +46,31 @@ class ArgumentEditor
         $this->args = preg_replace($regexp, $newarg, $this->args);
     }
 
+
+    /**
+     * Remove arguments by regular expression pattern
+     *
+     * @param string $regexp
+     */
     public function removeRegExp($regexp) {
         $regexp = '/' . preg_quote($regexp, '/') . '/';
         $this->args = preg_grep($regexp, $this->args, PREG_GREP_INVERT);
     }
 
+    /**
+     * Filter all arguments through a closure
+     *
+     * @param Closue 
+     */
     public function filter($callback) {
         $this->args = array_map($callback, $this->args);
         return $this;
     }
 
 
-
-
+    /**
+     * Run escape fitler to current arguments
+     */
     public function escape() {
         $this->args = array_map(function($arg) {
             return escapeshellarg($arg);
@@ -63,6 +78,9 @@ class ArgumentEditor
     }
 
 
+    /**
+     * Output current argument to string.
+     */
     public function __toString() {
         return join(' ', $this->args);
     }

@@ -291,6 +291,21 @@ Please check `example/demo.php`
     $ php example/demo.php
 
 
+
+ArgumentEditor
+----------------------
+
+```php
+use CLIFramework\ArgumentEditor\ArgumentEditor;
+
+$editor = new ArgumentEditor(array('./configure','--enable-debug'));
+$editor->append('--enable-zip');
+$editor->append('--with-sqlite','--with-postgres');
+
+echo $editor;
+# ./configure --enable-debug --enable-zip --with-sqlite --with-postgres
+```
+
 Message style formatter
 --------------------
 
