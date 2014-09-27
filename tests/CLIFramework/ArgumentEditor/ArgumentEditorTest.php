@@ -19,6 +19,19 @@ class ArgumentEditorTest extends PHPUnit_Framework_TestCase
         $editor->removeRegExp('--enable');
     }
 
+    public function testReplaceRegExp() {
+        $editor = new ArgumentEditor(array('./configure','--enable-debug','--enable-zip'));
+        $editor->replaceRegExp('--enable', '--with');
+        is("./configure --with-debug --with-zip", $editor->__toString() );
+    }
+
+    public function testReplace() {
+        $editor = new ArgumentEditor(array('./configure','--enable-debug'));
+        $old = $editor->replace('--enable-debug','--enable-foo');
+        is('--enable-debug', $old);
+        is("./configure --enable-foo", $editor->__toString() );
+    }
+
     public function testEscape() {
         $editor = new ArgumentEditor(array('./configure','--enable-debug'));
         $editor->escape();

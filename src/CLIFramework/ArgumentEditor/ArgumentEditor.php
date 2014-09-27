@@ -29,6 +29,20 @@ class ArgumentEditor
         return $removed;
     }
 
+    public function replace($needle, $newarg) {
+        $p = array_search($needle, $this->args);
+        if ($p !== false) {
+            $spliced = array_splice($this->args, $p, 1, $newarg);
+            return $spliced[0];
+        }
+        return false;
+    }
+
+    public function replaceRegExp($regexp, $newarg) {
+        $regexp = '/' . preg_quote($regexp, '/') . '/';
+        $this->args = preg_replace($regexp, $newarg, $this->args);
+    }
+
     public function removeRegExp($regexp) {
         $regexp = '/' . preg_quote($regexp, '/') . '/';
         $this->args = preg_grep($regexp, $this->args, PREG_GREP_INVERT);
