@@ -25,6 +25,16 @@ class ArgumentEditorTest extends PHPUnit_Framework_TestCase
         is("./configure --with-debug --with-zip", $editor->__toString() );
     }
 
+    public function testFilter() {
+        $editor = new ArgumentEditor(array('./configure','--enable-debug','--enable-zip'));
+        $editor->filter(function($arg) {
+            return escapeshellarg($arg);
+        });
+        is("'./configure' '--enable-debug' '--enable-zip'", $editor->__toString() );
+    }
+
+
+
     public function testReplace() {
         $editor = new ArgumentEditor(array('./configure','--enable-debug'));
         $old = $editor->replace('--enable-debug','--enable-foo');

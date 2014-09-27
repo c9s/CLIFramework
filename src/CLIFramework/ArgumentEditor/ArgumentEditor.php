@@ -48,6 +48,14 @@ class ArgumentEditor
         $this->args = preg_grep($regexp, $this->args, PREG_GREP_INVERT);
     }
 
+    public function filter($callback) {
+        $this->args = array_map($callback, $this->args);
+        return $this;
+    }
+
+
+
+
     public function escape() {
         $this->args = array_map(function($arg) {
             return escapeshellarg($arg);
