@@ -9,8 +9,9 @@
  *
  */
 namespace TestApp;
+use CLIFramework\Application as CLIApplication;
 
-class Application extends \CLIFramework\Application 
+class Application extends CLIApplication 
 {
 
     public function options($getopt)
