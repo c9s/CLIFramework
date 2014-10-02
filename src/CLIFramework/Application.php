@@ -20,6 +20,7 @@ use CLIFramework\Prompter;
 use CLIFramework\CommandGroup;
 use Exception;
 use CLIFramework\Exception\CommandNotFoundException;
+use ReflectionClass;
 
 class Application extends CommandBase
     implements CommandInterface
@@ -50,9 +51,6 @@ class Application extends CommandBase
     {
         parent::__construct();
 
-        // get current class namespace, add {App}\Command\ to loader
-        $app_ref_class = new \ReflectionClass($this);
-        $app_ns = $app_ref_class->getNamespaceName();
 
         $this->formatter = new Formatter;
         $this->logger = new Logger;
@@ -60,6 +58,10 @@ class Application extends CommandBase
         // initliaze command loader
         $this->loader = CommandLoader::getInstance();
         $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
+
+        // get current class namespace, add {App}\Command\ to loader
+        $app_ref_class = new ReflectionClass($this);
+        $app_ns = $app_ref_class->getNamespaceName();
         $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
 
         // init option parser
@@ -100,6 +102,7 @@ class Application extends CommandBase
         $this->addCommand('help','CLIFramework\\Command\\HelpCommand');
         $this->addCommand('_zsh', 'CLIFramework\\Command\\ZshCompletionCommand');
         $this->addCommand('_meta', 'CLIFramework\\Command\\MetaCommand');
+        $this->addCommand('_build:github-wiki', 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand');
     }
 
     public function runWithTry($argv)

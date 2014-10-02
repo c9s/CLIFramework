@@ -24,7 +24,7 @@ class Application extends \CLIFramework\Application
         parent::init();
         // $this->addCommand('list');
         // $this->addCommand('test1');
-        $this->addCommandGroup('Daily Basic', ['list', 'test1']);
+        $this->addCommandGroup('Daily Basic', array('list', 'test1'));
     }
 
 
