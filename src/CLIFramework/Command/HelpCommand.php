@@ -155,7 +155,6 @@ class HelpCommand extends Command
         if( file_exists( $file ) )
             echo file_get_contents( $file );
         */
-
         return true;
     }
 }

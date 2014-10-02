@@ -38,9 +38,9 @@ class Logger
         'critical' => 'strong_red',
         'error'    => 'strong_red',
         'warn'     => 'red',
-        'info'     => 'strong_green',
-        'info1'    => 'green',
-        'debug'    => 'strong_white',
+        'info'     => 'green',
+        'info2'    => 'green',
+        'debug'    => 'white',
         'debug2'   => 'white',
     );
 
@@ -104,18 +104,24 @@ class Logger
             return;
         }
 
-        if( $this->level <= 4 && $level >= 4 )
+        if ($this->level <= 4 && $level >= 4) {
             $style = 'dim';
+        }
 
-        if( $indent )
+        if ($indent) {
             echo str_repeat("\t", $indent);
+        }
 
         /* detect object */
-        if ( is_object($msg) || is_array($msg) ) {
-            echo $this->formatter->format( print_r( $msg , 1 ) , $style ) . "\n";
+        if (is_object($msg) || is_array($msg)) {
+            echo $this->formatter->format(print_r($msg , 1), $style) . "\n";
         } else {
-            echo $this->formatter->format( $msg , $style ) , "\n";
+            echo $this->formatter->format($msg , $style), "\n";
         }
+    }
+
+    public function write($text) {
+        echo $text;
     }
 
     public function getStyleByName($levelName)
