@@ -9,7 +9,6 @@
  *
  */
 namespace CLIFramework;
-
 use GetOptionKit\ContinuousOptionParser;
 use GetOptionKit\OptionCollection;
 
@@ -279,24 +278,6 @@ class Application extends CommandBase
         }
     }
 
-    /**
-     * Add a command group and register the commands automatically
-     *
-     * @param string $groupName The group name
-     * @param array  $commands  Command array combines indexed command names or command class assoc array.
-     * @return CommandGroup
-     */
-    public function addCommandGroup($groupName, $commands = array() ) {
-        $group = new CommandGroup($groupName);
-        foreach($commands as $key => $val) {
-            if (is_numeric($key)) {
-                $this->addCommand($val);
-            } else {
-                $this->addCommand($key, $val);
-            }
-        }
-        return $group;
-    }
 
     public function getFormatter()
     {

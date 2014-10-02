@@ -18,6 +18,7 @@ use CLIFramework\Prompter;
 use CLIFramework\Application;
 use CLIFramework\Chooser;
 use CLIFramework\CommandLoader;
+use CLIFramework\CommandGroup;
 use CLIFramework\Exception\CommandNotFoundException;
 use CLIFramework\Exception\InvalidCommandArgumentException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
@@ -97,9 +98,31 @@ abstract class CommandBase
 
 
 
-    public function aliases() {
-        // methods for user to define alias.
+    /**
+     * Method for users to define alias.
+     */
+    public function aliases() { }
+
+
+    /**
+     * Add a command group and register the commands automatically
+     *
+     * @param string $groupName The group name
+     * @param array  $commands  Command array combines indexed command names or command class assoc array.
+     * @return CommandGroup
+     */
+    public function addCommandGroup($groupName, $commands = array() ) {
+        $group = new CommandGroup($groupName);
+        foreach($commands as $key => $val) {
+            if (is_numeric($key)) {
+                $this->addCommand($val);
+            } else {
+                $this->addCommand($key, $val);
+            }
+        }
+        return $group;
     }
+
 
     public function addAlias($alias, $cmdName) {
         $this->aliases[$alias] = $cmdName;
