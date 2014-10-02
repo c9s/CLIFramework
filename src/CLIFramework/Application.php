@@ -279,8 +279,18 @@ class Application extends CommandBase
         }
     }
 
-    public function addGroup($groupName, $commandNames = array() ) {
-        $group = new CommandGroup($groupName, $commandNames);
+    /**
+     * Add a command group and register the commands automatically
+     */
+    public function addCommandGroup($groupName, $commands = array() ) {
+        $group = new CommandGroup($groupName);
+        foreach($commands as $key => $val) {
+            if (is_numeric($key)) {
+                $this->addCommand($val);
+            } else {
+                $this->addCommand($key, $val);
+            }
+        }
         return $group;
     }
 

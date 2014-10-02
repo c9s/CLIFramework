@@ -199,7 +199,7 @@ abstract class CommandBase
     public function registerCommand($command,$class = null)
     {
         trigger_error("'registerCommand' method is deprecated, please use 'addCommand' instead.\n");
-        return $this->addCommand($command,$class);
+        return $this->addCommand($command, $class);
     }
 
     public function setParent($parent)

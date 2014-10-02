@@ -22,10 +22,9 @@ class Application extends \CLIFramework\Application
     public function init()
     {
         parent::init();
-        $this->addCommand('list');
-        $this->addCommand('test1');
-
-        $this->addGroup('Daily Basic', ['list', 'test1']);
+        // $this->addCommand('list');
+        // $this->addCommand('test1');
+        $this->addCommandGroup('Daily Basic', ['list', 'test1']);
     }
 
 

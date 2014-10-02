@@ -8,14 +8,18 @@ class CommandGroup
 
     public $commandNames = array();
 
-    public function __construct($groupName, $commandNames = array())
+    public function __construct($groupName, $commands = array())
     {
         $this->name = $groupName;
-        $this->commandNames = $commandNames;
+        $this->commands = $commands;
     }
 
     public function addCommand($commandName) {
-        $this->commandNames[] = $commandName;
+        $this->commands[] = $commandName;
+    }
+
+    public function getCommands() {
+        return $this->commands;
     }
 }
 
