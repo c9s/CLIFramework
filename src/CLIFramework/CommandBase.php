@@ -196,9 +196,10 @@ abstract class CommandBase
      * @param string $command
      * @param string $class
      */
-    public function addCommand($command,$class = null)
+    public function registerCommand($command,$class = null)
     {
-        return $this->registerCommand($command,$class);
+        trigger_error("'registerCommand' method is deprecated, please use 'addCommand' instead.\n");
+        return $this->addCommand($command,$class);
     }
 
     public function setParent($parent)
@@ -233,12 +234,12 @@ abstract class CommandBase
      * @param  string $class   Full-qualified Class name
      * @return string Loaded class name
      */
-    public function registerCommand($command,$class = null)
+    public function addCommand($command,$class = null)
     {
         // try to load the class/subclass,
         // or generate command class name automatically.
         if ($class) {
-            if( $this->getLoader()->loadClass( $class ) === false )
+            if ($this->getLoader()->loadClass($class) === false )
                 throw Exception("Command class $class not found.");
         } else {
             if ($this->parent) {
