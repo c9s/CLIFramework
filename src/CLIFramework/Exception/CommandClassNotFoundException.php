@@ -28,6 +28,14 @@ class CommandClassNotFoundException extends Exception
         }
         parent::__construct($desc);
     }
+
+    public function getRegisteredNamespaces() {
+        return $this->registeredNamespaces;
+    }
+
+    public function getPossibleClasses() {
+        return $this->possibleClasses;
+    }
 }
 
 
