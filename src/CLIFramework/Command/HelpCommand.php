@@ -51,11 +51,12 @@ class HelpCommand extends Command
             $optionLines = $cmd->optionSpecs->outputOptions();
 
             if ( $brief = $cmd->brief() ) {
-                $logger->write($formatter->format(ucfirst($brief), 'strong_white') . "\n\n");
+                $logger->write($formatter->format('NAME', 'strong_white') . "\n");
+                $logger->write("\t" . $formatter->format($subcommand, 'strong_white') . ' - ' . ucfirst($brief) . "\n\n");
             }
 
 
-            $logger->write($formatter->format('Synopsis', 'strong_white') . "\n");
+            $logger->write($formatter->format('SYNOPSIS', 'strong_white') . "\n");
             $logger->write("\t" . $progname . ' ' . $cmd->getName());
 
             if ( ! empty($cmd->getOptionCollection()->options) ) {
@@ -72,13 +73,13 @@ class HelpCommand extends Command
             $logger->write("\n\n");
 
             if ( $usage = $cmd->usage() ) {
-                $logger->write( $formatter->format('Usage', 'strong_white') . "\n" );
+                $logger->write( $formatter->format('USAGE', 'strong_white') . "\n" );
                 $logger->write( $usage );
                 $logger->write( "\n\n" );
             }
 
             if ($optionLines) {
-                $logger->write( $formatter->format('Options', 'strong_white') . "\n" );
+                $logger->write( $formatter->format('OPTIONS', 'strong_white') . "\n" );
                 $logger->write( join("\n",$optionLines) );
                 $logger->write( "\n" );
             }
@@ -107,13 +108,13 @@ class HelpCommand extends Command
             $logger->write("\n\n");
 
             if( $usage = $cmd->usage() ) {
-                $logger->write($formatter->format("Usage", "strong_white") . "\n");
+                $logger->write($formatter->format("USAGE", "strong_white") . "\n");
                 $logger->write($usage);
                 $logger->write("\n\n");
             }
 
             // print application options
-            $logger->write($formatter->format("Options",'strong_white') . "\n");
+            $logger->write($formatter->format("OPTIONS",'strong_white') . "\n");
             $cmd->optionSpecs->printOptions();
             $logger->write("\n\n");
 

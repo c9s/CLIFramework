@@ -25,7 +25,7 @@ use CLIFramework\ValueCollection;
 
 class CommitCommand extends CLIFramework\Command {
 
-    public function brief() { return 'brief of bar'; }
+    public function brief() { return 'A simple demo command'; }
 
     public function options($opts) {
         $opts->add('a|all','Tell the command to automatically stage files that have been modified and deleted, but new files you have not told Git about are not affected.');
