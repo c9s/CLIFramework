@@ -43,7 +43,7 @@ class Prompter
     /**
      * show prompt with message
      */
-    public function ask($prompt, $validAnswers = null )
+    public function ask($prompt, $validAnswers = NULL, $default = NULL)
     {
         if ($validAnswers) {
             $prompt .= ' [' . join('/',$validAnswers) . ']';
@@ -59,9 +59,13 @@ class Prompter
         while (1) {
             $answer = $this->readline( $prompt );
             if ($validAnswers) {
-                if ( in_array($answer,$validAnswers) ) {
+                if (in_array($answer,$validAnswers) ) {
                     break;
                 } else {
+                    if (trim($answer) === "" && $default ) {
+                        $answer = $default;
+                        break;
+                    }
                     continue;
                 }
             }
@@ -70,7 +74,6 @@ class Prompter
         if ($this->style) {
             echo $this->formatter->getClearMark();
         }
-
         return $answer;
     }
 }

@@ -17,7 +17,9 @@ use CLIFramework\CommandLoader;
 use CLIFramework\CommandBase;
 use CLIFramework\Logger;
 use CLIFramework\CommandInterface;
+use CLIFramework\Prompter;
 use Exception;
+use CLIFramework\Exception\CommandNotFoundException;
 
 class Application extends CommandBase
     implements CommandInterface
@@ -144,17 +146,34 @@ class Application extends CommandBase
         $arguments = array();
 
         // get command list from application self
-        $subcommand_list = $current_cmd->getCommandList();
         while ( ! $getopt->isEnd() ) {
             $a = $getopt->getCurrentArgument();
 
             // if current command is in subcommand list.
-            if ( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) {
-                $subcommand = $getopt->getCurrentArgument();
+
+            if ($current_cmd->hasCommands()) {
+                $a = $getopt->getCurrentArgument();
+
+                if (!$current_cmd->hasCommand($a) ) {
+                    list($shortest, $guess) = $current_cmd->guessCommand($a);
+                    if ($shortest == 0) {
+                        $a = $guess;
+                    } else {
+                        $prompter = new Prompter;
+                        $prompter->style = 'ask';
+                        $answer = $prompter->ask("Did you mean command '$guess'?", array('Y','n'), 'Y');
+                        if (!$answer || strtolower($answer) == 'y') {
+                            $a = $guess;
+                        } else {
+                            throw new CommandNotFoundException($a);
+                        }
+                    }
+                }
+
                 $getopt->advance(); // advance position
 
                 // get command object
-                $current_cmd = $current_cmd->getCommand( $subcommand );
+                $current_cmd = $current_cmd->getCommand($a);
 
                 $getopt->setSpecs($current_cmd->optionSpecs);
 
@@ -167,9 +186,6 @@ class Application extends CommandBase
                 // echo get_class($current_cmd) , ' => ' , print_r($current_cmd_options);
 
                 $command_stack[] = $current_cmd; // save command object into the stack
-
-                // update subcommand list
-                $subcommand_list = $current_cmd->getCommandList();
 
             } else {
                 $a = $getopt->advance();

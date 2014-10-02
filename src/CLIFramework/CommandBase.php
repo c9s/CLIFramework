@@ -13,6 +13,7 @@ use ReflectionObject;
 use ArrayAccess;
 use IteratorAggregate;
 use GetOptionKit\OptionCollection;
+use GetOptionKit\OptionResult;
 use CLIFramework\Prompter;
 use CLIFramework\Application;
 use CLIFramework\Chooser;
@@ -272,7 +273,7 @@ abstract class CommandBase
      */
     public function hasCommand($command)
     {
-        return isset($this->commands[ $command ]);
+        return isset($this->commands[$command]);
     }
 
     /**
@@ -284,6 +285,9 @@ abstract class CommandBase
     {
         return array_keys( $this->commands );
     }
+
+
+
 
 
     /**
@@ -357,6 +361,47 @@ abstract class CommandBase
         throw new CommandNotFoundException($commandName);
     }
 
+    public function guessCommand($commandName) {
+        // array of words to check against
+        $words = array_keys($this->commands);
+
+        // no shortest distance found, yet
+        $shortest = -1;
+
+        // loop through words to find the closest
+        foreach ($words as $word) {
+
+            // calculate the distance between the input word,
+            // and the current word
+            $lev = levenshtein($commandName, $word);
+
+            // check for an exact match
+            if ($lev == 0) {
+
+                // closest word is this one (exact match)
+                $closest = $word;
+                $shortest = 0;
+
+                // break out of the loop; we've found an exact match
+                break;
+            }
+
+            // if this distance is less than the next found shortest
+            // distance, OR if a next shortest word has not yet been found
+            if ($lev <= $shortest || $shortest < 0) {
+                // set the closest match, and shortest distance
+                $closest  = $word;
+                $shortest = $lev;
+            }
+        }
+        if ($shortest == 0) {
+            return [0, $closest];
+        }
+        return [$shortest, $closest];
+    }
+
+
+
     /**
      * Create and initialize command object.
      *
@@ -392,7 +437,7 @@ abstract class CommandBase
      *
      * @param GetOptionKit\OptionResult $options
      */
-    public function setOptions( $options )
+    public function setOptions(OptionResult $options)
     {
         $this->options = $options;
     }
@@ -473,7 +518,7 @@ abstract class CommandBase
      * @param  array $args command argument list (not associative array).
      * @return mixed the value of execution result.
      */
-    public function executeWrapper($args)
+    public function executeWrapper(array $args)
     {
         // call_user_func_array(  );
         $refl = new ReflectionObject($this);
@@ -504,6 +549,8 @@ abstract class CommandBase
      * Show prompt with message, you can provide valid options
      * for the simple validation.
      *
+     * TODO: let user register their custom prompt handler.
+     *
      * @param string $prompt       Prompt message.
      * @param array  $validAnswers an array of valid values (optional)
      *
@@ -513,7 +560,6 @@ abstract class CommandBase
     {
         $prompter = new Prompter;
         $prompter->style = 'ask';
-
         return $prompter->ask( $prompt , $validAnswers );
     }
 
@@ -536,11 +582,10 @@ abstract class CommandBase
      * @param  array  $choices
      * @return mixed  value
      */
-    public function choose($prompt, $choices )
+    public function choose($prompt, $choices)
     {
         $chooser = new Chooser;
         $chooser->style = 'choose';
-
         return $chooser->choose( $prompt, $choices );
     }
 
