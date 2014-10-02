@@ -43,6 +43,12 @@ abstract class CommandBase
      * */
     public $commands = array();
 
+
+    /**
+     * @var CommandGroup[]
+     */
+    public $commandGroups = array();
+
     public $aliases = array();
 
     /**
@@ -120,6 +126,7 @@ abstract class CommandBase
                 $this->addCommand($key, $val);
             }
         }
+        $this->commandGroups[] = $group;
         return $group;
     }
 
