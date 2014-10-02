@@ -140,8 +140,8 @@ class ExampleApplication extends CLIFramework\Application {
     public function init()
     {
         parent::init();
-        $this->registerCommand('foo','FooCommand');
-        $this->registerCommand('commit','CommitCommand');
+        $this->addCommand('foo','FooCommand');
+        $this->addCommand('commit','CommitCommand');
     }
 }
 

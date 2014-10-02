@@ -18,6 +18,7 @@ use CLIFramework\CommandBase;
 use CLIFramework\Logger;
 use CLIFramework\CommandInterface;
 use CLIFramework\Prompter;
+use CLIFramework\CommandGroup;
 use Exception;
 use CLIFramework\Exception\CommandNotFoundException;
 
@@ -96,10 +97,10 @@ class Application extends CommandBase
      */
     public function init()
     {
-        // $this->registerCommand('list','CLIFramework\\Command\\ListCommand');
-        $this->registerCommand('help','CLIFramework\\Command\\HelpCommand');
-        $this->registerCommand('_zsh', 'CLIFramework\\Command\\ZshCompletionCommand');
-        $this->registerCommand('_meta', 'CLIFramework\\Command\\MetaCommand');
+        // $this->addCommand('list','CLIFramework\\Command\\ListCommand');
+        $this->addCommand('help','CLIFramework\\Command\\HelpCommand');
+        $this->addCommand('_zsh', 'CLIFramework\\Command\\ZshCompletionCommand');
+        $this->addCommand('_meta', 'CLIFramework\\Command\\MetaCommand');
     }
 
     public function runWithTry($argv)
@@ -276,6 +277,11 @@ class Application extends CommandBase
         } else {
             throw new Exception("Help command is not defined.");
         }
+    }
+
+    public function addGroup($groupName, $commandNames = array() ) {
+        $group = new CommandGroup($groupName, $commandNames);
+        return $group;
     }
 
     public function getFormatter()

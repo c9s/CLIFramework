@@ -13,17 +13,21 @@ namespace TestApp;
 class Application extends \CLIFramework\Application 
 {
 
-    function options($getopt)
+    public function options($getopt)
     {
         $getopt->add('c|color','Color message');
         parent::options($getopt);
     }
 
-    function init()
+    public function init()
     {
         parent::init();
-        $this->registerCommand('list');
-        $this->registerCommand('test1');
+        $this->addCommand('list');
+        $this->addCommand('test1');
+
+        $this->addGroup('Daily Basic', ['list', 'test1']);
     }
+
+
 
 }

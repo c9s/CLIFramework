@@ -27,8 +27,8 @@ class ListCommand extends Command
 
     function init()
     {
-        $this->registerCommand('foo');
-        $this->registerCommand('extra', 'TestApp\Command\ListCommand\ExtraArgumentTestCommand');
+        $this->addCommand('foo');
+        $this->addCommand('extra', 'TestApp\Command\ListCommand\ExtraArgumentTestCommand');
     }
 
     function execute()

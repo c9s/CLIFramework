@@ -57,8 +57,11 @@ class CommandLoader
         return $this->loadClass( $subclass );
     }
 
-    /*
-     * load command class/subclass
+    /**
+     * Load command class/subclass
+     *
+     * @param string $class
+     * @return string loaded class name
      */
     public function loadClass($class)
     {
