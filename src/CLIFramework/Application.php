@@ -40,6 +40,8 @@ class Application extends CommandBase
     */
     public $logger;
 
+    public $showAppSignature = true;
+
 
     /**
      *

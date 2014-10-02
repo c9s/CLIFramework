@@ -36,6 +36,7 @@ class HelpCommand extends Command
         $progname = $argv[0];
 
         $logger = $this->logger;
+        $app = $this->getApplication();
 
         // if there is no subcommand to render help, show all available commands.
         $subcommands = func_get_args();
@@ -44,17 +45,17 @@ class HelpCommand extends Command
             // TODO: recursively get the last subcommand.
             $subcommand = $subcommands[0];
             // get command object.
-            $cmd = $this->getApplication()->getCommand( $subcommand );
+            $cmd = $app->getCommand( $subcommand );
 
             $usage = $cmd->usage();
             $optionLines = $cmd->optionSpecs->outputOptions();
 
             if ( $brief = $cmd->brief() ) {
-                $logger->write($formatter->format(ucfirst($brief),'yellow') . "\n\n");
+                $logger->write($formatter->format(ucfirst($brief), 'strong_white') . "\n\n");
             }
 
 
-            $logger->write($formatter->format('Synopsis','yellow') . "\n");
+            $logger->write($formatter->format('Synopsis', 'strong_white') . "\n");
             $logger->write("\t" . $progname . ' ' . $cmd->getName());
 
             if ( ! empty($cmd->getOptionCollection()->options) ) {
@@ -71,13 +72,13 @@ class HelpCommand extends Command
             $logger->write("\n\n");
 
             if ( $usage = $cmd->usage() ) {
-                $logger->write( $formatter->format('Usage','yellow') . "\n" );
+                $logger->write( $formatter->format('Usage', 'strong_white') . "\n" );
                 $logger->write( $usage );
                 $logger->write( "\n\n" );
             }
 
             if ($optionLines) {
-                $logger->write( $formatter->format('Options','yellow') . "\n" );
+                $logger->write( $formatter->format('Options', 'strong_white') . "\n" );
                 $logger->write( join("\n",$optionLines) );
                 $logger->write( "\n" );
             }
@@ -88,9 +89,9 @@ class HelpCommand extends Command
             // print application subcommands
             // print application brief
             $cmd = $this->parent;
-            $logger->write( $formatter->format( ucfirst($cmd->brief()) ,'yellow')."\n\n");
+            $logger->write( $formatter->format( ucfirst($cmd->brief()), "strong_white")."\n\n");
 
-            $logger->write( $formatter->format('Synopsis','yellow')."\n" );
+            $logger->write( $formatter->format("Synopsis", "strong_white")."\n" );
             $logger->write( "\t" . $progname );
             if ( ! empty($cmd->getOptionCollection()->options) ) {
                 $logger->write(" [options]");
@@ -106,17 +107,17 @@ class HelpCommand extends Command
             $logger->write("\n\n");
 
             if( $usage = $cmd->usage() ) {
-                $logger->write($formatter->format("Usage",'yellow') . "\n");
+                $logger->write($formatter->format("Usage", "strong_white") . "\n");
                 $logger->write($usage);
                 $logger->write("\n\n");
             }
 
             // print application options
-            $logger->write($formatter->format("Options",'yellow') . "\n");
+            $logger->write($formatter->format("Options",'strong_white') . "\n");
             $cmd->optionSpecs->printOptions();
             $logger->write("\n\n");
 
-            // get command list, command classes should be preloaded.
+            // get command list, Command classes should be preloaded.
             $classes = get_declared_classes();
             $command_classes = array();
             foreach ($classes as $class) {
@@ -132,8 +133,8 @@ class HelpCommand extends Command
             }
 
             // print command brief list
-            $logger->write($formatter->format("Commands\n",'yellow'));
-            foreach ($this->getApplication()->commands as $name => $class) {
+            $logger->write($formatter->format("Commands\n",'strong_white'));
+            foreach( $app->commands as $name => $class) {
                 // skip subcommand with prefix underscore.
                 if (preg_match('#^_#', $name)) {
                     continue;
@@ -148,6 +149,11 @@ class HelpCommand extends Command
 
             $logger->write("\n");
             $logger->write($this->getFormattedHelpText());
+        }
+
+        if ($app->showAppSignature) {
+            $logger->write( $formatter->format("\n", 'gray') );
+            $logger->write( $formatter->format("CLIFramework {$app->getVersion()}\thttps://github.com/c9s/CLIFramework\n", 'gray') );
         }
 
         // if empty command list
