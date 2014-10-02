@@ -35,6 +35,8 @@ class HelpCommand extends Command
 
         $progname = $argv[0];
 
+        $logger = $this->logger;
+
         // if there is no subcommand to render help, show all available commands.
         $subcommands = func_get_args();
         $formatter = $this->getFormatter();
@@ -48,71 +50,71 @@ class HelpCommand extends Command
             $optionLines = $cmd->optionSpecs->outputOptions();
 
             if ( $brief = $cmd->brief() ) {
-                echo $formatter->format(ucfirst($brief),'yellow'),"\n\n";
+                $logger->write($formatter->format(ucfirst($brief),'yellow') . "\n\n");
             }
 
 
-            echo $formatter->format('Synopsis','yellow'),"\n";
-            echo "\t" . $progname . ' ' . $cmd->getName();
+            $logger->write($formatter->format('Synopsis','yellow') . "\n");
+            $logger->write("\t" . $progname . ' ' . $cmd->getName());
 
             if ( ! empty($cmd->getOptionCollection()->options) ) {
-                echo " [options]";
+                $logger->write(" [options]");
             }
             if ($cmd->hasCommands() ) {
-                echo " <command> ...";
+                $logger->write(" <command> ...");
             } else {
                 $argInfos = $cmd->getArgumentsInfo();
                 foreach( $argInfos as $argInfo ) {
-                    echo " <" . $argInfo->name . ">";
+                    $logger->write(" <" . $argInfo->name . ">");
                 }
             }
-            echo "\n\n";
+            $logger->write("\n\n");
 
             if ( $usage = $cmd->usage() ) {
-                echo $formatter->format('Usage','yellow'),"\n";
-                echo $usage;
-                echo "\n\n";
+                $logger->write( $formatter->format('Usage','yellow') . "\n" );
+                $logger->write( $usage );
+                $logger->write( "\n\n" );
             }
 
             if ($optionLines) {
-                echo $formatter->format('Options','yellow'),"\n";
-                echo join("\n",$optionLines);
-                echo "\n";
+                $logger->write( $formatter->format('Options','yellow') . "\n" );
+                $logger->write( join("\n",$optionLines) );
+                $logger->write( "\n" );
             }
 
-            echo $cmd->getFormattedHelpText();
+            $logger->write($cmd->getFormattedHelpText());
 
         } else {
             // print application subcommands
             // print application brief
             $cmd = $this->parent;
-            echo $formatter->format( ucfirst($cmd->brief()) ,'yellow'),"\n\n";
+            $logger->write( $formatter->format( ucfirst($cmd->brief()) ,'yellow')."\n\n");
 
-            echo $formatter->format('Synopsis','yellow'),"\n";
-            echo "\t" . $progname;
+            $logger->write( $formatter->format('Synopsis','yellow')."\n" );
+            $logger->write( "\t" . $progname );
             if ( ! empty($cmd->getOptionCollection()->options) ) {
-                echo " [options]";
+                $logger->write(" [options]");
             }
             if ($cmd->hasCommands() ) {
-                echo " <command>";
+                $logger->write(" <command>");
             } else {
                 $argInfos = $cmd->getArgumentsInfo();
                 foreach( $argInfos as $argInfo ) {
-                    echo " <" . $argInfo->name . ">";
+                    $logger->write(" <" . $argInfo->name . ">");
                 }
             }
-            echo "\n\n";
+            $logger->write("\n\n");
 
             if( $usage = $cmd->usage() ) {
-                echo $formatter->format("Usage",'yellow'),"\n";
-                echo $usage;
-                echo "\n\n";
+                $logger->write($formatter->format("Usage",'yellow') . "\n");
+                $logger->write($usage);
+                $logger->write("\n\n");
             }
 
             // print application options
-            echo $formatter->format("Options",'yellow'),"\n";
+            $logger->write($formatter->format("Options",'yellow') . "\n");
             $cmd->optionSpecs->printOptions();
-            echo "\n\n";
+            $logger->write("\n\n");
 
             // get command list, command classes should be preloaded.
             $classes = get_declared_classes();
@@ -130,13 +132,12 @@ class HelpCommand extends Command
             }
 
             // print command brief list
-            echo $formatter->format("Commands\n",'yellow');
+            $logger->write($formatter->format("Commands\n",'yellow'));
             foreach ($this->getApplication()->commands as $name => $class) {
                 // skip subcommand with prefix underscore.
-                if ( preg_match('#^_#', $name) ) {
+                if (preg_match('#^_#', $name)) {
                     continue;
                 }
-
 
                 $cmd = new $class;
                 $brief = $cmd->brief();
@@ -145,8 +146,8 @@ class HelpCommand extends Command
                     $brief );
             }
 
-            echo "\n";
-            echo $this->getFormattedHelpText();
+            $logger->write("\n");
+            $logger->write($this->getFormattedHelpText());
         }
 
         // if empty command list
