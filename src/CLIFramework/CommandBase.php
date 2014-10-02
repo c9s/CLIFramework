@@ -395,9 +395,9 @@ abstract class CommandBase
             }
         }
         if ($shortest == 0) {
-            return [0, $closest];
+            return array(0, $closest);
         }
-        return [$shortest, $closest];
+        return array($shortest, $closest);
     }
 
 
