@@ -54,7 +54,6 @@ class Corrector
             return $guess;
         } else {
             $prompter = new Prompter;
-            $prompter->style = 'ask';
             $answer = $prompter->ask("Did you mean '$guess'?", array('Y','n'), 'Y');
             if (!$answer || strtolower($answer) == 'y') {
                 return $guess;

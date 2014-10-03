@@ -74,7 +74,7 @@ class HelpCommand extends Command
             if ($topic = $app->getTopic($commandNames[0])) {
                 return $this->displayTopic($topic);
             } elseif(!$app->hasCommand($commandNames[0])) {
-                $corrector = new Corrector(array_keys($this->topics));
+                $corrector = new Corrector(array_keys($app->topics));
                 if ($match = $corrector->correct($commandNames[0])) {
                     return $this->displayTopic($app->topics[$match]);
                 }
