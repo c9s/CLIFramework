@@ -6,6 +6,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use RecursiveRegexIterator;
+use Exception;
 
 
 class BuildGitHubWikiTopicsCommand extends Command
@@ -56,6 +57,8 @@ class BuildGitHubWikiTopicsCommand extends Command
         // Build classes
         $this->logger->info("Building topic classes from GitHub pages...");
 
+        $outputDir = $this->options->dir ?: '.';
+
         $directory = new RecursiveDirectoryIterator($localRepoPath);
         $iterator = new RecursiveIteratorIterator($directory);
         foreach($iterator as $file) {
@@ -69,12 +72,15 @@ class BuildGitHubWikiTopicsCommand extends Command
                 $topicId = strtolower(preg_replace(array('/.md$/'),array(''),$file->getFileName()));
 
                 // The readable topic title
-                $topicTitle = preg_replace(array('/.md$/','/-/'),array('',' '),$file->getFileName());
+                // TODO: Support non-ascii characters 
+                $entryName = preg_replace(array('/.md$/','/[^a-zA-Z0-9-]/'),array('',''),$file->getFileName());
+                $topicClassName = join("", array_map("ucfirst", explode('-', $entryName))) . 'Topic';
+                $topicTitle = preg_replace('/-/', ' ', $entryName);
+                $topicFullClassName = $ns . $topicClassName;
 
-                // The class namename for topic
-                $topicClassName = $ns . preg_replace(array('/.md$/','/\W/'),array('',''),$file->getFileName()) . "Topic";
+                $classFile = $outputDir . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $topicFullClassName) . '.php';
 
-                $cTemplate = new ClassTemplate($topicClassName , array(
+                $cTemplate = new ClassTemplate($topicFullClassName , array(
                     'template' => 'Class.php.twig',
                 ));
 
@@ -84,20 +90,20 @@ class BuildGitHubWikiTopicsCommand extends Command
 
                 $cTemplate->extendClass('\\CLIFramework\\Topic\\GitHubTopic');
 
-                $cTemplate->addMethod('public','getRemoteUrl', [], 'return $this->remoteUrl;');
-                $cTemplate->addMethod('public','getId', [], 'return $this->id;');
+                $cTemplate->addMethod('public','getRemoteUrl', array(), 'return $this->remoteUrl;');
+                $cTemplate->addMethod('public','getId', array(), 'return $this->id;');
 
                 $content = file_get_contents($file);
-                $cTemplate->addMethod('public','getContent', [], 'return ' . var_export($content, true) . ';', [] , false);
+                $cTemplate->addMethod('public','getContent', array(), 'return ' . var_export($content, true) . ';', array(), false);
 
-                $outputDir = $this->options->dir ?: '.';
-                $classFile = $outputDir . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR,$topicClassName) . '.php';
-                $classDir  = dirname($classFile);
+                $classDir = dirname($classFile);
                 if (!file_exists($classDir)) {
                     mkdir($classDir,0755, true);
                 }
-                file_put_contents($classFile, $cTemplate->render());
                 $this->logger->info("Creating $classFile");
+                if ( false === file_put_contents($classFile, $cTemplate->render())) {
+                    throw new Exception("Can't write file $classFile.");
+                }
             }
         }
 
