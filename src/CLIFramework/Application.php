@@ -18,6 +18,7 @@ use CLIFramework\Logger;
 use CLIFramework\CommandInterface;
 use CLIFramework\Prompter;
 use CLIFramework\CommandGroup;
+use CLIFramework\Formatter;
 use Exception;
 use CLIFramework\Exception\CommandNotFoundException;
 use ReflectionClass;

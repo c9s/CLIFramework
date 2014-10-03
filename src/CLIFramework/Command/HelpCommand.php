@@ -40,10 +40,10 @@ class HelpCommand extends Command
         $app = $this->getApplication();
 
         $printer = new OptionPrinter;
+        $formatter = $this->getFormatter();
 
         // if there is no subcommand to render help, show all available commands.
         $subcommands = func_get_args();
-        $formatter = $this->getFormatter();
         if ($subcommands) {
             // TODO: recursively get the last subcommand.
             $subcommand = $subcommands[0];

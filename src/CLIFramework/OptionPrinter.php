@@ -12,28 +12,52 @@ namespace CLIFramework;
 use GetOptionKit\OptionCollection;
 use GetOptionKit\Option;
 use GetOptionKit\OptionPrinter\OptionPrinterInterface;
+use CLIFramework\Formatter;
 
 class OptionPrinter implements OptionPrinterInterface
 {
     public $screenWidth = 78;
+
+    public $formatter;
+
+    public function __construct() {
+        $this->formatter = new Formatter;
+    }
 
     /**
      * Render readable spec
      */
     public function renderOption(Option $opt)
     {
-        $c1 = '';
-        if ( $opt->short && $opt->long ) {
-            $c1 = sprintf('-%s, --%s',$opt->short,$opt->long);
-        } elseif( $opt->short ) {
-            $c1 = sprintf('-%s',$opt->short);
-        } elseif( $opt->long ) {
-            $c1 = sprintf('--%s',$opt->long );
+        $columns = array();
+        if ($opt->short) {
+            $columns[] = $this->formatter->format(sprintf('-%s',$opt->short), 'strong_white') 
+                . $this->renderOptionValueHint($opt, false);
         }
-        $c1 .= $opt->renderValueHint();
-        return $c1;
+        if ($opt->long) {
+            $columns[] = $this->formatter->format(sprintf('--%s',$opt->long ), 'strong_white')
+                . $this->renderOptionValueHint($opt, true);
+        }
+        return join(', ', $columns);
     }
 
+    public function renderOptionValueHint(Option $opt, $assign = true)
+    {
+        $n = 'value';
+        if ($opt->valueName) {
+            $n = $opt->valueName;
+        } elseif ($opt->isa) {
+            $n = $opt->isa;
+        }
+
+        if ( $opt->isRequired() ) {
+            return sprintf('%s<%s>',   $assign ? '=' : ' ', $this->formatter->format($n, 'underline') );
+        } elseif ( $opt->isOptional() ) {
+            return sprintf('%s[<%s>]', $assign ? '=' : ' ', $this->formatter->format($n, 'underline'));
+        }
+
+        return '';
+    }
 
     /**
      * render option descriptions
