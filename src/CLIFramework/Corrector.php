@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework;
+use CLIFramework\Exception\CommandNotFoundException;
 
 class Corrector
 {
@@ -11,7 +12,7 @@ class Corrector
     }
 
 
-    public function correct($input) {
+    public function match($input) {
         // no shortest distance found, yet
         $shortest = -1;
 
@@ -46,6 +47,21 @@ class Corrector
         }
         return array($shortest, $closest);
     }
+
+    public function correct($input) {
+        list($shortest, $guess) = $this->match($input);
+        if ($shortest == 0) {
+            return $guess;
+        } else {
+            $prompter = new Prompter;
+            $prompter->style = 'ask';
+            $answer = $prompter->ask("Did you mean '$guess'?", array('Y','n'), 'Y');
+            if (!$answer || strtolower($answer) == 'y') {
+                return $guess;
+            }
+        }
+    }
+
 }
 
 

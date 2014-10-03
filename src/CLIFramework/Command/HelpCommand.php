@@ -12,16 +12,8 @@ namespace CLIFramework\Command;
 use CLIFramework\Command;
 use CLIFramework\CommandInterface;
 use CLIFramework\OptionPrinter;
+use CLIFramework\Corrector;
 
-function calculate_column_width($words, $min = 0) {
-    $maxWidth = $min;
-    foreach($words as $word) {
-        if (strlen($word) > $maxWidth) {
-            $maxWidth = strlen($word);
-        }
-    }
-    return $maxWidth;
-}
 
 class HelpCommand extends Command
     implements CommandInterface
@@ -33,6 +25,23 @@ class HelpCommand extends Command
     public function brief()
     {
         return 'Show help message of a command';
+    }
+
+    public function displayTopic($topic) {
+        $this->logger->write($this->formatter->format('TOPIC', 'strong_white') . "\n");
+        $this->logger->write("    " . $topic->getTitle() . "\n\n");
+        $this->logger->write($this->formatter->format('DESCRIPTION', 'strong_white') . "\n");
+        $this->logger->write($topic->getContent() . "\n");
+    }
+
+    public function calculateColumnWidth($words, $min = 0) {
+        $maxWidth = $min;
+        foreach($words as $word) {
+            if (strlen($word) > $maxWidth) {
+                $maxWidth = strlen($word);
+            }
+        }
+        return $maxWidth;
     }
 
     /**
@@ -54,8 +63,21 @@ class HelpCommand extends Command
 
         // if there is no subcommand to render help, show all available commands.
         $commandNames = func_get_args();
-        if (count($commandNames)) {
 
+        if (count($commandNames) == 1) {
+            // Check topic
+            if ($topic = $app->getTopic($commandNames[0])) {
+                return $this->displayTopic($topic);
+            } elseif(!$app->hasCommand($commandNames[0])) {
+                $corrector = new Corrector(array_keys($this->topics));
+                if ($match = $corrector->correct($commandNames[0])) {
+                    return $this->displayTopic($app->topics[$match]);
+                }
+                return;
+            }
+        }
+
+        if (count($commandNames)) {
             $subcommand = $commandNames[0];
             $cmd = $app;
             for ($i = 0; $cmd && $i < count($commandNames) ; $i++ ) {
@@ -159,7 +181,7 @@ class HelpCommand extends Command
             $cmdNames = array_filter(array_keys($app->commands), function($n) {
                 return ! preg_match('#^_#', $n);
             });
-            $maxWidth = calculate_column_width($cmdNames, 8);
+            $maxWidth = $this->calculateColumnWidth($cmdNames, 8);
 
 
 
@@ -183,7 +205,7 @@ class HelpCommand extends Command
             if ($app->topics) {
                 $logger->write($formatter->format("Topics\n",'strong_white'));
 
-                $maxWidth = calculate_column_width(array_keys($app->topics), 8);
+                $maxWidth = $this->calculateColumnWidth(array_keys($app->topics), 8);
                 foreach($app->topics as $topicId => $topic) {
                     printf("%" . ($maxWidth + 8) . "s    %s\n", $topicId, $topic->getTitle());
                 }

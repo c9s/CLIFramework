@@ -19,6 +19,7 @@ use CLIFramework\CommandInterface;
 use CLIFramework\Prompter;
 use CLIFramework\CommandGroup;
 use CLIFramework\Formatter;
+use CLIFramework\Corrector;
 use Exception;
 use CLIFramework\Exception\CommandNotFoundException;
 use ReflectionClass;
@@ -115,6 +116,12 @@ class Application extends CommandBase
         $this->topics[$topicId] = $topicClass ? new $topicClass: $this->loadTopic($topicId);
     }
 
+    public function getTopic($topicId) {
+        if (isset($this->topics[$topicId])) {
+            return $this->topics[$topicId];
+        }
+    }
+
     public function loadTopic($topicId) {
         // existing class name or full-qualified class name
         if (class_exists($topicId, true)) {
@@ -201,18 +208,10 @@ class Application extends CommandBase
                 $a = $getopt->getCurrentArgument();
 
                 if (!$current_cmd->hasCommand($a) ) {
-                    list($shortest, $guess) = $current_cmd->guessCommand($a);
-                    if ($shortest == 0) {
+                    if ($guess = $current_cmd->guessCommand($a)) {
                         $a = $guess;
                     } else {
-                        $prompter = new Prompter;
-                        $prompter->style = 'ask';
-                        $answer = $prompter->ask("Did you mean command '$guess'?", array('Y','n'), 'Y');
-                        if (!$answer || strtolower($answer) == 'y') {
-                            $a = $guess;
-                        } else {
-                            throw new CommandNotFoundException($a);
-                        }
+                        throw new CommandNotFoundException($a);
                     }
                 }
 
