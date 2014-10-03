@@ -97,9 +97,9 @@ class BuildGitHubWikiTopicsCommand extends Command
                     'template' => 'Class.php.twig',
                 ));
 
-                $cTemplate->addProperty('remoteUrl', $topicRemoteUrl);
-                $cTemplate->addProperty('title', $topicTitle);
                 $cTemplate->addProperty('id',  $topicId);
+                $cTemplate->addProperty('url', $topicRemoteUrl);
+                $cTemplate->addProperty('title', $topicTitle);
 
                 $cTemplate->extendClass('\\CLIFramework\\Topic\\GitHubTopic');
 

@@ -29,9 +29,14 @@ class HelpCommand extends Command
 
     public function displayTopic($topic) {
         $this->logger->write($this->formatter->format('TOPIC', 'strong_white') . "\n");
-        $this->logger->write("    " . $topic->getTitle() . "\n\n");
+        $this->logger->write("\t" . $topic->getTitle() . "\n\n");
         $this->logger->write($this->formatter->format('DESCRIPTION', 'strong_white') . "\n");
-        $this->logger->write($topic->getContent() . "\n");
+        $this->logger->write($topic->getContent() . "\n\n");
+
+        if ($footer = $topic->getFooter()) {
+            $this->logger->write($this->formatter->format('MORE', 'strong_white') . "\n");
+            $this->logger->write($footer . "\n");
+        }
     }
 
     public function calculateColumnWidth($words, $min = 0) {
