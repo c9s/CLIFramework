@@ -23,6 +23,37 @@
 require 'vendor/autoload.php';
 use CLIFramework\ValueCollection;
 
+class BasicTopic {
+
+    public function getTitle() {
+        return 'Basic Tutorial';
+    }
+
+    public function getContent() {
+        return wordwrap('      alternate object database
+           Via the alternates mechanism, a repository can inherit part of its object database from another
+           object database, which is called an "alternate".
+
+       bare repository
+           A bare repository is normally an appropriately named directory with a .git suffix that does not
+           have a locally checked-out copy of any of the files under revision control. That is, all of the
+           Git administrative and control files that would normally be present in the hidden .git
+           sub-directory are directly present in the repository.git directory instead, and no other files are
+           present and checked out. Usually publishers of public repositories make bare repositories
+           available.
+
+       blob object
+           Untyped object, e.g. the contents of a file.
+
+       branch
+           A "branch" is an active line of development. The most recent commit on a branch is referred to as
+           the tip of that branch. The tip of the branch is referenced by a branch head, which moves forward
+           as additional development is done on the branch. A single Git repository can track an arbitrary
+           number of branches, but your working tree is associated with just one of them (the "current" or
+           "checked out" branch), and HEAD points to that branch.');
+    }
+}
+
 class CommitCommand extends CLIFramework\Command {
 
     public function brief() { return 'A simple demo command'; }
@@ -109,7 +140,7 @@ class FooCommand extends CLIFramework\Command {
     public function brief() { return 'brief of foo'; }
 
     public function init() {
-        $this->addCommand('subfoo','SubFooCommand');
+        $this->command('subfoo','SubFooCommand');
     }
 
     public function execute() {
@@ -142,8 +173,9 @@ class ExampleApplication extends CLIFramework\Application {
     public function init()
     {
         parent::init();
-        $this->addCommand('foo','FooCommand');
-        $this->addCommand('commit','CommitCommand');
+        $this->command('foo','FooCommand');
+        $this->command('commit','CommitCommand');
+        $this->topic('basic','BasicTopic');
     }
 }
 

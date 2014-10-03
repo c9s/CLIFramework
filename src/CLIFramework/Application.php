@@ -106,13 +106,13 @@ class Application extends CommandBase
             if (is_numeric($key)) {
                 $this->topics[$val] = $this->loadTopic($val);
             } else {
-                $this->topics[$key] = $val;
+                $this->topics[$key] = $this->loadTopic($val);
             }
         }
     }
 
     public function topic($topicId, $topicClass = null) {
-        $this->topics[$topicId] = $topicClass ?: $this->loadTopic($topicId);
+        $this->topics[$topicId] = $topicClass ? new $topicClass: $this->loadTopic($topicId);
     }
 
     public function loadTopic($topicId) {

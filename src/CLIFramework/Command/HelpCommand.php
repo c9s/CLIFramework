@@ -13,6 +13,16 @@ use CLIFramework\Command;
 use CLIFramework\CommandInterface;
 use CLIFramework\OptionPrinter;
 
+function calculate_column_width($words, $min = 0) {
+    $maxWidth = $min;
+    foreach($words as $word) {
+        if (strlen($word) > $maxWidth) {
+            $maxWidth = strlen($word);
+        }
+    }
+    return $maxWidth;
+}
+
 class HelpCommand extends Command
     implements CommandInterface
 {
@@ -43,18 +53,24 @@ class HelpCommand extends Command
         $formatter = $this->getFormatter();
 
         // if there is no subcommand to render help, show all available commands.
-        $subcommands = func_get_args();
-        if ($subcommands) {
-            // TODO: recursively get the last subcommand.
-            $subcommand = $subcommands[0];
-            // get command object.
-            $cmd = $app->getCommand( $subcommand );
+        $commandNames = func_get_args();
+        if (count($commandNames)) {
+
+            $subcommand = $commandNames[0];
+            $cmd = $app;
+            for ($i = 0; $cmd && $i < count($commandNames) ; $i++ ) {
+                $cmd = $cmd->getCommand($commandNames[$i]);
+            }
+            if (!$cmd) {
+                throw new Exception("Command entry " . join(' ', $commandNames) . " not found");
+            }
+
 
             $usage = $cmd->usage();
 
             if ( $brief = $cmd->brief() ) {
                 $logger->write($formatter->format('NAME', 'strong_white') . "\n");
-                $logger->write("\t" . $formatter->format($subcommand, 'strong_white') . ' - ' . $brief . "\n\n");
+                $logger->write("\t" . $formatter->format(join(' ', $commandNames), 'strong_white') . ' - ' . $brief . "\n\n");
             }
 
 
@@ -138,20 +154,16 @@ class HelpCommand extends Command
                 }
             }
 
-            // print command brief list
             $logger->write($formatter->format("Commands\n",'strong_white'));
 
-            $maxWidth = 4;
-            foreach( $app->commands as $name => $class) {
-                if (preg_match('#^_#', $name)) {
-                    continue;
-                }
-                if (strlen($name) > $maxWidth) {
-                    $maxWidth = strlen($name);
-                }
-            }
+            $cmdNames = array_filter(array_keys($app->commands), function($n) {
+                return ! preg_match('#^_#', $n);
+            });
+            $maxWidth = calculate_column_width($cmdNames, 8);
 
-            foreach( $app->commands as $name => $class) {
+
+
+            foreach ($app->commands as $name => $class) {
                 // skip subcommand with prefix underscore.
                 if (preg_match('#^_#', $name)) {
                     continue;
@@ -166,19 +178,24 @@ class HelpCommand extends Command
 
             $logger->write("\n");
             $logger->write($this->getFormattedHelpText());
+
+
+            if ($app->topics) {
+                $logger->write($formatter->format("Topics\n",'strong_white'));
+
+                $maxWidth = calculate_column_width(array_keys($app->topics), 8);
+                foreach($app->topics as $topicId => $topic) {
+                    printf("%" . ($maxWidth + 8) . "s    %s\n", $topicId, $topic->getTitle());
+                }
+            }
+
+
         }
 
         if ($app->showAppSignature) {
             $logger->write( $formatter->format("\n", 'gray') );
-            $logger->write( $formatter->format("CLIFramework {$app->getVersion()}\thttps://github.com/c9s/CLIFramework\n", 'gray') );
+            $logger->write( $formatter->format("CLIFramework {$app->getCoreVersion()}\thttps://github.com/c9s/CLIFramework\n", 'gray') );
         }
-
-        // if empty command list
-        /*
-        $file =  __FILE__ . '.md';
-        if( file_exists( $file ) )
-            echo file_get_contents( $file );
-        */
         return true;
     }
 }
