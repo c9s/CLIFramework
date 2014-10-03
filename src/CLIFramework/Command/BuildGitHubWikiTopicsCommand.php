@@ -10,7 +10,6 @@ use RecursiveRegexIterator;
 
 class BuildGitHubWikiTopicsCommand extends Command
 {
-
     public function brief() { return 'Build topic classes from the wiki of a GitHub Project'; }
 
     public function options($opts) {
