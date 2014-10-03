@@ -24,7 +24,14 @@ class BuildGitHubWikiTopicsCommand extends Command
     }
 
     public function execute($user, $repo) {
-        $ns = $this->options->ns;
+        $ns = '';
+        if ($appNs = $this->getApplication()->getCurrentAppNamespace()) {
+            $ns = $appNs . '\\Topic\\';
+        } elseif ($appNs = $this->options->ns) {
+            $ns = rtrim(str_replace(':','\\',$appNs),'\\') . '\\';
+        } else {
+            $this->logger->notice('Namespace is defined.');
+        }
 
         // Use git to clone the wiki
         $wikiGitURI = "https://github.com/$user/$repo.wiki.git";
@@ -34,12 +41,13 @@ class BuildGitHubWikiTopicsCommand extends Command
         $currentDir = getcwd();
 
         if (is_dir($localRepoPath)) {
-            $this->logger->info("Fetching...");
+            $this->logger->info("Fetching $wikiGitURI...");
             system("git -C $localRepoPath pull origin", $retval);
             if ($retval != 0) {
                 return $this->logger->error("Can't clone wiki repository");
             }
         } else {
+            $this->logger->info("Cloning $wikiGitURI...");
             system("git clone $wikiGitURI $localRepoPath", $retval);
             if ($retval != 0) {
                 return $this->logger->error("Can't clone wiki repository");
@@ -65,10 +73,7 @@ class BuildGitHubWikiTopicsCommand extends Command
                 $topicTitle = preg_replace(array('/.md$/','/-/'),array('',' '),$file->getFileName());
 
                 // The class namename for topic
-                $topicClassName = preg_replace(array('/.md$/','/\W/'),array('',''),$file->getFileName()) . "Topic";
-                if ($namespace = $this->options->ns) {
-                    $topicClassName = str_replace(':','\\',$namespace) . '\\' . $topicClassName;
-                }
+                $topicClassName = $ns . preg_replace(array('/.md$/','/\W/'),array('',''),$file->getFileName()) . "Topic";
 
                 $cTemplate = new ClassTemplate($topicClassName , array(
                     'template' => 'Class.php.twig',
@@ -87,7 +92,7 @@ class BuildGitHubWikiTopicsCommand extends Command
                 $cTemplate->addMethod('public','getContent', [], 'return ' . var_export($content, true) . ';', [] , false);
 
                 $outputDir = $this->options->dir ?: '.';
-                $classFile = $outputDir . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR ,$topicClassName) . '.php';
+                $classFile = $outputDir . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR,$topicClassName) . '.php';
                 $classDir  = dirname($classFile);
                 if (!file_exists($classDir)) {
                     mkdir($classDir,0755, true);
