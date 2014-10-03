@@ -117,7 +117,7 @@ class HelpCommand extends Command
 
             // print application options
             $logger->write($formatter->format("OPTIONS",'strong_white') . "\n");
-            $cmd->optionSpecs->printOptions();
+            $logger->write($printer->render($cmd->optionSpecs));
             $logger->write("\n\n");
 
             // get command list, Command classes should be preloaded.
@@ -137,6 +137,17 @@ class HelpCommand extends Command
 
             // print command brief list
             $logger->write($formatter->format("Commands\n",'strong_white'));
+
+            $maxWidth = 4;
+            foreach( $app->commands as $name => $class) {
+                if (preg_match('#^_#', $name)) {
+                    continue;
+                }
+                if (strlen($name) > $maxWidth) {
+                    $maxWidth = strlen($name);
+                }
+            }
+
             foreach( $app->commands as $name => $class) {
                 // skip subcommand with prefix underscore.
                 if (preg_match('#^_#', $name)) {
@@ -145,7 +156,7 @@ class HelpCommand extends Command
 
                 $cmd = new $class;
                 $brief = $cmd->brief();
-                printf("%24s   %s\n",
+                printf("%" . ($maxWidth + 8) . "s    %s\n",
                     $name,
                     $brief );
             }
