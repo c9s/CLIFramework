@@ -66,7 +66,7 @@ class BuildGitHubWikiTopicsCommand extends Command
         $directory = new RecursiveDirectoryIterator($localRepoPath);
         $iterator = new RecursiveIteratorIterator($directory);
         foreach($iterator as $file) {
-            if ( preg_match('/\.git/',$file->getPathName())) {
+            if (preg_match('/\.git/',$file->getPathName())) {
                 continue;
             }
             if (preg_match('/\.md$/', $file->getPathName())) {
