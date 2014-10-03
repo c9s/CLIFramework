@@ -11,6 +11,7 @@
 namespace CLIFramework\Command;
 use CLIFramework\Command;
 use CLIFramework\CommandInterface;
+use CLIFramework\OptionPrinter;
 
 class HelpCommand extends Command
     implements CommandInterface
@@ -38,6 +39,8 @@ class HelpCommand extends Command
         $logger = $this->logger;
         $app = $this->getApplication();
 
+        $printer = new OptionPrinter;
+
         // if there is no subcommand to render help, show all available commands.
         $subcommands = func_get_args();
         $formatter = $this->getFormatter();
@@ -48,11 +51,10 @@ class HelpCommand extends Command
             $cmd = $app->getCommand( $subcommand );
 
             $usage = $cmd->usage();
-            $optionLines = $cmd->optionSpecs->outputOptions();
 
             if ( $brief = $cmd->brief() ) {
                 $logger->write($formatter->format('NAME', 'strong_white') . "\n");
-                $logger->write("\t" . $formatter->format($subcommand, 'strong_white') . ' - ' . ucfirst($brief) . "\n\n");
+                $logger->write("\t" . $formatter->format($subcommand, 'strong_white') . ' - ' . $brief . "\n\n");
             }
 
 
@@ -78,10 +80,10 @@ class HelpCommand extends Command
                 $logger->write( "\n\n" );
             }
 
-            if ($optionLines) {
-                $logger->write( $formatter->format('OPTIONS', 'strong_white') . "\n" );
-                $logger->write( join("\n",$optionLines) );
-                $logger->write( "\n" );
+            if ($optionLines = $printer->render($cmd->optionSpecs)) {
+                $logger->write($formatter->format('OPTIONS', 'strong_white') . "\n");
+                $logger->write($optionLines);
+                $logger->write("\n");
             }
 
             $logger->write($cmd->getFormattedHelpText());
