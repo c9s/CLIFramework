@@ -25,7 +25,9 @@ class Application extends CLIApplication
         parent::init();
         // $this->addCommand('list');
         // $this->addCommand('test1');
-        $this->addCommandGroup('Daily Basic', array('list', 'test1'));
+        $this->CommandGroup('Daily Basic', array('list', 'test1'));
+        $this->topic('list');
+        $this->topics(array('setup','install'));
     }
 
 

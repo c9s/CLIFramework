@@ -250,6 +250,15 @@ abstract class CommandBase
         return CommandLoader::getInstance();
     }
 
+    public function commandGroup($groupName, $commands = array())
+    {
+        return $this->addCommandGroup($groupName, $commands);
+    }
+
+    public function command($command, $class = null) 
+    {
+        return $this->addCommand($command, $class);
+    }
 
     /**
      * register command to application, in init() method stage,

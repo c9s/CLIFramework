@@ -46,6 +46,11 @@ class Application extends CommandBase
 
     /**
      *
+     */
+    public $topics = array();
+
+    /**
+     *
      * @var CLIFramework\Formatter
      */
     public $formatter;
@@ -60,14 +65,19 @@ class Application extends CommandBase
 
         // initliaze command loader
         $this->loader = CommandLoader::getInstance();
-        $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
 
         // get current class namespace, add {App}\Command\ to loader
         $app_ref_class = new ReflectionClass($this);
         $app_ns = $app_ref_class->getNamespaceName();
         $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
+        $this->loader->addNamespace( array('\\CLIFramework\\Command' ));
 
         $this->supportReadline = extension_loaded('readline');
+    }
+
+    public function getCurrentAppNamespace() {
+        $refClass = new ReflectionClass($this);
+        return $refClass->getNamespaceName();
     }
 
     public function brief()
@@ -91,6 +101,40 @@ class Application extends CommandBase
         $opts->add('version'  ,'show version');
     }
 
+    public function topics(array $topics) {
+        foreach($topics as $key => $val) {
+            if (is_numeric($key)) {
+                $this->topics[$val] = $this->loadTopic($val);
+            } else {
+                $this->topics[$key] = $val;
+            }
+        }
+    }
+
+    public function topic($topicId, $topicClass = null) {
+        $this->topics[$topicId] = $topicClass ?: $this->loadTopic($topicId);
+    }
+
+    public function loadTopic($topicId) {
+        // existing class name or full-qualified class name
+        if (class_exists($topicId, true)) {
+            return new $topicId;
+        }
+        if (!preg_match('/Topic$/', $topicId)) {
+            $className = ucfirst($topicId) . 'Topic';
+        } else {
+            $className = ucfirst($topicId);
+        }
+        $possibleNs = array($this->getCurrentAppNamespace(), 'CLIFramework');
+        foreach($possibleNs as $ns) {
+            $class = $ns . '\\' . 'Topic' . '\\' . $className;
+            if (class_exists($class, true)) {
+                return new $class;
+            }
+        }
+        throw new Exception("Topic $topicId not found.");
+    }
+
     /*
      * init application,
      *
@@ -102,7 +146,7 @@ class Application extends CommandBase
         $this->addCommand('help','CLIFramework\\Command\\HelpCommand');
         $this->addCommand('_zsh', 'CLIFramework\\Command\\ZshCompletionCommand');
         $this->addCommand('_meta', 'CLIFramework\\Command\\MetaCommand');
-        $this->addCommand('_build:github-wiki', 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand');
+        $this->addCommand('_build-github-wiki', 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand');
     }
 
     public function runWithTry($argv)

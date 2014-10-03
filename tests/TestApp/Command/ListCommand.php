@@ -15,24 +15,20 @@ use CLIFramework\Command;
 class ListCommand extends Command 
 {
 
-    function brief()
-    {
+    public function brief() {
         return 'brief message';
     }
 
-    function usage()
-    {
+    public function usage() {
         return 'app list [arguments]';
     }
 
-    function init()
-    {
-        $this->addCommand('foo');
-        $this->addCommand('extra', 'TestApp\Command\ListCommand\ExtraArgumentTestCommand');
+    public function init() {
+        $this->command('foo');
+        $this->command('extra', 'TestApp\Command\ListCommand\ExtraArgumentTestCommand');
     }
 
-    function execute()
-    {
+    public function execute() {
 
     }
 
