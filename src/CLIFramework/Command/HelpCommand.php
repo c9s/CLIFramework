@@ -99,6 +99,8 @@ class HelpCommand extends Command
             if ( ! empty($cmd->getOptionCollection()->options) ) {
                 $logger->write(" [options]");
             }
+
+
             if ($cmd->hasCommands() ) {
                 $logger->write(" <command>");
             } else {
@@ -107,6 +109,7 @@ class HelpCommand extends Command
                     $logger->write(" <" . $argInfo->name . ">");
                 }
             }
+
             $logger->write("\n\n");
 
             if( $usage = $cmd->usage() ) {

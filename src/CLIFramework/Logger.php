@@ -124,6 +124,14 @@ class Logger
         echo $text;
     }
 
+    public function writeln($text) {
+        echo $text , "\n";
+    }
+
+    public function newline() {
+        echo "\n";
+    }
+
     public function getStyleByName($levelName)
     {
         return @$this->levelStyles[$levelName];
