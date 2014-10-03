@@ -11,14 +11,18 @@ use Exception;
 
 class BuildGitHubWikiTopicsCommand extends Command
 {
-    public function brief() { return 'Build topic classes from the wiki of a GitHub Project'; }
+    public function brief() {
+        return 'Build topic classes from the wiki of a GitHub Project.';
+    }
 
-    public function options($opts) {
+    public function options($opts) 
+    {
         $opts->add('ns:', 'Class namespace');
         $opts->add('dir:', 'Output directory');
     }
 
-    public function arguments($args) {
+    public function arguments($args) 
+    {
         $args->add('user')->desc('GitHub Account');
         $args->add('repo')->desc('GitHub Repository');
     }
