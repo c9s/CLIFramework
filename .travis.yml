@@ -15,7 +15,8 @@ script:
   - example/demo _meta --zsh commit arg 0 suggestions
   - example/demo _meta --zsh commit arg 1 valid-values
   - example/demo _zsh --bind demo > _zsh
-  - example/demo _build-github-wiki --dir src c9s LazyRecord
+  - example/demo _build-github-wiki --ns LazyRecord --dir src c9s LazyRecord
+  - example/demo _build-github-wiki --ns PHPBrew:Topic --dir src phpbrew phpbrew
 
 cache:
   - vendor
