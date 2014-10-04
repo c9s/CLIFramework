@@ -43,54 +43,6 @@ function encode_array_as_shell_string($array) {
     }
 }
 
-function output_values($values, $opts) {
-    // indexed array
-    if (empty($values)) {
-        return;
-    }
-
-    // encode complex data structure to shell
-    if ($values instanceof ValueCollection) {
-
-        // this output format works both in zsh & bash
-        if ($opts->zsh || $opts->bash) {
-            $buf = new Buffer;
-            $buf->appendLine("#groups");
-            $buf->appendLine("declare -A groups");
-            $buf->appendLine("declare -A labels");
-
-            // zsh and bash only supports one dimensional array, so we can only output values in string and separate these values with space.
-            foreach( $values as $groupId => $groupValues) {
-                $buf->appendLine("groups[$groupId]=" . encode_array_as_shell_string($groupValues));
-            }
-            foreach( $values->getGroupLabels() as $groupId => $label) {
-                $buf->appendLine("labels[$groupId]=" . as_shell_string($label));
-            }
-            echo $buf;
-        } elseif ($opts->json) {
-            echo $values->toJson();
-        } else {
-            throw new Exception('Unsupported shell');
-        }
-        return;
-    }
-
-    if (isset($values[0]) && is_array($values[0])) {
-        echo "#descriptions\n";
-        foreach($values as $value) {
-            list($key,$val) = $value;
-            echo "$key:" . addcslashes($val,":") . "\n";
-        }
-    } elseif (isset($values[0])) {
-        echo "#values\n";
-        echo join("\n", $values);
-    } else {
-        echo "#descriptions\n";
-        foreach($values as $key => $val) {
-            echo "$key:" . addcslashes($val,":") . "\n";
-        }
-    }
-}
 
 class MetaCommand extends Command
 {
@@ -137,13 +89,13 @@ class MetaCommand extends Command
             switch($attr) {
             case 'suggestions':
                 if ($values = $arginfo->getSuggestions()) {
-                    return output_values($values, $this->options);
+                    return $this->outputValues($values, $this->options);
                 }
                 break;
 
             case 'valid-values':
                 if ($values = $arginfo->getValidValues()) {
-                    return output_values($values, $this->options);
+                    return $this->outputValues($values, $this->options);
                 }
                 break;
             }
@@ -160,12 +112,12 @@ class MetaCommand extends Command
                 break;
             case 'valid-values':
                 if ($values = $option->getValidValues()) {
-                    return output_values($values, $this->options);
+                    return $this->outputValues($values, $this->options);
                 }
                 break;
             case 'suggestions':
                 if ($values = $option->getSuggestions()) {
-                    return output_values($values, $this->options);
+                    return $this->outputValues($values, $this->options);
                 }
                 break;
             }
@@ -179,6 +131,55 @@ class MetaCommand extends Command
 
         // return the information
 
+    }
+
+    public function outputValues($values, $opts) {
+        // indexed array
+        if (is_array($values) && empty($values)) {
+            return;
+        }
+
+        // encode complex data structure to shell
+        if ($values instanceof ValueCollection) {
+
+            // this output format works both in zsh & bash
+            if ($opts->zsh || $opts->bash) {
+                $buf = new Buffer;
+                $buf->appendLine("#groups");
+                $buf->appendLine("declare -A groups");
+                $buf->appendLine("declare -A labels");
+
+                // zsh and bash only supports one dimensional array, so we can only output values in string and separate these values with space.
+                foreach( $values as $groupId => $groupValues) {
+                    $buf->appendLine("groups[$groupId]=" . encode_array_as_shell_string($groupValues));
+                }
+                foreach( $values->getGroupLabels() as $groupId => $label) {
+                    $buf->appendLine("labels[$groupId]=" . as_shell_string($label));
+                }
+                $this->logger->write($buf);
+            } elseif ($opts->json) {
+                $this->logger->write($values->toJson());
+            } else {
+                throw new Exception('Unsupported shell');
+            }
+            return;
+        }
+
+        if (isset($values[0]) && is_array($values[0])) {
+            $this->logger->writeln("#descriptions");
+            foreach($values as $value) {
+                list($key,$val) = $value;
+                $this->logger->writeln("$key:" . addcslashes($val,":"));
+            }
+        } elseif (isset($values[0])) {
+            $this->logger->writeln("#values");
+            $this->logger->writeln(join("\n", $values));
+        } else {
+            $this->logger->writeln("#descriptions");
+            foreach($values as $key => $val) {
+                $this->logger->writeln("$key:" . addcslashes($val,":"));
+            }
+        }
     }
 }
 
