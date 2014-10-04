@@ -62,8 +62,6 @@ class Application extends CommandBase
         $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
         $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
 
-        // init option parser
-        $this->getoptParser = new ContinuousOptionParser;
 
         $this->supportReadline = extension_loaded('readline');
     }
@@ -129,8 +127,7 @@ class Application extends CommandBase
         $current_cmd->_init();
 
         // use getoption kit to parse application options
-        $getopt = $this->getoptParser;
-        $getopt->setSpecs( $current_cmd->optionSpecs );
+        $getopt = new ContinuousOptionParser($current_cmd->optionSpecs);
 
         // parse the first part options (options after script name)
         // option parser should stop before next command name.
