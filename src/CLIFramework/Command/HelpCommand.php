@@ -105,7 +105,7 @@ class HelpCommand extends Command
                 $logger->write("\t" . $formatter->format(join(', ', $aliases), 'strong_white') . "\n\n");
             }
 
-            if ( $usage = $cmd->usage() ) {
+            if ( $usage = trim($cmd->usage()) ) {
                 $logger->write( $formatter->format('USAGE', 'strong_white') . "\n" );
                 $logger->write( "\t" . $usage );
                 $logger->write( "\n\n" );
@@ -133,7 +133,7 @@ class HelpCommand extends Command
             $cmd = $this->parent;
             $logger->write( $formatter->format( ucfirst($cmd->brief()), "strong_white")."\n\n");
 
-            if( $usage = $cmd->usage() ) {
+            if( $usage = trim($cmd->usage()) ) {
                 $logger->write($formatter->format("USAGE", "strong_white") . "\n");
                 $logger->write($usage);
                 $logger->write("\n\n");
