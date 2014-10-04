@@ -34,5 +34,10 @@ GetOptionKit
         $this->runCommand('example/demo help basic');
     }
 
+    public function testGenerateZshCompletion() {
+        $this->expectOutputRegex("!compdef _demo demo!");
+        $this->runCommand('example/demo _zsh --program demo --bind demo');
+    }
+
 }
 
