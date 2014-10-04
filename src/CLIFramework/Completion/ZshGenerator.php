@@ -427,7 +427,7 @@ class ZshGenerator
      */
     public function command_subcommand_states($cmd) {
         $args = array();
-        $cmds = $this->visible_commands($cmd->getCommandObjects());
+        $cmds = $this->visible_commands($cmd->getCommands());
         foreach($cmds as $c) {
             $args[] = sprintf("'%s:->%s'", $c->getName(), $c->getName(), $c->getName()); // generate argument states
         }
@@ -536,7 +536,7 @@ class ZshGenerator
 
 
         $buf = new Buffer;
-        $subcmds = $this->visible_commands($cmd->getCommandObjects());
+        $subcmds = $this->visible_commands($cmd->getCommands());
         foreach($subcmds as $subcmd) {
             $buf->append($this->command_meta_callback_function($subcmd));
 
@@ -589,7 +589,7 @@ class ZshGenerator
         $buf = new Buffer;
         $buf->setIndent($level);
 
-        $subcmds = $this->visible_commands($cmd->getCommandObjects());
+        $subcmds = $this->visible_commands($cmd->getCommands());
         $descsBuf  = $this->describe_commands($subcmds, $level);
 
         $code = array();

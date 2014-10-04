@@ -414,7 +414,7 @@ abstract class CommandBase
      *
      * @return Command[]
      */
-    public function getCommandObjects() 
+    public function getCommands() 
     {
         return $this->commands;
     }

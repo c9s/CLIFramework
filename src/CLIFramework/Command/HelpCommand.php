@@ -180,14 +180,14 @@ class HelpCommand extends Command
 
             $logger->write($formatter->format("COMMANDS\n",'strong_white'));
 
-            $cmdNames = array_filter(array_keys($app->commands), function($n) {
+            $cmdNames = array_filter(array_keys($app->getCommands()), function($n) {
                 return ! preg_match('#^_#', $n);
             });
             $maxWidth = $this->calculateColumnWidth($cmdNames, 8);
 
 
 
-            foreach ($app->commands as $name => $class) {
+            foreach ($app->getCommands() as $name => $class) {
                 // skip subcommand with prefix underscore.
                 if (preg_match('#^_#', $name)) {
                     continue;
