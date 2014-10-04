@@ -39,5 +39,10 @@ GetOptionKit
         $this->runCommand('example/demo _zsh --program demo --bind demo');
     }
 
+    public function testArgument() {
+        $this->setExpectedException('CLIFramework\\Exception\\CommandArgumentNotEnoughException');
+        $this->runCommand('example/demo commit');
+    }
+
 }
 

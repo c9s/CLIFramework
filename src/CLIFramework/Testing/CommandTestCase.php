@@ -27,6 +27,6 @@ abstract class CommandTestCase extends PHPUnit_Framework_TestCase
         if (is_string($args)) {
             $args = preg_split('/\s+/',$args);
         }
-        $this->app->runWithTry($args);
+        $this->app->run($args);
     }
 }
