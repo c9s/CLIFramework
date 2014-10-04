@@ -24,11 +24,6 @@ abstract class Command extends CommandBase
      */
     public $application;
 
-    /**
-     * @var string Command alias string.
-     */
-    public $alias;
-
     public $name;
 
     public function __construct($parent = null)
@@ -112,17 +107,6 @@ abstract class Command extends CommandBase
     public function getFormatter()
     {
         return $this->getApplication()->getFormatter();
-    }
-
-    /**
-     * Alias setter
-     *
-     * @param string $alias
-     */
-    public function alias($alias)
-    {
-        $this->alias = $alias;
-        return $this;
     }
 
     /**
