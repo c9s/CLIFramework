@@ -352,7 +352,7 @@ abstract class CommandBase
      *
      * @return string[]
      */
-    public function getCommandNameTrace() {
+    public function getCommandNameTraceArray() {
         $cmdStacks = array( $this->getName() );
         $p = $this->parent;
         while($p) {
@@ -365,7 +365,7 @@ abstract class CommandBase
     }
 
     public function getSignature() {
-        return join('.', $this->getCommandNameTrace());
+        return join('.', $this->getCommandNameTraceArray());
     }
 
 
