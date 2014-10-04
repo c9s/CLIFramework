@@ -10,6 +10,7 @@
 namespace CLIFramework;
 use Exception;
 use CLIFramework\CommandInterface;
+use CLIFramework\Exception\CommandClassNotFoundException;
 
 /**
  * abstract command class

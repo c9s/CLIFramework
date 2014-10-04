@@ -22,6 +22,7 @@ use CLIFramework\CommandGroup;
 use CLIFramework\Exception\CommandNotFoundException;
 use CLIFramework\Exception\InvalidCommandArgumentException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
+use CLIFramework\Exception\CommandClassNotFoundException;
 use CLIFramework\ArgInfo;
 use CLIFramework\ArgInfoList;
 use CLIFramework\Corrector;
@@ -275,7 +276,7 @@ abstract class CommandBase
         // or generate command class name automatically.
         if ($class) {
             if ($this->getLoader()->loadClass($class) === false )
-                throw Exception("Command class $class not found.");
+                throw CommandClassNotFoundException("Command class $class not found.");
         } else {
             if ($this->parent) {
                 // get class name by subcommand rules.
@@ -285,8 +286,8 @@ abstract class CommandBase
                 $class = $this->getLoader()->load($command);
             }
         }
-        if ( ! $class ) {
-            throw new Exception("command class $class for command $command not found");
+        if (! $class) {
+            throw new CommandClassNotFoundException("command class $class for command $command not found");
         }
         // register command to table
         $cmd = $this->createCommand($class);
