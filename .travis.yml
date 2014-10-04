@@ -25,6 +25,6 @@ after_script:
 cache:
   - vendor
 
-notifications:
-  webhooks:
-    - http://wireroom.extremedev.org/=/travis-ci/Hall
+# notifications:
+#   webhooks:
+#     - http://wireroom.extremedev.org/=/travis-ci/Hall
