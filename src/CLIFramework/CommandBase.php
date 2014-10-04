@@ -132,11 +132,6 @@ abstract class CommandBase
     }
 
 
-    public function addAlias($alias, $cmdName) {
-        $this->aliases[$alias] = $cmdName;
-    }
-
-
     public function isApplication() {
         return $this instanceof Application;
     }
@@ -293,7 +288,23 @@ abstract class CommandBase
         if ( ! $class ) {
             throw new Exception("command class $class for command $command not found");
         }
-        return $this->commands[ $command ] = $this->createCommand($class);
+        // register command to table
+        $cmd = $this->createCommand($class);
+        $this->connectCommand($command, $cmd);
+    }
+
+
+    /**
+     * Connect command object with the current command object.
+     *
+     */
+    protected function connectCommand($name, CommandBase $cmd) {
+        $this->commands[$name] = $cmd;
+
+        // regsiter command aliases to the alias table.
+        foreach( (array) $cmd->aliases() as $alias) {
+            $this->aliases[$alias] = $cmd;
+        }
     }
 
     /**
@@ -371,7 +382,7 @@ abstract class CommandBase
     public function getCommand($command)
     {
         if ( isset($this->aliases[$command]) ) {
-            $command = $this->aliases[$command];
+            return $this->aliases[$command];
         }
         if ( isset($this->commands[ $command ]) ) {
             return $this->commands[ $command ];
