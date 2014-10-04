@@ -67,6 +67,7 @@ abstract class Command extends CommandBase
         }
     }
 
+
     /**
      * Translate current class name to command name.
      *

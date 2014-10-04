@@ -160,7 +160,10 @@ class Application extends CommandBase
     {
         try {
             return $this->run($argv);
-        } catch ( Exception $e ) {
+        } catch (CommandArgumentNotEnoughException $e) {
+            $this->logger->error( $e->getMessage() );
+            $this->logger->writeln( );
+        } catch (Exception $e) {
             $this->getLogger()->error( $e->getMessage() );
         }
 

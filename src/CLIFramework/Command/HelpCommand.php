@@ -106,18 +106,10 @@ class HelpCommand extends Command
             }
 
             $logger->write($formatter->format('SYNOPSIS', 'strong_white') . "\n");
-            $logger->write("\t" . $progname . ' ' . join(" ",$cmd->getCommandNameTrace()) );
 
-            if ( ! empty($cmd->getOptionCollection()->options) ) {
-                $logger->write(" [options]");
-            }
-            if ($cmd->hasCommands() ) {
-                $logger->write(" <command> ...");
-            } else {
-                $argInfos = $cmd->getArgumentsInfo();
-                foreach( $argInfos as $argInfo ) {
-                    $logger->write(" <" . $argInfo->name . ">");
-                }
+            $prototypes = $cmd->getAllCommandPrototype();
+            foreach($prototypes as $prototype) {
+                $logger->writeln("\t" . $progname . ' ' . $prototype);
             }
             $logger->write("\n\n");
 

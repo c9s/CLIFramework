@@ -295,11 +295,51 @@ abstract class CommandBase
     }
 
 
+
+    public function getAllCommandPrototype() {
+        $lines = array();
+
+        if (method_exists($this,'execute')) {
+            $lines[] = $this->getCommandPrototype();
+        }
+        if ($this->hasCommands()) {
+            foreach( $this->commands as $name => $subcmd) {
+                $lines[] = $subcmd->getCommandPrototype();
+            }
+        }
+        return $lines;
+    }
+
+    public function getCommandPrototype() {
+        $out = array();
+
+        // $out[] = $this->getName();
+        foreach($this->getCommandNameTraceArray() as $n) {
+            $out[] = $n;
+        }
+
+        if (! empty($this->getOptionCollection()->options) ) {
+            $out[] = "[options]";
+        }
+        if ($this->hasCommands() ) {
+            $out[] = "<command>";
+        } else {
+            $argInfos = $this->getArgumentsInfo();
+            foreach( $argInfos as $argInfo ) {
+                $out[] = "<" . $argInfo->name . ">";
+            }
+        }
+        return join(" ",$out);
+    }
+
+
+
     /**
      * Connect command object with the current command object.
      *
      */
     protected function connectCommand($name, CommandBase $cmd) {
+        $cmd->setName($name);
         $this->commands[$name] = $cmd;
 
         // regsiter command aliases to the alias table.
@@ -333,7 +373,7 @@ abstract class CommandBase
      */
     public function hasCommand($command)
     {
-        return isset($this->commands[$command]);
+        return isset($this->commands[$command]) || isset($this->aliases[$command]);
     }
 
     /**
@@ -620,4 +660,13 @@ abstract class CommandBase
         return new ArrayIterator($this->commands);
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
 }
