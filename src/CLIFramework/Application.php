@@ -103,12 +103,11 @@ class Application extends CommandBase
     public function runWithTry($argv)
     {
         try {
-            return $this->run($argv);
+            return $this->run($argv) ?: true;
         } catch ( Exception $e ) {
             $this->getLogger()->error( $e->getMessage() );
+            return false;
         }
-
-        return false;
     }
 
     /**
