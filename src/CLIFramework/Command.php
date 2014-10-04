@@ -121,9 +121,17 @@ abstract class Command extends CommandBase
     public function alias($alias)
     {
         $this->alias = $alias;
-
         return $this;
     }
+
+    /**
+     * User may register their aliases
+     */
+    public function aliases() {
+        return array();
+    }
+
+
 
     /**
      * Provide a shorthand property for retrieving logger object.

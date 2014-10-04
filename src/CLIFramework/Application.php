@@ -306,17 +306,15 @@ class Application extends CommandBase
         $options = $this->getOptions();
 
         if ($options->version) {
-            echo $this->getName() , ' - ' , $this->getVersion() , "\n";
-            echo "cliframework core: ", $this->getCoreVersion() , "\n";
+            $this->logger->writeln($this->getName() . ' - ' . $this->getVersion());
+            $this->logger->writeln("cliframework core: " . $this->getCoreVersion());
             return;
         }
 
         $arguments = func_get_args();
         // show list and help by default
-        $help_class = $this->getCommandClass( 'help' );
-        if ($help_class || $options->help) {
-            $help = new $help_class($this);
-            $help->parent = $this;
+        $help = $this->getCommand( 'help' );
+        if ($help || $options->help) {
             $help->executeWrapper($arguments);
         } else {
             throw new Exception("Help command is not defined.");

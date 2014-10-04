@@ -328,27 +328,6 @@ abstract class CommandBase
     }
 
 
-
-
-
-    /**
-     * Return the command class name by command name
-     *
-     * @param  string $command command name.
-     * @return string command class.
-     */
-    public function getCommandClass($command)
-    {
-        // translate alias to actual command name.
-        if ( isset($this->aliases[$command]) ) {
-            $command = $this->aliases[$command];
-        }
-        if ( isset($this->commands[ $command ]) ) {
-            return $this->commands[ $command ];
-        }
-    }
-
-
     /**
      * Return the command name stack
      *
