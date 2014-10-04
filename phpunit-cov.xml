@@ -16,6 +16,7 @@
           <directory>./src</directory>
           <exclude>
               <directory>./src/CLIFramework/Testing</directory>
+              <directory>./src/PHPBrew</directory>
               <directory>./build</directory>
               <directory>./composer</directory>
               <directory>./tests</directory>
