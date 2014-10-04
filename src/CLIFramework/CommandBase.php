@@ -293,7 +293,7 @@ abstract class CommandBase
         if ( ! $class ) {
             throw new Exception("command class $class for command $command not found");
         }
-        return $this->commands[ $command ] = $class;
+        return $this->commands[ $command ] = $this->createCommand($class);
     }
 
     /**
@@ -394,12 +394,15 @@ abstract class CommandBase
      *
      * @return Command initialized command object.
      */
-    public function getCommand($commandName)
+    public function getCommand($command)
     {
-        if ( $commandClass = $this->getCommandClass($commandName) ) {
-            return $this->createCommand($commandClass);
+        if ( isset($this->aliases[$command]) ) {
+            $command = $this->aliases[$command];
         }
-        throw new CommandNotFoundException($commandName);
+        if ( isset($this->commands[ $command ]) ) {
+            return $this->commands[ $command ];
+        }
+        throw new CommandNotFoundException($command);
     }
 
     public function guessCommand($commandName) {
