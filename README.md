@@ -19,9 +19,16 @@ Features
 --------------------
 
 - Intuitive command class and option spec
+
 - GetOpt supported, powered by GetOptionKit. supports long option, short option, required|optional|default value.
-- Automatic zsh completion generator.
+
 - Hierarchical subcommand support.
+
+- Automatic help page generation.
+
+- Automatic zsh completion generator.
+
+
 
 Synopsis
 --------------------
