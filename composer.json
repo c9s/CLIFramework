@@ -8,7 +8,8 @@
         "corneltek/class-template": "~1.4"
     },
     "require-dev": {
-        "corneltek/phpunit-testmore": "dev-master"
+        "corneltek/phpunit-testmore": "dev-master",
+        "satooshi/php-coveralls": "dev-master"
     },
     "license": "MIT",
     "authors": [

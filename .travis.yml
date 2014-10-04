@@ -8,15 +8,18 @@ php:
 
 before_script:
   - phpenv rehash
-  - composer install --dev
+  - composer install --dev --no-interaction
 
 script:
-  - phpunit
+  - phpunit --coverage-clover build/logs/clover.xml
   - example/demo _meta --zsh commit arg 0 suggestions
   - example/demo _meta --zsh commit arg 1 valid-values
   - example/demo _zsh --bind demo > _zsh
   - example/demo _build-github-wiki --ns LazyRecord --dir src c9s LazyRecord
   - example/demo _build-github-wiki --ns PHPBrew:Topic --dir src phpbrew phpbrew
+
+after_script:
+  - php vendor/bin/coveralls -v
 
 cache:
   - vendor
