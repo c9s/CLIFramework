@@ -322,7 +322,7 @@ abstract class CommandBase
             $out[] = "[options]";
         }
         if ($this->hasCommands() ) {
-            $out[] = "<command>";
+            $out[] = "<subcommand>";
         } else {
             $argInfos = $this->getArgumentsInfo();
             foreach( $argInfos as $argInfo ) {
