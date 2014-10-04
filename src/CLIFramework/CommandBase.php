@@ -35,6 +35,9 @@ use CLIFramework\Corrector;
 abstract class CommandBase
     implements ArrayAccess, IteratorAggregate, CommandInterface
 {
+
+
+
     /**
      * @var application commands
      *
@@ -312,6 +315,8 @@ abstract class CommandBase
 
     public function getCommandPrototype() {
         $out = array();
+
+        $out[] = $this->getApplication()->getProgramName();
 
         // $out[] = $this->getName();
         foreach($this->getCommandNameTraceArray() as $n) {
@@ -660,13 +665,4 @@ abstract class CommandBase
         return new ArrayIterator($this->commands);
     }
 
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
 }

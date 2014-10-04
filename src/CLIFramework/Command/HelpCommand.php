@@ -114,7 +114,7 @@ class HelpCommand extends Command
             $logger->write($formatter->format('SYNOPSIS', 'strong_white') . "\n");
             $prototypes = $cmd->getAllCommandPrototype();
             foreach($prototypes as $prototype) {
-                $logger->writeln("\t" . $progname . ' ' . $prototype);
+                $logger->writeln("\t" . ' ' . $prototype);
             }
             $logger->write("\n\n");
 

@@ -36,10 +36,6 @@ abstract class Command extends CommandBase
         parent::__construct();
     }
 
-    public function setName($name) {
-        $this->name = $name;
-    }
-
     public function setApplication(Application $application)
     {
         $this->application = $application;
@@ -67,6 +63,10 @@ abstract class Command extends CommandBase
         }
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
     /**
      * Translate current class name to command name.

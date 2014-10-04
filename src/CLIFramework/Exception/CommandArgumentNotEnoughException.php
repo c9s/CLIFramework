@@ -16,4 +16,10 @@ class CommandArgumentNotEnoughException extends Exception
         $this->required = $required;
         parent::__construct("Insufficient arguments for command '{$command->getName()}', which requires $required arguments, $given given.");
     }
+
+    public function getCommand()
+    {
+        return $this->command;
+    }
+
 }

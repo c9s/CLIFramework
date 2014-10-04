@@ -22,6 +22,7 @@ use CLIFramework\Formatter;
 use CLIFramework\Corrector;
 use Exception;
 use CLIFramework\Exception\CommandNotFoundException;
+use CLIFramework\Exception\CommandArgumentNotEnoughException;
 use ReflectionClass;
 
 class Application extends CommandBase
@@ -55,6 +56,8 @@ class Application extends CommandBase
      * @var CLIFramework\Formatter
      */
     public $formatter;
+
+    public $programName;
 
     public function __construct()
     {
@@ -162,7 +165,11 @@ class Application extends CommandBase
             return $this->run($argv);
         } catch (CommandArgumentNotEnoughException $e) {
             $this->logger->error( $e->getMessage() );
-            $this->logger->writeln( );
+
+            $this->logger->writeln("Expected argument prototypes:");
+            foreach($e->getCommand()->getAllCommandPrototype() as $p) {
+                $this->logger->writeln("\t" . $p);
+            }
         } catch (Exception $e) {
             $this->getLogger()->error( $e->getMessage() );
         }
@@ -179,14 +186,16 @@ class Application extends CommandBase
      * */
     public function run(Array $argv)
     {
-        $current_cmd = $this;
+        $this->setProgramName($argv[0]);
+
+        $currentCmd = $this;
 
         // init application,
         // before parsing options, we have to known the registered commands.
-        $current_cmd->_init();
+        $currentCmd->_init();
 
         // use getoption kit to parse application options
-        $getopt = new ContinuousOptionParser($current_cmd->optionSpecs);
+        $getopt = new ContinuousOptionParser($currentCmd->optionSpecs);
 
         // parse the first part options (options after script name)
         // option parser should stop before next command name.
@@ -195,8 +204,8 @@ class Application extends CommandBase
         //                  |
         //                  |->> parser
         //
-        $current_cmd->setOptions( $getopt->parse( $argv ) );
-        $current_cmd->prepare();
+        $currentCmd->setOptions( $getopt->parse( $argv ) );
+        $currentCmd->prepare();
 
         $command_stack = array();
         $arguments = array();
@@ -207,11 +216,11 @@ class Application extends CommandBase
 
             // if current command is in subcommand list.
 
-            if ($current_cmd->hasCommands()) {
+            if ($currentCmd->hasCommands()) {
                 $a = $getopt->getCurrentArgument();
 
-                if (!$current_cmd->hasCommand($a) ) {
-                    if ($guess = $current_cmd->guessCommand($a)) {
+                if (!$currentCmd->hasCommand($a) ) {
+                    if ($guess = $currentCmd->guessCommand($a)) {
                         $a = $guess;
                     } else {
                         throw new CommandNotFoundException($a);
@@ -221,19 +230,19 @@ class Application extends CommandBase
                 $getopt->advance(); // advance position
 
                 // get command object
-                $current_cmd = $current_cmd->getCommand($a);
+                $currentCmd = $currentCmd->getCommand($a);
 
-                $getopt->setSpecs($current_cmd->optionSpecs);
+                $getopt->setSpecs($currentCmd->optionSpecs);
 
                 // parse options for command.
-                $current_cmd_options = $getopt->continueParse();
+                $currentCmd_options = $getopt->continueParse();
 
                 // run subcommand prepare
-                $current_cmd->setOptions( $current_cmd_options );
+                $currentCmd->setOptions( $currentCmd_options );
 
-                // echo get_class($current_cmd) , ' => ' , print_r($current_cmd_options);
+                // echo get_class($currentCmd) , ' => ' , print_r($currentCmd_options);
 
-                $command_stack[] = $current_cmd; // save command object into the stack
+                $command_stack[] = $currentCmd; // save command object into the stack
 
             } else {
                 $a = $getopt->advance();
@@ -257,7 +266,7 @@ class Application extends CommandBase
             // no command specified.
             return $this->executeWrapper( $arguments );
         }
-        $current_cmd->finish();
+        $currentCmd->finish();
 
         return true;
     }
@@ -292,6 +301,14 @@ class Application extends CommandBase
         if ( defined('static::version') ) {
             return static::version;
         }
+    }
+
+    public function setProgramName($programName) {
+        $this->programName = $programName;
+    }
+
+    public function getProgramName() {
+        return $this->programName;
     }
 
     public function getName()
