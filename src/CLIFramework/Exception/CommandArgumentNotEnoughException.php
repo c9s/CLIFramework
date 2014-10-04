@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Exception;
 use Exception;
+use CLIFramework\CommandBase;
 
 class CommandArgumentNotEnoughException extends Exception
 {
@@ -10,7 +11,7 @@ class CommandArgumentNotEnoughException extends Exception
 
     public $required;
 
-    public function __construct($command, $given, $required) {
+    public function __construct(CommandBase $command, $given, $required) {
         $this->command = $command;
         $this->given = $given;
         $this->required = $required;

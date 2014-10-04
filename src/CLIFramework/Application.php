@@ -170,6 +170,16 @@ class Application extends CommandBase
             foreach($e->getCommand()->getAllCommandPrototype() as $p) {
                 $this->logger->writeln("\t" . $p);
             }
+            $this->logger->newline();
+        } catch (CommandNotFoundException $e) {
+            $this->logger->error( $e->getMessage() . " available commands are: " . join(', ', $e->getCommand()->getVisibleCommandList())  );
+            $this->logger->newline();
+
+            $this->logger->writeln("Please try the command below to see the details:");
+            $this->logger->newline();
+            $this->logger->writeln("\t" . $this->getProgramName() . ' help ' );
+            $this->logger->newline();
+
         } catch (Exception $e) {
             $this->getLogger()->error( $e->getMessage() );
         }
@@ -223,7 +233,7 @@ class Application extends CommandBase
                     if ($guess = $currentCmd->guessCommand($a)) {
                         $a = $guess;
                     } else {
-                        throw new CommandNotFoundException($a);
+                        throw new CommandNotFoundException($currentCmd, $a);
                     }
                 }
 

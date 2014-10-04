@@ -391,6 +391,12 @@ abstract class CommandBase
         return array_keys( $this->commands );
     }
 
+    public function getVisibleCommandList() {
+        return array_filter(array_keys($this->commands), function($name) {
+            return !preg_match('#^_#', $name);
+        });
+    }
+
 
     /**
      * Return the command name stack
@@ -440,7 +446,7 @@ abstract class CommandBase
         if ( isset($this->commands[ $command ]) ) {
             return $this->commands[ $command ];
         }
-        throw new CommandNotFoundException($command);
+        throw new CommandNotFoundException($this, $command);
     }
 
     public function guessCommand($commandName) {
