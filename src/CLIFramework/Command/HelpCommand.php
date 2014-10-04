@@ -95,14 +95,18 @@ class HelpCommand extends Command
 
             $usage = $cmd->usage();
 
-            if ( $brief = $cmd->brief() ) {
+            if ($brief = $cmd->brief()) {
                 $logger->write($formatter->format('NAME', 'strong_white') . "\n");
-                $logger->write("\t" . $formatter->format(join(' ', $commandNames), 'strong_white') . ' - ' . $brief . "\n\n");
+                $logger->write("\t" . $formatter->format($cmd->getName(), 'strong_white') . ' - ' . $brief . "\n\n");
             }
 
+            if ($aliases = $cmd->aliases()) {
+                $logger->write($formatter->format('ALIASES', 'strong_white') . "\n");
+                $logger->write("\t" . $formatter->format(join(', ', $aliases), 'strong_white') . "\n\n");
+            }
 
             $logger->write($formatter->format('SYNOPSIS', 'strong_white') . "\n");
-            $logger->write("\t" . $progname . ' ' . $cmd->getName());
+            $logger->write("\t" . $progname . ' ' . join(" ",$cmd->getCommandNameTrace()) );
 
             if ( ! empty($cmd->getOptionCollection()->options) ) {
                 $logger->write(" [options]");
@@ -137,7 +141,7 @@ class HelpCommand extends Command
             $cmd = $this->parent;
             $logger->write( $formatter->format( ucfirst($cmd->brief()), "strong_white")."\n\n");
 
-            $logger->write( $formatter->format("Synopsis", "strong_white")."\n" );
+            $logger->write( $formatter->format("SYNOPSIS", "strong_white")."\n" );
             $logger->write( "\t" . $progname );
             if ( ! empty($cmd->getOptionCollection()->options) ) {
                 $logger->write(" [options]");
@@ -181,7 +185,7 @@ class HelpCommand extends Command
                 }
             }
 
-            $logger->write($formatter->format("Commands\n",'strong_white'));
+            $logger->write($formatter->format("COMMANDS\n",'strong_white'));
 
             $cmdNames = array_filter(array_keys($app->commands), function($n) {
                 return ! preg_match('#^_#', $n);

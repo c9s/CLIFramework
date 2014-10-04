@@ -6,6 +6,8 @@ class CommitCommand extends \CLIFramework\Command {
 
     public function brief() { return 'A simple demo command'; }
 
+    public function aliases() { return array('c','ci'); }
+
     public function options($opts) {
         $opts->add('a|all','Tell the command to automatically stage files that have been modified and deleted, but new files you have not told Git about are not affected.');
 

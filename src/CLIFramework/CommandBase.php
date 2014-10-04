@@ -229,7 +229,7 @@ abstract class CommandBase
         return $this->addCommand($command, $class);
     }
 
-    public function setParent($parent)
+    public function setParent(CommandBase $parent)
     {
         $this->parent = $parent;
     }
@@ -303,7 +303,14 @@ abstract class CommandBase
         $this->commands[$name] = $cmd;
 
         // regsiter command aliases to the alias table.
-        foreach( (array) $cmd->aliases() as $alias) {
+        $aliases = $cmd->aliases();
+        if (is_string($aliases)) {
+            $aliases = preg_split('/\s+/', $aliases);
+        }
+        if (!is_array($aliases)) {
+            throw new InvalidArgumentException("Aliases needs to be an array or a space-separated string.");
+        }
+        foreach( $aliases as $alias) {
             $this->aliases[$alias] = $cmd;
         }
     }
@@ -345,7 +352,7 @@ abstract class CommandBase
      *
      * @return string[]
      */
-    public function getCommandNameStack() {
+    public function getCommandNameTrace() {
         $cmdStacks = array( $this->getName() );
         $p = $this->parent;
         while($p) {
@@ -358,7 +365,7 @@ abstract class CommandBase
     }
 
     public function getSignature() {
-        return join('.', $this->getCommandNameStack());
+        return join('.', $this->getCommandNameTrace());
     }
 
 
@@ -489,7 +496,7 @@ abstract class CommandBase
         // call_user_func_array(  );
         $ro = new ReflectionObject($this);
 
-        if ( ! method_exists( $this,'execute' ) ) {
+        if (!method_exists($this,'execute')) {
             throw new Exception('execute method is not defined.');
         }
 
@@ -499,8 +506,9 @@ abstract class CommandBase
         foreach ($parameters as $param) {
             // TODO: add description to the argument
             $a = new ArgInfo($param->getName());
-            if ($param->isOptional())
+            if ($param->isOptional()) {
                 $a->optional(true);
+            }
             $argInfo->append($a);
         }
         return $argInfo;
@@ -521,8 +529,9 @@ abstract class CommandBase
         // call_user_func_array(  );
         $refl = new ReflectionObject($this);
 
-        if( ! method_exists( $this,'execute' ) )
+        if (! method_exists( $this,'execute' )) {
             throw new Exception('execute method is not defined.');
+        }
 
         $reflMethod = $refl->getMethod('execute');
         $requiredNumber = $reflMethod->getNumberOfRequiredParameters();
@@ -539,7 +548,6 @@ abstract class CommandBase
             throw new Exception('Wrong Parameter, Can not execute command.');
             */
         }
-
         return call_user_func_array(array($this,'execute'), $args);
     }
 
@@ -583,7 +591,7 @@ abstract class CommandBase
     public function choose($prompt, $choices)
     {
         $chooser = new Chooser;
-        $chooser->style = 'choose';
+        $chooser->setStyle('choose');
         return $chooser->choose( $prompt, $choices );
     }
 
