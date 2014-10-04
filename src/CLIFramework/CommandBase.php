@@ -357,12 +357,7 @@ abstract class CommandBase
      */
     public function getCommandObjects() 
     {
-        $cmds = array();
-        foreach( $this->commands as $n => $cls ) {
-            $cmd = $this->createCommand($cls);
-            $cmds[ $n ] = $cmd;
-        }
-        return $cmds;
+        return $this->commands;
     }
 
     /*
