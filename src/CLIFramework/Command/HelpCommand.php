@@ -105,19 +105,19 @@ class HelpCommand extends Command
                 $logger->write("\t" . $formatter->format(join(', ', $aliases), 'strong_white') . "\n\n");
             }
 
-            $logger->write($formatter->format('SYNOPSIS', 'strong_white') . "\n");
+            if ( $usage = $cmd->usage() ) {
+                $logger->write( $formatter->format('USAGE', 'strong_white') . "\n" );
+                $logger->write( "\t" . $usage );
+                $logger->write( "\n\n" );
+            }
 
+            $logger->write($formatter->format('SYNOPSIS', 'strong_white') . "\n");
             $prototypes = $cmd->getAllCommandPrototype();
             foreach($prototypes as $prototype) {
                 $logger->writeln("\t" . $progname . ' ' . $prototype);
             }
             $logger->write("\n\n");
 
-            if ( $usage = $cmd->usage() ) {
-                $logger->write( $formatter->format('USAGE', 'strong_white') . "\n" );
-                $logger->write( $usage );
-                $logger->write( "\n\n" );
-            }
 
             if ($optionLines = $printer->render($cmd->optionSpecs)) {
                 $logger->write($formatter->format('OPTIONS', 'strong_white') . "\n");
@@ -132,6 +132,12 @@ class HelpCommand extends Command
             // print application brief
             $cmd = $this->parent;
             $logger->write( $formatter->format( ucfirst($cmd->brief()), "strong_white")."\n\n");
+
+            if( $usage = $cmd->usage() ) {
+                $logger->write($formatter->format("USAGE", "strong_white") . "\n");
+                $logger->write($usage);
+                $logger->write("\n\n");
+            }
 
             $logger->write( $formatter->format("SYNOPSIS", "strong_white")."\n" );
             $logger->write( "\t" . $progname );
@@ -151,11 +157,6 @@ class HelpCommand extends Command
 
             $logger->write("\n\n");
 
-            if( $usage = $cmd->usage() ) {
-                $logger->write($formatter->format("USAGE", "strong_white") . "\n");
-                $logger->write($usage);
-                $logger->write("\n\n");
-            }
 
             // print application options
             $logger->write($formatter->format("OPTIONS",'strong_white') . "\n");
