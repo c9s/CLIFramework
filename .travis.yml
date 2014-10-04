@@ -12,7 +12,7 @@ before_script:
   - mkdir -p build/logs
 
 script:
-  - phpunit --coverage-clover build/logs/clover.xml
+  - phpunit -c phpunit-cov.xml --coverage-clover build/logs/clover.xml
   - example/demo _meta --zsh commit arg 0 suggestions
   - example/demo _meta --zsh commit arg 1 valid-values
   - example/demo _zsh --bind demo > _zsh

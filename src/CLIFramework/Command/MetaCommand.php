@@ -85,16 +85,17 @@ class MetaCommand extends Command
                 throw new Exception("Undefined argument at $idx");
             }
 
-            $arginfo = $arginfos[ $idx ];
+            $argInfo = $arginfos[$idx];
+
             switch($attr) {
             case 'suggestions':
-                if ($values = $arginfo->getSuggestions()) {
+                if ($values = $argInfo->getSuggestions()) {
                     return $this->outputValues($values, $this->options);
                 }
                 break;
 
             case 'valid-values':
-                if ($values = $arginfo->getValidValues()) {
+                if ($values = $argInfo->getValidValues()) {
                     return $this->outputValues($values, $this->options);
                 }
                 break;

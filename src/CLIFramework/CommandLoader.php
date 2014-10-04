@@ -9,7 +9,7 @@
  *
  */
 namespace CLIFramework;
-
+use CLIFramework\Exception\CommandClassNotFoundException;
 use Exception;
 
 class CommandLoader
