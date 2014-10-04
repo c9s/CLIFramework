@@ -217,8 +217,9 @@ class HelpCommand extends Command
         }
 
         if ($app->showAppSignature) {
-            $logger->write( $formatter->format("\n", 'gray') );
-            $logger->write( $formatter->format("{$app->getName()} {$app->getVersion()}\thttps://github.com/c9s/CLIFramework\n", 'gray') );
+            $logger->write("\n\n\n");
+            $logger->write( $formatter->format("{$app->getName()} {$app->getVersion()}","gray"));
+            $logger->writeln( $formatter->format("\t\tpowered by https://github.com/c9s/CLIFramework","gray"));
         }
         return true;
     }
