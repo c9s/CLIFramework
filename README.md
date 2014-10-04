@@ -3,6 +3,8 @@ CLIFramework
 
 [![Build Status](https://travis-ci.org/c9s/CLIFramework.png?branch=master)](https://travis-ci.org/c9s/CLIFramework)
 
+[![Coverage Status](https://img.shields.io/coveralls/c9s/CLIFramework.svg)](https://coveralls.io/r/c9s/CLIFramework)
+
 CLIFramework is a command-line application framework, for building flexiable, simple command-line applications.
 
 In one CLIFramework application, each command is a class file, a command class can have many subcommands,
