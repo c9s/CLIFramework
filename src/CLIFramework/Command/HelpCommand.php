@@ -218,7 +218,7 @@ class HelpCommand extends Command
 
         if ($app->showAppSignature) {
             $logger->write( $formatter->format("\n", 'gray') );
-            $logger->write( $formatter->format("CLIFramework {$app->getCoreVersion()}\thttps://github.com/c9s/CLIFramework\n", 'gray') );
+            $logger->write( $formatter->format("{$app->getName()} {$app->getVersion()}\thttps://github.com/c9s/CLIFramework\n", 'gray') );
         }
         return true;
     }
