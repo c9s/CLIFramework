@@ -126,10 +126,8 @@ class HelpCommand extends Command
             }
 
             $logger->write($cmd->getFormattedHelpText());
-
         } else {
-            // print application subcommands
-            // print application brief
+
             $cmd = $this->parent;
             $logger->write( $formatter->format( ucfirst($cmd->brief()), "strong_white")."\n\n");
 
@@ -185,14 +183,7 @@ class HelpCommand extends Command
             });
             $maxWidth = $this->calculateColumnWidth($cmdNames, 8);
 
-
-
-            foreach ($app->getCommands() as $name => $class) {
-                // skip subcommand with prefix underscore.
-                if (preg_match('#^_#', $name)) {
-                    continue;
-                }
-
+            foreach ($app->getVisibleCommands() as $name => $class) {
                 $cmd = new $class;
                 $brief = $cmd->brief();
                 printf("%" . ($maxWidth + 8) . "s    %s\n",
@@ -200,24 +191,28 @@ class HelpCommand extends Command
                     $brief );
             }
 
-            $logger->write("\n");
+            $logger->newline();
             $logger->write($this->getFormattedHelpText());
 
 
             if ($app->topics) {
-                $logger->write($formatter->format("Topics\n",'strong_white'));
-
+                $logger->write($formatter->format("TOPICS\n",'strong_white'));
                 $maxWidth = $this->calculateColumnWidth(array_keys($app->topics), 8);
                 foreach($app->topics as $topicId => $topic) {
                     printf("%" . ($maxWidth + 8) . "s    %s\n", $topicId, $topic->getTitle());
                 }
+                $logger->newline();
             }
 
-
+            $logger->write($formatter->format("HELP\n",'strong_white'));
+            $this->logger->writeln(wordwrap(
+                "\t'$progname help' lists available subcommands and some" .
+                " topics. See '$progname help <command>' or '$progname help <topic>'" .
+                " to read about a specific subcommand or $progname.", 70, "\n\t"));
         }
 
         if ($app->showAppSignature) {
-            $logger->write("\n\n\n");
+            $logger->newline();
             $logger->write( $formatter->format("{$app->getName()} {$app->getVersion()}","gray"));
             $logger->writeln( $formatter->format("\t\tpowered by https://github.com/c9s/CLIFramework","gray"));
         }

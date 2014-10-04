@@ -391,6 +391,16 @@ abstract class CommandBase
         return array_keys( $this->commands );
     }
 
+
+    public function getVisibleCommands() {
+        $cmds = array();
+        foreach( $this->getVisibleCommandList() as $name ) {
+            $cmds[ $name ] = $this->commands[ $name ];
+        }
+        return $cmds;
+    }
+
+
     public function getVisibleCommandList() {
         return array_filter(array_keys($this->commands), function($name) {
             return !preg_match('#^_#', $name);

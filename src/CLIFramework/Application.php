@@ -101,8 +101,8 @@ class Application extends CommandBase
         $opts->add('v|verbose','Print verbose message.');
         $opts->add('d|debug'  ,'Print debug message.');
         $opts->add('q|quiet'  ,'Be quiet.');
-        $opts->add('h|help'   ,'help');
-        $opts->add('version'  ,'show version');
+        $opts->add('h|help'   ,'Show help');
+        $opts->add('version'  ,'Show version');
     }
 
     public function topics(array $topics) {
@@ -165,7 +165,6 @@ class Application extends CommandBase
             return $this->run($argv);
         } catch (CommandArgumentNotEnoughException $e) {
             $this->logger->error( $e->getMessage() );
-
             $this->logger->writeln("Expected argument prototypes:");
             foreach($e->getCommand()->getAllCommandPrototype() as $p) {
                 $this->logger->writeln("\t" . $p);
