@@ -32,6 +32,8 @@ Features
 
 - Command Groups
 
+- HHVM compatible
+
 
 
 
