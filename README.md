@@ -198,7 +198,7 @@ class CLIApplication extends Application
 {
 
     /* init your application options here */
-    function options($opts)
+    public function options($opts)
     {
         $opts->add('v|verbose', 'verbose message');
         $opts->add('path:', 'required option with a value.');
@@ -207,11 +207,11 @@ class CLIApplication extends Application
     }
 
     /* register your command here */
-    function init()
+    public function init()
     {
-        $this->addCommand( 'list', '\YourApp\Command\ListCommand' );
-        $this->addCommand( 'foo', '\YourApp\Command\FooCommand' );
-        $this->addCommand( 'bar' );    // initialize with \YourApp\Command\BarCommand
+        $this->command( 'list', '\YourApp\Command\ListCommand' );
+        $this->command( 'foo', '\YourApp\Command\FooCommand' );
+        $this->command( 'bar' );    // initialize with \YourApp\Command\BarCommand
     }
 
 }
@@ -268,10 +268,16 @@ argument info of a command:
 namespace YourApp\Command;
 use CLIFramework\Command;
 class FooCommand extends Command {
-    public function arguments() {
-        $this->arg('name')->desc('name parameter')->suggests([ 'c9s', 'foo', 'bar' ]);
-        $this->arg('email')->desc('email parameter');
-        $this->arg('phone')->desc('phone parameter')->optional();
+
+    public function arguments($args) {
+
+        $args->add('user')
+            ->desc('user name')
+            ->validValues(['c9s','bar','foo']);
+
+        $args->add('repo')
+            ->desc('repository')
+            ->validValues(['CLIFramework','GetOptionKit']);
     }
 }
 ```
