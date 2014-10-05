@@ -5,7 +5,7 @@ _foo () {
     declare -A opt_args
     local ret=1
 
-    eval "$(php example/demo _meta --zsh commit arg 0 valid-values)"
+    eval "$(php example/demo meta --zsh commit arg 0 valid-values)"
     for k in ${(k)groups} ; do
         values=(${(z)${groups[$k]}})
         label=${labels[$k]}

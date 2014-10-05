@@ -11,13 +11,13 @@
  *
  *
  *  
- *  php example/demo _meta commit opt C valid-values
+ *  php example/demo meta commit opt C valid-values
  *
- *  php example/demo _meta commit opt c valid-values
+ *  php example/demo meta commit opt c valid-values
  *
- *  php example/demo _meta commit opt author suggestions
+ *  php example/demo meta commit opt author suggestions
  *
- *  php example/demo _meta commit arg 0 valid-values
+ *  php example/demo meta commit arg 0 valid-values
  *
  */
 $loader = require 'vendor/autoload.php';

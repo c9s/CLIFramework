@@ -434,7 +434,7 @@ class ZshGenerator
         return $args;
     }
 
-    public function command_meta_function() {
+    public function commandmeta_function() {
         $buf = new Buffer;
         $buf->indent();
         $buf->appendLine("local curcontext=\$curcontext state line ret=1");
@@ -451,7 +451,7 @@ class ZshGenerator
         $buf->appendLine("local pos=\$4");
         $buf->appendLine("local completion=\$5");
 
-        $metaCommand = array($this->programName, '_meta', '--zsh', '$cmdsig', '$valtype', '$pos', '$completion');
+        $metaCommand = array($this->programName, 'meta', '--zsh', '$cmdsig', '$valtype', '$pos', '$completion');
 
         $buf->appendLine('output=$(' . join(" ",$metaCommand) . ')');
 
@@ -489,17 +489,17 @@ class ZshGenerator
     }
 
     public function meta_command_name() {
-        return '__' . preg_replace('/\W/','_',$this->compName) . '_meta';
+        return '__' . preg_replace('/\W/','_',$this->compName) . 'meta';
     }
 
 
     /**
      * Zsh function usage
      *
-     * example/demo _meta commit arg 1 valid-values
-     * appName _meta sub1.sub2.sub3 opt email valid-values
+     * example/demo meta commit arg 1 valid-values
+     * appName meta sub1.sub2.sub3 opt email valid-values
      */
-    public function command_meta_callback_function($cmd) {
+    public function commandmeta_callback_function($cmd) {
         $cmdSignature = $cmd->getSignature();
         
         
@@ -512,7 +512,7 @@ class ZshGenerator
         $buf->appendLine("local ret=1");
 
         /*
-        values=$(example/demo _meta commit arg 1 valid-values)
+        values=$(example/demo meta commit arg 1 valid-values)
         _values "description" ${=values} && ret=0
         return ret
         */
@@ -521,7 +521,7 @@ class ZshGenerator
         $buf->appendLine("local pos=\$4");
         $buf->appendLine("local completion=\$5");
 
-        $metaCommand = array($this->programName,'_meta', $cmdSignature, '$valtype', '$pos', '$completion');
+        $metaCommand = array($this->programName,'meta', $cmdSignature, '$valtype', '$pos', '$completion');
         $buf->appendLine('$(' . join(" ",$metaCommand) . ')');
         $buf->appendLine('_values $desc ${=values} && ret=0'); // expand value array as arguments
         $buf->appendLine('return ret');
@@ -530,7 +530,7 @@ class ZshGenerator
         return zsh_comp_function($funcName, $buf);
     }
 
-    public function command_meta_callback_functions($cmd) {
+    public function commandmeta_callback_functions($cmd) {
         $cmdSignature = $cmd->getSignature();
         
 
@@ -538,10 +538,10 @@ class ZshGenerator
         $buf = new Buffer;
         $subcmds = $this->visible_commands($cmd->getCommands());
         foreach($subcmds as $subcmd) {
-            $buf->append($this->command_meta_callback_function($subcmd));
+            $buf->append($this->commandmeta_callback_function($subcmd));
 
             if ($subcmd->hasCommands()) {
-                $buf->appendBuffer( $this->command_meta_callback_functions($subcmd) );
+                $buf->appendBuffer( $this->commandmeta_callback_functions($subcmd) );
             }
         }
         return $buf;
@@ -555,9 +555,9 @@ class ZshGenerator
             "# THIS IS AN AUTO-GENERATED FILE, PLEASE DON'T MODIFY THIS FILE DIRECTLY.",
         ));
 
-        $metaName = '_' . $this->programName . '_meta';
+        $metaName = '_' . $this->programName . 'meta';
 
-        $buf->append( $this->command_meta_function() );
+        $buf->append( $this->commandmeta_function() );
 
         $buf->appendLines(array(
             "{$this->compName}() {",

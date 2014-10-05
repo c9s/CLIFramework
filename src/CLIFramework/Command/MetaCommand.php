@@ -58,9 +58,9 @@ class MetaCommand extends Command
     /**
      * Enable a way to get meta information of argument or option from a command.
      *
-     *     app _meta sub1.sub2.sub3 arg 1 valid-values
-     *     app _meta sub1.sub2.sub3 arg 1 suggestions
-     *     app _meta sub1.sub2.sub3 opt email valid-values
+     *     app meta sub1.sub2.sub3 arg 1 valid-values
+     *     app meta sub1.sub2.sub3 arg 1 suggestions
+     *     app meta sub1.sub2.sub3 opt email valid-values
      */
     public function execute($commandlist, $type, $arg, $attr) {
         $commands = explode('.', $commandlist);

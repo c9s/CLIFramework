@@ -12,7 +12,7 @@ class GitHubBuildTopicCommandTest extends CommandTestCase
     public function testBuildGitHubTopics()
     {
         $this->expectOutputRegex("!Creating src/PHPBrew/Topic/ContributionTopic.php!");
-        $this->runCommand('example/demo _build-github-wiki --ns PHPBrew:Topic --dir src phpbrew phpbrew');
+        $this->runCommand('example/demo github:build-topics --ns PHPBrew:Topic --dir src phpbrew phpbrew');
     }
 }
 

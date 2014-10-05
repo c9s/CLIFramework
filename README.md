@@ -237,7 +237,7 @@ Zsh Completion Generator
 ----------------------------
 
 ```sh
-example/demo _zsh demo > _demo
+example/demo zsh demo > _demo
 source _demo
 ```
 

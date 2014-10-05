@@ -2,8 +2,8 @@
 # Web: http://github.com/c9s/php-CLIFramework
 # THIS IS AN AUTO-GENERATED FILE, PLEASE DON'T MODIFY THIS FILE DIRECTLY.
 
-(( $+functions[__foo_meta] )) ||
-__foo_meta () {
+(( $+functions[__foometa] )) ||
+__foometa () {
     local curcontext=$curcontext state line ret=1
     declare -A opt_args
     local ret=1
@@ -16,9 +16,9 @@ __foo_meta () {
     completion=$5
 
     # $1 = -M, $2 = m:{[:lower:][:upper:]}={[:upper:][:lower:]}, $3 = -J, $4= option--author-1
-    echo "example/demo _meta $4"
-    # values=$(example/demo _meta $cmd $valtype $pos $completion)
-    values=($(example/demo _meta commit $valtype $pos $completion))
+    echo "example/demo meta $4"
+    # values=$(example/demo meta $cmd $valtype $pos $completion)
+    values=($(example/demo meta commit $valtype $pos $completion))
 
     # =values to expand values
     _values $desc ${=values} && ret=0
@@ -64,7 +64,7 @@ _foo () {
     declare -A opt_args
     local ret=1
     _arguments -w -C -S -s \
-        '--author=[Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.]:author name:{__foo_meta dddd commit arg 1 valid-values}' \
+        '--author=[Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.]:author name:{__foometa dddd commit arg 1 valid-values}' \
         '--commit=[commit with description]:commit:{ __foo_commit }' \
         '--test=[commit with description]:test:(("foo\:foo desc" "bar\:bar desc"))' \
         && ret=0

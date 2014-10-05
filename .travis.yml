@@ -13,11 +13,11 @@ before_script:
 
 script:
   - phpunit --coverage-clover build/logs/clover.xml
-  - example/demo _meta --zsh commit arg 0 suggestions
-  - example/demo _meta --zsh commit arg 1 valid-values
-  - example/demo _zsh --bind demo > _zsh
-  - example/demo _build-github-wiki --ns LazyRecord --dir src c9s LazyRecord
-  - example/demo _build-github-wiki --ns PHPBrew:Topic --dir src phpbrew phpbrew
+  - example/demo meta --zsh commit arg 0 suggestions
+  - example/demo meta --zsh commit arg 1 valid-values
+  - example/demo zsh --bind demo > zsh
+  - example/demo github:build-topics --ns LazyRecord --dir src c9s LazyRecord
+  - example/demo github:build-topics --ns PHPBrew:Topic --dir src phpbrew phpbrew
 
 after_script:
   - php vendor/bin/coveralls -v

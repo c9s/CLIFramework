@@ -12,7 +12,7 @@ class MetaCommandTest extends CommandTestCase
     public function testMetaArgValidValuesGroups()
     {
         $this->expectOutputRegex("/#groups/");
-        $this->runCommand('example/demo _meta --zsh commit arg 0 valid-values');
+        $this->runCommand('example/demo meta --zsh commit arg 0 valid-values');
     }
 
     public function testMetaArgSimpleValidValues()
@@ -21,7 +21,7 @@ class MetaCommandTest extends CommandTestCase
 CLIFramework
 GetOptionKit
 ");
-        $this->runCommand('example/demo _meta --zsh commit arg 1 valid-values');
+        $this->runCommand('example/demo meta --zsh commit arg 1 valid-values');
     }
 
     public function testHelpCommand() {
@@ -36,7 +36,7 @@ GetOptionKit
 
     public function testGenerateZshCompletion() {
         $this->expectOutputRegex("!compdef _demo demo!");
-        $this->runCommand('example/demo _zsh --program demo --bind demo');
+        $this->runCommand('example/demo zsh --program demo --bind demo');
     }
 
     public function testArgument() {
