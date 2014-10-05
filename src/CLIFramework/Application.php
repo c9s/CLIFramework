@@ -153,10 +153,13 @@ class Application extends CommandBase
     public function init()
     {
         // $this->addCommand('list','CLIFramework\\Command\\ListCommand');
-        $this->addCommand('help','CLIFramework\\Command\\HelpCommand');
-        $this->addCommand('_zsh', 'CLIFramework\\Command\\ZshCompletionCommand');
-        $this->addCommand('_meta', 'CLIFramework\\Command\\MetaCommand');
-        $this->addCommand('_build-github-wiki', 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand');
+        $this->command('help','CLIFramework\\Command\\HelpCommand');
+        // $this->commandGroup('General Commands', array('help'));
+        $this->commandGroup("Development Commands", array(
+            'zsh' => 'CLIFramework\\Command\\ZshCompletionCommand',
+            'meta' => 'CLIFramework\\Command\\MetaCommand',
+            'github:build-topics' => 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand',
+        ))->setId('dev');
     }
 
     public function runWithTry($argv)
@@ -341,8 +344,10 @@ class Application extends CommandBase
         }
 
         $arguments = func_get_args();
+
         // show list and help by default
-        $help = $this->getCommand( 'help' );
+        $help = $this->getCommand('help');
+        $help->setOptions($options);
         if ($help || $options->help) {
             $help->executeWrapper($arguments);
         } else {

@@ -112,8 +112,8 @@ abstract class CommandBase
     /**
      * Method for users to define alias.
      */
-    public function aliases() { }
-
+    public function aliases() {
+    }
 
     /**
      * Add a command group and register the commands automatically
@@ -125,16 +125,22 @@ abstract class CommandBase
     public function addCommandGroup($groupName, $commands = array() ) {
         $group = new CommandGroup($groupName);
         foreach($commands as $key => $val) {
+            $name = $val;
             if (is_numeric($key)) {
-                $this->addCommand($val);
+                $cmd = $this->addCommand($val);
             } else {
-                $this->addCommand($key, $val);
+                $cmd = $this->addCommand($key, $val);
+                $name = $key;
             }
+            $group->addCommand($name, $cmd);
         }
         $this->commandGroups[] = $group;
         return $group;
     }
 
+    public function getCommandGroups() {
+        return $this->commandGroups;
+    }
 
     public function isApplication() {
         return $this instanceof Application;
@@ -261,7 +267,7 @@ abstract class CommandBase
     }
 
     /**
-     * register command to application, in init() method stage,
+     * Register a command to application, in init() method stage,
      * we save command classes in property `commands`.
      *
      * When command is needed, get the command from property `commands`, and
@@ -295,6 +301,7 @@ abstract class CommandBase
         // register command to table
         $cmd = $this->createCommand($class);
         $this->connectCommand($command, $cmd);
+        return $cmd;
     }
 
 
@@ -359,6 +366,39 @@ abstract class CommandBase
             $this->aliases[$alias] = $cmd;
         }
     }
+
+
+
+    /**
+     * Aggregate command info
+     */
+    public function aggregate() {
+        $groups = array();
+        $commands = array();
+        foreach($this->getVisibleCommands() as $name => $cmd) {
+            $commands[ $name ] = $cmd;
+        }
+
+        foreach($this->commandGroups as $g) {
+            if ($g->isHidden) {
+                continue;
+            }
+            foreach($g->getCommands() as $name => $cmd) {
+                unset($commands[$name]);
+            }
+        }
+
+        uasort($this->commandGroups, function($a, $b) { 
+            if ($a->getId() == "dev") return 1;
+            return 0;
+        });
+
+        return array(
+            'groups' => $this->commandGroups,
+            'commands' => $commands,
+        );
+    }
+
 
     /**
      * Return true if this command has subcommands.

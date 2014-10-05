@@ -47,7 +47,7 @@ function encode_array_as_shell_string($array) {
 class MetaCommand extends Command
 {
 
-    public function brief() { return 'meta command of cli framework'; }
+    public function brief() { return 'Return the meta data of a commands.'; }
 
     public function options($opts) {
         $opts->add('zsh', 'output for zsh');

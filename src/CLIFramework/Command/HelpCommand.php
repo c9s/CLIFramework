@@ -15,9 +15,7 @@ use CLIFramework\OptionPrinter;
 use CLIFramework\Corrector;
 
 
-class HelpCommand extends Command
-    implements CommandInterface
-{
+class HelpCommand extends Command implements CommandInterface {
 
     /**
      * one line description
@@ -25,6 +23,11 @@ class HelpCommand extends Command
     public function brief()
     {
         return 'Show help message of a command';
+    }
+
+    public function options($opts)
+    {
+        $opts->add('dev','Show development commands');
     }
 
     public function displayTopic($topic) {
@@ -47,6 +50,23 @@ class HelpCommand extends Command
             }
         }
         return $maxWidth;
+    }
+
+    public function layoutCommands($commands, $indent = 0) {
+        $cmdNames = array_filter(array_keys($commands), function($n) {
+            return ! preg_match('#^_#', $n);
+        });
+        $maxWidth = $this->calculateColumnWidth($cmdNames, 20);
+        foreach ($commands as $name => $class) {
+            $cmd = new $class;
+            $brief = $cmd->brief();
+            $this->logger->writeln(str_repeat(' ' , $indent) 
+                . sprintf("%" . ($maxWidth + 8) . "s    %s",
+                    $name,
+                    $brief 
+                ));
+        }
+        $this->logger->newline();
     }
 
     /**
@@ -143,7 +163,6 @@ class HelpCommand extends Command
                 $logger->write(" [options]");
             }
 
-
             if ($cmd->hasCommands() ) {
                 $logger->write(" <command>");
             } else {
@@ -177,23 +196,26 @@ class HelpCommand extends Command
             }
 
             $logger->write($formatter->format("COMMANDS\n",'strong_white'));
+            $ret = $app->aggregate();
 
-            $cmdNames = array_filter(array_keys($app->getCommands()), function($n) {
-                return ! preg_match('#^_#', $n);
-            });
-            $maxWidth = $this->calculateColumnWidth($cmdNames, 8);
+            if (isset($ret['groups'])) {
 
-            foreach ($app->getVisibleCommands() as $name => $class) {
-                $cmd = new $class;
-                $brief = $cmd->brief();
-                printf("%" . ($maxWidth + 8) . "s    %s\n",
-                    $name,
-                    $brief );
+                // show "General commands" title if there are more than one groups
+                if (count($ret['groups']) > 1 || $this->options->dev) {
+                    $this->logger->writeln("  " . $formatter->format("General Commands",'strong_white'));
+                }
+                $this->layoutCommands($ret['commands']);
+
+                foreach($ret['groups'] as $group) {
+                    if (!$this->options->dev && $group->getId() == "dev")
+                        continue;
+                    $this->logger->writeln("  " . $formatter->format($group->getName(),'strong_white'));
+                    $this->layoutCommands($group->getCommands());
+                }
+            } else {
+                $this->layoutCommands($ret['commands']);
             }
-
-            $logger->newline();
-            $logger->write($this->getFormattedHelpText());
-
+            $this->logger->write($this->getFormattedHelpText());
 
             if ($app->topics) {
                 $logger->write($formatter->format("TOPICS\n",'strong_white'));

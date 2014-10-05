@@ -1,14 +1,19 @@
 <?php
 namespace CLIFramework;
 use CLIFramework\Command;
+use CLIFramework\CommandBase;
 
 class CommandGroup
 {
+    public $id;
+
     public $name;
 
     public $desc;
 
-    public $commandNames = array();
+    public $commands = array();
+
+    public $isHidden = false;
 
     public function __construct($groupName, $commands = array())
     {
@@ -16,8 +21,23 @@ class CommandGroup
         $this->commands = $commands;
     }
 
-    public function addCommand($commandName) {
-        $this->commands[] = $commandName;
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id ?: $this->getName();
+    }
+
+    public function getName() {
+        return $this->name;
+    }
+
+    public function addCommand($name, CommandBase $command) {
+        $this->commands[$name] = $command;
         return $this;
     }
 
@@ -25,6 +45,9 @@ class CommandGroup
         return $this->commands;
     }
 
+    public function getCommandNames() {
+        return array_keys($this->commands);
+    }
 
     /**
      * Set group description
@@ -43,6 +66,11 @@ class CommandGroup
      */
     public function getDesc() {
         return $this->desc;
+    }
+
+    public function hidden() {
+        $this->isHidden = true;
+        return $this;
     }
 }
 
