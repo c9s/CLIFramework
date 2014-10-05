@@ -658,7 +658,7 @@ abstract class CommandBase
     public function ask($prompt, $validAnswers = null )
     {
         $prompter = new Prompter;
-        $prompter->style = 'ask';
+        $prompter->setStyle('ask');
         return $prompter->ask( $prompt , $validAnswers );
     }
 
