@@ -10,8 +10,8 @@ use CLIFramework\Formatter;
  */
 class Prompter
 {
-
     public $style;
+
     public $formatter;
 
     public function __construct()
