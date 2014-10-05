@@ -154,9 +154,8 @@ class Application extends CommandBase
     {
         // $this->addCommand('list','CLIFramework\\Command\\ListCommand');
         $this->command('help','CLIFramework\\Command\\HelpCommand');
-        // $this->commandGroup('General Commands', array('help'));
         $this->commandGroup("Development Commands", array(
-            'zsh' => 'CLIFramework\\Command\\ZshCompletionCommand',
+            'zsh'  => 'CLIFramework\\Command\\ZshCompletionCommand',
             'meta' => 'CLIFramework\\Command\\MetaCommand',
             'github:build-topics' => 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand',
         ))->setId('dev');

@@ -258,6 +258,9 @@ abstract class CommandBase
 
     public function commandGroup($groupName, $commands = array())
     {
+        if (is_string($commands)) {
+            $commands = explode(' ',$commands);
+        }
         return $this->addCommandGroup($groupName, $commands);
     }
 
