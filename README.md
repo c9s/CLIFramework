@@ -7,10 +7,6 @@ CLIFramework
 
 CLIFramework is a command-line application framework, for building flexiable, simple command-line applications.
 
-In one CLIFramework application, each command is a class file, a command class can have many subcommands,
-
-and each subcommand can also have their subcommands and arguments, options, and so on.
-
 Commands and Subcommands can be registered from outside of an application or your plugins.
 
 Defining a new command is pretty simple, all you need to is declare a class which is inherited from `CLIFramework\Command` class.
@@ -20,13 +16,22 @@ Features
 
 - Intuitive command class and option spec
 
-- GetOpt supported, powered by GetOptionKit. supports long option, short option, required|optional|default value.
+- command options are supported, powered by GetOptionKit. including long option, short option, required|optional|default value.
 
-- Hierarchical subcommand support.
+- Hierarchical commands.
 
 - Automatic help page generation.
 
 - Automatic zsh completion generator.
+
+- Friendly message when command arguments are not enough.
+
+- Testable, CLIFramework provides PHPUnit test case for testing the commands in PHP.
+
+- Argument validation, suggestion, 
+
+- Command Groups
+
 
 
 
@@ -65,8 +70,31 @@ class CommitCommand extends CLIFramework\Command {
             ->validValues(['CLIFramework','GetOptionKit']);
     }
 
+    public function init() {
+
+        $this->command('foo'); // register App\Command\FooCommand automatically
+
+        $this->command('bar', 'WhatEver\MyCommand\BarCommand');
+
+        $this->commandGroup('General Commands', ['foo', 'bar']);
+
+        $this->commandGroup('Database Commands', ['create-db', 'drop-db']);
+
+        $this->commandGroup('More Commands', [
+            'foo' => 'WhatEver\MyCommand\FooCommand',
+            'bar' => 'WhatEver\MyCommand\BarCommand'
+        ]);
+    }
+
     public function execute($user,$repo) {
-        $this->getLogger()->notice('executing bar command.');
+        $this->logger->notice('executing bar command.');
+        $this->logger->info('info message');
+        $this->logger->debug('info message');
+        $this->logger->write('just write');
+        $this->logger->writeln('just drop a line');
+        $this->logger->newline();
+
+        return "Return result as an API"; // This can be integrated in your web application
     }
 }
 ```
