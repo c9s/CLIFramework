@@ -113,7 +113,7 @@ class Application extends CommandBase
 
         $opts->add('p|profile','Display timing and memory usage information.');
         // Un-implemented options
-        // $opts->add('no-interact','Do not ask any interactive question.');
+        $opts->add('no-interact','Do not ask any interactive question.');
         // $opts->add('no-ansi', 'Disable ANSI output.');
     }
 
@@ -227,7 +227,9 @@ class Application extends CommandBase
         //                  |
         //                  |->> parser
         //
-        $currentCmd->setOptions( $getopt->parse( $argv ) );
+        //
+        $appOptions = $getopt->parse( $argv );
+        $currentCmd->setOptions($appOptions);
         $currentCmd->prepare();
 
         $command_stack = array();
@@ -243,7 +245,7 @@ class Application extends CommandBase
                 $a = $getopt->getCurrentArgument();
 
                 if (!$currentCmd->hasCommand($a) ) {
-                    if ($guess = $currentCmd->guessCommand($a)) {
+                    if (!$appOptions->noInteract && ($guess = $currentCmd->guessCommand($a) !== NULL)) {
                         $a = $guess;
                     } else {
                         throw new CommandNotFoundException($currentCmd, $a);
@@ -258,12 +260,12 @@ class Application extends CommandBase
                 $getopt->setSpecs($currentCmd->optionSpecs);
 
                 // parse options for command.
-                $currentCmd_options = $getopt->continueParse();
+                $currentCmdOptions = $getopt->continueParse();
 
                 // run subcommand prepare
-                $currentCmd->setOptions( $currentCmd_options );
+                $currentCmd->setOptions( $currentCmdOptions );
 
-                // echo get_class($currentCmd) , ' => ' , print_r($currentCmd_options);
+                // echo get_class($currentCmd) , ' => ' , print_r($currentCmdOptions);
 
                 $command_stack[] = $currentCmd; // save command object into the stack
 
