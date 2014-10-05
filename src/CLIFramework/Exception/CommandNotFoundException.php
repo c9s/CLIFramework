@@ -2,21 +2,15 @@
 namespace CLIFramework\Exception;
 use Exception;
 use CLIFramework\CommandBase;
+use CLIFramework\Exception\CommandBaseException;
 
-class CommandNotFoundException extends Exception
+class CommandNotFoundException extends CommandBaseException
 {
     public $name;
 
-    public $command;
-
     public function __construct(CommandBase $command, $name) {
-        $this->command = $command;
         $this->name = $name;
-        parent::__construct("Command $name not found.");
-    }
-
-    public function getCommand() {
-        return $this->command;
+        parent::__construct($command, "Command $name not found.");
     }
 }
 

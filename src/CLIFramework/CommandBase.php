@@ -23,6 +23,7 @@ use CLIFramework\Exception\CommandNotFoundException;
 use CLIFramework\Exception\InvalidCommandArgumentException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
 use CLIFramework\Exception\CommandClassNotFoundException;
+use CLIFramework\Exception\ExecuteMethodNotDefinedException;
 use CLIFramework\ArgInfo;
 use CLIFramework\ArgInfoList;
 use CLIFramework\Corrector;
@@ -597,11 +598,9 @@ abstract class CommandBase
     public function getArgumentsInfoByReflection() { 
         $argInfo = new ArgInfoList;
 
-        // call_user_func_array(  );
         $ro = new ReflectionObject($this);
-
         if (!method_exists($this,'execute')) {
-            throw new Exception('execute method is not defined.');
+            throw new ExecuteMethodNotDefinedException;
         }
 
         $method = $ro->getMethod('execute');
@@ -633,24 +632,14 @@ abstract class CommandBase
         // call_user_func_array(  );
         $refl = new ReflectionObject($this);
 
-        if (! method_exists( $this,'execute' )) {
-            throw new Exception('execute method is not defined.');
+        if (!method_exists( $this,'execute' )) {
+            throw new ExecuteMethodNotDefinedException();
         }
 
         $reflMethod = $refl->getMethod('execute');
         $requiredNumber = $reflMethod->getNumberOfRequiredParameters();
         if ( count($args) < $requiredNumber ) {
             throw new CommandArgumentNotEnoughException($this, count($args), $requiredNumber);
-            /*
-            $this->getLogger()->error( "Command requires at least $requiredNumber arguments." );
-            $this->getLogger()->error( "Command prototype:" );
-            $params = $reflMethod->getParameters();
-            foreach ($params as $param) {
-                $this->getLogger()->error(
-                    $param->getPosition() . ' => $' . $param->getName() , 1 );
-            }
-            throw new Exception('Wrong Parameter, Can not execute command.');
-            */
         }
         return call_user_func_array(array($this,'execute'), $args);
     }
