@@ -52,16 +52,16 @@ class HelpCommand extends Command implements CommandInterface {
         return $maxWidth;
     }
 
-    public function layoutCommands($commands, $indent = 0) {
+    public function layoutCommands($commands, $indent = 4) {
         $cmdNames = array_filter(array_keys($commands), function($n) {
             return ! preg_match('#^_#', $n);
         });
-        $maxWidth = $this->calculateColumnWidth($cmdNames, 20);
+        $maxWidth = $this->calculateColumnWidth($cmdNames, 12);
         foreach ($commands as $name => $class) {
             $cmd = new $class;
             $brief = $cmd->brief();
             $this->logger->writeln(str_repeat(' ' , $indent) 
-                . sprintf("%" . ($maxWidth + 8) . "s    %s",
+                . sprintf("%" . ($maxWidth + $indent) . "s    %s",
                     $name,
                     $brief 
                 ));
@@ -198,23 +198,19 @@ class HelpCommand extends Command implements CommandInterface {
             $logger->write($formatter->format("COMMANDS\n",'strong_white'));
             $ret = $app->aggregate();
 
-            if (isset($ret['groups'])) {
-
-                // show "General commands" title if there are more than one groups
-                if (count($ret['groups']) > 1 || $this->options->dev) {
-                    $this->logger->writeln("  " . $formatter->format("General Commands",'strong_white'));
-                }
-                $this->layoutCommands($ret['commands']);
-
-                foreach($ret['groups'] as $group) {
-                    if (!$this->options->dev && $group->getId() == "dev")
-                        continue;
-                    $this->logger->writeln("  " . $formatter->format($group->getName(),'strong_white'));
-                    $this->layoutCommands($group->getCommands());
-                }
-            } else {
-                $this->layoutCommands($ret['commands']);
+            // show "General commands" title if there are more than one groups
+            if (count($ret['groups']) > 1 || $this->options->dev) {
+                $this->logger->writeln("  " . $formatter->format("General Commands",'strong_white'));
             }
+            $this->layoutCommands($ret['commands']);
+
+            foreach($ret['groups'] as $group) {
+                if (!$this->options->dev && $group->getId() == "dev")
+                    continue;
+                $this->logger->writeln("  " . $formatter->format($group->getName(),'strong_white'));
+                $this->layoutCommands($group->getCommands());
+            }
+
             $this->logger->write($this->getFormattedHelpText());
 
             if ($app->topics) {
