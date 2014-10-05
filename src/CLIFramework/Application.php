@@ -32,6 +32,13 @@ class Application extends CommandBase
     const VERSION = "2.0.1";
     const NAME = 'CLIFramework';
 
+
+    /**
+     * timestamp when started
+     */
+    public $startedAt;
+
+
     // options parser
     public $getoptParser;
     public $supportReadline;
@@ -101,8 +108,13 @@ class Application extends CommandBase
         $opts->add('v|verbose','Print verbose message.');
         $opts->add('d|debug'  ,'Print debug message.');
         $opts->add('q|quiet'  ,'Be quiet.');
-        $opts->add('h|help'   ,'Show help');
-        $opts->add('version'  ,'Show version');
+        $opts->add('h|help'   ,'Show help.');
+        $opts->add('version'  ,'Show version.');
+
+        $opts->add('p|profile','Display timing and memory usage information.');
+        // Un-implemented options
+        // $opts->add('no-interact','Do not ask any interactive question.');
+        // $opts->add('no-ansi', 'Disable ANSI output.');
     }
 
     public function topics(array $topics) {
@@ -278,12 +290,13 @@ class Application extends CommandBase
             return $this->executeWrapper( $arguments );
         }
         $currentCmd->finish();
-
+        $this->finish();
         return true;
     }
 
     public function prepare()
     {
+        $this->startedAt = microtime(true);
         $options = $this->getOptions();
         if ($options->verbose) {
             $this->getLogger()->setVerbose();
@@ -291,6 +304,18 @@ class Application extends CommandBase
             $this->getLogger()->setDebug();
         } elseif ($options->quiet) {
             $this->getLogger()->setLevel(2);
+        }
+    }
+
+    public function finish() {
+        if ($this->options->profile) {
+            $this->logger->info(
+                sprintf('Memory usage: %.2fMB (peak: %.2fMB), time: %.4fs',
+                    memory_get_usage(true) / (1024 * 1024),
+                    memory_get_peak_usage(true) / (1024 * 1024),
+                    (microtime(true) - $this->startedAt)
+                )
+            );
         }
     }
 

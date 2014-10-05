@@ -21,27 +21,36 @@ class MetaCommandTest extends CommandTestCase
 CLIFramework
 GetOptionKit
 ");
-        $this->runCommand('example/demo meta --zsh commit arg 1 valid-values');
+        ok( $this->runCommand('example/demo meta --zsh commit arg 1 valid-values'));
     }
 
-    public function testHelpCommand() {
-        $this->expectOutputRegex("/A simple demo command/");
-        $this->runCommand('example/demo help');
-    }
+    public function testOptValidValues() {
+        ob_start();
+        ok( $this->runCommand('example/demo meta --zsh commit opt reuse-message valid-values'));
+        $output = ob_get_contents();
+        ob_end_clean();
+        $lines = explode("\n",trim($output));
 
-    public function testHelpTopicCommand() {
-        $this->expectOutputRegex("/A bare repository is normally an appropriately/");
-        $this->runCommand('example/demo help basic');
+        is('#values',$lines[0]);
+        array_shift($lines);
+        foreach($lines as $line) {
+            like('/^\w{7}$/', $line);
+        }
     }
 
     public function testGenerateZshCompletion() {
         $this->expectOutputRegex("!compdef _demo demo!");
-        $this->runCommand('example/demo zsh --program demo --bind demo');
+        ok( $this->runCommand('example/demo zsh --program demo --bind demo') );
+    }
+
+    public function testCommandNotFound() {
+        $this->setExpectedException('CLIFramework\\Exception\\CommandNotFoundException');
+        ok( $this->runCommand('example/demo --no-interact zzz') );
     }
 
     public function testArgument() {
         $this->setExpectedException('CLIFramework\\Exception\\CommandArgumentNotEnoughException');
-        $this->runCommand('example/demo commit');
+        ok( $this->runCommand('example/demo commit') );
     }
 
 }
