@@ -9,7 +9,6 @@
  *
  */
 namespace CLIFramework;
-
 use GetOptionKit\ContinuousOptionParser;
 use GetOptionKit\OptionCollection;
 
@@ -17,14 +16,28 @@ use CLIFramework\CommandLoader;
 use CLIFramework\CommandBase;
 use CLIFramework\Logger;
 use CLIFramework\CommandInterface;
+use CLIFramework\Prompter;
+use CLIFramework\CommandGroup;
+use CLIFramework\Formatter;
+use CLIFramework\Corrector;
 use Exception;
+use CLIFramework\Exception\CommandNotFoundException;
+use CLIFramework\Exception\CommandArgumentNotEnoughException;
+use ReflectionClass;
 
 class Application extends CommandBase
     implements CommandInterface
 {
-    const CORE_VERSION = '1.5.12';
-    const VERSION  = '1.5.12';
+    const CORE_VERSION = '1.10.0';
+    const VERSION = "2.0.1";
     const NAME = 'CLIFramework';
+
+
+    /**
+     * timestamp when started
+     */
+    public $startedAt;
+
 
     // options parser
     public $getoptParser;
@@ -37,6 +50,13 @@ class Application extends CommandBase
     */
     public $logger;
 
+    public $showAppSignature = true;
+
+
+    /**
+     *
+     */
+    public $topics = array();
 
     /**
      *
@@ -44,26 +64,31 @@ class Application extends CommandBase
      */
     public $formatter;
 
+    public $programName;
+
     public function __construct()
     {
         parent::__construct();
 
-        // get current class namespace, add {App}\Command\ to loader
-        $app_ref_class = new \ReflectionClass($this);
-        $app_ns = $app_ref_class->getNamespaceName();
 
         $this->formatter = new Formatter;
         $this->logger = new Logger;
 
         // initliaze command loader
         $this->loader = CommandLoader::getInstance();
-        $this->loader->addNamespace( array( '\\CLIFramework\\Command' ) );
-        $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
 
-        // init option parser
-        $this->getoptParser = new ContinuousOptionParser;
+        // get current class namespace, add {App}\Command\ to loader
+        $app_ref_class = new ReflectionClass($this);
+        $app_ns = $app_ref_class->getNamespaceName();
+        $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
+        $this->loader->addNamespace( array('\\CLIFramework\\Command' ));
 
         $this->supportReadline = extension_loaded('readline');
+    }
+
+    public function getCurrentAppNamespace() {
+        $refClass = new ReflectionClass($this);
+        return $refClass->getNamespaceName();
     }
 
     public function brief()
@@ -83,8 +108,53 @@ class Application extends CommandBase
         $opts->add('v|verbose','Print verbose message.');
         $opts->add('d|debug'  ,'Print debug message.');
         $opts->add('q|quiet'  ,'Be quiet.');
-        $opts->add('h|help'   ,'help');
-        $opts->add('version'  ,'show version');
+        $opts->add('h|help'   ,'Show help.');
+        $opts->add('version'  ,'Show version.');
+
+        $opts->add('p|profile','Display timing and memory usage information.');
+        // Un-implemented options
+        $opts->add('no-interact','Do not ask any interactive question.');
+        // $opts->add('no-ansi', 'Disable ANSI output.');
+    }
+
+    public function topics(array $topics) {
+        foreach($topics as $key => $val) {
+            if (is_numeric($key)) {
+                $this->topics[$val] = $this->loadTopic($val);
+            } else {
+                $this->topics[$key] = $this->loadTopic($val);
+            }
+        }
+    }
+
+    public function topic($topicId, $topicClass = null) {
+        $this->topics[$topicId] = $topicClass ? new $topicClass: $this->loadTopic($topicId);
+    }
+
+    public function getTopic($topicId) {
+        if (isset($this->topics[$topicId])) {
+            return $this->topics[$topicId];
+        }
+    }
+
+    public function loadTopic($topicId) {
+        // existing class name or full-qualified class name
+        if (class_exists($topicId, true)) {
+            return new $topicId;
+        }
+        if (!preg_match('/Topic$/', $topicId)) {
+            $className = ucfirst($topicId) . 'Topic';
+        } else {
+            $className = ucfirst($topicId);
+        }
+        $possibleNs = array($this->getCurrentAppNamespace(), 'CLIFramework');
+        foreach($possibleNs as $ns) {
+            $class = $ns . '\\' . 'Topic' . '\\' . $className;
+            if (class_exists($class, true)) {
+                return new $class;
+            }
+        }
+        throw new Exception("Topic $topicId not found.");
     }
 
     /*
@@ -94,17 +164,36 @@ class Application extends CommandBase
      */
     public function init()
     {
-        // $this->registerCommand('list','CLIFramework\\Command\\ListCommand');
-        $this->registerCommand('help','CLIFramework\\Command\\HelpCommand');
-        $this->registerCommand('_zsh', 'CLIFramework\\Command\\ZshCompletionCommand');
-        $this->registerCommand('_meta', 'CLIFramework\\Command\\MetaCommand');
+        // $this->addCommand('list','CLIFramework\\Command\\ListCommand');
+        $this->command('help','CLIFramework\\Command\\HelpCommand');
+        $this->commandGroup("Development Commands", array(
+            'zsh'  => 'CLIFramework\\Command\\ZshCompletionCommand',
+            'meta' => 'CLIFramework\\Command\\MetaCommand',
+            'github:build-topics' => 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand',
+        ))->setId('dev');
     }
 
     public function runWithTry($argv)
     {
         try {
             return $this->run($argv);
-        } catch ( Exception $e ) {
+        } catch (CommandArgumentNotEnoughException $e) {
+            $this->logger->error( $e->getMessage() );
+            $this->logger->writeln("Expected argument prototypes:");
+            foreach($e->getCommand()->getAllCommandPrototype() as $p) {
+                $this->logger->writeln("\t" . $p);
+            }
+            $this->logger->newline();
+        } catch (CommandNotFoundException $e) {
+            $this->logger->error( $e->getMessage() . " available commands are: " . join(', ', $e->getCommand()->getVisibleCommandList())  );
+            $this->logger->newline();
+
+            $this->logger->writeln("Please try the command below to see the details:");
+            $this->logger->newline();
+            $this->logger->writeln("\t" . $this->getProgramName() . ' help ' );
+            $this->logger->newline();
+
+        } catch (Exception $e) {
             $this->getLogger()->error( $e->getMessage() );
         }
 
@@ -120,15 +209,16 @@ class Application extends CommandBase
      * */
     public function run(Array $argv)
     {
-        $current_cmd = $this;
+        $this->setProgramName($argv[0]);
+
+        $currentCmd = $this;
 
         // init application,
         // before parsing options, we have to known the registered commands.
-        $current_cmd->_init();
+        $currentCmd->_init();
 
         // use getoption kit to parse application options
-        $getopt = $this->getoptParser;
-        $getopt->setSpecs( $current_cmd->optionSpecs );
+        $getopt = new ContinuousOptionParser($currentCmd->optionSpecs);
 
         // parse the first part options (options after script name)
         // option parser should stop before next command name.
@@ -137,39 +227,47 @@ class Application extends CommandBase
         //                  |
         //                  |->> parser
         //
-        $current_cmd->setOptions( $getopt->parse( $argv ) );
-        $current_cmd->prepare();
+        //
+        $appOptions = $getopt->parse( $argv );
+        $currentCmd->setOptions($appOptions);
+        $currentCmd->prepare();
 
         $command_stack = array();
         $arguments = array();
 
         // get command list from application self
-        $subcommand_list = $current_cmd->getCommandList();
         while ( ! $getopt->isEnd() ) {
             $a = $getopt->getCurrentArgument();
 
             // if current command is in subcommand list.
-            if ( in_array(  $getopt->getCurrentArgument() , $subcommand_list ) ) {
-                $subcommand = $getopt->getCurrentArgument();
+
+            if ($currentCmd->hasCommands()) {
+                $a = $getopt->getCurrentArgument();
+
+                if (!$currentCmd->hasCommand($a) ) {
+                    if (!$appOptions->noInteract && ($guess = $currentCmd->guessCommand($a) !== NULL)) {
+                        $a = $guess;
+                    } else {
+                        throw new CommandNotFoundException($currentCmd, $a);
+                    }
+                }
+
                 $getopt->advance(); // advance position
 
                 // get command object
-                $current_cmd = $current_cmd->getCommand( $subcommand );
+                $currentCmd = $currentCmd->getCommand($a);
 
-                $getopt->setSpecs($current_cmd->optionSpecs);
+                $getopt->setSpecs($currentCmd->optionSpecs);
 
                 // parse options for command.
-                $current_cmd_options = $getopt->continueParse();
+                $currentCmdOptions = $getopt->continueParse();
 
                 // run subcommand prepare
-                $current_cmd->setOptions( $current_cmd_options );
+                $currentCmd->setOptions( $currentCmdOptions );
 
-                // echo get_class($current_cmd) , ' => ' , print_r($current_cmd_options);
+                // echo get_class($currentCmd) , ' => ' , print_r($currentCmdOptions);
 
-                $command_stack[] = $current_cmd; // save command object into the stack
-
-                // update subcommand list
-                $subcommand_list = $current_cmd->getCommandList();
+                $command_stack[] = $currentCmd; // save command object into the stack
 
             } else {
                 $a = $getopt->advance();
@@ -193,13 +291,14 @@ class Application extends CommandBase
             // no command specified.
             return $this->executeWrapper( $arguments );
         }
-        $current_cmd->finish();
-
+        $currentCmd->finish();
+        $this->finish();
         return true;
     }
 
     public function prepare()
     {
+        $this->startedAt = microtime(true);
         $options = $this->getOptions();
         if ($options->verbose) {
             $this->getLogger()->setVerbose();
@@ -207,6 +306,18 @@ class Application extends CommandBase
             $this->getLogger()->setDebug();
         } elseif ($options->quiet) {
             $this->getLogger()->setLevel(2);
+        }
+    }
+
+    public function finish() {
+        if ($this->options->profile) {
+            $this->logger->info(
+                sprintf('Memory usage: %.2fMB (peak: %.2fMB), time: %.4fs',
+                    memory_get_usage(true) / (1024 * 1024),
+                    memory_get_peak_usage(true) / (1024 * 1024),
+                    (microtime(true) - $this->startedAt)
+                )
+            );
         }
     }
 
@@ -230,6 +341,14 @@ class Application extends CommandBase
         }
     }
 
+    public function setProgramName($programName) {
+        $this->programName = $programName;
+    }
+
+    public function getProgramName() {
+        return $this->programName;
+    }
+
     public function getName()
     {
         if ( defined('static::NAME') ) {
@@ -245,22 +364,23 @@ class Application extends CommandBase
         $options = $this->getOptions();
 
         if ($options->version) {
-            echo $this->getName() , ' - ' , $this->getVersion() , "\n";
-            echo "cliframework core: ", $this->getCoreVersion() , "\n";
+            $this->logger->writeln($this->getName() . ' - ' . $this->getVersion());
+            $this->logger->writeln("cliframework core: " . $this->getCoreVersion());
             return;
         }
 
         $arguments = func_get_args();
+
         // show list and help by default
-        $help_class = $this->getCommandClass( 'help' );
-        if ($help_class || $options->help) {
-            $help = new $help_class($this);
-            $help->parent = $this;
+        $help = $this->getCommand('help');
+        $help->setOptions($options);
+        if ($help || $options->help) {
             $help->executeWrapper($arguments);
         } else {
             throw new Exception("Help command is not defined.");
         }
     }
+
 
     public function getFormatter()
     {

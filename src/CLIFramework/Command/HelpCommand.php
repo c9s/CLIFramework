@@ -11,10 +11,11 @@
 namespace CLIFramework\Command;
 use CLIFramework\Command;
 use CLIFramework\CommandInterface;
+use CLIFramework\OptionPrinter;
+use CLIFramework\Corrector;
 
-class HelpCommand extends Command
-    implements CommandInterface
-{
+
+class HelpCommand extends Command implements CommandInterface {
 
     /**
      * one line description
@@ -22,6 +23,50 @@ class HelpCommand extends Command
     public function brief()
     {
         return 'Show help message of a command';
+    }
+
+    public function options($opts)
+    {
+        $opts->add('dev','Show development commands');
+    }
+
+    public function displayTopic($topic) {
+        $this->logger->write($this->formatter->format('TOPIC', 'strong_white') . "\n");
+        $this->logger->write("\t" . $topic->getTitle() . "\n\n");
+        $this->logger->write($this->formatter->format('DESCRIPTION', 'strong_white') . "\n");
+        $this->logger->write($topic->getContent() . "\n\n");
+
+        if ($footer = $topic->getFooter()) {
+            $this->logger->write($this->formatter->format('MORE', 'strong_white') . "\n");
+            $this->logger->write($footer . "\n");
+        }
+    }
+
+    public function calculateColumnWidth($words, $min = 0) {
+        $maxWidth = $min;
+        foreach($words as $word) {
+            if (strlen($word) > $maxWidth) {
+                $maxWidth = strlen($word);
+            }
+        }
+        return $maxWidth;
+    }
+
+    public function layoutCommands($commands, $indent = 4) {
+        $cmdNames = array_filter(array_keys($commands), function($n) {
+            return ! preg_match('#^_#', $n);
+        });
+        $maxWidth = $this->calculateColumnWidth($cmdNames, 12);
+        foreach ($commands as $name => $class) {
+            $cmd = new $class;
+            $brief = $cmd->brief();
+            $this->logger->writeln(str_repeat(' ' , $indent) 
+                . sprintf("%" . ($maxWidth + $indent) . "s    %s",
+                    $name,
+                    $brief 
+                ));
+        }
+        $this->logger->newline();
     }
 
     /**
@@ -35,86 +80,107 @@ class HelpCommand extends Command
 
         $progname = $argv[0];
 
-        // if there is no subcommand to render help, show all available commands.
-        $subcommands = func_get_args();
+        $logger = $this->logger;
+        $app = $this->getApplication();
+
+        $printer = new OptionPrinter;
         $formatter = $this->getFormatter();
-        if ($subcommands) {
-            // TODO: recursively get the last subcommand.
-            $subcommand = $subcommands[0];
-            // get command object.
-            $cmd = $this->getApplication()->getCommand( $subcommand );
+
+        // if there is no subcommand to render help, show all available commands.
+        $commandNames = func_get_args();
+
+        if (count($commandNames) == 1) {
+            // Check topic
+            if ($topic = $app->getTopic($commandNames[0])) {
+                return $this->displayTopic($topic);
+            } elseif(!$app->hasCommand($commandNames[0])) {
+                $corrector = new Corrector(array_keys($app->topics));
+                if ($match = $corrector->correct($commandNames[0])) {
+                    return $this->displayTopic($app->topics[$match]);
+                }
+                return;
+            }
+        }
+
+        if (count($commandNames)) {
+            $subcommand = $commandNames[0];
+            $cmd = $app;
+            for ($i = 0; $cmd && $i < count($commandNames) ; $i++ ) {
+                $cmd = $cmd->getCommand($commandNames[$i]);
+            }
+            if (!$cmd) {
+                throw new Exception("Command entry " . join(' ', $commandNames) . " not found");
+            }
+
 
             $usage = $cmd->usage();
-            $optionLines = $cmd->optionSpecs->outputOptions();
 
-            if ( $brief = $cmd->brief() ) {
-                echo $formatter->format(ucfirst($brief),'yellow'),"\n\n";
+            if ($brief = $cmd->brief()) {
+                $logger->write($formatter->format('NAME', 'strong_white') . "\n");
+                $logger->write("\t" . $formatter->format($cmd->getName(), 'strong_white') . ' - ' . $brief . "\n\n");
             }
 
-
-            echo $formatter->format('Synopsis','yellow'),"\n";
-            echo "\t" . $progname . ' ' . $cmd->getName();
-
-            if ( ! empty($cmd->getOptionCollection()->options) ) {
-                echo " [options]";
-            }
-            if ($cmd->hasCommands() ) {
-                echo " <command> ...";
-            } else {
-                $argInfos = $cmd->getArgumentsInfo();
-                foreach( $argInfos as $argInfo ) {
-                    echo " <" . $argInfo->name . ">";
-                }
-            }
-            echo "\n\n";
-
-            if ( $usage = $cmd->usage() ) {
-                echo $formatter->format('Usage','yellow'),"\n";
-                echo $usage;
-                echo "\n\n";
+            if ($aliases = $cmd->aliases()) {
+                $logger->write($formatter->format('ALIASES', 'strong_white') . "\n");
+                $logger->write("\t" . $formatter->format(join(', ', $aliases), 'strong_white') . "\n\n");
             }
 
-            if ($optionLines) {
-                echo $formatter->format('Options','yellow'),"\n";
-                echo join("\n",$optionLines);
-                echo "\n";
+            if ( $usage = trim($cmd->usage()) ) {
+                $logger->write( $formatter->format('USAGE', 'strong_white') . "\n" );
+                $logger->write( "\t" . $usage );
+                $logger->write( "\n\n" );
             }
 
-            echo $cmd->getFormattedHelpText();
+            $logger->write($formatter->format('SYNOPSIS', 'strong_white') . "\n");
+            $prototypes = $cmd->getAllCommandPrototype();
+            foreach($prototypes as $prototype) {
+                $logger->writeln("\t" . ' ' . $prototype);
+            }
+            $logger->write("\n\n");
 
+
+            if ($optionLines = $printer->render($cmd->optionSpecs)) {
+                $logger->write($formatter->format('OPTIONS', 'strong_white') . "\n");
+                $logger->write($optionLines);
+                $logger->write("\n");
+            }
+
+            $logger->write($cmd->getFormattedHelpText());
         } else {
-            // print application subcommands
-            // print application brief
-            $cmd = $this->parent;
-            echo $formatter->format( ucfirst($cmd->brief()) ,'yellow'),"\n\n";
 
-            echo $formatter->format('Synopsis','yellow'),"\n";
-            echo "\t" . $progname;
-            if ( ! empty($cmd->getOptionCollection()->options) ) {
-                echo " [options]";
+            $cmd = $this->parent;
+            $logger->write( $formatter->format( ucfirst($cmd->brief()), "strong_white")."\n\n");
+
+            if( $usage = trim($cmd->usage()) ) {
+                $logger->write($formatter->format("USAGE", "strong_white") . "\n");
+                $logger->write($usage);
+                $logger->write("\n\n");
             }
+
+            $logger->write( $formatter->format("SYNOPSIS", "strong_white")."\n" );
+            $logger->write( "\t" . $progname );
+            if ( ! empty($cmd->getOptionCollection()->options) ) {
+                $logger->write(" [options]");
+            }
+
             if ($cmd->hasCommands() ) {
-                echo " <command>";
+                $logger->write(" <command>");
             } else {
                 $argInfos = $cmd->getArgumentsInfo();
                 foreach( $argInfos as $argInfo ) {
-                    echo " <" . $argInfo->name . ">";
+                    $logger->write(" <" . $argInfo->name . ">");
                 }
             }
-            echo "\n\n";
 
-            if( $usage = $cmd->usage() ) {
-                echo $formatter->format("Usage",'yellow'),"\n";
-                echo $usage;
-                echo "\n\n";
-            }
+            $logger->write("\n\n");
+
 
             // print application options
-            echo $formatter->format("Options",'yellow'),"\n";
-            $cmd->optionSpecs->printOptions();
-            echo "\n\n";
+            $logger->write($formatter->format("OPTIONS",'strong_white') . "\n");
+            $logger->write($printer->render($cmd->optionSpecs));
+            $logger->write("\n\n");
 
-            // get command list, command classes should be preloaded.
+            // get command list, Command classes should be preloaded.
             $classes = get_declared_classes();
             $command_classes = array();
             foreach ($classes as $class) {
@@ -129,33 +195,45 @@ class HelpCommand extends Command
                 }
             }
 
-            // print command brief list
-            echo $formatter->format("Commands\n",'yellow');
-            foreach ($this->getApplication()->commands as $name => $class) {
-                // skip subcommand with prefix underscore.
-                if ( preg_match('#^_#', $name) ) {
+            $logger->write($formatter->format("COMMANDS\n",'strong_white'));
+            $ret = $app->aggregate();
+
+            // show "General commands" title if there are more than one groups
+            if (count($ret['groups']) > 1 || $this->options->dev) {
+                $this->logger->writeln("  " . $formatter->format("General Commands",'strong_white'));
+            }
+            $this->layoutCommands($ret['commands']);
+
+            foreach($ret['groups'] as $group) {
+                if (!$this->options->dev && $group->getId() == "dev")
                     continue;
-                }
-
-
-                $cmd = new $class;
-                $brief = $cmd->brief();
-                printf("%24s   %s\n",
-                    $name,
-                    $brief );
+                $this->logger->writeln("  " . $formatter->format($group->getName(),'strong_white'));
+                $this->layoutCommands($group->getCommands());
             }
 
-            echo "\n";
-            echo $this->getFormattedHelpText();
+            $this->logger->write($this->getFormattedHelpText());
+
+            if ($app->topics) {
+                $logger->write($formatter->format("TOPICS\n",'strong_white'));
+                $maxWidth = $this->calculateColumnWidth(array_keys($app->topics), 8);
+                foreach($app->topics as $topicId => $topic) {
+                    printf("%" . ($maxWidth + 8) . "s    %s\n", $topicId, $topic->getTitle());
+                }
+                $logger->newline();
+            }
+
+            $logger->write($formatter->format("HELP\n",'strong_white'));
+            $this->logger->writeln(wordwrap(
+                "\t'$progname help' lists available subcommands and some" .
+                " topics. See '$progname help <command>' or '$progname help <topic>'" .
+                " to read about a specific subcommand or $progname.", 70, "\n\t"));
         }
 
-        // if empty command list
-        /*
-        $file =  __FILE__ . '.md';
-        if( file_exists( $file ) )
-            echo file_get_contents( $file );
-        */
-
+        if ($app->showAppSignature) {
+            $logger->newline();
+            $logger->write( $formatter->format("{$app->getName()} {$app->getVersion()}","gray"));
+            $logger->writeln( $formatter->format("\t\tpowered by https://github.com/c9s/CLIFramework","gray"));
+        }
         return true;
     }
 }

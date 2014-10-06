@@ -1,0 +1,25 @@
+
+_foo () {
+    local curcontext=$curcontext state line
+    typeset -A val_args
+    declare -A opt_args
+    local ret=1
+
+    eval "$(php example/demo meta --zsh commit arg 0 valid-values)"
+    for k in ${(k)groups} ; do
+        values=(${(z)${groups[$k]}})
+        label=${labels[$k]}
+        if [[ -z $label ]] ; then
+            label=$k
+        fi
+        _describe -t $k $label values && ret=0
+    done
+
+    # _describe -t commits commit commits && ret=0
+    # commitdesca=("a:a" "b:b" "c:c")
+    # commitdesca=(${(z)a:a b:b c:c})
+    # commitdescb=("z:a" "x:b" "y:c")
+    # _describe -t commitb commitb commitdescb && ret=0
+    return ret
+}
+compdef _foo foo

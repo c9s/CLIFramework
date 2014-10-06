@@ -10,6 +10,8 @@
 namespace CLIFramework;
 use Exception;
 use CLIFramework\CommandInterface;
+use CLIFramework\Exception\CommandClassNotFoundException;
+use CLIFramework\Application;
 
 /**
  * abstract command class
@@ -23,11 +25,6 @@ abstract class Command extends CommandBase
      */
     public $application;
 
-    /**
-     * @var string Command alias string.
-     */
-    public $alias;
-
     public $name;
 
     public function __construct($parent = null)
@@ -39,11 +36,7 @@ abstract class Command extends CommandBase
         parent::__construct();
     }
 
-    public function setName($name) {
-        $this->name = $name;
-    }
-
-    public function setApplication($application)
+    public function setApplication(Application $application)
     {
         $this->application = $application;
     }
@@ -70,6 +63,11 @@ abstract class Command extends CommandBase
         }
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
     /**
      * Translate current class name to command name.
      *
@@ -77,19 +75,19 @@ abstract class Command extends CommandBase
      */
     public function getName()
     {
-        if ( $this->name ) {
+        if ($this->name) {
             return $this->name;
         }
 
-        // get default command name
+        // Extract command name from the class name.
         $class = get_class($this);
-
         // strip command suffix
         $parts = explode('\\',$class);
         $class = end($parts);
         $class = preg_replace( '/Command$/','', $class );
         return strtolower( preg_replace( '/(?<=[a-z])([A-Z])/', '-\1' , $class ) );
     }
+
 
     /**
      * Returns logger object.
@@ -114,16 +112,13 @@ abstract class Command extends CommandBase
     }
 
     /**
-     * Alias setter
-     *
-     * @param string $alias
+     * User may register their aliases
      */
-    public function alias($alias)
-    {
-        $this->alias = $alias;
-
-        return $this;
+    public function aliases() {
+        return array();
     }
+
+
 
     /**
      * Provide a shorthand property for retrieving logger object.

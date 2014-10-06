@@ -1,13 +1,11 @@
 CLIFramework
 ============
 
-[![Build Status](https://travis-ci.org/c9s/php-CLIFramework.png?branch=master)](https://travis-ci.org/c9s/php-CLIFramework)
+[![Build Status](https://travis-ci.org/c9s/CLIFramework.png?branch=master)](https://travis-ci.org/c9s/CLIFramework)
+
+[![Coverage Status](https://img.shields.io/coveralls/c9s/CLIFramework.svg)](https://coveralls.io/r/c9s/CLIFramework)
 
 CLIFramework is a command-line application framework, for building flexiable, simple command-line applications.
-
-In one CLIFramework application, each command is a class file, a command class can have many subcommands,
-
-and each subcommand can also have their subcommands and arguments, options, and so on.
 
 Commands and Subcommands can be registered from outside of an application or your plugins.
 
@@ -17,9 +15,27 @@ Features
 --------------------
 
 - Intuitive command class and option spec
-- GetOpt supported, powered by GetOptionKit. supports long option, short option, required|optional|default value.
+
+- command options are supported, powered by GetOptionKit. including long option, short option, required|optional|default value.
+
+- Hierarchical commands.
+
+- Automatic help page generation.
+
 - Automatic zsh completion generator.
-- Hierarchical subcommand support.
+
+- Friendly message when command arguments are not enough.
+
+- Testable, CLIFramework provides PHPUnit test case for testing the commands in PHP.
+
+- Argument validation, suggestion, 
+
+- Command Groups
+
+- HHVM compatible
+
+
+
 
 Synopsis
 --------------------
@@ -30,22 +46,38 @@ class CommitCommand extends CLIFramework\Command {
     public function brief() { return 'brief of bar'; }
 
     public function options($opts) {
-        $opts->add('a|all','Tell the command to automatically stage files that have been modified and deleted, but new files you have not told Git about are not affected.');
-
-        $opts->add('p|patch','Use the interactive patch selection interface to chose which changes to commit. See git-add(1) for details.');
-
         $opts->add('C|reuse-message:','Take an existing commit object, and reuse the log message and the authorship information (including the timestamp) when creating the commit.')
             ->isa('string')
-            ->validValues([ '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'])
+            ->valueName('commit hash')
+            // ->validValues([ 'static-50768ab', 'static-c2efdc2', 'static-ed5ba6a', 'static-cf0b1eb'])
+            ->validValues(function() {
+                $output = array();
+                exec("git rev-list --abbrev-commit HEAD -n 20", $output);
+                return $output;
+            })
             ;
 
         $opts->add('c|reedit-message:','like -C, but with -c the editor is invoked, so that the user can further edit the commit message.')
             ->isa('string')
-            ->validValues([ '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'])
+            ->valueName('commit hash')
+            ->validValues(function() {
+                // exec("git log -n 10 --pretty=format:%H:%s", $output);
+                exec("git log -n 10 --pretty=format:%H:%s", $output);
+                return array_map(function($line) {
+                    list($key,$val) = explode(':',$line);
+                    $val = preg_replace('/\W/',' ', $val);
+                    return array($key, $val);
+                }, $output);
+            })
             ;
 
         $opts->add('author:', 'Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.')
-            ->suggestions([ 'c9s', 'foo' , 'bar' ])
+            ->suggestions(array( 'c9s', 'foo' , 'bar' ))
+            ->valueName('author name')
+            ;
+
+        $opts->add('output:', 'Output file')
+            ->isa('file')
             ;
     }
 
@@ -56,17 +88,42 @@ class CommitCommand extends CLIFramework\Command {
             ->validValues(['CLIFramework','GetOptionKit']);
     }
 
+    public function init() {
+
+        $this->command('foo'); // register App\Command\FooCommand automatically
+
+        $this->command('bar', 'WhatEver\MyCommand\BarCommand');
+
+        $this->commandGroup('General Commands', ['foo', 'bar']);
+
+        $this->commandGroup('Database Commands', ['create-db', 'drop-db']);
+
+        $this->commandGroup('More Commands', [
+            'foo' => 'WhatEver\MyCommand\FooCommand',
+            'bar' => 'WhatEver\MyCommand\BarCommand'
+        ]);
+    }
+
     public function execute($user,$repo) {
-        $this->getLogger()->notice('executing bar command.');
+        $this->logger->notice('executing bar command.');
+        $this->logger->info('info message');
+        $this->logger->debug('info message');
+        $this->logger->write('just write');
+        $this->logger->writeln('just drop a line');
+        $this->logger->newline();
+
+        return "Return result as an API"; // This can be integrated in your web application
     }
 }
 ```
 
-Automatic Zsh Completion:
+Automatic Zsh Completion Generator:
 
-![Imgur](http://imgur.com/bg2PPIF.png)
+![Imgur](http://imgur.com/sU3mrDe.gif)
 
-![Imgur](http://imgur.com/DLmzKD4.png)
+With Lazy Completion Values:
+
+![Imgur](http://i.imgur.com/ItYGDIu.gif)
 
 
 Command Forms
@@ -143,7 +200,7 @@ class CLIApplication extends Application
 {
 
     /* init your application options here */
-    function options($opts)
+    public function options($opts)
     {
         $opts->add('v|verbose', 'verbose message');
         $opts->add('path:', 'required option with a value.');
@@ -152,11 +209,11 @@ class CLIApplication extends Application
     }
 
     /* register your command here */
-    function init()
+    public function init()
     {
-        $this->addCommand( 'list', '\YourApp\Command\ListCommand' );
-        $this->addCommand( 'foo', '\YourApp\Command\FooCommand' );
-        $this->addCommand( 'bar' );    // initialize with \YourApp\Command\BarCommand
+        $this->command( 'list', '\YourApp\Command\ListCommand' );
+        $this->command( 'foo', '\YourApp\Command\FooCommand' );
+        $this->command( 'bar' );    // initialize with \YourApp\Command\BarCommand
     }
 
 }
@@ -213,10 +270,16 @@ argument info of a command:
 namespace YourApp\Command;
 use CLIFramework\Command;
 class FooCommand extends Command {
-    public function arguments() {
-        $this->arg('name')->desc('name parameter')->suggests([ 'c9s', 'foo', 'bar' ]);
-        $this->arg('email')->desc('email parameter');
-        $this->arg('phone')->desc('phone parameter')->optional();
+
+    public function arguments($args) {
+
+        $args->add('user')
+            ->desc('user name')
+            ->validValues(['c9s','bar','foo']);
+
+        $args->add('repo')
+            ->desc('repository')
+            ->validValues(['CLIFramework','GetOptionKit']);
     }
 }
 ```
@@ -226,7 +289,7 @@ Zsh Completion Generator
 ----------------------------
 
 ```sh
-example/demo _zsh demo > _demo
+example/demo zsh demo > _demo
 source _demo
 ```
 
@@ -288,6 +351,21 @@ Please check `example/demo.php`
 
     $ php example/demo.php
 
+
+
+ArgumentEditor
+----------------------
+
+```php
+use CLIFramework\ArgumentEditor\ArgumentEditor;
+
+$editor = new ArgumentEditor(array('./configure','--enable-debug'));
+$editor->append('--enable-zip');
+$editor->append('--with-sqlite','--with-postgres');
+
+echo $editor;
+# ./configure --enable-debug --enable-zip --with-sqlite --with-postgres
+```
 
 Message style formatter
 --------------------

@@ -1,0 +1,10 @@
+#!/bin/sh
+declare -A values
+values[foo]='"111" "222" "333"'
+values[bar]="222"
+
+echo "keys: " ${(@k)values}
+echo "values: " ${(@v)values}
+echo "keys and values: " ${(@kv)values}
+echo "index foo: " ${=values[foo]}
+echo "index bar: " ${values[bar]}

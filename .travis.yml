@@ -2,13 +2,29 @@ language: php
 php:
   - 5.3
   - 5.4
+  - 5.5
+  - 5.6
+  - hhvm
 
 before_script:
   - phpenv rehash
-  - composer install --dev
+  - composer install --dev --no-interaction
+  - mkdir -p build/logs
 
-script: phpunit
+script:
+  - phpunit --coverage-clover build/logs/clover.xml
+  - example/demo meta --zsh commit arg 0 suggestions
+  - example/demo meta --zsh commit arg 1 valid-values
+  - example/demo zsh --bind demo > zsh
+  - example/demo github:build-topics --ns LazyRecord --dir src c9s LazyRecord
+  - example/demo github:build-topics --ns PHPBrew:Topic --dir src phpbrew phpbrew
 
-notifications:
-  webhooks:
-    - http://wireroom.extremedev.org/=/travis-ci/Hall
+after_script:
+  - php vendor/bin/coveralls -v
+
+cache:
+  - vendor
+
+# notifications:
+#   webhooks:
+#     - http://wireroom.extremedev.org/=/travis-ci/Hall

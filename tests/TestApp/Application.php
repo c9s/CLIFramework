@@ -9,21 +9,27 @@
  *
  */
 namespace TestApp;
+use CLIFramework\Application as CLIApplication;
 
-class Application extends \CLIFramework\Application 
+class Application extends CLIApplication 
 {
 
-    function options($getopt)
+    public function options($getopt)
     {
         $getopt->add('c|color','Color message');
         parent::options($getopt);
     }
 
-    function init()
+    public function init()
     {
         parent::init();
-        $this->registerCommand('list');
-        $this->registerCommand('test1');
+        // $this->addCommand('list');
+        // $this->addCommand('test1');
+        $this->CommandGroup('Daily Basic', array('list', 'test1'));
+        $this->topic('list');
+        $this->topics(array('setup','install'));
     }
+
+
 
 }

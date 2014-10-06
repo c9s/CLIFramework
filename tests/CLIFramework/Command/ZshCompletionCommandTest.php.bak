@@ -1,0 +1,105 @@
+<?php
+
+class CommitCommand extends CLIFramework\Command {
+
+    public function brief() { return 'brief of bar'; }
+
+    public function options($opts) {
+        $opts->add('a|all','Tell the command to automatically stage files that have been modified and deleted, but new files you have not told Git about are not affected.');
+
+        $opts->add('p|patch','Use the interactive patch selection interface to chose which changes to commit. See git-add(1) for details.');
+
+        $opts->add('C|reuse-message:','Take an existing commit object, and reuse the log message and the authorship information (including the timestamp) when creating the commit.')
+            ->isa('string')
+            ->validValues(array( '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'))
+            ;
+
+        $opts->add('c|reedit-message:','like -C, but with -c the editor is invoked, so that the user can further edit the commit message.')
+            ->isa('string')
+            ->validValues(array( '50768ab', 'c2efdc2', 'ed5ba6a', 'cf0b1eb'))
+            ;
+
+        $opts->add('author:', 'Override the commit author. Specify an explicit author using the standard A U Thor <author@example.com> format.')
+            ->suggestions(array( 'c9s', 'foo' , 'bar' ))
+            ->valueName('author name')
+            ;
+
+        $opts->add('output:', 'Output file')
+            ->isa('file')
+            ;
+    }
+
+    public function arguments($args) {
+        $args->add('user')
+            ->validValues(array('c9s','bar','foo'))
+            ;
+
+        $args->add('repo')
+            ->validValues(array('CLIFramework','GetOptionKit'))
+            ;
+
+        $args->add('file')
+            ->isa('file')
+            ->glob('*.php')
+            ;
+    }
+
+    public function execute($user,$repo) {
+        $this->getLogger()->notice('executing bar command.');
+    }
+}
+class FooCommand extends CLIFramework\Command { 
+
+    public function brief() { return 'brief of foo'; }
+
+    public function init() {
+        $this->addCommand('subfoo','SubFooCommand');
+    }
+
+    public function execute() {
+        $this->getLogger()->info('executing foo command.');
+    }
+}
+
+class SubFooCommand extends CLIFramework\Command {
+
+    public function brief() { return 'brief of subfoo'; }
+
+    public function options($opts) {
+        $opts->add('x', 'x desc');
+        $opts->add('y', 'y desc');
+        $opts->add('z', 'z desc');
+    }
+
+    public function arguments($args) {
+        $args->add('p1');
+        $args->add('p2');
+    }
+
+    public function execute() {
+        $this->getLogger()->info('executing subfoo command.');
+    }
+}
+
+class ExampleApplication extends CLIFramework\Application {
+
+    public function init()
+    {
+        parent::init();
+        $this->command('foo','FooCommand');
+        $this->command('commit','CommitCommand');
+    }
+}
+
+
+class ZshCompletionCommandTest extends PHPUnit_Framework_TestCase
+{
+
+    public function test()
+    {
+        $this->expectOutputRegex('/compdef _demo demo/');
+        $app = ExampleApplication::getInstance();
+        $app->run(array('demo','zsh', '--program' , 'demo', '--bind' , 'demo'));
+    }
+}
+

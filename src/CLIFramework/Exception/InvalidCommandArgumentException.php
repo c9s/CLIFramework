@@ -1,20 +1,19 @@
 <?php
 namespace CLIFramework\Exception;
 use Exception;
+use CLIFramework\Exception\CommandBaseException;
+use CLIFramework\CommandBase;
 
-class InvalidCommandArgumentException extends Exception
+class InvalidCommandArgumentException extends CommandBaseException
 {
-    public $command;
-
     public $arg;
 
     public $argIndex;
 
-    public function __construct($command, $argIndex, $arg) {
-        $this->command = $command;
+    public function __construct(CommandBase $command, $argIndex, $arg) {
         $this->argIndex = $argIndex;
         $this->arg = $arg;
-        parent::__construct("Invalid '{$command->getName()}' command argument '$arg' at position $argIndex");
+        parent::__construct($command, "Invalid '{$command->getName()}' command argument '$arg' at position $argIndex");
     }
 }
 

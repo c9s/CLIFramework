@@ -9,7 +9,7 @@
  *
  */
 namespace CLIFramework;
-
+use CLIFramework\Exception\CommandClassNotFoundException;
 use Exception;
 
 class CommandLoader
@@ -57,32 +57,27 @@ class CommandLoader
         return $this->loadClass( $subclass );
     }
 
-    /*
-     * load command class/subclass
+    /**
+     * Load command class/subclass
+     *
+     * @param string $class
+     * @return string loaded class name
      */
     public function loadClass($class)
     {
-        if ( class_exists($class, true)) {
+        if (class_exists($class, true)) {
             return $class;
         }
 
-        // if it's a full-qualified class name.
-        if ($class[0] == '\\') {
-            if( class_exists($class, true) ) {
-                return $class;
-            } else {
-                throw new Exception("Command class $class not found.");
-            }
-        } else {
-            // for subcommand class name (under any subcommand namespace)
-            // has application command class ?
-            foreach ($this->namespaces as $ns) {
-                $fullclass = $ns . '\\' . $class;
-                if ( class_exists($fullclass, true) ) {
-                    return $fullclass;
-                }
+        // for subcommand class name (under any subcommand namespace)
+        // has application command class ?
+        foreach ($this->namespaces as $ns) {
+            $fullclass = $ns . '\\' . $class;
+            if (class_exists($fullclass, true)) {
+                return $fullclass;
             }
         }
+        throw new CommandClassNotFoundException($class, $this->namespaces);
     }
 
 
