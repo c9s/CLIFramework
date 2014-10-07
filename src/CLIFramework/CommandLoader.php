@@ -65,7 +65,7 @@ class CommandLoader
      */
     public function loadClass($class)
     {
-        if (class_exists($class, true)) {
+        if (class_exists($class)) {
             return $class;
         }
 
@@ -73,7 +73,7 @@ class CommandLoader
         // has application command class ?
         foreach ($this->namespaces as $ns) {
             $fullclass = $ns . '\\' . $class;
-            if (class_exists($fullclass, true)) {
+            if (class_exists($fullclass)) {
                 return $fullclass;
             }
         }
