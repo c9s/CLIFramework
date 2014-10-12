@@ -6,7 +6,7 @@ abstract class CommandTestCase extends PHPUnit_Framework_TestCase
 {
     public $app;
 
-    public $outputBufferingActive = true;
+    public $outputBufferingActive = false;
 
     abstract public function setupApplication();
 
