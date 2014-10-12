@@ -6,6 +6,8 @@ abstract class CommandTestCase extends PHPUnit_Framework_TestCase
 {
     public $app;
 
+    public $outputBufferingActive = true;
+
     abstract public function setupApplication();
 
     public function getApplication()
@@ -15,12 +17,18 @@ abstract class CommandTestCase extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        if ($this->outputBufferingActive) {
+            ob_start();
+        }
         $this->app = $this->setupApplication();
     }
 
     public function tearDown()
     {
         $this->app = NULL;
+        if ($this->outputBufferingActive) {
+            ob_end_clean();
+        }
     }
 
     public function runCommand($args) {
