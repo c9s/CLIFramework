@@ -256,17 +256,10 @@ class Application extends CommandBase
 
                 // get command object
                 $currentCmd = $currentCmd->getCommand($a);
-
                 $getopt->setSpecs($currentCmd->optionSpecs);
 
                 // parse options for command.
-                $currentCmdOptions = $getopt->continueParse();
-
-                // run subcommand prepare
-                $currentCmd->setOptions( $currentCmdOptions );
-
-                // echo get_class($currentCmd) , ' => ' , print_r($currentCmdOptions);
-
+                $currentCmd->setOptions($getopt->continueParse());
                 $command_stack[] = $currentCmd; // save command object into the stack
 
             } else {
