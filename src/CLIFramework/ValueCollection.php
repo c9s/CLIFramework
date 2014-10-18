@@ -65,6 +65,15 @@ class ValueCollection implements IteratorAggregate
         }
     }
 
+    public function containsValue($value) {
+        foreach($this->groups as $groupId => $values) {
+            if (in_array($value, $values)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getGroupLabels() {
         return $this->labels;
     }

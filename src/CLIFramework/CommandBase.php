@@ -629,9 +629,23 @@ abstract class CommandBase
      */
     public function executeWrapper(array $args)
     {
+        // Validating arguments
+        $argInfos = $this->getArgumentsInfo();
+
+        for ($i = 0; $i < count($argInfos); $i++ ) {
+            $argInfo = $argInfos[$i];
+            if (isset($args[$i])) {
+                $arg = $args[$i];
+                @list($ret, $message) = $argInfo->validate($arg);
+                if ($ret === FALSE) {
+                    $this->logger->error($message ?: "Invalid argument $arg");
+                    return;
+                }
+            }
+        }
+
         // call_user_func_array(  );
         $refl = new ReflectionObject($this);
-
         if (!method_exists( $this,'execute' )) {
             throw new ExecuteMethodNotDefinedException();
         }

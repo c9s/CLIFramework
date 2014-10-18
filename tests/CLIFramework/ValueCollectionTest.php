@@ -17,6 +17,10 @@ class ValueCollectionTest extends PHPUnit_Framework_TestCase
         ok($values);
         ok(is_array($values));
 
+        ok($groups->containsValue('disable'));
+
+        ok(! $groups->containsValue('foobar'));
+
         $json = $groups->toJson();
         ok($json);
     }

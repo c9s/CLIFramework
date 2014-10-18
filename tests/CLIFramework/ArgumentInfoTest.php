@@ -9,9 +9,9 @@ class ArgInfoTest extends PHPUnit_Framework_TestCase
         ok($info);
 
         $info->isa('number');
-        ok($info->test('123'));
+        ok($info->validate('123'));
 
-        ok(!$info->test('foo'));
+        ok(!$info->validate('foo'));
     }
 }
 

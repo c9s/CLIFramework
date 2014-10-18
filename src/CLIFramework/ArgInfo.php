@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework;
+use CLIFramework\ValueCollection;
 
 class ArgInfo
 {
@@ -99,7 +100,7 @@ class ArgInfo
     /**
      * Test a value if it match the spec
      */
-    public function test($value) {
+    public function validate($value) {
         if ($this->isa) {
             switch($this->isa) {
             case "number":
@@ -109,6 +110,10 @@ class ArgInfo
             case "string":
                 return is_string($value);
             }
+        }
+        $validValues = $this->getValidValues();
+        if ($validValues instanceof ValueCollection) {
+
         }
         return true;
     }
