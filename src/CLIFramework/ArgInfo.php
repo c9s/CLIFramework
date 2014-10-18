@@ -112,8 +112,10 @@ class ArgInfo
             }
         }
         $validValues = $this->getValidValues();
-        if ($validValues instanceof ValueCollection) {
-
+        if ($validValues && $validValues instanceof ValueCollection) {
+            return $validValues->containsValue($value);
+        } elseif ( is_array($validValues) ) {
+            return in_array($value, $validValues);
         }
         return true;
     }
