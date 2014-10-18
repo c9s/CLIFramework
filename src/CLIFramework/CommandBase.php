@@ -636,8 +636,19 @@ abstract class CommandBase
             $argInfo = $argInfos[$i];
             if (isset($args[$i])) {
                 $arg = $args[$i];
-                @list($ret, $message) = $argInfo->validate($arg);
-                if ($ret === FALSE) {
+
+                $valid = false;
+                $message = NULL;
+                $ret = $argInfo->validate($arg);
+
+                if (is_array($ret)) {
+                    $valid = $ret[0];
+                    $message = $ret[1];
+                } elseif (is_bool($ret)) {
+                    $valid = $ret;
+                }
+
+                if ($valid === FALSE) {
                     $this->logger->error($message ?: "Invalid argument $arg");
                     return;
                 }
