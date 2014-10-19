@@ -36,20 +36,33 @@ class Chooser
         echo $prompt . ": \n";
 
         $choicesMap = array();
-        $i = 0;
-        foreach ($choices as $choice => $value) {
-            $i++;
-            $choicesMap[ $i ] = $value;
-            echo "\t" . ($i) . "  $choice\n";
+
+        // Not an indexed array
+        if (! isset($choices[0])) {
+            $i = 0;
+            foreach ($choices as $choice => $value) {
+                $i++;
+                $choicesMap[ $i ] = $value;
+                echo "\t" . ($i) . "  $choice\n";
+            }
+        } else {
+            foreach ($choices as $choice => $desc) {
+                $choicesMap[$choice] = $choice;
+                echo "\t$choice: $desc\n";
+            }
         }
 
         if ($this->style) {
             echo $this->formatter->getStartMark( $this->style );
         }
 
-        $choosePrompt = "Please Choose (1-$i): ";
+        $completionItems = array_keys($choicesMap);
+        $choosePrompt = "Please Choose 1-$i > ";
         while (1) {
-            if ( extension_loaded('readline') ) {
+            if (extension_loaded('readline')) {
+                $success = readline_completion_function(function($string, $index) use ($completionItems) { 
+                    return $completionItems;
+                });
                 $answer = readline($choosePrompt);
                 readline_add_history($answer);
             } else {
@@ -58,9 +71,8 @@ class Chooser
             }
 
             $answer = (int) trim( $answer );
-            if ( is_integer( $answer ) ) {
+            if (is_integer($answer)) {
                 if ( isset( $choicesMap[$answer] ) ) {
-
                     if( $this->style )
                         echo $this->formatter->getClearMark();
 
