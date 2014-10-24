@@ -68,6 +68,11 @@ class Logger
         $this->level = $level;
     }
 
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
     public function quiet()
     {
         $this->level = 0;
@@ -81,6 +86,11 @@ class Logger
     public function setDebug()
     {
         $this->level = $this->getLevelByName('debug2');
+    }
+
+    public function isDebug()
+    {
+        return $this->level == $this->getLevelByName('debug2') || $this->level == $this->getLevelByName('debug');
     }
 
     public function setFormatter( $formatter )
