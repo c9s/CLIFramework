@@ -78,6 +78,11 @@ class Logger
         $this->level = 0;
     }
 
+    public function setQuiet()
+    {
+        $this->level = 0;
+    }
+
     public function setVerbose()
     {
         $this->level = $this->getLevelByName('info2');
@@ -92,6 +97,11 @@ class Logger
     {
         return $this->level == $this->getLevelByName('debug2') || $this->level == $this->getLevelByName('debug');
     }
+
+    public function isQuiet() {
+        return $this->level == 0;
+    }
+
 
     public function setFormatter( $formatter )
     {
