@@ -78,9 +78,14 @@ class Logger
         $this->level = 0;
     }
 
-    public function setQuiet()
+    public function setAbsoluteQuiet()
     {
         $this->level = 0;
+    }
+
+    public function setQuiet()
+    {
+        $this->level = 2;
     }
 
     public function setVerbose()
@@ -99,7 +104,7 @@ class Logger
     }
 
     public function isQuiet() {
-        return $this->level == 0;
+        return $this->level == 2;
     }
 
 
