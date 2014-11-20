@@ -230,7 +230,10 @@ class Application extends CommandBase
         //
         $appOptions = $getopt->parse( $argv );
         $currentCmd->setOptions($appOptions);
-        $currentCmd->prepare();
+        if (false === $currentCmd->prepare()) {
+            return false;
+        }
+
 
         $command_stack = array();
         $arguments = array();
@@ -269,7 +272,9 @@ class Application extends CommandBase
         }
 
         foreach ($command_stack as $cmd) {
-            $cmd->prepare();
+            if (false === $cmd->prepare()) {
+                return false;
+            }
         }
 
         // get last command and run
@@ -300,6 +305,7 @@ class Application extends CommandBase
         } elseif ($options->quiet) {
             $this->getLogger()->setLevel(2);
         }
+        return true;
     }
 
     public function finish() {
