@@ -248,7 +248,7 @@ class Application extends CommandBase
                 $a = $getopt->getCurrentArgument();
 
                 if (!$currentCmd->hasCommand($a) ) {
-                    if (!$appOptions->noInteract && ($guess = $currentCmd->guessCommand($a) !== NULL)) {
+                    if (!$appOptions->noInteract && ($guess = $currentCmd->guessCommand($a)) !== NULL) {
                         $a = $guess;
                     } else {
                         throw new CommandNotFoundException($currentCmd, $a);
