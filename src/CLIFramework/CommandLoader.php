@@ -58,7 +58,6 @@ class CommandLoader
      */
     public function inverseTranslate($className)
     {
-        var_dump($className);
         if (substr($className, -7) !== 'Command')
             throw new \InvalidArgumentException("Command class name need to end with 'Command'");
         // remove the suffix 'Command', then lower case the first letter
