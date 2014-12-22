@@ -165,6 +165,7 @@ class Application extends CommandBase
     public function init()
     {
         // $this->addCommand('list','CLIFramework\\Command\\ListCommand');
+        parent::init();
         $this->command('help','CLIFramework\\Command\\HelpCommand');
         $this->commandGroup("Development Commands", array(
             'zsh'  => 'CLIFramework\\Command\\ZshCompletionCommand',
@@ -209,7 +210,7 @@ class Application extends CommandBase
      * */
     public function run(Array $argv)
     {
-        $this->setProgramName($argv[0]);
+        $this->setProgramName(basename($argv[0]));
 
         $currentCmd = $this;
 
