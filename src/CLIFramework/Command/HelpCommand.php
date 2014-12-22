@@ -76,12 +76,9 @@ class HelpCommand extends Command implements CommandInterface {
      */
     public function execute()
     {
-        global $argv;
-
-        $progname = $argv[0];
-
         $logger = $this->logger;
         $app = $this->getApplication();
+        $progname = $app->getProgramName();
 
         $printer = new OptionPrinter;
         $formatter = $this->getFormatter();
