@@ -206,16 +206,18 @@ abstract class CommandBase
     }
 
     /**
-     * user-defined init function
+     * Default init function.
      *
-     * register custom subcommand here
+     * Register custom subcommand here.
+     * If user did not override this function, it will try to autoload 
+     * sub-commands base on file-system structure.
      *
      **/
     public function init()
     {
-
+        $autoloader = new CommandAutoloader($this);
+        $autoloader->autoload();
     }
-
 
     public function _init() {
         // get option parser, init specs from the command.

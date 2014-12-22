@@ -46,6 +46,31 @@ class CommandLoader
     }
 
     /**
+     * Translate class name to command name
+     *
+     * This method is inverse of self::translate()
+     *
+     *     HelpCommand => help
+     *     SuchALongCommand => such-a-long
+     *
+     * @param string $className class name.
+     * @return string translated command name.
+     */
+    public function inverseTranslate($className)
+    {
+        var_dump($className);
+        if (substr($className, -7) !== 'Command')
+            throw new \InvalidArgumentException("Command class name need to end with 'Command'");
+        // remove the suffix 'Command', then lower case the first letter
+        $className = lcfirst(substr($className, 0, -7));
+        return preg_replace_callback(
+            '/[A-Z]/',
+            function ($matches) { return '-' . strtolower($matches[0]); },
+            $className
+        );
+    }
+
+    /**
      * load command class:
      *
      * @param  string  $command command name
