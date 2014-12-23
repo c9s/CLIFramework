@@ -12,15 +12,31 @@ class CommandAutoloader
     /** @type \CLIFramework\CommandBase */
     private $parent;
 
+    /** @type string */
+    private $path;
+
     /**
      * Constructor.
      *
      * @param \CLIFramework\CommandBase $parent object we want to load its
      *     commands/subcommands
+     * @param string|null $path if string is given, load the commands in given
+     *     path. If null is given, use default path.
      */
-    public function __construct(CommandBase $parent)
+    public function __construct(CommandBase $parent, $path = null)
     {
         $this->parent = $parent;
+        $this->path = is_null($path) ? $this->getDefaultCommandPath() : $path;
+    }
+
+    private function getDefaultCommandPath()
+    {
+        $reflector = new \ReflectionClass(get_class($this->parent));
+        $classDir = dirname($reflector->getFileName());
+        $commandDirectoryBase= $this->parent->isApplication()
+            ? 'Command'
+            : $reflector->getShortName();
+        return $classDir . '/' . $commandDirectoryBase;
     }
 
     /**
@@ -35,26 +51,15 @@ class CommandAutoloader
      */
     public function autoload()
     {
-        $path = $this->getCommandDirectoryPath();
-        $commands = $this->readCommandsInPath($path);
+        $commands = $this->readCommandsInPath();
         $this->addCommandsForParent($commands);
     }
-
-    private function getCommandDirectoryPath()
+    
+    private function readCommandsInPath()
     {
-        $reflector = new \ReflectionClass(get_class($this->parent));
-        $classDir = dirname($reflector->getFileName());
-        $commandDirectoryBase= $this->parent->isApplication()
-            ? 'Command'
-            : $reflector->getShortName();
-        return $classDir . '/' . $commandDirectoryBase;
-    }
-
-    private function readCommandsInPath($path)
-    {
-        if (!is_dir($path))
+        if (!is_dir($this->path))
             return [];
-        $files = scandir($path);
+        $files = scandir($this->path);
         $classFiles = $this->filterCommandClassFiles($files);
         return $this->mapClassFilesToCommands($classFiles);
     }

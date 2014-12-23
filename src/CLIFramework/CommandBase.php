@@ -215,7 +215,18 @@ abstract class CommandBase
      **/
     public function init()
     {
-        $autoloader = new CommandAutoloader($this);
+        $this->autoloadCommands();
+    }
+
+    /**
+     * Autoload comands/subcommands in a given directory
+     *
+     * @param string|null $path path of directory commands placed at.
+     * @return void
+     */
+    protected function autoloadCommands($path = null)
+    {
+        $autoloader = new CommandAutoloader($this, $path);
         $autoloader->autoload();
     }
 
