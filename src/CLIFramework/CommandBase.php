@@ -602,7 +602,7 @@ abstract class CommandBase
 
         $ro = new ReflectionObject($this);
         if (!method_exists($this,'execute')) {
-            throw new ExecuteMethodNotDefinedException;
+            throw new ExecuteMethodNotDefinedException($this);
         }
 
         $method = $ro->getMethod('execute');
