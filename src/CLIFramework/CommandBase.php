@@ -209,13 +209,10 @@ abstract class CommandBase
      * Default init function.
      *
      * Register custom subcommand here.
-     * If user did not override this function, it will try to autoload 
-     * sub-commands base on file-system structure.
-     *
-     **/
+     */
     public function init()
     {
-        $this->autoloadCommands();
+
     }
 
     /**

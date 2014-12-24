@@ -78,7 +78,7 @@ class HelpCommand extends Command implements CommandInterface {
     {
         $logger = $this->logger;
         $app = $this->getApplication();
-        $progname = $app->getProgramName();
+        $progname = basename($app->getProgramName());
 
         $printer = new OptionPrinter;
         $formatter = $this->getFormatter();

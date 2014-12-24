@@ -26,9 +26,7 @@ class ZshCompletionCommand extends Command
     }
 
     public function execute() {
-        global $argv;
-
-        $programName = $this->options->program ?: $argv[0];
+        $programName = $this->options->program ?: $this->getApplication()->getProgramName();
         $bind = $this->options->bind ?: $programName;
         $compName = "_" . preg_replace('#\W+#','_',$programName);
         $generator = new ZshGenerator($this->getApplication(), $programName, $bind, $compName);

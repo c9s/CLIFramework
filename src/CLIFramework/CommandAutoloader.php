@@ -26,26 +26,29 @@ class CommandAutoloader
     public function __construct(CommandBase $parent, $path = null)
     {
         $this->parent = $parent;
-        $this->path = is_null($path) ? $this->getDefaultCommandPath() : $path;
+        $this->path = is_null($path)
+            ? $this->getCurrentCommandDirectory()
+            : $path;
     }
 
-    private function getDefaultCommandPath()
+    private function getCurrentCommandDirectory()
     {
         $reflector = new \ReflectionClass(get_class($this->parent));
         $classDir = dirname($reflector->getFileName());
+        // @see self::autoload()
         $commandDirectoryBase= $this->parent->isApplication()
             ? 'Command'
             : $reflector->getShortName();
-        return $classDir . '/' . $commandDirectoryBase;
+        return $classDir . DIRECTORY_SEPARATOR . $commandDirectoryBase;
     }
 
     /**
      * Load all commands of parent based on file-system structure.
      *
      * Commands to be autoloaded must located at specific directory.
-     * If parent is Application, commands must be whthin Command/ directory.
+     * If parent is Application, commands must be whthin App/Command/ directory.
      * If parent is another command named FooCommand, sub-commands must
-     * within FooCommand/ directory.
+     *     within App/Command/FooCommand/ directory.
      *
      * @return void
      */
@@ -58,10 +61,10 @@ class CommandAutoloader
     private function readCommandsInPath()
     {
         if (!is_dir($this->path))
-            return [];
+            return array();
         $files = scandir($this->path);
         $classFiles = $this->filterCommandClassFiles($files);
-        return $this->mapClassFilesToCommands($classFiles);
+        return $this->translateClassFilesToCommands($classFiles);
     }
 
     private function filterCommandClassFiles($files)
@@ -77,7 +80,7 @@ class CommandAutoloader
             and in_array($matches[1], $extensions);
     }
 
-    private function mapClassFilesToCommands($classFiles)
+    private function translateClassFilesToCommands(array $classFiles)
     {
         $classes = array_map(
             // remove extension part of file name
@@ -96,7 +99,7 @@ class CommandAutoloader
     {
         array_walk(
             $commands,
-            function ($command) { $this->parent->addCommand($command); }
+            array($this->parent, 'addCommand')
         );
     }
 }

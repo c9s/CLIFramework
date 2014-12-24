@@ -210,7 +210,7 @@ class Application extends CommandBase
      * */
     public function run(Array $argv)
     {
-        $this->setProgramName(basename($argv[0]));
+        $this->setProgramName($argv[0]);
 
         $currentCmd = $this;
 
