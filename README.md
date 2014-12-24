@@ -1,7 +1,7 @@
 CLIFramework
 ============
 
-[![Build Status](https://travis-ci.org/c9s/CLIFramework.png?branch=master)](https://travis-ci.org/c9s/CLIFramework)
+[![Build Status](https://travis-ci.org/c9s/CLIFramework.svg?branch=master)](https://travis-ci.org/c9s/CLIFramework)
 
 [![Coverage Status](https://img.shields.io/coveralls/c9s/CLIFramework.svg)](https://coveralls.io/r/c9s/CLIFramework)
 
@@ -117,11 +117,11 @@ class CommitCommand extends CLIFramework\Command {
 }
 ```
 
-Automatic Zsh Completion Generator:
+### Automatic Zsh Completion Generator
 
 ![Imgur](http://imgur.com/sU3mrDe.gif)
 
-With Lazy Completion Values:
+#### Zsh Completion With Lazy Completion Values:
 
 ![Imgur](http://i.imgur.com/ItYGDIu.gif)
 
