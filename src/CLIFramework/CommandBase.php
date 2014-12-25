@@ -206,16 +206,34 @@ abstract class CommandBase
     }
 
     /**
-     * user-defined init function
+     * Default init function.
      *
-     * register custom subcommand here
-     *
-     **/
+     * Register custom subcommand here.
+     */
     public function init()
     {
-
+        if ($this->isCommandAutoloadEnabled())
+            $this->autoloadCommands();
     }
 
+    public function isCommandAutoloadEnabled()
+    {
+        return $this->isApplication()
+            ? $this->commandAutoloadEnabled
+            : $this->getApplication()->commandAutoloadEnabled;
+    }
+
+    /**
+     * Autoload comands/subcommands in a given directory
+     *
+     * @param string|null $path path of directory commands placed at.
+     * @return void
+     */
+    protected function autoloadCommands($path = null)
+    {
+        $autoloader = new CommandAutoloader($this);
+        $autoloader->autoload($path);
+    }
 
     public function _init() {
         // get option parser, init specs from the command.
@@ -600,7 +618,7 @@ abstract class CommandBase
 
         $ro = new ReflectionObject($this);
         if (!method_exists($this,'execute')) {
-            throw new ExecuteMethodNotDefinedException;
+            throw new ExecuteMethodNotDefinedException($this);
         }
 
         $method = $ro->getMethod('execute');
@@ -647,7 +665,7 @@ abstract class CommandBase
         // call_user_func_array(  );
         $refl = new ReflectionObject($this);
         if (!method_exists( $this,'execute' )) {
-            throw new ExecuteMethodNotDefinedException();
+            throw new ExecuteMethodNotDefinedException($this);
         }
 
         $reflMethod = $refl->getMethod('execute');
