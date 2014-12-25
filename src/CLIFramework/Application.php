@@ -23,6 +23,7 @@ use CLIFramework\Corrector;
 use Exception;
 use CLIFramework\Exception\CommandNotFoundException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
+use CLIFramework\Exception\ExecuteMethodNotDefinedException;
 use ReflectionClass;
 
 class Application extends CommandBase
@@ -66,6 +67,9 @@ class Application extends CommandBase
 
     public $programName;
 
+    /** @var bool */
+    protected $commandAutoloadEnabled;
+
     public function __construct()
     {
         parent::__construct();
@@ -84,6 +88,28 @@ class Application extends CommandBase
         $this->loader->addNamespace( array('\\CLIFramework\\Command' ));
 
         $this->supportReadline = extension_loaded('readline');
+
+        $this->disableCommandAutoload();
+    }
+
+    /**
+     * Enable command autoload feature.
+     *
+     * @return void
+     */
+    public function enableCommandAutoload()
+    {
+        $this->commandAutoloadEnabled = true;
+    }
+
+    /**
+     * Disable command autoload feature.
+     *
+     * @return void
+     */
+    public function disableCommandAutoload()
+    {
+        $this->commandAutoloadEnabled = false;
     }
 
     public function getCurrentAppNamespace() {

@@ -54,11 +54,11 @@ class CommandAutoloader
      */
     public function autoload()
     {
-        $commands = $this->readCommandsInPath();
+        $commands = $this->scanCommandsInPath();
         $this->addCommandsForParent($commands);
     }
     
-    private function readCommandsInPath()
+    private function scanCommandsInPath()
     {
         if (!is_dir($this->path))
             return array();
@@ -89,10 +89,10 @@ class CommandAutoloader
             },
             $classFiles
         );
-        return array_map(
+        return array_values(array_map(
             [$this->parent->getLoader(), 'inverseTranslate'],
             $classes
-        );
+        ));
     }
 
     private function addCommandsForParent($commands)
