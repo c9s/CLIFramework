@@ -9,90 +9,81 @@ namespace CLIFramework;
  */
 class CommandAutoloader
 {
-    /** @type \CLIFramework\CommandBase */
+    /** @var \CLIFramework\CommandBase */
     private $parent;
-
-    /** @type string */
-    private $path;
 
     /**
      * Constructor.
      *
      * @param \CLIFramework\CommandBase $parent object we want to load its
      *     commands/subcommands
-     * @param string|null $path if string is given, load the commands in given
-     *     path. If null is given, use default path.
      */
-    public function __construct(CommandBase $parent, $path = null)
+    public function __construct(CommandBase $parent)
     {
         $this->parent = $parent;
-        $this->path = is_null($path)
-            ? $this->getCurrentCommandDirectory()
-            : $path;
     }
-
+    
+    /**
+     * Add all commands in a directory to parent command
+     *
+     * @param string|null $path if string is given, add the commands in given
+     *     path. If null is given, use current command's path.
+     * @return void
+     */
+    public function autoload($path = null)
+    {
+        if (is_null($path))
+            $path = $this->getCurrentCommandDirectory();
+        $commands = $this->scanCommandsInPath($path);
+        $this->addCommandsForParent($commands);
+    }
+    
     private function getCurrentCommandDirectory()
     {
         $reflector = new \ReflectionClass(get_class($this->parent));
         $classDir = dirname($reflector->getFileName());
-        // @see self::autoload()
+
+        /*
+         * Commands to be autoloaded must located at specific directory.
+         * If parent is Application, commands must be whthin App/Command/ directory.
+         * If parent is another command named FooCommand, sub-commands must
+         *     within App/Command/FooCommand/ directory.
+         */
         $commandDirectoryBase= $this->parent->isApplication()
             ? 'Command'
             : $reflector->getShortName();
         return $classDir . DIRECTORY_SEPARATOR . $commandDirectoryBase;
     }
-
-    /**
-     * Load all commands of parent based on file-system structure.
-     *
-     * Commands to be autoloaded must located at specific directory.
-     * If parent is Application, commands must be whthin App/Command/ directory.
-     * If parent is another command named FooCommand, sub-commands must
-     *     within App/Command/FooCommand/ directory.
-     *
-     * @return void
-     */
-    public function autoload()
-    {
-        $commands = $this->scanCommandsInPath();
-        $this->addCommandsForParent($commands);
-    }
     
-    private function scanCommandsInPath()
+    private function scanCommandsInPath($path)
     {
-        if (!is_dir($this->path))
+        if (!is_dir($path))
             return array();
-        $files = scandir($this->path);
-        $classFiles = $this->filterCommandClassFiles($files);
-        return $this->translateClassFilesToCommands($classFiles);
+        $files = scandir($path);
+        return $this->translateFileNamesToCommands($files);
     }
 
-    private function filterCommandClassFiles($files)
+    private function translateFileNamesToCommands(array $fileNames)
     {
-        return array_filter($files, [$this, 'isCommandClassFile']);
+        $commands = array_map(
+            array($this, 'translateFileNameToCommand'),
+            $fileNames
+        );
+        return array_filter(
+            $commands,
+            function ($command) { return $command !== false; }
+        );
     }
 
-    private function isCommandClassFile($file)
+    private function translateFileNameToCommand($fileName)
     {
         $extensions = explode(',', spl_autoload_extensions());
-        return $file[0] !== '.'
-            and preg_match('/Command(\..*)$/', $file, $matches) === 1
-            and in_array($matches[1], $extensions);
-    }
-
-    private function translateClassFilesToCommands(array $classFiles)
-    {
-        $classes = array_map(
-            // remove extension part of file name
-            function ($classFile) {
-                return substr($classFile, 0, strpos($classFile, '.')); 
-            },
-            $classFiles
-        );
-        return array_values(array_map(
-            [$this->parent->getLoader(), 'inverseTranslate'],
-            $classes
-        ));
+        $isCommandClassFile = ($fileName[0] !== '.'
+            and preg_match('/(^.*Command)(\..*)$/', $fileName, $matches) === 1
+            and in_array($matches[2], $extensions));
+        return $isCommandClassFile
+            ? $this->parent->getLoader()->inverseTranslate($matches[1])
+            : false;
     }
 
     private function addCommandsForParent($commands)
