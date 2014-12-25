@@ -212,7 +212,15 @@ abstract class CommandBase
      */
     public function init()
     {
+        if ($this->isCommandAutoloadEnabled())
+            $this->autoloadCommands();
+    }
 
+    public function isCommandAutoloadEnabled()
+    {
+        return $this->isApplication()
+            ? $this->commandAutoloadEnabled
+            : $this->getApplication()->commandAutoloadEnabled;
     }
 
     /**
@@ -657,7 +665,7 @@ abstract class CommandBase
         // call_user_func_array(  );
         $refl = new ReflectionObject($this);
         if (!method_exists( $this,'execute' )) {
-            throw new ExecuteMethodNotDefinedException();
+            throw new ExecuteMethodNotDefinedException($this);
         }
 
         $reflMethod = $refl->getMethod('execute');
