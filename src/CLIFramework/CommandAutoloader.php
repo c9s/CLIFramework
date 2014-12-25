@@ -97,9 +97,7 @@ class CommandAutoloader
 
     private function addCommandsForParent($commands)
     {
-        array_walk(
-            $commands,
-            array($this->parent, 'addCommand')
-        );
+        foreach ($commands as $command)
+            $this->parent->addCommand($command);
     }
 }
