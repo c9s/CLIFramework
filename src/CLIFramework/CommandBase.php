@@ -231,8 +231,8 @@ abstract class CommandBase
      */
     protected function autoloadCommands($path = null)
     {
-        $autoloader = new CommandAutoloader($this, $path);
-        $autoloader->autoload();
+        $autoloader = new CommandAutoloader($this);
+        $autoloader->autoload($path);
     }
 
     public function _init() {
