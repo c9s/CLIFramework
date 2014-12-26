@@ -1,67 +1,69 @@
 <?php
 namespace CLIFramework;
-use CLIFramework\Exception\CommandNotFoundException;
 
+/**
+ * Try to correct/suggest user's input
+ *
+ * @method __construct
+ * @method guess
+ * @method match
+ */
 class Corrector
 {
-    public $possibleTokens = array();
+    protected $possibleTokens = array();
 
+    /**
+     * Constructor.
+     *
+     * @param string[] $possibleTokens candidates of the suggestion
+     */
     public function __construct(array $possibleTokens = array())
     {
         $this->possibleTokens = $possibleTokens;
     }
 
-
-    public function match($input) {
-        // no shortest distance found, yet
-        $shortest = -1;
-
-        // loop through words to find the closest
-        foreach ($this->possibleTokens as $word) {
-
-            // calculate the distance between the input word,
-            // and the current word
-            $lev = levenshtein($input, $word);
-
-            // check for an exact match
-            if ($lev == 0) {
-
-                // closest word is this one (exact match)
-                $closest = $word;
-                $shortest = 0;
-
-                // break out of the loop; we've found an exact match
-                break;
-            }
-
-            // if this distance is less than the next found shortest
-            // distance, OR if a next shortest word has not yet been found
-            if ($lev <= $shortest || $shortest < 0) {
-                // set the closest match, and shortest distance
-                $closest  = $word;
-                $shortest = $lev;
-            }
-        }
-        if ($shortest == 0) {
-            return array(0, $closest);
-        }
-        return array($shortest, $closest);
+    /**
+     * Given user's input, ask user to correct it.
+     *
+     * @param string $input user's input
+     * @return string corrected input
+     */
+    public function correct($input) {
+        $guess = $this->match($input);
+        if ($guess === $input)
+            return $guess;
+        else
+            return $this->askForGuess($guess) ? $guess : $input;
     }
 
-    public function correct($input) {
-        list($shortest, $guess) = $this->match($input);
-        if ($shortest == 0) {
-            return $guess;
-        } else {
-            $prompter = new Prompter;
-            $answer = $prompter->ask("Did you mean '$guess'?", array('Y','n'), 'Y');
-            if (!$answer || strtolower($answer) == 'y') {
-                return $guess;
+    /**
+     * Given user's input, return the best match among candidates.
+     *
+     * @param string $input @see self::correct()
+     * @return string best matched string or raw input if no candidates provided
+     */
+    public function match($input)
+    {
+        if (empty($this->possibleTokens))
+            return $input;
+
+        $bestSimilarity = -1;
+        $bestGuess = $input;
+        foreach ($this->possibleTokens as $possibleToken) {
+            similar_text($input, $possibleToken, $similarity);
+            if ($similarity > $bestSimilarity) {
+                $bestSimilarity = $similarity;
+                $bestGuess = $possibleToken;
             }
         }
+        return $bestGuess;
+    }
+
+    private function askForGuess($guess)
+    {
+        $prompter = new Prompter;
+        $answer = $prompter->ask("Did you mean '$guess'?", array('Y','n'), 'Y');
+        return !$answer || strtolower($answer) == 'y';
     }
 
 }
-
-
-
