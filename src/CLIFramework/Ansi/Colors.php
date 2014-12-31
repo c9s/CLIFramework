@@ -1,6 +1,11 @@
 <?php
 namespace CLIFramework\Ansi;
 
+/**
+ * ANSI Color definitions
+ *
+ * @author Yo-An Lin <yoanlin93@gmail.com>
+ */
 class Colors
 {
     protected $foregroundColors = array(
