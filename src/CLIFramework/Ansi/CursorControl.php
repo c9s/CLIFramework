@@ -1,6 +1,9 @@
 <?php
 namespace CLIFramework\Ansi;
 
+/**
+ * @codeCoverageIgnore
+ */
 class CursorControl
 {
 
