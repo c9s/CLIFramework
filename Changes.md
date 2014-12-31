@@ -1,4 +1,8 @@
 
+Version 2.2   - Wed Dec 31 11:27:50 2014
+
+- Added ConsoleInfo classes for detecting the dimension of the console.
+
 Version 1.7   - Mon Jun 30 11:41:33 2014
 
 - Added zsh completion generator.
