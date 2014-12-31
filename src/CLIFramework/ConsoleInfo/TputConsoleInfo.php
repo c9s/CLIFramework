@@ -1,9 +1,8 @@
 <?php
 namespace CLIFramework\ConsoleInfo;
 
-class TputConsoleInfo
+class TputConsoleInfo implements ConsoleInfoInterface
 {
-
     public function getColumns() 
     {
         return intval(exec('tput cols'));
