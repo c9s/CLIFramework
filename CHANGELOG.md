@@ -1,4 +1,9 @@
 
+Version next
+
+- Added ANSI Color definition class
+- Added show/hide cursor ansi code to CursorControl
+
 Version 2.2   - Wed Dec 31 11:27:50 2014
 
 - Added ConsoleInfo classes for detecting the dimension of the console.
