@@ -3,6 +3,13 @@
          backupGlobals="false"
          colors="true"
          verbose="true">
+
+  <!-- used by env console info -->
+  <php>
+    <env name="LINES"   value="50"/>
+    <env name="COLUMNS"   value="72"/>
+  </php>
+
   <testsuites>
     <testsuite name="CLIFramework">
       <directory suffix="Test.php">tests</directory>
