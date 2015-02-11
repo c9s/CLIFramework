@@ -16,7 +16,7 @@ class ArgInfo
 
     public $validValues;
 
-
+    protected $validator;
 
     /* file/path glob pattern */
     public $glob;
@@ -51,6 +51,11 @@ class ArgInfo
 
     public function validValues($val) {
         $this->validValues = $val;
+        return $this;
+    }
+
+    public function validator($cb) {
+        $this->validator = $cb;
         return $this;
     }
 
@@ -116,6 +121,9 @@ class ArgInfo
             return $validValues->containsValue($value);
         } elseif ( is_array($validValues) ) {
             return in_array($value, $validValues);
+        }
+        if ($this->validator) {
+            return call_user_func($this->validator);
         }
         return true;
     }
