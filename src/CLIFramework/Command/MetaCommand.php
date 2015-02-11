@@ -7,6 +7,7 @@ use CLIFramework\ValueCollection;
 use Exception;
 use CLIFramework\Buffer;
 use GetOptionKit\OptionCollection;
+use GetOptionKit\OptionResult;
 
 class UnsupportedShellException extends Exception { }
 
@@ -24,7 +25,7 @@ class UndefinedOptionException extends Exception
 
 }
 
-function output($str, $opts) {
+function output($str, OptionResult $opts = NULL) {
     echo $str;
 }
 
@@ -171,7 +172,7 @@ class MetaCommand extends Command
         }
     }
 
-    public function outputValues($values, $opts) {
+    public function outputValues($values, OptionResult $opts) {
         // indexed array
         if (is_array($values) && empty($values)) {
             return;
