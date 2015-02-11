@@ -176,41 +176,129 @@ __mycompappend ()
 
 
 
+__complete_meta ()
+{
+    local app="example/demo"
+    local command_signature=$1
+    local complete_for=$2
+    local arg=$3  # could be "--dir", 0 for argument index
+    local complete_type=$4
+
+    # When completing argument valid values, we need to eval
+    IFS=$'\n' lines=($($app meta --bash $command_signature $complete_for $arg $complete_type))
+
+    # Get the first line to return the compreply
+    if [[ ${lines[0]} == "#groups" ]] ; then
+        # groups means we need to eval
+        output=$($app meta --bash $command_signature $complete_for $arg $complete_type)
+        eval "$output"
+
+        # Here we should get two array: "labels" and "descriptions"
+        # But in bash, we can only complete words, so we will abandon the "descriptions"
+        # We use "*" expansion because we want to expand the whole array inside the same string
+        COMPREPLY=($(compgen -W "${labels[*]}" -- $cur))
+    else
+        # Complete the rest lines as words
+        COMPREPLY=($(compgen -W "${lines[*]:1}" -- $cur))
+    fi
+}
+
+
+
+
 __demo_comp_add()
 {
-    local c=$1
-    __mycomp "complete-for-add-$c"
+    local command_signature=$1
+    local command_index=$2
+    __mycomp "complete-for-add-$command_index"
     # COMPREPLY=( $(compgen -d /etc/) )
 }
 
 __demo_comp_commit()
 {
-    local c=$1
-    __mycomp "complete-for-commit-$c"
+    local cur words cword prev
+    _get_comp_words_by_ref -n =: cur words cword prev
+    local command_signature=$1
+    local command_index=$2
+#     echo "c: [$c]"
+#     echo "prev: [$prev]"
+#     echo "cur: [$cur]"
+    declare -A subcommand_alias
+    subcommand_alias=(["f"]="foo" ["b"]="bar")
+
+    # Define the command names
+    declare -A subcommands
+    subcommands=(["foo"]="command foo" ["bar"]="command bar")
+
+    # option names defines the available options of this command
+    declare -A options
+    options=(["--force"]=1 ["-f"]=1)
+
+    # options_require_value: defines the required completion type for each
+    # option that requires a value.
+    declare -A options_require_value
+    options_require_value=(["--commit"]="__complete_directory")
+
+
+    # Same code : Find the subcommand
+    # =========================
+    local i
+    local command
+    while [ $command_index -lt $cword ]; do
+        i="${words[command_index]}"
+        case "$i" in
+            # Ignore options
+            --=*) ;;
+            --*) ;;
+            -*) ;;
+            *)
+                # looks like my command, that's break the loop and dispatch to the next complete function
+                if [[ -n "$i" && -n "${subcommands[$i]}" ]] ; then
+                    command="$i"
+                    break
+                elif [[ -n "$i" && -n "${subcommand_alias[$i]}" ]] ; then
+                    command="$i"
+                    break
+                fi
+                # XXX: If the command is not found, check if the previous argument is an option expecting a value
+            ;;
+        esac
+        ((command_index++))
+    done
+
+
+
+
+    __mycomp "commit-value commit-value2"
 }
 
 __demo_main ()
 {
     local cur words cword prev
+    local command_signature
     _get_comp_words_by_ref -n =: cur words cword prev
 
     # Output application command alias mapping 
     # aliases[ alias ] = command
-    declare -A alias_map
-    alias_map=(["a"]="add" ["c"]="commit")
+    declare -A subcommand_alias
 
     # Define the command names
-    declare -A commands
-    commands=(["add"]="command to add" ["commit"]="command to commit")
+    declare -A subcommands
+
 
     # option names defines the available options of this command
     declare -A options
-    options=(["--debug"]=1 ["--verbose"]=1 ["--log-dir"]=1)
-
     # options_require_value: defines the required completion type for each
     # option that requires a value.
     declare -A options_require_value
+
+    # Command signature is used for fetching meta information from the meta command.
+    command_signature="app"
+    subcommand_alias=(["a"]="add" ["c"]="commit")
+    subcommands=(["add"]="command to add" ["commit"]="command to commit")
+    options=(["--debug"]=1 ["--verbose"]=1 ["--log-dir"]=1)
     options_require_value=(["--log-dir"]="__complete_directory")
+    local argument_min_length=0
 
     # Get the command name chain of the current input, e.g.
     # 
@@ -221,37 +309,49 @@ __demo_main ()
     # not in the root completion function. 
     # We should pass the argument index to the complete function.
 
-    # c=1 start from the first argument, not the application name
-    local i c=1 command
-    while [ $c -lt $cword ]; do
-        i="${words[c]}"
-
+    # command_index=1 start from the first argument, not the application name
+    # Find the command position
+    local command_index=1
+    local argument_index=0
+    local i
+    local command
+    local found_options=0
+    while [ $command_index -lt $cword ]; do
+        i="${words[command_index]}"
         case "$i" in
-            # Ignore known options
-            # XXX: handle the case of "--output directory"
-            --=*) ;;
-            --*) ;;
-            -*) ;;
+            # Ignore options
+            --=*) found_options=1 ;;
+            --*) found_options=1 ;;
+            -*) found_options=1 ;;
             *)
                 # looks like my command, that's break the loop and dispatch to the next complete function
-                if [[ -n "${commands[$i]}" ]] ; then
+                if [[ -n "$i" && -n "${subcommands[$i]}" ]] ; then
                     command="$i"
                     break
-                elif [[ -n "${alias_map[$i]}" ]] ; then
+                elif [[ -n "$i" && -n "${subcommand_alias[$i]}" ]] ; then
                     command="$i"
                     break
+                else
+                    # If the command is not found, check if the previous argument is an option expecting a value
+                    # or it's an argument
+
+                    # the previous argument (might be)
+                    p="${words[command_index-1]}"
+
+                    # not an option value, push to the argument list
+                    if [[ -z "${options_require_value[$p]}" ]] ; then
+                        ((argument_index++))
+                    fi
                 fi
-                # If the command is not found, check if the previous argument is an option expecting a value
-                break 
             ;;
         esac
-        ((c++))
+        ((command_index++))
     done
 
-    # If the first command is not specified, we complete the full command names
+    # If the first command name is not found, we do complete...
     if [[ -z "$command" ]] ; then
         case "$cur" in
-            # If the current argument looks like an option, then we should complete
+            # If the current argument $cur looks like an option, then we should complete
             --*)
                 __mycomp "${!options[*]}"
                 return
@@ -260,23 +360,16 @@ __demo_main ()
                 # The argument here can be an option value. e.g. --output-dir /tmp
                 # The the previous one...
                 if [[ -n "$prev" && -n "${options_require_value[$prev]}" ]] ; then
-                    # local complete_type="${options_require_value[$prev]"}
-
-                    # Dispatch to the meta command to get the completion:
-                    #     app meta {command chain} opt {option name} valid-values
-                    #
-                    # For example:
-                    #     php example/demo meta commit opt c valid-values
-                    #
-                    __mycomp "value1 value2 value3"
-                    # __mycomp $(php example/demo meta commit opt c valid-values)
+                    # TODO: local complete_type="${options_require_value[$prev]"}
+                    __complete_meta "app.commit" "opt" "c" "valid-values"
                 else
-#                     echo -e "\nCommands:"
-#                     for cmd in ${!commands[@]}; do
-#                         printf "%10s -- %s\n" "$cmd" "${commands[$cmd]}"
-#                     done
-                    # output the command keys
-                    __mycomp "${!options[*]} ${!commands[*]} ${!alias_map[*]}"
+                    # If the command requires at least $argument_min_length to run, we check the argument
+                    if [[ $argument_min_length > 0 ]] ; then
+                        __complete_meta "app.commit" "opt" "c" "valid-values"
+                    else
+                        # If there is no argument support, then user is supposed to give a subcommand name or an option
+                        __mycomp "${!options[*]} ${!subcommands[*]} ${!subcommand_alias[*]}"
+                    fi
                 fi
                 return
             ;;
@@ -284,13 +377,14 @@ __demo_main ()
     else
         # We just found the first command, we are going to dispatch the completion handler to the next level...
         # Rewrite command alias to command name to get the correct response
-        if [[ -n "${alias_map[$command]}" ]] ; then
-            command="${alias_map[$command]}"
+        if [[ -n "${subcommand_alias[$command]}" ]] ; then
+            command="${subcommand_alias[$command]}"
         fi
         local completion_func="__demo_comp_${command//-/_}"
 
         # declare the function name and call the completion function
-        declare -f $completion_func >/dev/null && $completion_func $c && return
+        command_signature="${command_signature}.${command}"
+        declare -f $completion_func >/dev/null && $completion_func $command_signature $command_index && return
     fi
 }
 
