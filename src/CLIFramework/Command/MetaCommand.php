@@ -30,8 +30,13 @@ function output($str, OptionResult $opts = NULL) {
     echo $str;
 }
 
+function array_escape_space(array $array) {
+    return array_map(function($c) {
+        return addcslashes($c, ' ');
+    }, $array);
+}
 
-function is_assoc_array($array) {
+function is_assoc_array(array $array) {
     if (empty($array)) {
         return false;
     }
@@ -96,7 +101,7 @@ class MetaCommand extends Command
         }
 
         // 'arg' or 'opt' require the argument name and attribute type
-        if (in_array($type, array('arg', 'opt'))) {
+        if (in_array($type, array('arg', 'opt')) && $arg === NULL || $attr === NULL) {
             throw new InvalidArgumentException("'arg' or 'opt' require the attribute type.");
         }
 
@@ -225,17 +230,31 @@ class MetaCommand extends Command
 
         if (isset($values[0]) && is_array($values[0])) {
             $this->logger->writeln("#descriptions");
-            foreach($values as $value) {
-                list($key,$val) = $value;
-                $this->logger->writeln("$key:" . addcslashes($val,":"));
+            if ($opts->zsh) {
+                // for zsh, we output the first line as the label
+                foreach($values as $value) {
+                    list($key,$val) = $value;
+                    $this->logger->writeln("$key:" . addcslashes($val,":"));
+                }
+            } else {
+                foreach($values as $value) {
+                    $this->logger->writeln($value[0]);
+                }
             }
-        } elseif (isset($values[0])) {
+
+        } elseif (isset($values[0])) { // indexed array is a list.
             $this->logger->writeln("#values");
             $this->logger->writeln(join("\n", $values));
-        } else {
+        } else { // associative array
             $this->logger->writeln("#descriptions");
-            foreach($values as $key => $val) {
-                $this->logger->writeln("$key:" . addcslashes($val,":"));
+            if ($opts->zsh) {
+                foreach($values as $key => $desc) {
+                    $this->logger->writeln("$key:" . addcslashes($desc,":"));
+                }
+            } else {
+                foreach($values as $key => $desc) {
+                    $this->logger->writeln($key);
+                }
             }
         }
     }

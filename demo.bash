@@ -268,8 +268,8 @@ __demo_main ()
                     # For example:
                     #     php example/demo meta commit opt c valid-values
                     #
-                    __mycomp $(php example/demo meta app)
-                    __mycomp "opt-val opt-val2"
+                    __mycomp "value1 value2 value3"
+                    # __mycomp $(php example/demo meta commit opt c valid-values)
                 else
 #                     echo -e "\nCommands:"
 #                     for cmd in ${!commands[@]}; do
