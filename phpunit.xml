@@ -11,7 +11,7 @@
   </php>
 
   <testsuites>
-    <testsuite name="CLIFramework">
+    <testsuite name="all">
       <directory suffix="Test.php">tests</directory>
     </testsuite>
   </testsuites>

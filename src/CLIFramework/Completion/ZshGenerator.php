@@ -1,8 +1,9 @@
 <?php
 namespace CLIFramework\Completion;
 use CLIFramework\Buffer;
-use Exception;
 use CLIFramework\Application;
+use CLIFramework\ArgInfo;
+use Exception;
 
 function indent($level) {
     return str_repeat('  ', $level);
@@ -361,7 +362,7 @@ class ZshGenerator
 
 
 
-    public function render_argument_completion_values($a) {
+    public function render_argument_completion_values(ArgInfo $a) {
         if ($a->validValues || $a->suggestions) {
             $values = array();
             if ($a->validValues) {
