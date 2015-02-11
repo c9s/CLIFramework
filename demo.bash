@@ -1,37 +1,4 @@
 #!/bin/bash
-
-# compgen documentation
-# http://www.gnu.org/software/bash/manual/bash.html#Programmable-Completion-Builtins
-# https://sixohthree.com/867/bash-completion
-
-# To complete directory names under the /etc/
-# 
-#   compgen -d /etc/
-#
-# To complete system commands:
-# 
-#   compgen -c
-#
-# To complete bash varaible names:
-# 
-#   compgen -v
-#
-# To complete binding names:
-#
-#   compgen -A binding
-#
-# To complete built-in commands:
-#
-#   compgen -A builtin
-#
-# To complete running jobs:
-#
-#   compgen -A running
-
-
-
-
-
 # This function can be used to access a tokenized list of words
 # on the command line:
 #
@@ -382,7 +349,7 @@ __demo_main ()
         fi
         local completion_func="__demo_comp_${command//-/_}"
 
-        # declare the function name and call the completion function
+        # declare the completion function name and dispatch rest arguments to the complete function
         command_signature="${command_signature}.${command}"
         declare -f $completion_func >/dev/null && $completion_func $command_signature $command_index && return
     fi

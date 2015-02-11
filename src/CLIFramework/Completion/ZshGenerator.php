@@ -3,6 +3,9 @@ namespace CLIFramework\Completion;
 use CLIFramework\Buffer;
 use CLIFramework\Application;
 use CLIFramework\ArgInfo;
+use CLIFramework\CommandBase;
+use CLIFramework\Command;
+use GetOptionKit\Option;
 use Exception;
 
 function indent($level) {
@@ -17,11 +20,11 @@ function q($str) {
     return "'" . addcslashes($str, "'") . "'";
 }
 
-function array_qq($array) {
+function array_qq(array $array) {
     return array_map("CLIFramework\\Completion\\qq", $array);
 }
 
-function array_q($array) {
+function array_q(array $array) {
     return array_map("CLIFramework\\Completion\\q", $array);
 }
 
@@ -32,14 +35,14 @@ function str_indent($content, $level = 1) {
     return join("\n", $lines);
 }
 
-function array_indent($lines, $level = 1) {
+function array_indent(array $lines, $level = 1) {
     $space = str_repeat('  ', $level);
     return array_map(function($line) use ($space) {
         return $space . $line;
     }, $lines);
 }
 
-function join_indent($lines, $level = 1) {
+function join_indent(array $lines, $level = 1) {
     return join("\n",array_indent($lines, $level));
 }
 
@@ -74,7 +77,7 @@ function case_case($pattern, $code) {
         ;
 }
 
-function zsh_comp_desc_array($array) {
+function zsh_comp_desc_array(array $array) {
     $out = new Buffer;
     $out->appendLine('(');
     $out->indent();
@@ -122,17 +125,17 @@ class ZshGenerator
         return $this->complete_application();
     }
 
-    public function visible_commands($cmds) {
+    public function visible_commands(array $cmds) {
         $visible = array();
-        foreach ( $cmds as $name => $cmd ) {
-            if ( ! preg_match('#^_#', $name) ) {
+        foreach ($cmds as $name => $cmd) {
+            if (! preg_match('#^_#', $name) ) {
                 $visible[$name] = $cmd;
             }
         }
         return $visible;
     }
 
-    public function command_desc_array($cmds) {
+    public function command_desc_array(array $cmds) {
         $args = array();
         foreach ( $cmds as $name => $cmd ) {
             if ( preg_match('#^_#', $name) ) {
@@ -144,7 +147,7 @@ class ZshGenerator
     }
 
 
-    public function describe_commands($cmds, $level = 0) {
+    public function describe_commands(array $cmds, $level = 0) {
         $buf = new Buffer;
         $buf->setIndent($level);
         $buf->appendLine("local commands; commands=(");
@@ -175,7 +178,7 @@ class ZshGenerator
                                                                             strip\:"remove both whitespace and commentary lines"
                                                                             default\:"act as '\''strip'\'' if the message is to be edited and as '\''whitespace'\'' otherwise"))' \
     */
-    public function option_flag_item($opt, $cmdSignature) {
+    public function option_flag_item(Option $opt, $cmdSignature) {
         // TODO: Check conflict options
         $str = "";
 
@@ -256,7 +259,7 @@ class ZshGenerator
     *
     *  "*:args:{ _alternative ':importpaths:__go_list' ':files:_path_files -g \"*.go\"' }"
     */
-    public function command_args($cmd, $cmdSignature) {
+    public function command_args(CommandBase $cmd, $cmdSignature) {
         $args = array();
         $arginfos = $cmd->getArgumentsInfo();
 
@@ -311,7 +314,7 @@ class ZshGenerator
     /**
      * Complete commands with options and its arguments (without subcommands)
      */
-    public function complete_command_options_arguments($subcmd, $level = 1) {
+    public function complete_command_options_arguments(CommandBase $subcmd, $level = 1) {
         $cmdSignature = $subcmd->getSignature();
 
 
@@ -341,7 +344,7 @@ class ZshGenerator
         return $buf->__toString();
     }
 
-    public function render_argument_completion_handler($a) {
+    public function render_argument_completion_handler(ArgInfo $a) {
         $comp = '';
         switch($a->isa) {
             case "file":
@@ -381,7 +384,7 @@ class ZshGenerator
     /**
      * complete argument cases
      */
-    public function command_args_case($cmd) {
+    public function command_args_case(CommandBase $cmd) {
         $buf = new Buffer;
         $arginfos = $cmd->getArgumentsInfo();
         $buf->appendLine("case \$state in");
@@ -405,7 +408,7 @@ class ZshGenerator
      *
      * @return string[]
      */
-    public function command_flags($cmd, $cmdSignature) {
+    public function command_flags(CommandBase $cmd, $cmdSignature) {
         $args = array();
         $specs = $cmd->getOptionCollection();
         /*
@@ -426,7 +429,7 @@ class ZshGenerator
      *
      * @return string[]
      */
-    public function command_subcommand_states($cmd) {
+    public function command_subcommand_states(CommandBase $cmd) {
         $args = array();
         $cmds = $this->visible_commands($cmd->getCommands());
         foreach($cmds as $c) {
@@ -500,7 +503,7 @@ class ZshGenerator
      * example/demo meta commit arg 1 valid-values
      * appName meta sub1.sub2.sub3 opt email valid-values
      */
-    public function commandmeta_callback_function($cmd) {
+    public function commandmeta_callback_function(CommandBase $cmd) {
         $cmdSignature = $cmd->getSignature();
         
         
@@ -531,7 +534,7 @@ class ZshGenerator
         return zsh_comp_function($funcName, $buf);
     }
 
-    public function commandmeta_callback_functions($cmd) {
+    public function commandmeta_callback_functions(CommandBase $cmd) {
         $cmdSignature = $cmd->getSignature();
         
 
@@ -584,7 +587,7 @@ class ZshGenerator
     }
 
 
-    public function complete_with_subcommands($cmd, $level = 1) {
+    public function complete_with_subcommands(CommandBase $cmd, $level = 1) {
         $cmdSignature = $cmd->getSignature();
 
         $buf = new Buffer;

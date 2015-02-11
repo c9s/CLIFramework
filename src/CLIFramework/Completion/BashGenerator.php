@@ -39,40 +39,15 @@ class BashGenerator
         return $this->complete_application();
     }
 
-    public function visible_commands($cmds) {
+    public function visible_commands(array $cmds) {
         $visible = array();
-        foreach ( $cmds as $name => $cmd ) {
+        foreach ($cmds as $name => $cmd) {
             if ( ! preg_match('#^_#', $name) ) {
                 $visible[$name] = $cmd;
             }
         }
         return $visible;
     }
-
-    public function command_desc_array($cmds) {
-        $args = array();
-        foreach ( $cmds as $name => $cmd ) {
-            if ( preg_match('#^_#', $name) ) {
-                continue;
-            }
-            $args[] = "$name:" . q($cmd->brief());
-        }
-        return $args;
-    }
-
-
-    public function describe_commands($cmds, $level = 0) {
-        $buf = new Buffer;
-        $buf->setIndent($level);
-        $buf->appendLine("local commands; commands=(");
-        $buf->indent();
-        $buf->appendLines($this->command_desc_array($cmds));
-        $buf->unindent();
-        $buf->appendLine(")");
-        $buf->appendLine("_describe -t commands 'command' commands && ret=0");
-        return $buf;
-    }
-
 
 
     /**
