@@ -4,10 +4,11 @@ use CLIFramework\Command;
 use CLIFramework\CommandInterface;
 use CLIFramework\Zsh;
 use CLIFramework\ValueCollection;
-use Exception;
 use CLIFramework\Buffer;
 use GetOptionKit\OptionCollection;
 use GetOptionKit\OptionResult;
+use Exception;
+use InvalidArgumentException;
 
 class UnsupportedShellException extends Exception { }
 
@@ -80,7 +81,7 @@ class MetaCommand extends Command
      *     app meta sub1.sub2.sub3 arg 1 suggestions
      *     app meta sub1.sub2.sub3 opt email valid-values
      */
-    public function execute($commandlist, $type, $arg, $attr) {
+    public function execute($commandlist, $type, $arg = NULL, $attr = NULL) {
         $commands = explode('.', $commandlist);
         // lookup commands
         $app = $this->getApplication();
@@ -92,6 +93,11 @@ class MetaCommand extends Command
         }
         while (!empty($commands) && $cmd->hasCommands()) {
             $cmd = $cmd->getCommand(array_pop($commands));
+        }
+
+        // 'arg' or 'opt' require the argument name and attribute type
+        if (in_array($type, array('arg', 'opt'))) {
+            throw new InvalidArgumentException("'arg' or 'opt' require the attribute type.");
         }
 
         try {
@@ -125,6 +131,19 @@ class MetaCommand extends Command
                     break;
                 }
                 break;
+            case 'opts':
+                $options = $cmd->getOptionCollection();
+                $values = array();
+                foreach ($options as $opt) {
+                    if ($opt->short) {
+                        $values[] = "-" . $opt->short;
+                    } elseif ($opt->long) {
+                        $values[] = "--" . $opt->long;
+                    }
+                }
+                echo join(' ', $values) , "\n";
+                return ;
+                break;
             case 'opt':
                 $options = $cmd->getOptionCollection();
                 $option = $options->find($arg);
@@ -148,7 +167,7 @@ class MetaCommand extends Command
                 }
                 break;
             default:
-                echo "unsupported type\n";
+                throw new Exception("Invalid type '$type', valid types are 'arg', 'opt', 'opts'");
                 break;
             }
         } catch (UnsupportedShellException $e) {
