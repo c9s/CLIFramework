@@ -5,7 +5,7 @@
     "require": {
         "php": ">=5.3.0",
         "corneltek/getoptionkit": "~2",
-        "corneltek/class-template": "~1.4"
+        "corneltek/class-template": "*"
     },
     "require-dev": {
         "corneltek/phpunit-testmore": "dev-master",
