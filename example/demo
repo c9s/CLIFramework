@@ -26,6 +26,7 @@ $loader->add('DemoApp','tests');
 require 'tests/DemoApp/Application.php';
 require 'tests/DemoApp/Command/CommitCommand.php';
 require 'tests/DemoApp/Command/FooCommand.php';
+require 'tests/DemoApp/Command/AddCommand.php';
 require 'tests/DemoApp/Command/FooCommand/SubFooCommand.php';
 
 $app = new DemoApp\Application;

@@ -6,6 +6,7 @@ class Application extends \CLIFramework\Application {
     {
         parent::init();
         $this->command('foo');
+        $this->command('add');
         $this->command('commit');
         $this->topic('basic');
     }

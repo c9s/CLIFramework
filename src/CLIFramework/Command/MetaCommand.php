@@ -6,6 +6,23 @@ use CLIFramework\Zsh;
 use CLIFramework\ValueCollection;
 use Exception;
 use CLIFramework\Buffer;
+use GetOptionKit\OptionCollection;
+
+class UnsupportedShellException extends Exception { }
+
+class UndefinedArgumentException extends Exception {}
+
+class UndefinedOptionException extends Exception 
+{
+    public $options;
+
+    public function __construct($message, OptionCollection $options)
+    {
+        $this->options = $options;
+        parent::__construct($message);
+    }
+
+}
 
 function output($str, $opts) {
     echo $str;
@@ -68,70 +85,90 @@ class MetaCommand extends Command
         $app = $this->getApplication();
 
         $cmd = $app;
-        while ($cmd->hasCommands()) {
-            $cmd = $cmd->getCommand( array_pop($commands) );
+
+        if ($commands[0] === "app") {
+            array_shift($commands);
+        }
+        while (!empty($commands) && $cmd->hasCommands()) {
+            $cmd = $cmd->getCommand(array_pop($commands));
         }
 
-        if ( !$cmd) {
-            throw new Exception("Can not find command.");
+        try {
+
+            if ( !$cmd) {
+                throw new Exception("Can not find command.");
+            }
+
+            switch($type) {
+            case 'arg':
+                $idx = intval($arg);
+                $arginfos = $cmd->getArgumentsInfo();
+
+                if (! isset($arginfos[ $idx ]) ) {
+                    throw new UndefinedArgumentException("Undefined argument at $idx");
+                }
+
+                $argInfo = $arginfos[$idx];
+
+                switch($attr) {
+                case 'suggestions':
+                    if ($values = $argInfo->getSuggestions()) {
+                        return $this->outputValues($values, $this->options);
+                    }
+                    break;
+
+                case 'valid-values':
+                    if ($values = $argInfo->getValidValues()) {
+                        return $this->outputValues($values, $this->options);
+                    }
+                    break;
+                }
+                break;
+            case 'opt':
+                $options = $cmd->getOptionCollection();
+                $option = $options->find($arg);
+                if (!$option) {
+                    throw new UndefinedOptionException("Option '$arg' not found", $options);
+                }
+                switch ($attr) {
+                case 'isa':
+                    return output($option->isa);
+                    break;
+                case 'valid-values':
+                    if ($values = $option->getValidValues()) {
+                        return $this->outputValues($values, $this->options);
+                    }
+                    break;
+                case 'suggestions':
+                    if ($values = $option->getSuggestions()) {
+                        return $this->outputValues($values, $this->options);
+                    }
+                    break;
+                }
+                break;
+            default:
+                echo "unsupported type\n";
+                break;
+            }
+        } catch (UnsupportedShellException $e) {
+
+            echo $e->getMessage() . "\n";
+            echo "Supported shells: zsh, bash\n";
+
+        } catch (UndefinedOptionException $e) {
+            echo $e->getMessage() . "\n\n";
+            echo "Valid options:\n";
+            foreach ($e->options as $opt) {
+                if ($opt->short && $opt->long) {
+                    echo " " . $opt->short . '|' . $opt->long;
+                } elseif ($opt->short) {
+                    echo " " . $opt->short;
+                } elseif ($opt->long) {
+                    echo " " . $opt->long;
+                }
+                echo "\n";
+            }
         }
-
-        switch($type) {
-        case 'arg':
-            $idx = intval($arg);
-            $arginfos = $cmd->getArgumentsInfo();
-
-            if ( ! isset($arginfos[ $idx ]) ) {
-                throw new Exception("Undefined argument at $idx");
-            }
-
-            $argInfo = $arginfos[$idx];
-
-            switch($attr) {
-            case 'suggestions':
-                if ($values = $argInfo->getSuggestions()) {
-                    return $this->outputValues($values, $this->options);
-                }
-                break;
-
-            case 'valid-values':
-                if ($values = $argInfo->getValidValues()) {
-                    return $this->outputValues($values, $this->options);
-                }
-                break;
-            }
-            break;
-        case 'opt':
-            $options = $cmd->getOptionCollection();
-            $option = $options->find($arg);
-            if (!$option) {
-                throw new Exception("Option $arg not found");
-            }
-            switch ($attr) {
-            case 'isa':
-                return output($option->isa);
-                break;
-            case 'valid-values':
-                if ($values = $option->getValidValues()) {
-                    return $this->outputValues($values, $this->options);
-                }
-                break;
-            case 'suggestions':
-                if ($values = $option->getSuggestions()) {
-                    return $this->outputValues($values, $this->options);
-                }
-                break;
-            }
-            break;
-        default:
-            echo "unsupported type\n";
-            break;
-        }
-
-        // find argument or find option
-
-        // return the information
-
     }
 
     public function outputValues($values, $opts) {
@@ -161,7 +198,7 @@ class MetaCommand extends Command
             } elseif ($opts->json) {
                 $this->logger->write($values->toJson());
             } else {
-                throw new Exception('Unsupported shell');
+                throw new UnsupportedShellException();
             }
             return;
         }
