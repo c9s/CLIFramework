@@ -239,7 +239,7 @@ __demo_comp_commit()
     __mycomp "commit-value commit-value2"
 }
 
-__demo_main ()
+__demo_complete_app ()
 {
     local cur words cword prev
     _get_comp_words_by_ref -n =: cur words cword prev
@@ -357,8 +357,6 @@ __demo_main ()
 
 __demo_main_wrapper()
 {
-    __demo_main "app" 1
+    __demo_complete_app "app" 1
 }
-
 complete -o bashdefault -o default -o nospace -F __demo_main_wrapper demo 2>/dev/null
-
