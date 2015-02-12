@@ -14,8 +14,7 @@ use CLIFramework\Command;
 use CLIFramework\CommandInterface;
 use CLIFramework\Completion\ZshGenerator;
 
-class ZshCompletionCommand extends Command
-    implements CommandInterface
+class ZshCompletionCommand extends Command implements CommandInterface
 {
 
     public function brief() { return 'This function generate a zsh-completion script automatically'; }

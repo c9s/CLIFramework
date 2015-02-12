@@ -242,8 +242,10 @@ __demo_comp_commit()
 __demo_main ()
 {
     local cur words cword prev
-    local command_signature
     _get_comp_words_by_ref -n =: cur words cword prev
+
+    local command_signature=$1
+    local command_index=$2
 
     # Output application command alias mapping 
     # aliases[ alias ] = command
@@ -260,7 +262,6 @@ __demo_main ()
     declare -A options_require_value
 
     # Command signature is used for fetching meta information from the meta command.
-    command_signature="app"
     subcommand_alias=(["a"]="add" ["c"]="commit")
     subcommands=(["add"]="command to add" ["commit"]="command to commit")
     options=(["--debug"]=1 ["--verbose"]=1 ["--log-dir"]=1)
@@ -278,7 +279,6 @@ __demo_main ()
 
     # command_index=1 start from the first argument, not the application name
     # Find the command position
-    local command_index=1
     local argument_index=0
     local i
     local command
@@ -355,5 +355,10 @@ __demo_main ()
     fi
 }
 
-complete -o bashdefault -o default -o nospace -F __demo_main demo 2>/dev/null
+__demo_main_wrapper()
+{
+    __demo_main "app" 1
+}
+
+complete -o bashdefault -o default -o nospace -F __demo_main_wrapper demo 2>/dev/null
 

@@ -194,8 +194,9 @@ class Application extends CommandBase
         parent::init();
         $this->command('help','CLIFramework\\Command\\HelpCommand');
         $this->commandGroup("Development Commands", array(
-            'zsh'  => 'CLIFramework\\Command\\ZshCompletionCommand',
-            'meta' => 'CLIFramework\\Command\\MetaCommand',
+            'zsh'                 => 'CLIFramework\\Command\\ZshCompletionCommand',
+            'bash'                => 'CLIFramework\\Command\\BashCompletionCommand',
+            'meta'                => 'CLIFramework\\Command\\MetaCommand',
             'github:build-topics' => 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand',
         ))->setId('dev');
     }
