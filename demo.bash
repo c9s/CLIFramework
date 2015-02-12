@@ -254,7 +254,6 @@ __demo_complete_app ()
     # Define the command names
     declare -A subcommands
 
-
     # option names defines the available options of this command
     declare -A options
     # options_require_value: defines the required completion type for each
@@ -355,7 +354,7 @@ __demo_complete_app ()
     fi
 }
 
-__demo_main_wrapper()
+__demo_main_wrapper ()
 {
     __demo_complete_app "app" 1
 }

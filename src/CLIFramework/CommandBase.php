@@ -112,6 +112,8 @@ abstract class CommandBase
 
     /**
      * Method for users to define alias.
+     *
+     * @return strings[]
      */
     public function aliases() {
     }

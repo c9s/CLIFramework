@@ -2,6 +2,10 @@
 namespace DemoApp;
 
 class Application extends \CLIFramework\Application {
+
+    const NAME = 'demo';
+    const VERSION = '1.0.0';
+
     public function init()
     {
         parent::init();
