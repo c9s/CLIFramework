@@ -248,6 +248,11 @@ class ZshGenerator
         $args = array();
         $arginfos = $cmd->getArgumentsInfo();
 
+        // for command that does not define an argument, we just complete the argument by file paths.
+        if (empty($arginfos)) {
+            return array("*:default:_files");
+        }
+
         $idx = 0;
         foreach($arginfos as $a) {
             $comp = '';
