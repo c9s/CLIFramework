@@ -20,6 +20,9 @@ class MetaCommandTest extends CommandTestCase
         $this->expectOutputString("#values
 CLIFramework
 GetOptionKit
+PHPBrew
+AssetKit
+ActionKit
 ");
         ok( $this->runCommand('example/demo meta --zsh commit arg 1 valid-values'));
     }
