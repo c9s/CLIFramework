@@ -6,6 +6,36 @@ use CLIFramework\Application;
 use CLIFramework\ArgInfo;
 use CLIFramework\CommandBase;
 
+function array_to_bash(array $array) {
+    $out = '(';
+    foreach($array as $key => $value) {
+        $out .= '["' . addcslashes($key, '"') . '"]="' . addcslashes($value,'"') . '"';
+        $out .= ' ';
+    }
+    $out .= ')';
+    return $out;
+}
+
+function set_bash_array($name, array $array)
+{
+    return $name . '=' . array_to_bash($array);
+}
+
+function set_bash_var($name, $value) 
+{
+    return $name . '=' . $value;
+}
+
+function local_bash_var($name, $value) 
+{
+    return 'local ' . $name . '=' . $value;
+}
+
+function command_signature_suffix(CommandBase $command) {
+    return $command->getSignature();
+    // return str_replace('.','_', $command->getSignature());
+}
+
 class BashGenerator
 {
     public $app;
@@ -252,11 +282,13 @@ __complete_meta ()
 BASH;
         $buf->append($completeMeta);
 
+        foreach($this->app->getCommands() as $command) {
+            $this->generateCompleteFunction($buf, $command, $compPrefix);
+        }
+
         $this->generateCompleteFunction($buf, $this->app, $compPrefix);
 
-
-        $signature = $this->app->getSignature();
-        $funcSuffix = str_replace('.', '_',$signature);
+        $funcSuffix = command_signature_suffix($this->app);
 
         $buf->append("
 {$compPrefix}_main_wrapper()
@@ -270,11 +302,11 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
 
     public function generateCompleteFunction(Buffer $buf, CommandBase $cmd, $compPrefix)
     {
-        $signature = $cmd->getSignature();
-        $funcSuffix = str_replace('.', '_',$signature);
-
-        $buf->append("{$compPrefix}_complete_{$funcSuffix} ()");
-        $buf->append('{
+        $funcSuffix = command_signature_suffix($cmd);
+        $buf->appendLine("{$compPrefix}_complete_{$funcSuffix} ()");
+        $buf->appendLine("{");
+        $buf->appendLine(local_bash_var('comp_prefix',$compPrefix));
+        $buf->append('
         local cur words cword prev
         _get_comp_words_by_ref -n =: cur words cword prev
 
@@ -288,6 +320,8 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         # Define the command names
         declare -A subcommands
 
+        declare -A subcommand_signs
+
         # option names defines the available options of this command
         declare -A options
         # options_require_value: defines the required completion type for each
@@ -298,68 +332,60 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
 
         $subcommands = $cmd->getCommands();
         $subcommandAliasMap = array();
+        $subcommandDescMap = array();
+        $commandOptionMap = array();
+        $commandOptionRequireValueMap = array();
+        $commandSignMap = array();
         foreach($subcommands as $subcommand) {
             foreach( $subcommand->aliases() as $alias) {
                 $subcommandAliasMap[$alias] = $subcommand->getName();
             }
+            $subcommandDescMap[ $subcommand->getName() ] = $subcommand->brief();
+            $commandSignMap[ $subcommand->getName() ] = command_signature_suffix($subcommand);
         }
 
         // Command signature is used for fetching meta information from the meta command.
+        // And a command description map
         //
+        //      subcommands=(["add"]="command to add" ["commit"]="command to commit")
         //      subcommand_alias=(["a"]="add" ["c"]="commit")
         //
-        $buf->append('subcommand_alias=(');
-        foreach($subcommandAliasMap as $alias => $commandName) {
-            // subcommand_alias=(["a"]="add" ["c"]="commit")
-            $buf->append("[\"$alias\"]=\"$commandName\"");
-        }
-        $buf->append(")\n");
-
-        // Generate a command description map
-        //
-        //  subcommands=(["add"]="command to add" ["commit"]="command to commit")
-        //
-        $buf->append('subcommands=(');
-        foreach($subcommands as $subcommand) {
-            $buf->append("[\"{$subcommand->getName()}\"]=\"" . addcslashes($subcommand->brief(), '"') . "\" ");
-        }
-        $buf->append(")\n");
+        $buf->appendLine(set_bash_array('subcommands',$subcommandDescMap));
+        $buf->appendLine(set_bash_array('subcommand_alias',$subcommandAliasMap));
+        $buf->appendLine(set_bash_array('subcommand_signs', $commandSignMap));
 
         // Generate the bash array for command options
         //
         //      options=(["--debug"]=1 ["--verbose"]=1 ["--log-dir"]=1)
         //
         $options = $cmd->getOptionCollection();
-        $buf->append('options=(');
         foreach($options as $option) {
             if ($option->short) {
-                $buf->append('["-'. $option->short .'"]="1" ');
+                $commandOptionMap[ '-' . $option->short ] = 1;
             }
             if ($option->long) {
-                $buf->append('["--'. $option->long .'"]="1" ');
+                $commandOptionMap[ '--' . $option->long ] = 1;
             }
-        }
-        $buf->append(")\n");
 
-        //  options_require_value=(["--log-dir"]="__complete_directory")
-        $buf->append("options_require_value=(");
-        foreach($options as $option) {
             if ($option->required || $option->multiple) {
                 if ($option->short ) {
-                    $buf->append('["-'. $option->short .'"]="1" ');
+                    $commandOptionRequireValueMap[ '-' . $option->short ] = 1;
                 }
                 if ($option->long ) {
-                    $buf->append('["-'. $option->long .'"]="1" ');
+                    $commandOptionRequireValueMap[ '--' . $option->long ] = 1;
                 }
             }
         }
-        $buf->append(")\n");
+        $buf->appendLine(set_bash_array('options',$commandOptionMap));
+
+        //  options_require_value=(["--log-dir"]="__complete_directory")
+        $buf->appendLine(set_bash_array('options_require_value', $commandOptionRequireValueMap));
+
 
         // local argument_min_length=0
         $argInfos = $cmd->getArgumentsInfo();
-        $buf->appendLine("local argument_min_length=" . count($argInfos));
-
-
+        // $buf->appendLine("local argument_min_length=" . count($argInfos));
+        $buf->appendLine(local_bash_var('argument_min_length', count($argInfos)));
 
 
         $buf->append('
@@ -444,17 +470,22 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         if [[ -n "${subcommand_alias[$command]}" ]] ; then
             command="${subcommand_alias[$command]}"
         fi
-        local completion_func="__demo_comp_${command//-/_}"
 
-        # declare the completion function name and dispatch rest arguments to the complete function
-        command_signature="${command_signature}.${command}"
-        declare -f $completion_func >/dev/null && $completion_func $command_signature $command_index && return
+        if [[ -n "${subcommand_signs[$command]}" ]] ; then
+            local suffix="${subcommand_signs[$command]}"
+            local completion_func="${comp_prefix}_complete_${suffix//-/_}"
+
+            # Declare the completion function name and dispatch rest arguments to the complete function
+            command_signature="${command_signature}.${command}"
+            declare -f $completion_func >/dev/null && \
+                $completion_func $command_signature $command_index && return
+        else
+            echo "Command \'$command\' not found"
+        fi
     fi
 ');
-
-
         // Epilog
-        $buf->append("};\n");
+        $buf->appendLine("};");
     }
 
 }
