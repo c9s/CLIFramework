@@ -5,6 +5,7 @@ use CLIFramework\CommandInterface;
 use CLIFramework\Zsh;
 use CLIFramework\ValueCollection;
 use CLIFramework\Buffer;
+use CLIFramework\CommandBase;
 use GetOptionKit\OptionCollection;
 use GetOptionKit\OptionResult;
 use Exception;
@@ -17,9 +18,11 @@ class UndefinedArgumentException extends Exception {}
 class UndefinedOptionException extends Exception 
 {
     public $options;
+    public $command;
 
-    public function __construct($message, OptionCollection $options)
+    public function __construct($message, CommandBase $command, OptionCollection $options)
     {
+        $this->command = $command;
         $this->options = $options;
         parent::__construct($message);
     }
@@ -154,7 +157,7 @@ class MetaCommand extends Command
                 $options = $cmd->getOptionCollection();
                 $option = $options->find($arg);
                 if (!$option) {
-                    throw new UndefinedOptionException("Option '$arg' not found", $options);
+                    throw new UndefinedOptionException("Option '$arg' not found", $cmd, $options);
                 }
                 switch ($attr) {
                 case 'isa':
@@ -178,21 +181,22 @@ class MetaCommand extends Command
             }
         } catch (UnsupportedShellException $e) {
 
-            echo $e->getMessage() . "\n";
-            echo "Supported shells: zsh, bash\n";
+            fwrite(STDERR, $e->getMessage() . "\n");
+            fwrite(STDERR, "Supported shells: zsh, bash\n");
 
         } catch (UndefinedOptionException $e) {
-            echo $e->getMessage() . "\n\n";
-            echo "Valid options:\n";
+            fwrite(STDERR, $e->command->getSignature() . "\n");
+            fwrite(STDERR, $e->getMessage() . "\n");
+            fwrite(STDERR, "Valid options:\n");
             foreach ($e->options as $opt) {
                 if ($opt->short && $opt->long) {
-                    echo " " . $opt->short . '|' . $opt->long;
+                    fwrite(STDERR, " " . $opt->short . '|' . $opt->long);
                 } elseif ($opt->short) {
-                    echo " " . $opt->short;
+                    fwrite(STDERR,  " " . $opt->short);
                 } elseif ($opt->long) {
-                    echo " " . $opt->long;
+                    fwrite(STDERR,  " " . $opt->long);
                 }
-                echo "\n";
+                fwrite(STDERR, "\n");
             }
         }
     }
