@@ -442,7 +442,7 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
     if [[ -z "$command" ]] ; then
         case "$cur" in
             # If the current argument $cur looks like an option, then we should complete
-            --*)
+            -*)
                 __mycomp "${!options[*]}"
                 return
             ;;
@@ -451,11 +451,11 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
                 # The the previous one...
                 if [[ -n "$prev" && -n "${options_require_value[$prev]}" ]] ; then
                     # TODO: local complete_type="${options_require_value[$prev]"}
-                    __complete_meta "app.commit" "opt" "c" "valid-values"
+                    __complete_meta "$command_signature" "opt" "${prev//-/}" "valid-values"
                 else
                     # If the command requires at least $argument_min_length to run, we check the argument
                     if [[ $argument_min_length > 0 ]] ; then
-                        __complete_meta "app.commit" "opt" "c" "valid-values"
+                        __complete_meta "$command_signature" "arg" "c" "valid-values"
                     else
                         # If there is no argument support, then user is supposed to give a subcommand name or an option
                         __mycomp "${!options[*]} ${!subcommands[*]} ${!subcommand_alias[*]}"
@@ -464,6 +464,9 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
                 return
             ;;
         esac
+');
+        // Dispatch
+        $buf->append('
     else
         # We just found the first command, we are going to dispatch the completion handler to the next level...
         # Rewrite command alias to command name to get the correct response
