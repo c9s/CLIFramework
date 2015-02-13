@@ -453,7 +453,7 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
                 if [[ -n "$prev" && -n "${options_require_value[$prev]}" ]] ; then
                     # TODO: local complete_type="${options_require_value[$prev]"}
         ');
-        $buf->appendLine('          __complete_meta "$command_signature" "opt" "${prev//--/}" "valid-values"');
+        $buf->appendLine('          __complete_meta "$command_signature" "opt" "${prev##*(-)}" "valid-values"');
         $buf->appendLine('          return');
         $buf->appendLine('      fi');
         $buf->appendLine('      # If the command requires at least $argument_min_length to run, we check the argument');
