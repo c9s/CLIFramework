@@ -53,12 +53,12 @@ class CommitCommand extends \CLIFramework\Command {
             ->validValues(function() {
                 $values = new ValueCollection;
                 $values->group('authors', 'Authors', array(
-                    'abba' => 'ABBA',
+                    'abba'    => 'ABBA',
                     'michael' => 'Michael Jackson',
-                    'adele' => 'Adele',
-                    'air' => 'Air',
-                    'alicia' => 'Alicia Keys',
-                    'andras' => 'Andras Schiff',
+                    'adele'   => 'Adele',
+                    'air'     => 'Air',
+                    'alicia'  => 'Alicia Keys',
+                    'andras'  => 'Andras Schiff',
                 ));
                 $values->group('admins', 'Administrators', array( 'admin1', 'admin2' , 'admin3' ));
                 $values->group('users', 'Users', array( 'userA', 'userB' , 'userC' ));
@@ -72,12 +72,13 @@ class CommitCommand extends \CLIFramework\Command {
             ;
 
         $args->add('repo')
-            ->validValues(array('CLIFramework','GetOptionKit'))
+            ->validValues(array('CLIFramework','GetOptionKit', 'PHPBrew', 'AssetKit', 'ActionKit'))
             ;
 
         $args->add('file')
             ->isa('file')
             ->glob('*.php')
+            ->multiple()
             ;
     }
 

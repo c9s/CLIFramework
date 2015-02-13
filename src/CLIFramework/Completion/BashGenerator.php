@@ -6,6 +6,11 @@ use CLIFramework\Application;
 use CLIFramework\ArgInfo;
 use CLIFramework\CommandBase;
 
+/**
+ * The Gentoo documentation shows the bash completion variables:
+ *
+ * @see https://devmanual.gentoo.org/tasks-reference/completion/index.html
+ */
 function array_to_bash(array $array) {
     $out = '(';
     foreach($array as $key => $value) {
@@ -57,7 +62,7 @@ class BashGenerator
 
     public $buffer;
 
-    public function __construct($app, $programName, $bindName, $compName)
+    public function __construct(Application $app, $programName, $bindName, $compName)
     {
         $this->app = $app;
         $this->programName = $programName;
@@ -258,24 +263,14 @@ __complete_meta ()
     local complete_for=\$2
     local arg=\$3  # could be "--dir", 0 for argument index
     local complete_type=\$4
+    local IFS=\$'\n'
 
     # When completing argument valid values, we need to eval
-    IFS=\$'\n' lines=(\$(\$app meta --bash \$command_signature \$complete_for \$arg \$complete_type))
+    lines=(\$(\$app meta --bash --flat \$command_signature \$complete_for \$arg \$complete_type))
 
     # Get the first line to return the compreply
-    if [[ \${lines[0]} == "#groups" ]] ; then
-        # groups means we need to eval
-        output=\$(\$app meta --bash \$command_signature \$complete_for \$arg \$complete_type)
-        eval "\$output"
-
-        # Here we should get two array: "labels" and "descriptions"
-        # But in bash, we can only complete words, so we will abandon the "descriptions"
-        # We use "*" expansion because we want to expand the whole array inside the same string
-        COMPREPLY=(\$(compgen -W "\${labels[*]}" -- \$cur))
-    else
-        # Complete the rest lines as words
-        COMPREPLY=(\$(compgen -W "\${lines[*]:1}" -- \$cur))
-    fi
+    # Complete the rest lines as words
+    COMPREPLY=(\$(compgen -W "\${lines[*]:1}" -- \$cur))
 }
 
 
@@ -293,7 +288,7 @@ BASH;
         $buf->append("
 {$compPrefix}_main_wrapper()
 {
-    {$compPrefix}_complete_{$funcSuffix} \"app\" 1
+    {$compPrefix}_complete_{$funcSuffix} \"app\" 0
 }
 complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bindName} 2>/dev/null
 ");
@@ -312,6 +307,8 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
 
         local command_signature=$1
         local command_index=$2
+
+        ((command_index++))
 
         # Output application command alias mapping 
         # aliases[ alias ] = command
@@ -404,6 +401,9 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
     local i
     local command
     local found_options=0
+
+    # echo "[DEBUG] command_index: [$command_signature] [$command_index]"
+
     while [ $command_index -lt $cword ]; do
         i="${words[command_index]}"
         case "$i" in
@@ -419,15 +419,16 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
                 elif [[ -n "$i" && -n "${subcommand_alias[$i]}" ]] ; then
                     command="$i"
                     break
-                else
+                elif [[ $command_index -gt 1 ]] ; then
                     # If the command is not found, check if the previous argument is an option expecting a value
-                    # or it\'s an argument
+                    # or it is an argument
 
                     # the previous argument (might be)
                     p="${words[command_index-1]}"
 
                     # not an option value, push to the argument list
                     if [[ -z "${options_require_value[$p]}" ]] ; then
+                        # echo "[DEBUG] argument_index++ because of [$i]"
                         ((argument_index++))
                     fi
                 fi
@@ -451,16 +452,95 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
                 # The the previous one...
                 if [[ -n "$prev" && -n "${options_require_value[$prev]}" ]] ; then
                     # TODO: local complete_type="${options_require_value[$prev]"}
-                    __complete_meta "$command_signature" "opt" "${prev//-/}" "valid-values"
-                else
-                    # If the command requires at least $argument_min_length to run, we check the argument
-                    if [[ $argument_min_length > 0 ]] ; then
-                        __complete_meta "$command_signature" "arg" "c" "valid-values"
-                    else
-                        # If there is no argument support, then user is supposed to give a subcommand name or an option
-                        __mycomp "${!options[*]} ${!subcommands[*]} ${!subcommand_alias[*]}"
-                    fi
-                fi
+        ');
+        $buf->appendLine('          __complete_meta "$command_signature" "opt" "${prev//-/}" "valid-values"');
+        $buf->appendLine('          return');
+        $buf->appendLine('      fi');
+        $buf->appendLine('      # If the command requires at least $argument_min_length to run, we check the argument');
+
+        if (count($argInfos) > 0) {
+            $buf->appendLine('if [[ $argument_min_length > 0 ]] ; then');
+
+            // $buf->appendLine('echo argument_index: [$argument_index]');
+            // $buf->appendLine('echo cur: [$cur]');
+
+            // expand the argument case
+            $buf->appendLine('  case $argument_index in');
+            foreach($argInfos as $index => $a) {
+                // TODO: when $a->multiple is enabled, we will use "*" for the case pattern.
+                $pattern = $index;
+                if ($a->multiple) {
+                    $pattern = '*';
+                }
+                $buf->appendLine("      $pattern)");
+                // $buf->appendLine('echo argument_index matched: [$argument_index]');
+                if ($a->validValues || $a->suggestions) {
+                    $values = array();
+                    if ($a->validValues) {
+                        if (is_callable($a->validValues)) {
+                            $buf->appendLine("      __complete_meta \"\$command_signature\" \"arg\" $index \"valid-values\"");
+                            $buf->appendLine('      return');
+                        } elseif ($values = $a->getValidValues()) {
+                            $buf->appendLine('      COMPREPLY=( $(compgen -W "' . join("\n",$values) . '" -- $cur) )');
+                            $buf->appendLine('      return');
+                        }
+                    } elseif ($a->suggestions) {
+                        if (is_callable($a->validValues)) {
+                            $buf->appendLine("      __complete_meta \"\$command_signature\" \"arg\" $index \"suggestions\"");
+                            $buf->appendLine('      return');
+                        } elseif ($values = $a->getValidValues()) {
+                            $buf->appendLine('      COMPREPLY=( $(compgen -W "' . join("\n", $values) . '" -- $cur) )');
+                            $buf->appendLine('      return');
+                        }
+                    }
+                } elseif (in_array($a->isa,array('file','path','dir'))) {
+                    $compopt = '';
+                    switch($a->isa) {
+                        case "file":
+                            $compopt .= ' -A file';
+                            // $buf->appendLine('COMPREPLY=($(compgen -A file -- $cur))');
+                            break;
+                        case "path":
+                            $compopt .= ' -A file';
+                            break;
+                        case "command":
+                            $compopt .= ' -A command';
+                            break;
+                        case "user":
+                            $compopt .= ' -A user';
+                            break;
+                        case "service":
+                            $compopt .= ' -A service';
+                            break;
+                        case "hostname":
+                            $compopt .= ' -A hostname';
+                            break;
+                        case "job":
+                            $compopt .= ' -A job';
+                            break;
+                        case "dir":
+                        case "directory":
+                            $compopt .= ' -A directory';
+                            break;
+                    }
+                    // If the glob is specified, bash does not support for both -A with -G
+                    if ($a->glob) {
+                        $compopt = " -G \"{$a->glob}\"";
+                    }
+                    $buf->appendLine("COMPREPLY=(\$(compgen $compopt -- \$cur))");
+                    $buf->appendLine("return");
+                }
+
+
+                $buf->appendLine("      ;;");
+            }
+            $buf->appendLine('  esac');
+            $buf->appendLine('  fi');
+        }
+
+        $buf->append('
+                # If there is no argument support, then user is supposed to give a subcommand name or an option
+                __mycomp "${!options[*]} ${!subcommands[*]} ${!subcommand_alias[*]}"
                 return
             ;;
         esac

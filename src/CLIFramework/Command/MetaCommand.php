@@ -74,6 +74,7 @@ class MetaCommand extends Command
     public function brief() { return 'Return the meta data of a commands.'; }
 
     public function options($opts) {
+        $opts->add('flat', 'flat list format. work for both zsh and bash.');
         $opts->add('zsh', 'output for zsh');
         $opts->add('bash', 'output for bash');
         $opts->add('json', 'output in JSON format (un-implemented)');
@@ -206,7 +207,16 @@ class MetaCommand extends Command
         if ($values instanceof ValueCollection) {
 
             // this output format works both in zsh & bash
-            if ($opts->zsh || $opts->bash) {
+            if ($opts->flat) {
+                $buf = new Buffer;
+                $buf->appendLine("#flat");
+                foreach( $values as $groupId => $groupValues) {
+                    foreach($groupValues as $val) {
+                        $buf->appendLine($val);
+                    }
+                }
+                $this->logger->write($buf);
+            } elseif ($opts->zsh || $opts->bash) {
                 $buf = new Buffer;
                 $buf->appendLine("#groups");
                 $buf->appendLine("declare -A groups");

@@ -5,27 +5,12 @@ use CLIFramework\Application;
 use CLIFramework\ArgInfo;
 use CLIFramework\CommandBase;
 use CLIFramework\Command;
+use CLIFramework\Completion\Utils;
 use GetOptionKit\Option;
 use Exception;
 
 function indent($level) {
     return str_repeat('  ', $level);
-}
-
-function qq($str) {
-    return '"' . addcslashes($str , '"') . '"';
-}
-
-function q($str) {
-    return "'" . addcslashes($str, "'") . "'";
-}
-
-function array_qq(array $array) {
-    return array_map("CLIFramework\\Completion\\qq", $array);
-}
-
-function array_q(array $array) {
-    return array_map("CLIFramework\\Completion\\q", $array);
 }
 
 function str_indent($content, $level = 1) {
@@ -111,7 +96,7 @@ class ZshGenerator
 
     public $buffer;
 
-    public function __construct($app, $programName, $bindName, $compName)
+    public function __construct(Application $app, $programName, $bindName, $compName)
     {
         $this->app = $app;
         $this->programName = $programName;
@@ -141,7 +126,7 @@ class ZshGenerator
             if ( preg_match('#^_#', $name) ) {
                 continue;
             }
-            $args[] = "$name:" . q($cmd->brief());
+            $args[] = "$name:" . Utils::q($cmd->brief());
         }
         return $args;
     }
@@ -216,17 +201,17 @@ class ZshGenerator
             if ($opt->validValues || $opt->suggestions) {
                 if ($opt->validValues) {
                     if ( is_callable($opt->validValues) ) {
-                        $str .= ':{' . join(' ', array($this->meta_command_name(), qq($placeholder), $cmdSignature, 'opt', $optName, 'valid-values')) . '}';
+                        $str .= ':{' . join(' ', array($this->meta_command_name(), Utils::qq($placeholder), $cmdSignature, 'opt', $optName, 'valid-values')) . '}';
                     } elseif ($values = $opt->getValidValues()) {
                         // not callable, generate static array
-                        $str .= ':(' . join(' ', array_qq($values)) . ')';
+                        $str .= ':(' . join(' ', Utils::array_qq($values)) . ')';
                     }
                 } elseif ($opt->suggestions) {
                     if ( is_callable($opt->suggestions) ) {
-                        $str .= ':{' . join(' ', array($this->meta_command_name(), qq($placeholder), $cmdSignature, 'opt', $optName, 'suggestions') ) . '}';
+                        $str .= ':{' . join(' ', array($this->meta_command_name(), Utils::qq($placeholder), $cmdSignature, 'opt', $optName, 'suggestions') ) . '}';
                     } elseif ($values = $opt->getSuggestions()) {
                         // not callable, generate static array
-                        $str .= ':(' . join(' ', array_qq($values)) . ')';
+                        $str .= ':(' . join(' ', Utils::array_qq($values)) . ')';
                     }
                 }
 
@@ -277,15 +262,15 @@ class ZshGenerator
                 $values = array();
                 if ($a->validValues) {
                     if (is_callable($a->validValues)) {
-                        $comp .= ':{' . join(' ', array($this->meta_command_name(), qq($a->name), $cmdSignature, 'arg', $idx, 'valid-values')) . '}';
+                        $comp .= ':{' . join(' ', array($this->meta_command_name(), Utils::qq($a->name), $cmdSignature, 'arg', $idx, 'valid-values')) . '}';
                     } elseif ($values = $a->getValidValues()) {
-                        $comp .= ':(' . join(" ", array_qq($values)) . ')';
+                        $comp .= ':(' . join(" ", Utils::array_qq($values)) . ')';
                     }
                 } elseif ($a->suggestions ) {
                     if (is_callable($a->suggestions)) {
-                        $comp .= ':{' . join(' ', array($this->meta_command_name(), qq($a->name), $cmdSignature, 'arg', $idx, 'suggestions')) . '}';
+                        $comp .= ':{' . join(' ', array($this->meta_command_name(), Utils::qq($a->name), $cmdSignature, 'arg', $idx, 'suggestions')) . '}';
                     } elseif ($values = $a->getSuggestions()) {
-                        $comp .= ':(' . join(" ", array_qq($values)) . ')';
+                        $comp .= ':(' . join(" ", Utils::array_qq($values)) . ')';
                     }
                 }
             } elseif (in_array($a->isa,array('file','path','dir'))) {
@@ -304,7 +289,7 @@ class ZshGenerator
                     $comp .= " -g \"{$a->glob}\"";
                 }
             }
-            $args[] = q($comp);
+            $args[] = Utils::q($comp);
             $idx++;
         }
         return empty($args) ? NULL : $args;
@@ -433,7 +418,7 @@ class ZshGenerator
         $args = array();
         $cmds = $this->visible_commands($cmd->getCommands());
         foreach($cmds as $c) {
-            $args[] = sprintf("'%s:->%s'", $c->getName(), $c->getName(), $c->getName()); // generate argument states
+            $args[] = sprintf("'%s:->%s'", $c->getName(), $c->getName()); // generate argument states
         }
         return $args;
     }

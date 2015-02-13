@@ -74,7 +74,8 @@ class Buffer {
     /**
      * Append a text to the buffer
      */
-    public function append($text) {
+    public function append($text)
+    {
         $this->content .= $text;
     }
 
