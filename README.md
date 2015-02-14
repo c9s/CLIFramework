@@ -24,6 +24,8 @@ Features
 
 - Automatic zsh completion generator.
 
+- Automatic bash completion generator.
+
 - Friendly message when command arguments are not enough.
 
 - Testable, CLIFramework provides PHPUnit test case for testing the commands in PHP.
@@ -57,6 +59,7 @@ class CommitCommand extends CLIFramework\Command {
             })
             ;
 
+        // Runtime completion by setting up a closure for completion
         $opts->add('c|reedit-message:','like -C, but with -c the editor is invoked, so that the user can further edit the commit message.')
             ->isa('string')
             ->valueName('commit hash')
@@ -84,8 +87,17 @@ class CommitCommand extends CLIFramework\Command {
     public function arguments($args) {
         $args->add('user')
             ->validValues(['c9s','bar','foo']);
+
+        // Static completion result
         $args->add('repo')
             ->validValues(['CLIFramework','GetOptionKit']);
+
+        // Add an argument info expecting multiple *.php files
+        $args->add('file')
+            ->isa('file')
+            ->glob('*.php')
+            ->multiple()
+            ;
     }
 
     public function init() {
@@ -124,6 +136,10 @@ class CommitCommand extends CLIFramework\Command {
 #### Zsh Completion With Lazy Completion Values:
 
 ![Imgur](http://i.imgur.com/ItYGDIu.gif)
+
+#### Bash Completion
+
+![Imgur](http://i.imgur.com/sF5UPX5.gif)
 
 
 Command Forms
