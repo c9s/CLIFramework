@@ -1,7 +1,7 @@
 <?php
 namespace CLIFramework\Component;
 
-class MarkdownTableStyle
+class MarkdownTableStyle extends TableStyle
 {
     public $cellPadding = 1;
 

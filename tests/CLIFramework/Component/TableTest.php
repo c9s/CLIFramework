@@ -1,15 +1,35 @@
 <?php
 use CLIFramework\Component\Table;
-use CLIFramework\Component\DefaultTableStyle;
+use CLIFramework\Component\TableStyle;
 use CLIFramework\Component\MarkdownTableStyle;
 
 class TableTest extends PHPUnit_Framework_TestCase
 {
+    public function testDefaultTableWithTextOverflowWithoutHeaderAndFooter()
+    {
+        $table = new Table;
+        $table->setMaxColumnWidth(30);
+        $table->getDefaultCellAttribute()->setTextOverflow('ellipsis');
+        $table->addRow(array( 
+            "September 16, 2014",
+            "Zero to One: Notes on Startups, or How to Build the Future",
+            "If you want to build a better future, you must believe in secrets.
+            The great secret of our time is that there are still uncharted frontiers to explore and new inventions to create. In Zero to One, legendary entrepreneur and investor Peter Thiel shows how we can find singular ways to create those new things. ",
+        ));
+
+        $out = $table->render();
+        if (!file_exists('tests/data/default-table-2.txt')) {
+            file_put_contents('tests/data/default-table-2.txt', $out);
+            echo "\n" . $out . "\n";
+        }
+        $this->assertStringEqualsFile('tests/data/default-table-2.txt', $out);
+    }
+
+
 
     public function testDefaultTableWithoutFooter()
     {
         $table = new Table;
-        $table->setStyle(new DefaultTableStyle);
         $table->setHeaders(array(
             'Published Date',
             'Title',
@@ -41,7 +61,6 @@ class TableTest extends PHPUnit_Framework_TestCase
     public function testDefaultTableWithFooter()
     {
         $table = new Table;
-        $table->setStyle(new DefaultTableStyle);
         $table->setHeaders(array(
             'Published Date',
             'Title',
@@ -74,7 +93,6 @@ class TableTest extends PHPUnit_Framework_TestCase
     public function testMarkdownTable()
     {
         $table = new Table;
-        // $table->setStyle(new DefaultTableStyle);
         $table->setStyle(new MarkdownTableStyle);
         $table->setHeaders(array(
             'Published Date',
