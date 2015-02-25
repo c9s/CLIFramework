@@ -50,6 +50,11 @@ class Table
 
     protected $wrapWidth = 50;
 
+    protected $predefinedStyles = array(
+    
+    
+    );
+
     /**
      * @var bool strip the white spaces from the begining of a 
      * string and the end of a string.
@@ -169,6 +174,20 @@ class Table
         } else {
             return $out . "\n";
         }
+    }
+
+    public function setStyle($style)
+    {
+        if (is_string($style)) {
+            if (isset($this->predefinedStyles[$style])) {
+                $this->style = $this->predefinedStyles[$style];
+            } else {
+                throw new InvalidArgumentException("Undefined style $style");
+            }
+        } else {
+            $this->style = $style;
+        }
+        return $this;
     }
 
     public function renderSeparator($rowIndex, $row) {
