@@ -144,10 +144,10 @@ class Table
         foreach ($cells as $col => $cell) {
             $attribute = $this->defaultCellAttribute;
 
-            $customAttribute = false;
+            $expandAttribute = false;
             if (is_array($cell)) {
                 list($cell, $attribute) = $cell;
-                $customAttribute = true;
+                $expandAttribute = true;
             } elseif (isset($this->columnCellAttributes[$col])) {
                 $attribute = $this->columnCellAttributes[$col];
             }
@@ -174,9 +174,9 @@ class Table
                 }
 
                 if (isset($this->rows[$extraRowIdx])) {
-                    $this->rows[$extraRowIdx][ $col ] = $customAttribute ? [$line, $attribute] : $line;
+                    $this->rows[$extraRowIdx][ $col ] = $expandAttribute ? [$line, $attribute] : $line;
                 } else {
-                    $this->rows[$extraRowIdx] = array($col => $customAttribute ? [$line, $attribute] : $line);
+                    $this->rows[$extraRowIdx] = array($col => $expandAttribute ? [$line, $attribute] : $line);
                 }
                 $extraRowIdx++;
             }
