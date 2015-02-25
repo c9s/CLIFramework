@@ -1,11 +1,13 @@
 <?php
 use CLIFramework\Component\Table\Table;
 use CLIFramework\Component\Table\TableStyle;
-use CLIFramework\Component\Table\CellAttribute;
+use CLIFramework\Component\Table\CompactTableStyle;
 use CLIFramework\Component\Table\MarkdownTableStyle;
+use CLIFramework\Component\Table\CellAttribute;
 use CLIFramework\Component\Table\NumberFormatCell;
 use CLIFramework\Component\Table\CurrencyCellAttribute;
 use CLIFramework\Component\Table\SpellOutNumberFormatCell;
+use CLIFramework\Component\Table\RowSeparator;
 
 class TableTest extends PHPUnit_Framework_TestCase
 {
@@ -42,6 +44,27 @@ class TableTest extends PHPUnit_Framework_TestCase
 
         // echo "\n" . $table->render() . "\n";
         $this->assertStringEqualsFile('tests/data/default-table-column-cell-attribute.txt', $table);
+    }
+
+    public function testRowSeparator()
+    {
+        $table = new Table;
+        $table->setStyle(new CompactTableStyle);
+        $table->addRow(array( 
+            "September 16, 2014",
+            "Zero to One: Notes on Startups, or How to Build the Future",
+            "If you want to build a better future, you must believe in secrets.
+            The great secret of our time is that there are still uncharted frontiers to explore and new inventions to create. In Zero to One, legendary entrepreneur and investor Peter Thiel shows how we can find singular ways to create those new things. ",
+        ));
+        $table->addRow(new RowSeparator);
+        $table->addRow(array( 
+            "September 16, 2014",
+            "Zero to One: Notes on Startups, or How to Build the Future",
+            "If you want to build a better future, you must believe in secrets.
+            The great secret of our time is that there are still uncharted frontiers to explore and new inventions to create. In Zero to One, legendary entrepreneur and investor Peter Thiel shows how we can find singular ways to create those new things. ",
+        ));
+        echo "\n" . $table->render() . "\n";
+        $this->assertStringEqualsFile("tests/data/default-table-row-separator.txt", $table);
     }
 
     public function testCustomColumnCellAttribute()

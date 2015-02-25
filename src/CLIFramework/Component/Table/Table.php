@@ -136,6 +136,10 @@ class Table
     public function addRow($row) {
         $this->rows[] = $row;
 
+        if ($row instanceof RowSeparator) {
+            return $this;
+        }
+
         // $keys = array_keys($this->rows);
         $lastRowIdx = count($this->rows) - 1;
 
@@ -191,6 +195,9 @@ class Table
     public function getColumnWidth($col) {
         $lengths = array();
         foreach($this->rows as $row) {
+            if ($row instanceof RowSeparator) {
+                continue;
+            }
             if (isset($row[$col])) {
                 if (is_array($row[$col])) {
                     if (!isset($row[$col][1])) {
@@ -220,7 +227,7 @@ class Table
             $out .= $this->style->verticalBorderChar;
 
         }
-        if ($rowIndex > 0 && isset($this->rowIndex[$rowIndex])) {
+        if ($rowIndex > 0 && isset($this->rowIndex[$rowIndex]) && $this->style->drawRowSeparator) {
             return $this->renderSeparator() . $out . "\n";
         } else {
             return $out . "\n";
