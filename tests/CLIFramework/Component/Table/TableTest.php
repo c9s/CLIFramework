@@ -52,7 +52,7 @@ class TableTest extends PHPUnit_Framework_TestCase
         $table = new Table;
         $table->addRow(array( 
             "September 16, 2014",
-            ["Zero to One: Notes on Startups, or How to Build the Future", $highlight],
+            [$highlight, "Zero to One: Notes on Startups, or How to Build the Future"],
             "If you want to build a better future, you must believe in secrets.
             The great secret of our time is that there are still uncharted frontiers to explore and new inventions to create. In Zero to One, legendary entrepreneur and investor Peter Thiel shows how we can find singular ways to create those new things. ",
         ));

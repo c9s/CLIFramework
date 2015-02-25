@@ -4,6 +4,7 @@ use InvalidArgumentException;
 
 use CLIFramework\Component\Table\TableStyle;
 use CLIFramework\Component\Table\MarkdownTableStyle;
+use CLIFramework\Component\Table\CellAttribute;
 
 interface Separator { }
 
@@ -146,8 +147,11 @@ class Table
 
             $expandAttribute = false;
             if (is_array($cell)) {
-                list($cell, $attribute) = $cell;
-                $expandAttribute = true;
+                if ($cell[0] instanceof CellAttribute) {
+                    $attribute = array_shift($cell);
+                    $expandAttribute = true;
+                }
+                $cell = join("\n", $cell);
             } elseif (isset($this->columnCellAttributes[$col])) {
                 $attribute = $this->columnCellAttributes[$col];
             }
@@ -174,9 +178,9 @@ class Table
                 }
 
                 if (isset($this->rows[$extraRowIdx])) {
-                    $this->rows[$extraRowIdx][ $col ] = $expandAttribute ? [$line, $attribute] : $line;
+                    $this->rows[$extraRowIdx][ $col ] = $expandAttribute ? [$attribute, $line] : $line;
                 } else {
-                    $this->rows[$extraRowIdx] = array($col => $expandAttribute ? [$line, $attribute] : $line);
+                    $this->rows[$extraRowIdx] = array($col => $expandAttribute ? [$attribute, $line] : $line);
                 }
                 $extraRowIdx++;
             }
@@ -189,7 +193,10 @@ class Table
         foreach($this->rows as $row) {
             if (isset($row[$col])) {
                 if (is_array($row[$col])) {
-                    $lengths[] = mb_strlen($row[$col][0]);
+                    if (!isset($row[$col][1])) {
+                        throw new InvalidArgumentException('Incorrect cell structure. Expecting [attribute, text].');
+                    }
+                    $lengths[] = mb_strlen($row[$col][1]);
                 } else {
                     $lengths[] = mb_strlen($row[$col]);
                 }
@@ -289,7 +296,10 @@ class Table
         $attribute = $this->defaultCellAttribute;
 
         if (is_array($cell)) {
-            list($cell, $attribute) = $cell;
+            if ($cell[0] instanceof CellAttribute) {
+                $attribute = array_shift($cell);
+            }
+            $cell = join("\n", $cell);
         } elseif (isset($this->columnCellAttributes[$cellIndex])) {
             $attribute = $this->columnCellAttributes[$cellIndex];
         }
