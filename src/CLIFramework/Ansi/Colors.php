@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Ansi;
+use InvalidArgumentException;
 
 /**
  * ANSI Color definitions
@@ -8,6 +9,9 @@ namespace CLIFramework\Ansi;
  */
 class Colors
 {
+    const CODE_PATTERN = '#\033\[\d{0,1}[,;]?\d*(?:;\d2)?m#x';
+
+
     static protected $foregroundColors = array(
         'black'        => '0;30',
         'dark_gray'    => '1;30',
@@ -38,12 +42,21 @@ class Colors
         'light_gray' => '47',
     );
 
+    static protected $attributes = array(
+        'bold'      => 1,
+        'dim'       => 2,
+        'underline' => 4,
+        'blink'     => 5,
+        'reverse'   => 7,
+        'hidden'    => 8,
+    );
+
     static public function stripAnsiEscapeCode($str) {
-        return preg_replace('#\033\[\d{0,1}[,;]?\d*(?:;\d2)?m#x', '', $str);
+        return preg_replace(self::CODE_PATTERN, '', $str);
     }
 
     static public function strlenWithoutAnsiEscapeCode($str) {
-        $plain = preg_replace('#\033\[\d{0,1}[,;]?\d*(?:;\d2)?m#x', '', $str);
+        $plain = preg_replace(self::CODE_PATTERN, '', $str);
         return mb_strlen($plain);
     }
 
@@ -52,8 +65,20 @@ class Colors
         return "\033[0m";
     }
 
+    static public function attribute($text, $attribute)
+    {
+        if (!isset(self::$attributes[$attribute])) {
+            throw new InvalidArgumentException("Undefined attribute $attribute");
+        }
+        $str = "\033[" . self::$attributes[$attribute] . "m";
+        $str .= $text;
+        $str = "\033[0m";
+        return $str;
+    }
+
     // Returns colored string
-    static public function decorate($string, $fg = null, $bg = null) {
+    static public function decorate($string, $fg = null, $bg = null, $attribute = null)
+    {
         $coloredString = "";
 
         // Check if given foreground color found
@@ -63,6 +88,10 @@ class Colors
         // Check if given background color found
         if ($bg && isset(self::$backgroundColors[$bg])) {
             $coloredString .= "\033[" . self::$backgroundColors[$bg] . "m";
+        }
+
+        if ($attribute) {
+            $coloredString .= "\033[" . self::$attributes[$attribute] . "m";
         }
 
         // Add string and end coloring
@@ -83,7 +112,6 @@ class Colors
     static public function getBackgroundColors() {
         return array_keys(self::$backgroundColors);
     }
-
 }
 
 

@@ -1,5 +1,5 @@
 <?php
-namespace CLIFramework\Component;
+namespace CLIFramework\Component\Table;
 use CLIFramework\Ansi\Colors;
 
 class CellAttribute { 
@@ -50,6 +50,9 @@ class CellAttribute {
         $this->textOverflow = $overflowType;
     }
 
+    /**
+     * The default cell text formatter
+     */
     public function format($cell) { 
         if ($this->formatter) {
             return call_user_func($this->formatter, $cell);

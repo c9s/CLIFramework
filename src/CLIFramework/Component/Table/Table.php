@@ -1,9 +1,9 @@
 <?php
-namespace CLIFramework\Component;
+namespace CLIFramework\Component\Table;
 use InvalidArgumentException;
 
-use CLIFramework\Component\TableStyle;
-use CLIFramework\Component\MarkdownTableStyle;
+use CLIFramework\Component\Table\TableStyle;
+use CLIFramework\Component\Table\MarkdownTableStyle;
 
 interface Separator { }
 

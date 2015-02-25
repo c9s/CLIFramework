@@ -1,5 +1,5 @@
 <?php
-namespace CLIFramework\Component;
+namespace CLIFramework\Component\Table;
 
 class TableStyle
 {
