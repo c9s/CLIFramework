@@ -20,7 +20,7 @@ class TableStyle
 
     public $drawTableBorder = true;
 
-    public $drawRowSeparator = true;
+    public $drawRowSeparator = false;
 
     public function setCellPadding($padding) 
     {

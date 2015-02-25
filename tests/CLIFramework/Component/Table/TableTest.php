@@ -63,7 +63,7 @@ class TableTest extends PHPUnit_Framework_TestCase
             "If you want to build a better future, you must believe in secrets.
             The great secret of our time is that there are still uncharted frontiers to explore and new inventions to create. In Zero to One, legendary entrepreneur and investor Peter Thiel shows how we can find singular ways to create those new things. ",
         ));
-        echo "\n" . $table->render() . "\n";
+        // echo "\n" . $table->render() . "\n";
         $this->assertStringEqualsFile("tests/data/default-table-row-separator.txt", $table);
     }
 
@@ -187,6 +187,8 @@ class TableTest extends PHPUnit_Framework_TestCase
         }
         if (!file_exists($file)) {
             file_put_contents($file, $str);
+            echo "Actual:\n";
+            echo $str , "\n";
         }
         parent::assertStringEqualsFile($file, $str, $message, $canonicalize, $ignoreCase);
     }

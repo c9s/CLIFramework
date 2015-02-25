@@ -9,7 +9,6 @@
 |                    |                                                 | legendary entrepreneur and investor Peter Thiel    |
 |                    |                                                 | shows how we can find singular ways to create      |
 |                    |                                                 | those new things.                                  |
-+--------------------+-------------------------------------------------+----------------------------------------------------+
 | November 4, 2014   | Hooked: How to Build Habit-Forming Products     | Why do some products capture widespread attention  |
 |                    |                                                 | while others flop? What makes us engage with       |
 |                    |                                                 | certain products out of sheer habit? Is there a    |
