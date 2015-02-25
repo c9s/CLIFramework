@@ -87,7 +87,7 @@ class TableTest extends PHPUnit_Framework_TestCase
     {
         $table = new Table;
         $table->setMaxColumnWidth(30);
-        $table->getDefaultCellAttribute()->setTextOverflow('ellipsis');
+        $table->getDefaultCellAttribute()->setTextOverflow(CellAttribute::ELLIPSIS);
         $table->addRow(array( 
             "September 16, 2014",
             "Zero to One: Notes on Startups, or How to Build the Future",

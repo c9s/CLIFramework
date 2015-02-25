@@ -10,11 +10,17 @@ class CellAttribute {
 
     const ALIGN_CENTER = 3;
 
+    const WRAP = 1;
+
+    const CLIP = 2;
+
+    const ELLIPSIS = 3;
+
     protected $alignment = 2;
 
     protected $formatter;
 
-    protected $textOverflow = 'wrap';
+    protected $textOverflow = CellAttribute::WRAP;
 
     protected $backgroundColor;
 
@@ -90,18 +96,18 @@ class CellAttribute {
     public function handleTextOverflow($cell, $maxWidth)
     {
         $lines = explode("\n",$cell);
-        if ($this->textOverflow == 'wrap') {
+        if ($this->textOverflow == self::WRAP) {
             $maxLineWidth = max(array_map('mb_strlen', $lines));
             if ($maxLineWidth > $maxWidth) {
                 $cell = wordwrap($cell, $maxWidth, "\n");
                 // Re-explode the lines
                 $lines = explode("\n",$cell);
             }
-        } elseif ($this->textOverflow == 'ellipsis') {
+        } elseif ($this->textOverflow == self::ELLIPSIS) {
             if (mb_strlen($lines[0]) > $maxWidth) {
                 $lines = array(mb_substr($lines[0], 0, $maxWidth - 2) . '..');
             }
-        } elseif ($this->textOverflow == 'clip') {
+        } elseif ($this->textOverflow == self::CLIP) {
             if (mb_strlen($lines[0]) > $maxWidth) {
                 $lines = array(mb_substr($lines[0], 0, $maxWidth));
             }
