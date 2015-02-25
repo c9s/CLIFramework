@@ -1,33 +1,20 @@
 <?php
 namespace CLIFramework\Component;
 use InvalidArgumentException;
-
-class MarkdownTableStyle {
-    public $cellPadding = 1;
-    public $cellPaddingChar = ' ';
-    public $verticalBorderChar = '|';
-
-    public $rowSeparatorCrossChar = '+';
-    public $rowSeparatorBorderChar = '-';
-
-    public $rowSeparatorLeftmostCrossChar = '+';
-    public $rowSeparatorRightmostCrossChar = '+';
-
-}
+use CLIFramework\Component\DefaultTableStyle;
+use CLIFramework\Component\MarkdownTableStyle;
 
 interface Separator { }
 
 /**
  * RowSeparator is a slight separator for separating distinct rows...
  */
-class RowSeparator implements Separator { 
-}
+class RowSeparator implements Separator { }
 
 /**
  * TableSeparator is more likely a section separator, the style is customizable.
  */
-class TableSeparator implements Separator { 
-}
+class TableSeparator implements Separator { }
 
 /**
  * Feature:
@@ -37,6 +24,11 @@ class TableSeparator implements Separator {
  */
 class Table
 {
+
+    const ALIGN_RIGHT = 1;
+    const ALIGN_LEFT = 2;
+    const ALIGN_CENTER = 3;
+
 
     /**
      * @var string[] the rows are expanded by lines
@@ -76,7 +68,7 @@ class Table
     protected $footer;
 
     public function __construct() {
-        $this->style = new MarkdownTableStyle;
+        $this->style = new DefaultTableStyle;
     }
 
     public function setHeaders(array $headers) {
@@ -174,15 +166,7 @@ class Table
             } else {
                 $cell = '';
             }
-            $width = $this->getColumnWidth($c);
-
-            if (function_exists('mb_strlen') && false !== $encoding = mb_detect_encoding($cell)) {
-                $width += strlen($cell) - mb_strlen($cell, $encoding);
-            }
-
-            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
-            $out .= str_pad($cell, $width, ' ');
-            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
+            $out .= $this->renderCell($c, $cell);
             $out .= $this->style->verticalBorderChar;
 
         }
@@ -225,7 +209,12 @@ class Table
 
     public function renderHeader() {
         $out = '';
-        $out = $this->style->verticalBorderChar;
+
+        if ($this->style->drawTableBorder) {
+            $out .= $this->renderSeparator();
+        }
+
+        $out .= $this->style->verticalBorderChar;
         $columnNumber = $this->getNumberOfColumns();
         for ($c = 0 ; $c < $columnNumber ; $c++) {
             if (isset($this->headers[$c])) {
@@ -233,18 +222,12 @@ class Table
             } else {
                 $cell = '';
             }
-            $width = $this->getColumnWidth($c);
-
-            if (function_exists('mb_strlen') && false !== $encoding = mb_detect_encoding($cell)) {
-                $width += strlen($cell) - mb_strlen($cell, $encoding);
-            }
-
-            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
-            $out .= str_pad($cell, $width, ' ');
-            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
+            $out .= $this->renderCell($c, $cell);
             $out .= $this->style->verticalBorderChar;
         }
-        return $this->renderSeparator() . $out . "\n" . $this->renderSeparator();
+        $out .= "\n";
+        $out .= $this->renderSeparator();
+        return $out;
     }
 
 
@@ -258,6 +241,28 @@ class Table
         return $width - 1;
     }
 
+    public function renderCell($cellIndex, $cell, $alignment = Table::ALIGN_LEFT)
+    {
+        $width = $this->getColumnWidth($cellIndex);
+        if (function_exists('mb_strlen') && false !== $encoding = mb_detect_encoding($cell)) {
+            $width += strlen($cell) - mb_strlen($cell, $encoding);
+        }
+        $out = '';
+        $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
+
+        if ($alignment === Table::ALIGN_LEFT) {
+            $out .= str_pad($cell, $width, ' '); // default alignment = LEFT
+        } elseif ($alignment === Table::ALIGN_RIGHT) {
+            $out .= str_pad($cell, $width, ' ', STR_PAD_LEFT);
+        } elseif ($alignment === Table::ALIGN_CENTER) {
+            $out .= str_pad($cell, $width, ' ', STR_PAD_BOTH);
+        } else {
+            $out .= str_pad($cell, $width, ' '); // default alignment
+        }
+
+        $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
+        return $out;
+    }
 
     public function renderFooter()
     {
@@ -272,13 +277,17 @@ class Table
                 . str_repeat($this->style->cellPaddingChar, $this->style->cellPadding)
                 . $this->style->verticalBorderChar . "\n";
 
-            $out .= $this->style->rowSeparatorLeftmostCrossChar . str_repeat($this->style->rowSeparatorBorderChar, $width) 
-                . $this->style->rowSeparatorRightmostCrossChar . "\n";
+            if ($this->style->drawTableBorder) {
+                $out .= $this->style->rowSeparatorLeftmostCrossChar . str_repeat($this->style->rowSeparatorBorderChar, $width) 
+                    . $this->style->rowSeparatorRightmostCrossChar . "\n";
+            }
             return $out;
         }
 
         $out = '';
-        $out = $this->style->verticalBorderChar;
+
+
+        $out .= $this->style->verticalBorderChar;
         $columnNumber = $this->getNumberOfColumns();
         for ($c = 0 ; $c < $columnNumber ; $c++) {
             if (isset($this->footer[$c])) {
@@ -286,18 +295,15 @@ class Table
             } else {
                 $cell = '';
             }
-            $width = $this->getColumnWidth($c);
-
-            if (function_exists('mb_strlen') && false !== $encoding = mb_detect_encoding($cell)) {
-                $width += strlen($cell) - mb_strlen($cell, $encoding);
-            }
-
-            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
-            $out .= str_pad($cell, $width, ' ');
-            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
+            $out .= $this->renderCell($c, $cell);
             $out .= $this->style->verticalBorderChar;
         }
-        return $this->renderSeparator() . $out . "\n" . $this->renderSeparator();
+        $out .= "\n";
+
+        if ($this->style->drawTableBorder) {
+            $out .= $this->renderSeparator();
+        }
+        return $out;
     }
 
     public function render() {
@@ -308,14 +314,22 @@ class Table
         } else {
             $out .= $this->renderSeparator();
         }
+
         foreach($this->rows as $rowIndex => $row) {
-            $out .= $this->renderRow($rowIndex, $row);
+            if ($row instanceof RowSeparator) {
+                $out .= $this->renderSeparator();
+            } else {
+                $out .= $this->renderRow($rowIndex, $row);
+            }
         }
 
-        if (!empty($this->footer)) {
-            $out .= $this->renderFooter();
-        } else {
-            $out .= $this->renderSeparator();
+        // Markdown table does not support footer
+        if ($this->style && ! $this->style instanceof MarkdownTableStyle) {
+            if (!empty($this->footer)) {
+                $out .= $this->renderFooter();
+            } else {
+                $out .= $this->renderSeparator();
+            }
         }
         return $out;
     }

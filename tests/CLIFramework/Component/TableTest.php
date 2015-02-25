@@ -1,11 +1,15 @@
 <?php
 use CLIFramework\Component\Table;
+use CLIFramework\Component\DefaultTableStyle;
+use CLIFramework\Component\MarkdownTableStyle;
 
 class TableTest extends PHPUnit_Framework_TestCase
 {
     public function testTableAddRow()
     {
         $table = new Table;
+        // $table->setStyle(new DefaultTableStyle);
+        $table->setStyle(new MarkdownTableStyle);
         $table->setHeaders(array(
             'Published Date',
             'Title',
@@ -25,7 +29,6 @@ class TableTest extends PHPUnit_Framework_TestCase
             . "Nir Eyal answers these questions (and many more) by explaining the Hook Model—a four-step process embedded into the products of many successful companies to subtly encourage customer behavior. Through consecutive “hook cycles,” these products reach their ultimate goal of bringing users back again and again without depending on costly advertising or aggressive messaging.\n"
         ));
         $table->setFooter('Found 3 books...');
-        // $table->setStyle('compact');
         $out = $table->render();
 
         // file_put_contents('tests/table.txt', $out);
