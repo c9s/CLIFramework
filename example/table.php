@@ -1,10 +1,10 @@
 <?php
 require 'vendor/autoload.php';
 
-use CLIFramework\Component\Table;
-use CLIFramework\Component\TableStyle;
-use CLIFramework\Component\CellAttribute;
-use CLIFramework\Component\MarkdownTableStyle;
+use CLIFramework\Component\Table\Table;
+use CLIFramework\Component\Table\TableStyle;
+use CLIFramework\Component\Table\CellAttribute;
+use CLIFramework\Component\Table\MarkdownTableStyle;
 
 $bluehighlight = new CellAttribute;
 $bluehighlight->setBackgroundColor('blue');
