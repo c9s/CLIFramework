@@ -4,7 +4,6 @@ namespace CLIFramework\Ansi;
 /**
  * ANSI Color definitions
  *
- * @codeCoverageIgnore
  * @author Yo-An Lin <yoanlin93@gmail.com>
  */
 class Colors
