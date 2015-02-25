@@ -20,7 +20,7 @@ class ColorsTest extends PHPUnit_Framework_TestCase
      */
     public function testStrlenWithoutAnsiEscapeCode($input, $fg, $bg)
     {
-        $str = Colors::wrap($input, $fg, $bg);
+        $str = Colors::decorate($input, $fg, $bg);
         $len = Colors::strlenWithoutAnsiEscapeCode($str);
         $this->assertEquals(strlen($input), $len);
     }
@@ -30,7 +30,7 @@ class ColorsTest extends PHPUnit_Framework_TestCase
      */
     public function testStripAnsiEscapeCode($input, $fg, $bg)
     {
-        $str = Colors::wrap($input, $fg, $bg);
+        $str = Colors::decorate($input, $fg, $bg);
         $output = Colors::stripAnsiEscapeCode($str);
         $this->assertEquals($input, $output);
     }

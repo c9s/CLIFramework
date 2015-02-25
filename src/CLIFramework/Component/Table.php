@@ -3,7 +3,6 @@ namespace CLIFramework\Component;
 use InvalidArgumentException;
 
 use CLIFramework\Component\TableStyle;
-
 use CLIFramework\Component\MarkdownTableStyle;
 
 interface Separator { }
@@ -17,140 +16,6 @@ class RowSeparator implements Separator { }
  * TableSeparator is more likely a section separator, the style is customizable.
  */
 class TableSeparator implements Separator { }
-
-class CellAttribute { 
-
-    const ALIGN_RIGHT = 1;
-
-    const ALIGN_LEFT = 2;
-
-    const ALIGN_CENTER = 3;
-
-    protected $alignment = 2;
-
-    protected $formatter;
-
-    protected $textOverflow = 'wrap';
-
-    protected $backgroundColor;
-
-    protected $foregroundColor;
-
-
-    /*
-    protected $style;
-
-    public function __construct(TableStyle $style) 
-    {
-        $this->style = $style;
-    }
-
-    public function setStyle(TableStyle $style)
-    {
-        $this->style = $style;
-    }
-    */
-
-    public function setAlignment($alignment) 
-    {
-        $this->alignment = $alignment;
-    }
-
-    public function setFormatter(callable $formatter)
-    {
-        $this->formatter = $formatter;
-    }
-
-    public function setTextOverflow($overflowType)
-    {
-        $this->textOverflow = $overflowType;
-    }
-
-    public function format($cell) { 
-        if ($this->formatter) {
-            return call_user_func($this->formatter, $cell);
-        }
-        return $cell;
-    }
-
-    public function setBackgroundColor($color) {
-        $this->backgroundColor = $color;
-    }
-
-    public function setForegroundColor($color) {
-        $this->foregroundColor = $color;
-    }
-
-    public function getForegroundColor() 
-    {
-        return $this->foregroundColor; // TODO: fallback to table style
-    }
-
-    public function getBackgroundColor() 
-    {
-        return $this->backgroundColor; // TODO: fallback to table style
-    }
-
-    /**
-     * When inserting rows, we pre-explode the lines to extra rows from Table
-     * hence this method is separated for pre-processing..
-     */
-    public function handleTextOverflow($cell, $maxWidth)
-    {
-        $lines = explode("\n",$cell);
-        if ($this->textOverflow == 'wrap') {
-            // do wrap if need
-            $maxLineWidth = max(array_map('mb_strlen', $lines));
-            if ($maxLineWidth > $maxWidth) {
-                $cell = wordwrap($cell, $maxWidth, "\n");
-                // re-explode the lines
-                $lines = explode("\n",$cell);
-            }
-            return $lines;
-        } elseif ($this->textOverflow == 'ellipsis') {
-            if (mb_strlen($lines[0]) > $maxWidth) {
-                return array(mb_substr($lines[0], 0, $maxWidth - 2) . '..');
-            }
-            return $lines;
-        } elseif ($this->textOverflow == 'clip') {
-            if (mb_strlen($lines[0]) > $maxWidth) {
-                return array(mb_substr($lines[0], 0, $maxWidth));
-            }
-            return $lines;
-        }
-        return $lines;
-    }
-
-    public function renderCell($cell, $width, $style)
-    {
-        // XXX: ANSI Color support
-        $out = '';
-        $out .= str_repeat($style->cellPaddingChar, $style->cellPadding);
-
-        if ($this->formatter) {
-            $cell = $this->format($cell);
-        }
-
-        if ($this->alignment === CellAttribute::ALIGN_LEFT) {
-            $out .= str_pad($cell, $width, ' '); // default alignment = LEFT
-        } elseif ($this->alignment === CellAttribute::ALIGN_RIGHT) {
-            $out .= str_pad($cell, $width, ' ', STR_PAD_LEFT);
-        } elseif ($this->alignment === CellAttribute::ALIGN_CENTER) {
-            $out .= str_pad($cell, $width, ' ', STR_PAD_BOTH);
-        } else {
-            $out .= str_pad($cell, $width, ' '); // default alignment
-        }
-
-        $out .= str_repeat($style->cellPaddingChar, $style->cellPadding);
-        return $out;
-    }
-}
-
-class CurrencyCellAttribute extends CellAttribute {
-
-}
-
-
 
 /**
  * Feature:
@@ -277,7 +142,16 @@ class Table
 
         $cells = array_values($row);
         foreach ($cells as $col => $cell) {
-            $lines = $this->defaultCellAttribute->handleTextOverflow($cell, $this->maxColumnWidth);
+            $attribute = NULL;
+            $customAttribute = false;
+            if (is_array($cell)) {
+                list($cell, $attribute) = $cell;
+                $customAttribute = true;
+            } else {
+                $attribute = $this->defaultCellAttribute;
+            }
+
+            $lines = $attribute->handleTextOverflow($cell, $this->maxColumnWidth);
 
             // Handle extra lines
             $extraRowIdx = $lastRowIdx;
@@ -295,9 +169,9 @@ class Table
                 }
 
                 if (isset($this->rows[$extraRowIdx])) {
-                    $this->rows[$extraRowIdx][ $col ] = $line;
+                    $this->rows[$extraRowIdx][ $col ] = $customAttribute ? [$line, $attribute] : $line;
                 } else {
-                    $this->rows[$extraRowIdx] = array($col => $line);
+                    $this->rows[$extraRowIdx] = array($col => $customAttribute ? [$line, $attribute] : $line);
                 }
                 $extraRowIdx++;
             }
@@ -309,7 +183,11 @@ class Table
         $lengths = array();
         foreach($this->rows as $row) {
             if (isset($row[$col])) {
-                $lengths[] = mb_strlen($row[$col]);
+                if (is_array($row[$col])) {
+                    $lengths[] = mb_strlen($row[$col][0]);
+                } else {
+                    $lengths[] = mb_strlen($row[$col]);
+                }
             }
         }
 
@@ -403,6 +281,11 @@ class Table
 
     public function renderCell($cellIndex, $cell)
     {
+        $attribute = $this->defaultCellAttribute;
+        if (is_array($cell)) {
+            list($cell, $attribute) = $cell;
+        }
+
         $width = $this->getColumnWidth($cellIndex);
         if (function_exists('mb_strlen') && false !== $encoding = mb_detect_encoding($cell)) {
             $width += strlen($cell) - mb_strlen($cell, $encoding);
@@ -410,7 +293,7 @@ class Table
         if (isset($this->columnCellAttributes[$cellIndex])) {
             return $this->columnCellAttributes[$cellIndex]->renderCell($cell, $width, $this->style);
         }
-        return $this->defaultCellAttribute->renderCell($cell, $width, $this->style);
+        return $attribute->renderCell($cell, $width, $this->style);
     }
 
     public function renderFooter()
