@@ -20,9 +20,19 @@ class TableTest extends PHPUnit_Framework_TestCase
             "If you want to build a better future, you must believe in secrets.
             The great secret of our time is that there are still uncharted frontiers to explore and new inventions to create. In Zero to One, legendary entrepreneur and investor Peter Thiel shows how we can find singular ways to create those new things. ",
         ));
-        echo "\n" . $table->render() . "\n";
+        // echo "\n" . $table->render() . "\n";
+        $this->assertStringEqualsFile('tests/data/default-table-cell-attribute.txt', $table);
     }
 
+    static public function assertStringEqualsFile($file, $str, $message = NULL, $canonicalize = false, $ignoreCase = false) {
+        if ($str instanceof Table) {
+            $str = $str->render();
+        }
+        if (!file_exists($file)) {
+            file_put_contents($file, $str);
+        }
+        parent::assertStringEqualsFile($file, $str, $message, $canonicalize, $ignoreCase);
+    }
 
     public function testDefaultTableWithTextOverflowWithoutHeaderAndFooter()
     {
@@ -37,10 +47,6 @@ class TableTest extends PHPUnit_Framework_TestCase
         ));
 
         $out = $table->render();
-        if (!file_exists('tests/data/default-table-2.txt')) {
-            file_put_contents('tests/data/default-table-2.txt', $out);
-            echo "\n" . $out . "\n";
-        }
         $this->assertStringEqualsFile('tests/data/default-table-2.txt', $out);
     }
 
@@ -68,11 +74,6 @@ class TableTest extends PHPUnit_Framework_TestCase
             . "Nir Eyal answers these questions (and many more) by explaining the Hook Model—a four-step process embedded into the products of many successful companies to subtly encourage customer behavior. Through consecutive “hook cycles,” these products reach their ultimate goal of bringing users back again and again without depending on costly advertising or aggressive messaging.\n"
         ));
         $out = $table->render();
-
-        if (!file_exists('tests/data/default-table.txt')) {
-            file_put_contents('tests/data/default-table.txt', $out);
-            echo "\n" . $out . "\n";
-        }
         $this->assertStringEqualsFile('tests/data/default-table.txt', $out);
     }
 
@@ -100,11 +101,6 @@ class TableTest extends PHPUnit_Framework_TestCase
         ));
         $table->setFooter('Found 3 books...');
         $out = $table->render();
-
-        if (!file_exists('tests/data/default-table-footer.txt')) {
-            file_put_contents('tests/data/default-table-footer.txt', $out);
-            echo "\n" . $out . "\n";
-        }
         $this->assertStringEqualsFile('tests/data/default-table-footer.txt', $out);
     }
 
@@ -133,11 +129,6 @@ class TableTest extends PHPUnit_Framework_TestCase
         ));
         $table->setFooter('Found 3 books...');
         $out = $table->render();
-
-        if (!file_exists('tests/data/markdown-table.txt')) {
-            file_put_contents('tests/data/markdown-table.txt', $out);
-            echo "\n" . $out . "\n";
-        }
         $this->assertStringEqualsFile('tests/data/markdown-table.txt', $out);
     }
 }
