@@ -22,7 +22,8 @@ class TableTest extends PHPUnit_Framework_TestCase
         $out = $table->render();
 
         // file_put_contents('tests/table.txt', $out);
-        $this->assertStringMatchesFormatFile('tests/data/table.txt', $out);
+        // $this->assertStringMatchesFormatFile('tests/data/table.txt', $out);
+        $this->assertStringEqualsFile('tests/data/table.txt', $out);
         // echo "\n" . $out . "\n";
     }
 }
