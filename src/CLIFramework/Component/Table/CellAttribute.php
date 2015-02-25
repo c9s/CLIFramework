@@ -40,9 +40,14 @@ class CellAttribute {
         $this->alignment = $alignment;
     }
 
-    public function setFormatter(callable $formatter)
+    public function setFormatter($formatter)
     {
         $this->formatter = $formatter;
+    }
+
+    public function getFormatter()
+    {
+        return $this->formatter;
     }
 
     public function setTextOverflow($overflowType)
