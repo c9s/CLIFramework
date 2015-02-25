@@ -1,25 +1,33 @@
 <?php
 namespace CLIFramework\Component;
+use InvalidArgumentException;
 
 class MarkdownTableStyle {
     public $cellPadding = 1;
     public $cellPaddingChar = ' ';
     public $verticalBorderChar = '|';
+
+    public $rowSeparatorCrossChar = '+';
+    public $rowSeparatorBorderChar = '-';
+
+    public $rowSeparatorLeftmostCrossChar = '+';
+    public $rowSeparatorRightmostCrossChar = '+';
+
 }
 
-
+interface Separator { }
 
 /**
  * RowSeparator is a slight separator for separating distinct rows...
  */
-class RowSeparator {  }
+class RowSeparator implements Separator { 
+}
 
 /**
  * TableSeparator is more likely a section separator, the style is customizable.
  */
-class TableSeparator {  }
-
-
+class TableSeparator implements Separator { 
+}
 
 /**
  * Feature:
@@ -65,12 +73,21 @@ class Table
 
     protected $trimTrailingSpaces = false;
 
+    protected $footer;
+
     public function __construct() {
         $this->style = new MarkdownTableStyle;
     }
 
-    public function setHeaders($headers) {
+    public function setHeaders(array $headers) {
         $this->headers = $headers;
+        return $this;
+    }
+
+    public function setFooter($footer)
+    {
+        $this->footer = $footer;
+        return $this;
     }
 
     /**
@@ -170,7 +187,7 @@ class Table
 
         }
         if ($rowIndex > 0 && isset($this->rowIndex[$rowIndex])) {
-            return $this->renderSeparator($rowIndex, $row) . $out . "\n";
+            return $this->renderSeparator() . $out . "\n";
         } else {
             return $out . "\n";
         }
@@ -190,23 +207,115 @@ class Table
         return $this;
     }
 
-    public function renderSeparator($rowIndex, $row) {
+    public function renderSeparator() {
         $columnNumber = $this->getNumberOfColumns();
-
-        $out = '+';
+        $out = $this->style->rowSeparatorLeftmostCrossChar;
         for ($c = 0 ; $c < $columnNumber ; $c++) {
             $columnWidth = $this->getColumnWidth($c);
+            $out .= str_repeat($this->style->rowSeparatorBorderChar, $columnWidth + $this->style->cellPadding * 2);
 
-            $out .= str_repeat('-', $columnWidth + $this->style->cellPadding * 2);
-            $out .= '+';
+            if ($c + 1 < $columnNumber) {
+                $out .= $this->style->rowSeparatorCrossChar;
+            } else {
+                $out .= $this->style->rowSeparatorRightmostCrossChar;
+            }
         }
         return $out . "\n";
     }
 
+    public function renderHeader() {
+        $out = '';
+        $out = $this->style->verticalBorderChar;
+        $columnNumber = $this->getNumberOfColumns();
+        for ($c = 0 ; $c < $columnNumber ; $c++) {
+            if (isset($this->headers[$c])) {
+                $cell = $this->headers[$c];
+            } else {
+                $cell = '';
+            }
+            $width = $this->getColumnWidth($c);
+
+            if (function_exists('mb_strlen') && false !== $encoding = mb_detect_encoding($cell)) {
+                $width += strlen($cell) - mb_strlen($cell, $encoding);
+            }
+
+            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
+            $out .= str_pad($cell, $width, ' ');
+            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
+            $out .= $this->style->verticalBorderChar;
+        }
+        return $this->renderSeparator() . $out . "\n" . $this->renderSeparator();
+    }
+
+
+    public function getTableInnerWidth() 
+    {
+        $columnNumber = $this->getNumberOfColumns();
+        $width = 0;
+        for ($c = 0 ; $c < $columnNumber ; $c++) {
+            $width += $this->getColumnWidth($c) + $this->style->cellPadding * 2 + 1;
+        }
+        return $width - 1;
+    }
+
+
+    public function renderFooter()
+    {
+        if (!is_array($this->footer)) {
+            $columnNumber = $this->getNumberOfColumns();
+            $out = '';
+            $width = $this->getTableInnerWidth();
+            $out .= $this->renderSeparator();
+            $out .= $this->style->verticalBorderChar 
+                . str_repeat($this->style->cellPaddingChar, $this->style->cellPadding)
+                . str_pad($this->footer, $width - $this->style->cellPadding * 2) 
+                . str_repeat($this->style->cellPaddingChar, $this->style->cellPadding)
+                . $this->style->verticalBorderChar . "\n";
+
+            $out .= $this->style->rowSeparatorLeftmostCrossChar . str_repeat($this->style->rowSeparatorBorderChar, $width) 
+                . $this->style->rowSeparatorRightmostCrossChar . "\n";
+            return $out;
+        }
+
+        $out = '';
+        $out = $this->style->verticalBorderChar;
+        $columnNumber = $this->getNumberOfColumns();
+        for ($c = 0 ; $c < $columnNumber ; $c++) {
+            if (isset($this->footer[$c])) {
+                $cell = $this->footer[$c];
+            } else {
+                $cell = '';
+            }
+            $width = $this->getColumnWidth($c);
+
+            if (function_exists('mb_strlen') && false !== $encoding = mb_detect_encoding($cell)) {
+                $width += strlen($cell) - mb_strlen($cell, $encoding);
+            }
+
+            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
+            $out .= str_pad($cell, $width, ' ');
+            $out .= str_repeat($this->style->cellPaddingChar, $this->style->cellPadding);
+            $out .= $this->style->verticalBorderChar;
+        }
+        return $this->renderSeparator() . $out . "\n" . $this->renderSeparator();
+    }
+
     public function render() {
         $out = '';
+
+        if (!empty($this->headers)) {
+            $out .= $this->renderHeader();
+        } else {
+            $out .= $this->renderSeparator();
+        }
         foreach($this->rows as $rowIndex => $row) {
             $out .= $this->renderRow($rowIndex, $row);
+        }
+
+        if (!empty($this->footer)) {
+            $out .= $this->renderFooter();
+        } else {
+            $out .= $this->renderSeparator();
         }
         return $out;
     }
