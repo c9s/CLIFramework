@@ -3,9 +3,28 @@ use CLIFramework\Component\Table\Table;
 use CLIFramework\Component\Table\TableStyle;
 use CLIFramework\Component\Table\CellAttribute;
 use CLIFramework\Component\Table\MarkdownTableStyle;
+use CLIFramework\Component\Table\NumberFormatCell;
+use CLIFramework\Component\Table\CurrencyCellAttribute;
+use CLIFramework\Component\Table\SpellOutNumberFormatCell;
 
 class TableTest extends PHPUnit_Framework_TestCase
 {
+
+    public function testNumberFormatCell()
+    {
+        $numberFormatCell = new NumberFormatCell('en');
+        $numberFormatCell->setBackgroundColor('blue');
+
+        $table = new Table;
+        $table->setColumnCellAttribute(2, $numberFormatCell);
+        $table->addRow(array("AAA", "ASCII adjust AL after addition", 123));
+        $table->addRow(array("AAD", "ASCII adjust AX before division", 222));
+        $table->addRow(array("AAM", "ASCII adjust AX after multiplication", 12909));
+
+        // echo "\n" . $table->render() . "\n";
+        $this->assertStringEqualsFile('tests/data/default-table-number-column-cell-attribute.txt', $table);
+    }
+
     public function testColumnCellAttribute()
     {
         $highlight = new CellAttribute;

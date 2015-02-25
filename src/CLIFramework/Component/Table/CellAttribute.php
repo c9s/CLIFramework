@@ -92,27 +92,20 @@ class CellAttribute {
                 // Re-explode the lines
                 $lines = explode("\n",$cell);
             }
-            return $lines;
         } elseif ($this->textOverflow == 'ellipsis') {
             if (mb_strlen($lines[0]) > $maxWidth) {
-                return array(mb_substr($lines[0], 0, $maxWidth - 2) . '..');
+                $lines = array(mb_substr($lines[0], 0, $maxWidth - 2) . '..');
             }
-            return $lines;
         } elseif ($this->textOverflow == 'clip') {
             if (mb_strlen($lines[0]) > $maxWidth) {
-                return array(mb_substr($lines[0], 0, $maxWidth));
+                $lines = array(mb_substr($lines[0], 0, $maxWidth));
             }
-            return $lines;
         }
         return $lines;
     }
 
     public function renderCell($cell, $width, $style)
     {
-        if ($this->formatter) {
-            $cell = $this->format($cell);
-        }
-
         $out = '';
         $out .= str_repeat($style->cellPaddingChar, $style->cellPadding);
         /*
@@ -141,9 +134,4 @@ class CellAttribute {
         return $out;
     }
 }
-
-class CurrencyCellAttribute extends CellAttribute {
-
-}
-
 

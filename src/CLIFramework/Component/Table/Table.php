@@ -142,16 +142,21 @@ class Table
 
         $cells = array_values($row);
         foreach ($cells as $col => $cell) {
-            $attribute = NULL;
+            $attribute = $this->defaultCellAttribute;
+
             $customAttribute = false;
             if (is_array($cell)) {
                 list($cell, $attribute) = $cell;
                 $customAttribute = true;
-            } else {
-                $attribute = $this->defaultCellAttribute;
+            } elseif (isset($this->columnCellAttributes[$col])) {
+                $attribute = $this->columnCellAttributes[$col];
             }
 
             $lines = $attribute->handleTextOverflow($cell, $this->maxColumnWidth);
+
+            if (count($lines) == 1) {
+                $lines[0] = $attribute->format($lines[0]);
+            }
 
             // Handle extra lines
             $extraRowIdx = $lastRowIdx;
