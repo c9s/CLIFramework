@@ -6,9 +6,26 @@ use CLIFramework\Component\MarkdownTableStyle;
 
 class TableTest extends PHPUnit_Framework_TestCase
 {
+    public function testColumnCellAttribute()
+    {
+        $highlight = new CellAttribute;
+        $highlight->setBackgroundColor('blue');
 
+        $highlight2 = new CellAttribute;
+        $highlight2->setForegroundColor('red');
 
-    public function testCustomColumnCellAttribute() 
+        $table = new Table;
+        $table->setColumnCellAttribute(0, $highlight);
+        $table->setColumnCellAttribute(1, $highlight2);
+        $table->addRow(array("AAA", "ASCII adjust AL after addition"));
+        $table->addRow(array("AAD", "ASCII adjust AX before division"));
+        $table->addRow(array("AAM", "ASCII adjust AX after multiplication"));
+
+        // echo "\n" . $table->render() . "\n";
+        $this->assertStringEqualsFile('tests/data/default-table-column-cell-attribute.txt', $table);
+    }
+
+    public function testCustomColumnCellAttribute()
     {
         $highlight = new CellAttribute;
         $highlight->setBackgroundColor('blue');
@@ -22,16 +39,6 @@ class TableTest extends PHPUnit_Framework_TestCase
         ));
         // echo "\n" . $table->render() . "\n";
         $this->assertStringEqualsFile('tests/data/default-table-cell-attribute.txt', $table);
-    }
-
-    static public function assertStringEqualsFile($file, $str, $message = NULL, $canonicalize = false, $ignoreCase = false) {
-        if ($str instanceof Table) {
-            $str = $str->render();
-        }
-        if (!file_exists($file)) {
-            file_put_contents($file, $str);
-        }
-        parent::assertStringEqualsFile($file, $str, $message, $canonicalize, $ignoreCase);
     }
 
     public function testDefaultTableWithTextOverflowWithoutHeaderAndFooter()
@@ -131,5 +138,16 @@ class TableTest extends PHPUnit_Framework_TestCase
         $out = $table->render();
         $this->assertStringEqualsFile('tests/data/markdown-table.txt', $out);
     }
+
+    static public function assertStringEqualsFile($file, $str, $message = NULL, $canonicalize = false, $ignoreCase = false) {
+        if ($str instanceof Table) {
+            $str = $str->render();
+        }
+        if (!file_exists($file)) {
+            file_put_contents($file, $str);
+        }
+        parent::assertStringEqualsFile($file, $str, $message, $canonicalize, $ignoreCase);
+    }
+
 }
 

@@ -106,20 +106,19 @@ class CellAttribute {
 
     public function renderCell($cell, $width, $style)
     {
-        // XXX: ANSI Color support
-        $out = '';
-        $out .= str_repeat($style->cellPaddingChar, $style->cellPadding);
-
         if ($this->formatter) {
             $cell = $this->format($cell);
         }
 
-        // decorate the cell
+        $out = '';
+        $out .= str_repeat($style->cellPaddingChar, $style->cellPadding);
+        /*
         if ($this->backgroundColor || $this->foregroundColor) {
             $decoratedCell = Colors::decorate($cell, $this->foregroundColor, $this->backgroundColor);
             $width += mb_strlen($decoratedCell) - mb_strlen($cell);
             $cell = $decoratedCell;
         }
+        */
 
         if ($this->alignment === CellAttribute::ALIGN_LEFT) {
             $out .= str_pad($cell, $width, ' '); // default alignment = LEFT
@@ -132,6 +131,10 @@ class CellAttribute {
         }
 
         $out .= str_repeat($style->cellPaddingChar, $style->cellPadding);
+
+        if ($this->backgroundColor || $this->foregroundColor) {
+            return Colors::decorate($out, $this->foregroundColor, $this->backgroundColor);
+        }
         return $out;
     }
 }

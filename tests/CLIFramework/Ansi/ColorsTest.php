@@ -14,6 +14,15 @@ class ColorsTest extends PHPUnit_Framework_TestCase
         return $data;
     }
 
+    public function printColors() {
+        echo "\n";
+        foreach(Colors::getForegroundColors() as $fg) {
+            foreach(Colors::getBackgroundColors() as $bg) {
+                echo Colors::decorate("Hello", $fg, $bg);
+            }
+            echo "\n";
+        }
+    }
 
     /**
      * @dataProvider stringProvider

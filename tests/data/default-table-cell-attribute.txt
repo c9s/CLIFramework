@@ -1,6 +1,6 @@
 +--------------------+-------------------------------------------------+----------------------------------------------------+
-| September 16, 2014 | [44mZero to One: Notes on Startups, or How to Build[0m | If you want to build a better future, you must     |
-|                    | [44mthe Future[0m                                      | believe in secrets.                                |
+| September 16, 2014 |[44m Zero to One: Notes on Startups, or How to Build [0m| If you want to build a better future, you must     |
+|                    |[44m the Future                                      [0m| believe in secrets.                                |
 |                    |                                                 | The great secret of our time is that               |
 |                    |                                                 | there are still uncharted frontiers to explore and |
 |                    |                                                 | new inventions to create. In Zero to One,          |

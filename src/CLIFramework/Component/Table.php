@@ -94,13 +94,13 @@ class Table
 
     public function setColumnCellAttribute($colIndex, CellAttribute $cellAttribute)
     {
-        $columnCellAttributes[$colIndex] = $cellAttribute;
+        $this->columnCellAttributes[$colIndex] = $cellAttribute;
     }
 
     public function getColumnCellAttribute($colIndex)
     {
-        if (isset($columnCellAttributes[$colIndex])) {
-            return $columnCellAttributes[$colIndex];
+        if (isset($this->columnCellAttributes[$colIndex])) {
+            return $this->columnCellAttributes[$colIndex];
         }
     }
 
@@ -282,16 +282,16 @@ class Table
     public function renderCell($cellIndex, $cell)
     {
         $attribute = $this->defaultCellAttribute;
+
         if (is_array($cell)) {
             list($cell, $attribute) = $cell;
+        } elseif (isset($this->columnCellAttributes[$cellIndex])) {
+            $attribute = $this->columnCellAttributes[$cellIndex];
         }
 
         $width = $this->getColumnWidth($cellIndex);
         if (function_exists('mb_strlen') && false !== $encoding = mb_detect_encoding($cell)) {
             $width += strlen($cell) - mb_strlen($cell, $encoding);
-        }
-        if (isset($this->columnCellAttributes[$cellIndex])) {
-            return $this->columnCellAttributes[$cellIndex]->renderCell($cell, $width, $this->style);
         }
         return $attribute->renderCell($cell, $width, $this->style);
     }
