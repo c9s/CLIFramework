@@ -53,7 +53,7 @@ class Colors
     }
 
     // Returns colored string
-    static public function wrap($string, $fg = null, $bg = null) {
+    static public function decorate($string, $fg = null, $bg = null) {
         $coloredString = "";
 
         // Check if given foreground color found
