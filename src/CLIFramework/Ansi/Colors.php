@@ -9,7 +9,7 @@ namespace CLIFramework\Ansi;
  */
 class Colors
 {
-    protected $foregroundColors = array(
+    static protected $foregroundColors = array(
         'black'        => '0,30',
         'dark_gray'    => '1,30',
         'blue'         => '0,34',
@@ -28,7 +28,7 @@ class Colors
         'white'        => '1,37',
     );
 
-    protected $backgroundColors = array(
+    static protected $backgroundColors = array(
         'black'      => '40',
         'red'        => '41',
         'green'      => '42',
@@ -39,17 +39,26 @@ class Colors
         'light_gray' => '47',
     );
 
+    static public function stripAnsiEscapeCode($str) {
+        return preg_replace('#\033\[\d{0,1},?\d*(?:;\d2)?m#x', '', $str);
+    }
+
+    static public function strlenWithoutAnsiEscapeCode($str) {
+        $plain = preg_replace('#\033\[\d{0,1},?\d*(?:;\d2)?m#x', '', $str);
+        return mb_strlen($plain);
+    }
+
     // Returns colored string
-    public function wrap($string, $fg = null, $bg = null) {
+    static public function wrap($string, $fg = null, $bg = null) {
         $coloredString = "";
 
         // Check if given foreground color found
-        if ($fg && isset($this->foregroundColors[$fg])) {
-            $coloredString .= "\033[" . $this->foregroundColors[$fg] . "m";
+        if ($fg && isset(self::$foregroundColors[$fg])) {
+            $coloredString .= "\033[" . self::$foregroundColors[$fg] . "m";
         }
         // Check if given background color found
-        if ($bg && isset($this->backgroundColors[$bg])) {
-            $coloredString .= "\033[" . $this->backgroundColors[$bg] . "m";
+        if ($bg && isset(self::$backgroundColors[$bg])) {
+            $coloredString .= "\033[" . self::$backgroundColors[$bg] . "m";
         }
 
         // Add string and end coloring
@@ -62,13 +71,13 @@ class Colors
     }
 
     // Returns all foreground color names
-    public function getForegroundColors() {
-        return array_keys($this->foregroundColors);
+    static public function getForegroundColors() {
+        return array_keys(self::$foregroundColors);
     }
 
     // Returns all background color names
-    public function getBackgroundColors() {
-        return array_keys($this->backgroundColors);
+    static public function getBackgroundColors() {
+        return array_keys(self::$backgroundColors);
     }
 
 }
