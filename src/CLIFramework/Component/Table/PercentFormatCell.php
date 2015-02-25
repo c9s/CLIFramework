@@ -7,7 +7,7 @@ class DurationFormatCell extends NumberFormatCell
 {
     public function __construct($locale) {
         $this->locale = $locale;
-        $this->formatter = new NumberFormatter($locale, NumberFormatter::DURATION); 
+        $this->formatter = new NumberFormatter($locale, NumberFormatter::PERCENT); 
     }
 }
 
