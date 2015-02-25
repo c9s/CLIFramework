@@ -48,6 +48,11 @@ class Colors
         return mb_strlen($plain);
     }
 
+    static public function reset()
+    {
+        return "\033[0m";
+    }
+
     // Returns colored string
     static public function wrap($string, $fg = null, $bg = null) {
         $coloredString = "";
