@@ -45,12 +45,6 @@ class Application extends CommandBase
     public $getoptParser;
     public $supportReadline;
 
-    /**
-    * command message logger
-    *
-    * @var CLIFramework\Logger
-    */
-    public $logger;
 
     public $showAppSignature = true;
 
@@ -61,13 +55,28 @@ class Application extends CommandBase
     public $topics = array();
 
     /**
+     * (This should be deprecated since we use service container from now on).
      *
      * @var CLIFramework\Formatter
      */
     public $formatter;
 
+    /**
+     * Command message logger.
+     *
+     * (This should be deprecated since we use service container from now on).
+     *
+     * @var CLIFramework\Logger
+     */
+    public $logger;
+
+
     public $programName;
 
+
+    /**
+     * @var CLIFramework\ServiceContainer
+     */
     protected $service;
 
 
@@ -426,7 +435,6 @@ class Application extends CommandBase
     public function execute()
     {
         $options = $this->getOptions();
-
         if ($options->version) {
             $this->logger->writeln($this->getName() . ' - ' . $this->getVersion());
             $this->logger->writeln("cliframework core: " . $this->getCoreVersion());
