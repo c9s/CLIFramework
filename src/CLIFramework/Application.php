@@ -350,8 +350,6 @@ class Application extends CommandBase
             }
         }
 
-            throw new Exception("TestException");
-
         foreach ($command_stack as $cmd) {
             if (false === $cmd->prepare()) {
                 return false;
