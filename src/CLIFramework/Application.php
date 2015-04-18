@@ -260,7 +260,10 @@ class Application extends CommandBase
             $this->logger->error("Seems like an application logic error, please contact the developer.");
 
         } catch (Exception $e) {
-            $this->getLogger()->error(get_class($e) . ':' . $e->getMessage());
+
+            $printer = new \CLIFramework\ExceptionPrinter\ProductionExceptionPrinter($this->getLogger());
+            $printer->dump($e);
+            // $this->getLogger()->error(get_class($e) . ':' . $e->getMessage());
         }
 
         return false;
@@ -338,6 +341,8 @@ class Application extends CommandBase
                 $arguments[] = $a;
             }
         }
+
+            throw new Exception("TestException");
 
         foreach ($command_stack as $cmd) {
             if (false === $cmd->prepare()) {
