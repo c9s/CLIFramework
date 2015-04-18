@@ -21,11 +21,12 @@ use CLIFramework\CommandGroup;
 use CLIFramework\Formatter;
 use CLIFramework\Corrector;
 use CLIFramework\ServiceContainer;
-use Exception;
 use CLIFramework\Exception\CommandNotFoundException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
 use CLIFramework\Exception\ExecuteMethodNotDefinedException;
+use Exception;
 use ReflectionClass;
+use InvalidArgumentException;
 
 class Application extends CommandBase
     implements CommandInterface
@@ -453,12 +454,19 @@ class Application extends CommandBase
 
     public function getFormatter()
     {
-        return $this->formatter;
+        return $this->service['formatter'];
     }
 
     public function getLogger()
     {
-        return $this->logger;
+        return $this->service['logger'];
+    }
+
+    public function __get($name) {
+        if (isset($this->service[$name])) {
+            return $This->service[$name];
+        }
+        throw new InvalidArgumentException("Application class doesn't have `$name` property.");
     }
 
     public static function getInstance()
