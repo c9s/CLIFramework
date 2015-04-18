@@ -41,8 +41,6 @@ class Application extends CommandBase
     public $startedAt;
 
 
-    // options parser
-    public $getoptParser;
     public $supportReadline;
 
 
