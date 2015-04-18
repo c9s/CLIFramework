@@ -222,7 +222,7 @@ class Application extends CommandBase
             $this->logger->newline();
 
         } catch (Exception $e) {
-            $this->getLogger()->error( $e->getMessage() );
+            $this->getLogger()->error(get_class($e) . ':' . $e->getMessage());
         }
 
         return false;
