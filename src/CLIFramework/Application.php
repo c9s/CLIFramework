@@ -27,6 +27,7 @@ use CLIFramework\Exception\ExecuteMethodNotDefinedException;
 use Exception;
 use ReflectionClass;
 use InvalidArgumentException;
+use BadMethodCallException;
 
 class Application extends CommandBase
     implements CommandInterface
@@ -205,7 +206,7 @@ class Application extends CommandBase
                 return new $class;
             }
         }
-        throw new Exception("Topic $topicId not found.");
+        throw new InvalidArgumentException("Topic $topicId not found.");
     }
 
     /*
@@ -253,6 +254,10 @@ class Application extends CommandBase
             $this->logger->newline();
             $this->logger->writeln("\t" . $this->getProgramName() . ' help ' );
             $this->logger->newline();
+        } catch (BadMethodCallException $e) {
+
+            $this->logger->error($e->getMessage());
+            $this->logger->error("Seems like an application logic error, please contact the developer.");
 
         } catch (Exception $e) {
             $this->getLogger()->error(get_class($e) . ':' . $e->getMessage());
