@@ -17,12 +17,11 @@ function is_indexed_array(array $a) {
 function output_var($a) {
     if (is_array($a)) {
         if (is_indexed_array($a)) {
-            $out = '[';
+            $out = [];
             foreach ($a as $i) {
-                $out .= output_var($i);
+                $out[] = output_var($i);
             }
-            $out .= ']';
-            return $out;
+            return '[' . join(', ',$out) . ']';
         } else {
 
             $out = '[';

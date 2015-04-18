@@ -24,6 +24,10 @@ use CLIFramework\ServiceContainer;
 use CLIFramework\Exception\CommandNotFoundException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
 use CLIFramework\Exception\ExecuteMethodNotDefinedException;
+
+use CLIFramework\ExceptionPrinter\ProductionExceptionPrinter;
+use CLIFramework\ExceptionPrinter\DevelopmentExceptionPrinter;
+
 use Exception;
 use ReflectionClass;
 use InvalidArgumentException;
@@ -261,9 +265,13 @@ class Application extends CommandBase
 
         } catch (Exception $e) {
 
-            $printer = new \CLIFramework\ExceptionPrinter\ProductionExceptionPrinter($this->getLogger());
-            $printer->dump($e);
-            // $this->getLogger()->error(get_class($e) . ':' . $e->getMessage());
+            if ($this->options->debug) {
+                $printer = new DevelopmentExceptionPrinter($this->getLogger());
+                $printer->dump($e);
+            } else {
+                $printer = new ProductionExceptionPrinter($this->getLogger());
+                $printer->dump($e);
+            }
         }
 
         return false;
