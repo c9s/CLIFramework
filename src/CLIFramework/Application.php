@@ -86,9 +86,9 @@ class Application extends CommandBase
         $this->formatter = $this->service['formatter'];
 
         // get current class namespace, add {App}\Command\ to loader
-        $app_ref_class = new ReflectionClass($this);
-        $app_ns = $app_ref_class->getNamespaceName();
-        $this->loader->addNamespace( '\\' . $app_ns . '\\Command' );
+        $appRefClass = new ReflectionClass($this);
+        $appNs = $appRefClass->getNamespaceName();
+        $this->loader->addNamespace( '\\' . $appNs . '\\Command' );
         $this->loader->addNamespace( array('\\CLIFramework\\Command' ));
 
         $this->supportReadline = extension_loaded('readline');
@@ -115,11 +115,21 @@ class Application extends CommandBase
         $this->commandAutoloadEnabled = false;
     }
 
+    /**
+     * Use ReflectionClass to get the namespace of the current running app.
+     * (not CLIFramework\Application itself)
+     *
+     * @return string classname
+     */
     public function getCurrentAppNamespace() {
         $refClass = new ReflectionClass($this);
         return $refClass->getNamespaceName();
     }
 
+
+    /**
+     * @return string brief of this application
+     */
     public function brief()
     {
         return 'application brief';
@@ -130,7 +140,7 @@ class Application extends CommandBase
     }
 
     /**
-     * register application option specs to the parser
+     * Register application option specs to the parser
      */
     public function options($opts)
     {
@@ -146,7 +156,8 @@ class Application extends CommandBase
         // $opts->add('no-ansi', 'Disable ANSI output.');
     }
 
-    public function topics(array $topics) {
+    public function topics(array $topics) 
+    {
         foreach($topics as $key => $val) {
             if (is_numeric($key)) {
                 $this->topics[$val] = $this->loadTopic($val);
@@ -156,17 +167,20 @@ class Application extends CommandBase
         }
     }
 
-    public function topic($topicId, $topicClass = null) {
+    public function topic($topicId, $topicClass = null) 
+    {
         $this->topics[$topicId] = $topicClass ? new $topicClass: $this->loadTopic($topicId);
     }
 
-    public function getTopic($topicId) {
+    public function getTopic($topicId) 
+    {
         if (isset($this->topics[$topicId])) {
             return $this->topics[$topicId];
         }
     }
 
-    public function loadTopic($topicId) {
+    public function loadTopic($topicId) 
+    {
         // existing class name or full-qualified class name
         if (class_exists($topicId, true)) {
             return new $topicId;
@@ -204,7 +218,15 @@ class Application extends CommandBase
         ))->setId('dev');
     }
 
-    public function runWithTry($argv)
+    /**
+     * Execute `run` method with a default try & catch block to catch the exception.
+     *
+     * @param array $argv
+     *
+     * @return bool return true for success, false for failure. the returned
+     *              state will be reflected to the exit code of the process.
+     */
+    public function runWithTry(array $argv)
     {
         try {
             return $this->run($argv);
@@ -237,6 +259,8 @@ class Application extends CommandBase
      *
      * @param Array $argv
      *
+     * @return bool return true for success, false for failure. the returned
+     *              state will be reflected to the exit code of the process.
      * */
     public function run(Array $argv)
     {
@@ -325,6 +349,10 @@ class Application extends CommandBase
         return true;
     }
 
+    /**
+     * This is a `before` trigger of an app. when the application is getting
+     * started, we run `prepare` method to prepare the settings.
+     */
     public function prepare()
     {
         $this->startedAt = microtime(true);
@@ -389,6 +417,12 @@ class Application extends CommandBase
         }
     }
 
+    /**
+     * This method is the top logic of an application. when there is no
+     * argument provided, we show help content by default.
+     *
+     * @return bool return true if success
+     */
     public function execute()
     {
         $options = $this->getOptions();
@@ -396,7 +430,7 @@ class Application extends CommandBase
         if ($options->version) {
             $this->logger->writeln($this->getName() . ' - ' . $this->getVersion());
             $this->logger->writeln("cliframework core: " . $this->getCoreVersion());
-            return;
+            return true;
         }
 
         $arguments = func_get_args();
@@ -406,11 +440,10 @@ class Application extends CommandBase
         $help->setOptions($options);
         if ($help || $options->help) {
             $help->executeWrapper($arguments);
-        } else {
-            throw new Exception("Help command is not defined.");
+            return true;
         }
+        throw new CommandNotFoundException($this, 'help');
     }
-
 
     public function getFormatter()
     {
