@@ -4,6 +4,21 @@ use Pimple\Container;
 use CLIFramework\Logger;
 use CLIFramework\CommandLoader;
 
+
+/**
+ *
+ * Provided services:
+ *
+ *    logger:  CLIFramework\Logger
+ *    formatter: CLIFramework\Formatter
+ *    command_loader: CLIFramework\CommandLoader
+ *
+ * Usage:
+ *
+ *    $container = ServiceContainer::getInstance();
+ *    $logger = $container['logger'];
+ *
+ */
 class ServiceContainer extends Container
 {
     public function __construct()
