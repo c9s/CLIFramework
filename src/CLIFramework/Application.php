@@ -20,6 +20,7 @@ use CLIFramework\Prompter;
 use CLIFramework\CommandGroup;
 use CLIFramework\Formatter;
 use CLIFramework\Corrector;
+use CLIFramework\ServiceContainer;
 use Exception;
 use CLIFramework\Exception\CommandNotFoundException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
@@ -67,6 +68,9 @@ class Application extends CommandBase
 
     public $programName;
 
+    protected $service;
+
+
     /** @var bool */
     protected $commandAutoloadEnabled;
 
@@ -74,12 +78,12 @@ class Application extends CommandBase
     {
         parent::__construct();
 
-
-        $this->formatter = new Formatter;
-        $this->logger = new Logger;
+        $this->service = new ServiceContainer;
 
         // initliaze command loader
-        $this->loader = CommandLoader::getInstance();
+        $this->loader = $this->service['command_loader'];
+        $this->logger = $this->service['logger'];
+        $this->formatter = $this->service['formatter'];
 
         // get current class namespace, add {App}\Command\ to loader
         $app_ref_class = new ReflectionClass($this);
@@ -88,7 +92,6 @@ class Application extends CommandBase
         $this->loader->addNamespace( array('\\CLIFramework\\Command' ));
 
         $this->supportReadline = extension_loaded('readline');
-
         $this->disableCommandAutoload();
     }
 

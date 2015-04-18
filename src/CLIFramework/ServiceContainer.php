@@ -2,13 +2,21 @@
 namespace CLIFramework;
 use Pimple\Container;
 use CLIFramework\Logger;
+use CLIFramework\CommandLoader;
 
 class ServiceContainer extends Container
 {
     public function __construct()
     {
         $this['logger'] = function($c) {
-            return Console::getInstance()->getLogger();
+            return new Logger;
+        };
+        $this['formatter'] = function($c) {
+            return new Formatter;
+        };
+
+        $this['command_loader'] = function($c) {
+            return CommandLoader::getInstance();
         };
         parent::__construct();
     }
