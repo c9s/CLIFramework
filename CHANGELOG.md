@@ -3,6 +3,7 @@ Version next
 
 - Added ANSI Color definition class
 - Added show/hide cursor ansi code to CursorControl
+- Moved all singleton object builders to `CLIFramework\ServiceContainer`
 
 Version 2.2   - Wed Dec 31 11:27:50 2014
 
