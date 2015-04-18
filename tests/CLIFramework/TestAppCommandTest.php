@@ -1,11 +1,12 @@
 <?php
 use CLIFramework\ArgInfo;
+use TestApp\Application;
 
 class TestAppCommandTest extends PHPUnit_Framework_TestCase
 {
     public function testSimpleCommand()
     {
-        $command = new TestApp\Command\SimpleCommand(new TestApp\Application);
+        $command = new TestApp\Command\SimpleCommand(new Application);
 
         $argInfos = $command->getArgumentsInfo();
         $this->assertNotEmpty($argInfos);
@@ -14,8 +15,7 @@ class TestAppCommandTest extends PHPUnit_Framework_TestCase
     }
 
     public function testArginfoCommand() {
-        $cmd = new TestApp\Command\ArginfoCommand(new TestApp\Application);
-
+        $cmd = new TestApp\Command\ArginfoCommand(new Application);
         $argInfos = $cmd->getArgumentsInfo();
         $this->assertNotEmpty($argInfos);
         $this->assertCount(3, $argInfos);
