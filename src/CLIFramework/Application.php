@@ -265,7 +265,7 @@ class Application extends CommandBase
 
         } catch (Exception $e) {
 
-            if ($this->options->debug) {
+            if ($this->options && $this->options->debug) {
                 $printer = new DevelopmentExceptionPrinter($this->getLogger());
                 $printer->dump($e);
             } else {
