@@ -107,20 +107,24 @@ class Formatter
 
     public function getStartMark($style)
     {
-        if (!$this->supportsColors)
+        if (!$this->supportsColors) {
             return;
+        }
 
-        if ( $style == 'none' || ! isset($this->styles[$style]) )
+        if ($style == 'none' || ! isset($this->styles[$style])) {
             return '';
+        }
 
         $parameters = $this->styles[$style];
         $codes = array();
 
-        if (isset($parameters['fg']))
+        if (isset($parameters['fg'])) {
             $codes[] = $this->foreground[$parameters['fg']];
+        }
 
-        if (isset($parameters['bg']))
+        if (isset($parameters['bg'])) {
             $codes[] = $this->background[$parameters['bg']];
+        }
 
         foreach ($this->options as $option => $value) {
             if (isset($parameters[$option]) && $parameters[$option]) {
@@ -133,9 +137,9 @@ class Formatter
 
     public function getClearMark()
     {
-        if( ! $this->supportsColors )
-
+        if (! $this->supportsColors) {
             return '';
+        }
         return "\033[0m";
     }
 
@@ -149,10 +153,6 @@ class Formatter
      */
     public function format($text = '', $style = 'none')
     {
-        return
-            $this->getStartMark($style)
-            . $text
-            . $this->getClearMark();
+        return $this->getStartMark($style) . $text . $this->getClearMark();
     }
-
 }
