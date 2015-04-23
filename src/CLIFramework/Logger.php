@@ -10,6 +10,7 @@
  */
 namespace CLIFramework;
 use CLIFramework\Formatter;
+use CLIFramework\ServiceContainer;
 
 class Logger
 {
@@ -51,6 +52,10 @@ class Logger
      * */
     public $level = 4;
 
+    protected $indent = 0;
+
+    protected $indentCharacter = '  ';
+
     /**
      * foramtter class
      *
@@ -60,7 +65,8 @@ class Logger
 
     public function __construct()
     {
-        $this->formatter = new Formatter;
+        $container = ServiceContainer::getInstance();
+        $this->formatter = $container['formatter']; // new Formatter;
     }
 
     public function setLevel($level, $indent = 0)
@@ -108,7 +114,7 @@ class Logger
     }
 
 
-    public function setFormatter( $formatter )
+    public function setFormatter(Formatter $formatter)
     {
         $this->formatter = $formatter;
     }
@@ -118,7 +124,19 @@ class Logger
         return $this->formatter;
     }
 
-    public function __call($method,$args)
+    public function indent($level = 1) {
+        $this->indent += $level;
+    }
+
+    public function unIndent($level = 1) {
+        $this->indent = max(0 ,$this->indent - $level);
+    }
+
+    public function resetIndent() {
+        $this->indent = 0;
+    }
+
+    public function __call($method, $args)
     {
         $msg = $args[0];
         $indent = isset($args[1]) ? $args[1] : 0;
@@ -133,8 +151,8 @@ class Logger
             $style = 'dim';
         }
 
-        if ($indent) {
-            echo str_repeat("\t", $indent);
+        if ($this->indent) {
+            echo str_repeat($this->indentCharacter, $this->indent);
         }
 
         /* detect object */
@@ -183,6 +201,8 @@ class Logger
 
     /**
      * return the style of the given level name
+     *
+     * @param string $levelName
      */
     public function getStyleByName($levelName)
     {
@@ -191,6 +211,11 @@ class Logger
         }
     }
 
+    /**
+     * Return the log level name of the given level
+     *
+     * @param string $levelName
+     */
     public function getLevelByName($levelName)
     {
         if (isset($this->logLevels[$levelName])) {
