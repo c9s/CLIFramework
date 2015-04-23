@@ -114,6 +114,11 @@ class Logger
     }
 
 
+    /**
+     * Set formatter object
+     *
+     * @param Formatter $formatter
+     */
     public function setFormatter(Formatter $formatter)
     {
         $this->formatter = $formatter;
