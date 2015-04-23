@@ -139,12 +139,23 @@ class Logger
 
         /* detect object */
         if (is_object($msg) || is_array($msg)) {
-            echo $this->formatter->format(print_r($msg , 1), $style) . "\n";
+            echo $this->formatter->format(print_r($msg , 1), $style) , "\n";
         } else {
-            echo $this->formatter->format($msg , $style), "\n";
+            echo $this->formatter->format($msg , $style) , "\n";
         }
     }
 
+    /**
+     * Write to console with given output format.
+     *
+     * $logger->writef('%s ... %s');
+     *
+     * @param string $format
+     */
+    public function writef($format) {
+        $args = func_get_args();
+        echo call_user_func_array('sprintf', $args);
+    }
 
     /**
      * @param string $text text to write to console by `echo`
@@ -156,14 +167,16 @@ class Logger
     /**
      * @param string $text write text to console and append a newline charactor.
      */
-    public function writeln($text) {
-        echo $text , "\n";
+    public function writeln($text)
+    {
+        echo $text, "\n";
     }
 
     /**
      * Append a newline charactor to the console
      */
-    public function newline() {
+    public function newline()
+    {
         echo "\n";
     }
 
