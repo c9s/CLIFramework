@@ -227,6 +227,7 @@ class Application extends CommandBase
             'zsh'                 => 'CLIFramework\\Command\\ZshCompletionCommand',
             'bash'                => 'CLIFramework\\Command\\BashCompletionCommand',
             'meta'                => 'CLIFramework\\Command\\MetaCommand',
+            'compile'             => 'CLIFramework\\Command\\CompileCommand',
             'github:build-topics' => 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand',
         ))->setId('dev');
     }
