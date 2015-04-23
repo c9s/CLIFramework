@@ -145,32 +145,49 @@ class Logger
         }
     }
 
+
+    /**
+     * @param string $text text to write to console by `echo`
+     */
     public function write($text) {
         echo $text;
     }
 
+    /**
+     * @param string $text write text to console and append a newline charactor.
+     */
     public function writeln($text) {
         echo $text , "\n";
     }
 
+    /**
+     * Append a newline charactor to the console
+     */
     public function newline() {
         echo "\n";
     }
 
+
+    /**
+     * return the style of the given level name
+     */
     public function getStyleByName($levelName)
     {
-        return @$this->levelStyles[$levelName];
+        if (isset($this->levelStyles[$levelName])) {
+            return $this->levelStyles[$levelName];
+        }
     }
 
     public function getLevelByName($levelName)
     {
-        return @$this->logLevels[$levelName];
+        if (isset($this->logLevels[$levelName])) {
+            return $this->logLevels[$levelName];
+        }
     }
 
     public static function getInstance()
     {
         static $instance;
-
         return $instance ? $instance : $instance = new static;
     }
 }

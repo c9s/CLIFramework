@@ -39,7 +39,7 @@ class Formatter
         'bold' => array('fg' => 'white', 'bold' => 1 ),
         'underline' => array( 'fg' => 'white' , 'underline' => 1 ),
 
-        // generic styles
+        // generic styles for logger
         'info'   => array('fg'  => 'white', 'bold' => 1 ),
         'debug'  => array('fg'  => 'white' ),
         'notice' => array('fg'  => 'yellow' ),
