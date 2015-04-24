@@ -3,7 +3,12 @@ CLIFramework
 
 [![Build Status](https://travis-ci.org/c9s/CLIFramework.svg?branch=master)](https://travis-ci.org/c9s/CLIFramework)
 [![Coverage Status](https://img.shields.io/coveralls/c9s/CLIFramework.svg)](https://coveralls.io/r/c9s/CLIFramework) 
-[![Latest Stable Version](https://poser.pugx.org/corneltek/cliframework/v/stable.svg)](https://packagist.org/packages/corneltek/cliframework) [![Total Downloads](https://poser.pugx.org/corneltek/cliframework/downloads.svg)](https://packagist.org/packages/corneltek/cliframework) [![Latest Unstable Version](https://poser.pugx.org/corneltek/cliframework/v/unstable.svg)](https://packagist.org/packages/corneltek/cliframework) [![License](https://poser.pugx.org/corneltek/cliframework/license.svg)](https://packagist.org/packages/corneltek/cliframework)
+[![Latest Stable Version](https://poser.pugx.org/corneltek/cliframework/v/stable.svg)](https://packagist.org/packages/corneltek/cliframework) 
+[![Latest Unstable Version](https://poser.pugx.org/corneltek/cliframework/v/unstable.svg)](https://packagist.org/packages/corneltek/cliframework) 
+[![Total Downloads](https://poser.pugx.org/corneltek/cliframework/downloads.svg)](https://packagist.org/packages/corneltek/cliframework) 
+[![Monthly Downloads](https://poser.pugx.org/corneltek/cliframework/d/monthly)](https://packagist.org/packages/corneltek/cliframework)
+[![License](https://poser.pugx.org/corneltek/cliframework/license.svg)](https://packagist.org/packages/corneltek/cliframework)
+
 
 CLIFramework is a command-line application framework, for building flexiable, simple command-line applications.
 
