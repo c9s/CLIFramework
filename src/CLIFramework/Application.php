@@ -481,7 +481,7 @@ class Application extends CommandBase
 
     public function __get($name) {
         if (isset($this->service[$name])) {
-            return $This->service[$name];
+            return $this->service[$name];
         }
         throw new InvalidArgumentException("Application class doesn't have `$name` property.");
     }
