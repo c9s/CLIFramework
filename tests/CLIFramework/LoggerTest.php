@@ -11,24 +11,33 @@
 
 class LoggerTest extends PHPUnit_Framework_TestCase 
 {
+    private $logger;
+    function setUp()
+    {
+        $this->logger = new \CLIFramework\Logger;
+    }
+
     function testColoredOutput()
     {
-        $logger = new \CLIFramework\Logger;
-        $logger->info('test');
-        $logger->debug('test');
+        $this->logger->info('test');
+        $this->logger->debug('test');
 
         $this->expectOutputString("\033[2mtest\033[0m\n");
     }
 
     function testRawOutput()
     {
-        $logger = new \CLIFramework\Logger;
-        $logger->getFormatter()->preferRawOutput();
-        $logger->info('test');
-        $logger->debug('test');
+        $this->logger->getFormatter()->preferRawOutput();
+        $this->logger->info('test');
+        $this->logger->debug('test');
 
         $this->expectOutputString("test\n");
     }
 
 
+    function testLogException()
+    {
+        $this->logger->logException(new \Exception('exception'));
+        $this->expectOutputString("exception\n");
+    }
 }
