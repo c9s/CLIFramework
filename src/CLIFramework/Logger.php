@@ -203,6 +203,14 @@ class Logger
         echo "\n";
     }
 
+    /**
+     * @param Exception $exception an exception to write to console.
+     */
+    public function logException(\Exception $exception)
+    {
+        echo $exception->getMessage();
+        $this->newline();
+    }
 
     /**
      * return the style of the given level name
