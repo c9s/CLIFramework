@@ -3,6 +3,7 @@ namespace CLIFramework;
 use Pimple\Container;
 use CLIFramework\Logger;
 use CLIFramework\CommandLoader;
+use CLIFramework\IO\StreamWriter;
 
 
 /**
@@ -12,6 +13,7 @@ use CLIFramework\CommandLoader;
  *    logger:  CLIFramework\Logger
  *    formatter: CLIFramework\Formatter
  *    command_loader: CLIFramework\CommandLoader
+ *    writer: CLIFramework\IO\Writer
  *
  * Usage:
  *
@@ -23,6 +25,9 @@ class ServiceContainer extends Container
 {
     public function __construct()
     {
+        $this['writer'] = function($c) {
+            return new StreamWriter(STDOUT);
+        };
         $this['logger'] = function($c) {
             return new Logger;
         };
@@ -39,7 +44,11 @@ class ServiceContainer extends Container
     static public function getInstance()
     {
         static $instance;
-        $instance = new self;
+
+        if (!$instance) {
+            $instance = new static;
+        }
+
         return $instance;
     }
 }
