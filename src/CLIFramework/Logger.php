@@ -11,6 +11,7 @@
 namespace CLIFramework;
 use CLIFramework\Formatter;
 use CLIFramework\ServiceContainer;
+use CLIFramework\IO\Writer;
 
 class Logger
 {
@@ -63,10 +64,18 @@ class Logger
      */
     public $formatter;
 
+    /**
+     * writer class
+     *
+     * @var CLIFramework\IO\Writer
+     */
+    private $writer;
+
     public function __construct()
     {
         $container = ServiceContainer::getInstance();
         $this->formatter = $container['formatter']; // new Formatter;
+        $this->writer = $container['writer'];
     }
 
     public function setLevel($level, $indent = 0)
@@ -129,6 +138,16 @@ class Logger
         return $this->formatter;
     }
 
+    /**
+     * Set writer object
+     *
+     * @param Writer $writer
+     */
+    public function setWriter(Writer $writer)
+    {
+        $this->writer = $writer;
+    }
+
     public function indent($level = 1) {
         $this->indent += $level;
     }
@@ -157,14 +176,14 @@ class Logger
         }
 
         if ($this->indent) {
-            echo str_repeat($this->indentCharacter, $this->indent);
+            $this->writer->write(str_repeat($this->indentCharacter, $this->indent));
         }
 
         /* detect object */
         if (is_object($msg) || is_array($msg)) {
-            echo $this->formatter->format(print_r($msg , 1), $style) , "\n";
+            $this->writer->writeln($this->formatter->format(print_r($msg , 1), $style));
         } else {
-            echo $this->formatter->format($msg , $style) , "\n";
+            $this->writer->writeln($this->formatter->format($msg , $style));
         }
     }
 
@@ -177,22 +196,22 @@ class Logger
      */
     public function writef($format) {
         $args = func_get_args();
-        echo call_user_func_array('sprintf', $args);
+        $this->writer->write(call_user_func_array('sprintf', $args));
     }
 
     /**
-     * @param string $text text to write to console by `echo`
+     * @param string $text text to write by `writer`
      */
     public function write($text) {
-        echo $text;
+        $this->writer->write($text);
     }
 
     /**
-     * @param string $text write text to console and append a newline charactor.
+     * @param string $text write text and append a newline charactor.
      */
     public function writeln($text)
     {
-        echo $text, "\n";
+        $this->writer->writeln($text);
     }
 
     /**
@@ -200,7 +219,7 @@ class Logger
      */
     public function newline()
     {
-        echo "\n";
+        $this->writer->writeln('');
     }
 
     /**
