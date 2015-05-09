@@ -4,6 +4,7 @@ use Pimple\Container;
 use CLIFramework\Logger;
 use CLIFramework\CommandLoader;
 use CLIFramework\IO\StreamWriter;
+use CLIFramework\Config\GlobalConfig;
 
 
 /**
@@ -25,6 +26,27 @@ class ServiceContainer extends Container
 {
     public function __construct()
     {
+        $this['config.path'] = function($c) {
+            $filename = 'cliframework.ini';
+            $configAtCurrentDirectory = getcwd() . DIRECTORY_SEPARATOR . $filename;
+            $configAtHomeDirectory = getenv('HOME') . DIRECTORY_SEPARATOR . $filename;
+
+            if (file_exists($configAtCurrentDirectory)) {
+                return $configAtCurrentDirectory;
+            }
+
+            if (file_exists($configAtHomeDirectory)) {
+                return $configAtHomeDirectory;
+            }
+
+            return '';
+        };
+        $this['config'] = function($c) {
+            if (empty($c['config.path'])) {
+                return new GlobalConfig(array());
+            }
+            return new GlobalConfig(parse_ini_file($c['config.path'], true));
+        };
         $this['writer'] = function($c) {
             return new StreamWriter(STDOUT);
         };
