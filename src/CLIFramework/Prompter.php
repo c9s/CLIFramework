@@ -1,22 +1,22 @@
 <?php
 namespace CLIFramework;
-use CLIFramework\Formatter;
+
+use CLIFramework\ServiceContainer;
 
 /**
  * Prompter class
- *
- *
- *
  */
 class Prompter
 {
-    public $style;
-
-    public $formatter;
+    private $style;
+    private $formatter;
+    private $console;
 
     public function __construct()
     {
-        $this->formatter = new Formatter;
+        $container = ServiceContainer::getInstance();
+        $this->formatter = $container['formatter'];
+        $this->console = $container['console'];
     }
 
     /**
@@ -25,19 +25,6 @@ class Prompter
     public function setStyle($style)
     {
         return $this->style = $style;
-    }
-
-    public function readline($prompt)
-    {
-        if ( extension_loaded('readline') ) {
-            $answer = readline($prompt);
-            readline_add_history($answer);
-        } else {
-            echo $prompt;
-            $answer = rtrim( fgets( STDIN ), "\n" );
-        }
-
-        return trim( $answer );
     }
 
     /**
@@ -57,7 +44,7 @@ class Prompter
 
         $answer = null;
         while (1) {
-            $answer = $this->readline( $prompt );
+            $answer = trim($this->console->readLine( $prompt ));
             if ($validAnswers) {
                 if (in_array($answer,$validAnswers) ) {
                     break;
@@ -75,5 +62,23 @@ class Prompter
             echo $this->formatter->getClearMark();
         }
         return $answer;
+    }
+
+    /**
+     * Show password prompt with a message.
+     */
+    public function password($prompt)
+    {
+        if ($this->style) {
+            echo $this->formatter->getStartMark( $this->style );
+        }
+
+        $result = $this->console->readPassword($prompt);
+
+        if ($this->style) {
+            echo $this->formatter->getClearMark();
+        }
+
+        return $result;
     }
 }
