@@ -410,17 +410,27 @@ Built-in styles:
 Prompter Component
 ------------------
 
+Show prompt with a message.
 
 ```php
 $prompter = new CLIFramework\Prompter;
 
-$prompter->style = 'strong_white';
+$prompter->setStyle('strong_white');
 
 $value = $prompter->ask( "Please enter your email" );
 
 $value = $prompter->ask( "Apple or Banana" , array( 'Apple', 'Banana' ) );
 ```
 
+Show password prompt with a message, which doesn't display user input.
+
+```php
+$prompter = new CLIFramework\Prompter;
+
+$prompter->setStyle('strong_white');
+
+$value = $prompter->password( "Please enter your password" );
+```
 
 Chooser Component
 -----------------

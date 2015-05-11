@@ -3,8 +3,12 @@ namespace CLIFramework;
 use Pimple\Container;
 use CLIFramework\Logger;
 use CLIFramework\CommandLoader;
-use CLIFramework\IO\StreamWriter;
 use CLIFramework\Config\GlobalConfig;
+use CLIFramework\IO\StreamWriter;
+use CLIFramework\IO\NullStty;
+use CLIFramework\IO\UnixStty;
+use CLIFramework\IO\ReadlineConsole;
+use CLIFramework\IO\StandardConsole;
 
 
 /**
@@ -56,11 +60,28 @@ class ServiceContainer extends Container
         $this['formatter'] = function($c) {
             return new Formatter;
         };
-
+        $this['console.stty'] = function($c) {
+            if ($this->isWindows()) {
+                // TODO support Windows
+                return new NullStty();
+            }
+            return new UnixStty();
+        };
+        $this['console'] = function($c) {
+            if (ReadlineConsole::isAvailable()) {
+                return new ReadlineConsole($c['console.stty']);
+            }
+            return new StandardConsole($c['console.stty']);
+        };
         $this['command_loader'] = function($c) {
             return CommandLoader::getInstance();
         };
         parent::__construct();
+    }
+
+    private function isWindows()
+    {
+        return preg_match('/^Win/', PHP_OS);
     }
 
     static public function getInstance()
