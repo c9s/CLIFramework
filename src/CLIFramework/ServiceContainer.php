@@ -30,6 +30,7 @@ class ServiceContainer extends Container
 {
     public function __construct()
     {
+        $that = $this;
         $this['config.path'] = function($c) {
             $filename = 'cliframework.ini';
             $configAtCurrentDirectory = getcwd() . DIRECTORY_SEPARATOR . $filename;
@@ -60,8 +61,8 @@ class ServiceContainer extends Container
         $this['formatter'] = function($c) {
             return new Formatter;
         };
-        $this['console.stty'] = function($c) {
-            if ($this->isWindows()) {
+        $this['console.stty'] = function($c) use ($that){
+            if ($that->isWindows()) {
                 // TODO support Windows
                 return new NullStty();
             }
@@ -79,7 +80,7 @@ class ServiceContainer extends Container
         parent::__construct();
     }
 
-    private function isWindows()
+    public function isWindows()
     {
         return preg_match('/^Win/', PHP_OS);
     }
