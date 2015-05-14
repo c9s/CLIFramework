@@ -481,10 +481,10 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
                             $buf->appendLine('      return');
                         }
                     } elseif ($a->suggestions) {
-                        if (is_callable($a->validValues)) {
+                        if (is_callable($a->suggestions)) {
                             $buf->appendLine("      __complete_meta \"\$command_signature\" \"arg\" $index \"suggestions\"");
                             $buf->appendLine('      return');
-                        } elseif ($values = $a->getValidValues()) {
+                        } elseif ($values = $a->getSuggestions()) {
                             $buf->appendLine('      COMPREPLY=( $(compgen -W "' . join("\n", $values) . '" -- $cur) )');
                             $buf->appendLine('      return');
                         }
