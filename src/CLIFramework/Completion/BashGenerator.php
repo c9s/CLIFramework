@@ -277,11 +277,7 @@ __complete_meta ()
 BASH;
         $buf->append($completeMeta);
 
-        foreach($this->app->getCommands() as $command) {
-            $this->generateCompleteFunction($buf, $command, $compPrefix);
-        }
-
-        $this->generateCompleteFunction($buf, $this->app, $compPrefix);
+        $this->generateCommandCompletionRecursively($buf, $this->app, $compPrefix);
 
         $funcSuffix = command_signature_suffix($this->app);
 
@@ -570,6 +566,21 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         // Epilog
         $buf->appendLine("};");
     }
+
+
+    public function generateCommandCompletionRecursively(Buffer $buf, $command, $compPrefix) {
+        foreach($command->getCommands() as $subcommand) {
+            if ($subcommand->hasCommands()) {
+                $this->generateCommandCompletionRecursively($buf, $subcommand, $compPrefix);
+            }
+            $this->generateCompleteFunction($buf, $subcommand, $compPrefix);
+        }
+        $this->generateCompleteFunction($buf, $command, $compPrefix);
+    }
+
+
+
+
 
 }
 
