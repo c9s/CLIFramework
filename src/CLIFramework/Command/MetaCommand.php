@@ -91,23 +91,30 @@ class MetaCommand extends Command
      *     app meta sub1.sub2.sub3 opt email valid-values
      */
     public function execute($commandlist, $type, $arg = NULL, $attr = NULL) {
-        $commands = explode('.', $commandlist);
+        $commandNames = explode('.', $commandlist);
         // lookup commands
         $app = $this->getApplication();
 
         $cmd = $app;
 
-        if ($commands[0] === "app") {
-            array_shift($commands);
+        if ($commandNames[0] === "app") {
+            array_shift($commandNames);
         }
-        while (!empty($commands) && $cmd->hasCommands()) {
-            $cmd = $cmd->getCommand(array_pop($commands));
+
+        $this->logger->debug("Finding command " . get_class($cmd));
+
+        while (!empty($commandNames) && $cmd->hasCommands()) {
+            $commandName = array_shift($commandNames);
+            $this->logger->debug("Finding command " . $commandName);
+            $cmd = $cmd->getCommand($commandName);
+            $this->logger->debug("Found command class " . get_class($cmd));
         }
 
         // 'arg' or 'opt' require the argument name and attribute type
         if (in_array($type, array('arg', 'opt')) && $arg === NULL || $attr === NULL) {
             throw new InvalidArgumentException("'arg' or 'opt' require the attribute type.");
         }
+
 
         try {
 
@@ -241,6 +248,8 @@ class MetaCommand extends Command
             }
             return;
         }
+
+        // if the output values is indexed array
 
         if (isset($values[0]) && is_array($values[0])) {
             $this->logger->writeln("#descriptions");
