@@ -39,12 +39,29 @@ function array_escape_space(array $array) {
     }, $array);
 }
 
+function is_indexed_array(array $array) {
+    $keys = array_keys($array);
+    $numericKey = true;
+    foreach($keys as $key) {
+        if (!is_numeric($key)) {
+            $numericKey = false;
+        }
+    }
+    return $numericKey;
+}
+
 function is_assoc_array(array $array) {
     if (empty($array)) {
         return false;
     }
     $keys = array_keys($array);
-    return ! is_integer($keys[0]);
+    $numericKey = true;
+    foreach($keys as $key) {
+        if (!is_numeric($key)) {
+            $numericKey = false;
+        }
+    }
+    return !$numericKey;
 }
 
 function as_shell_string($str) {
@@ -251,7 +268,7 @@ class MetaCommand extends Command
 
         // if the output values is indexed array
 
-        if (isset($values[0]) && is_array($values[0])) {
+        if (is_indexed_array($values) && is_array($values[0])) {
             $this->logger->writeln("#descriptions");
             if ($opts->zsh) {
                 // for zsh, we output the first line as the label
@@ -265,7 +282,7 @@ class MetaCommand extends Command
                 }
             }
 
-        } elseif (isset($values[0])) { // indexed array is a list.
+        } elseif (is_indexed_array($values)) { // indexed array is a list.
             $this->logger->writeln("#values");
             $this->logger->writeln(join("\n", $values));
         } else { // associative array
