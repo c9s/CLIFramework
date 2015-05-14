@@ -266,9 +266,8 @@ class MetaCommand extends Command
             return;
         }
 
-        // if the output values is indexed array
-
-        if (is_indexed_array($values) && is_array($values[0])) {
+        // for assoc array in indexed array
+        if (is_array($values) && is_indexed_array($values) && is_array(end($values))) {
             $this->logger->writeln("#descriptions");
             if ($opts->zsh) {
                 // for zsh, we output the first line as the label
@@ -282,7 +281,7 @@ class MetaCommand extends Command
                 }
             }
 
-        } elseif (is_indexed_array($values)) { // indexed array is a list.
+        } elseif (is_array($values) && is_indexed_array($values)) { // indexed array is a list.
             $this->logger->writeln("#values");
             $this->logger->writeln(join("\n", $values));
         } else { // associative array
