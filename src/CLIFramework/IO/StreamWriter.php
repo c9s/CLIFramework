@@ -11,6 +11,10 @@ class StreamWriter implements Writer
 
     public function __construct($stream)
     {
+        if (!is_resource($stream)) {
+            throw new \RuntimeException("invalid stream");
+        }
+
         $this->stream = $stream;
     }
 

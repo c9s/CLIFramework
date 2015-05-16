@@ -164,6 +164,7 @@ class Application extends CommandBase
         $opts->add('version'  ,'Show version.');
 
         $opts->add('p|profile','Display timing and memory usage information.');
+        $opts->add('log-path?', 'The path of a log file.');
         // Un-implemented options
         $opts->add('no-interact','Do not ask any interactive question.');
         // $opts->add('no-ansi', 'Disable ANSI output.');
@@ -382,9 +383,10 @@ class Application extends CommandBase
     {
         $this->startedAt = microtime(true);
         $options = $this->getOptions();
-        if ($options->verbose) {
+        $config = $this->getGlobalConfig();
+        if ($options->verbose || $config->isVerbose()) {
             $this->getLogger()->setVerbose();
-        } elseif ($options->debug) {
+        } elseif ($options->debug || $config->isDebug()) {
             $this->getLogger()->setDebug();
         } elseif ($options->quiet) {
             $this->getLogger()->setLevel(2);
@@ -477,6 +479,11 @@ class Application extends CommandBase
     public function getLogger()
     {
         return $this->service['logger'];
+    }
+
+    private function getGlobalConfig()
+    {
+        return $this->service['config'];
     }
 
     public function __get($name) {
