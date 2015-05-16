@@ -28,6 +28,7 @@ require 'tests/DemoApp/Command/CommitCommand.php';
 require 'tests/DemoApp/Command/FooCommand.php';
 require 'tests/DemoApp/Command/AddCommand.php';
 require 'tests/DemoApp/Command/FooCommand/SubFooCommand.php';
+require 'tests/DemoApp/Command/ServerCommand.php';
 
 $app = new DemoApp\Application;
 $app->runWithTry($argv);

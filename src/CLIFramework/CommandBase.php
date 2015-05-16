@@ -27,6 +27,9 @@ use CLIFramework\Exception\ExecuteMethodNotDefinedException;
 use CLIFramework\ArgInfo;
 use CLIFramework\ArgInfoList;
 use CLIFramework\Corrector;
+use CLIFramework\Hook\Hookable;
+use CLIFramework\Hook\HookHolder;
+use CLIFramework\Extension\Extension;
 
 /**
  * Command based class (application & subcommands inherit from this class)
@@ -73,6 +76,10 @@ abstract class CommandBase
 
     public $argInfos = array();
 
+    private $hooks;
+
+    private $extensions = array();
+
     public function __construct() {
     }
 
@@ -116,6 +123,46 @@ abstract class CommandBase
      * @return strings[]
      */
     public function aliases() {
+    }
+
+    private function getHooks()
+    {
+        if (!$this->hooks) {
+            $this->hooks = new HookHolder();
+        }
+        return $this->hooks;
+    }
+
+    public function getHookPoints()
+    {
+        return $this->getHooks()->getHookPoints();
+    }
+
+    public function addHook($name, \Closure $callback)
+    {
+        $this->getHooks()->addHook($name, $callback);
+    }
+
+    public function addHookByArray(array $options)
+    {
+        $this->getHooks()->addHookByArray($options);
+    }
+
+    public function callHook($name)
+    {
+        call_user_func_array(array($this->getHooks(), 'callHook'), func_get_args());
+    }
+
+    public function enableExtension(Extension $extension)
+    {
+        $this->extensions[] = $extension;
+    }
+
+    private function initExtensions()
+    {
+        foreach ($this->extensions as $extension) {
+            $extension->bind($this);
+        }
     }
 
     /**
@@ -243,6 +290,7 @@ abstract class CommandBase
         // init application options
         $this->options($this->optionSpecs);
         $this->init();
+        $this->initExtensions();
     }
 
 
@@ -686,7 +734,11 @@ abstract class CommandBase
         if ( count($args) < $requiredNumber ) {
             throw new CommandArgumentNotEnoughException($this, count($args), $requiredNumber);
         }
-        return call_user_func_array(array($this,'execute'), $args);
+
+        $this->callHook('execute.before');
+        $result = call_user_func_array(array($this,'execute'), $args);
+        $this->callHook('execute.after');
+        return $result;
     }
 
     /**

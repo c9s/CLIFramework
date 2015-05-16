@@ -44,6 +44,16 @@ class GlobalConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($config->isDebug());
     }
 
+    /**
+     * @test
+     * @dataProvider provideSampleConfig
+     */
+    public function testGetPidDirectory($sampleConfig)
+    {
+        $config = new GlobalConfig($sampleConfig);
+        $this->assertSame('/var/run', $config->getPidDirectory());
+    }
+
     public function provideSampleConfig()
     {
         return array(

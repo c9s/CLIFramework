@@ -12,6 +12,7 @@ class Application extends \CLIFramework\Application {
         $this->command('foo');
         $this->command('add');
         $this->command('commit');
+        $this->command('server');
         $this->topic('basic');
     }
 }

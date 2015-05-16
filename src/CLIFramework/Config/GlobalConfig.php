@@ -18,6 +18,11 @@ class GlobalConfig
      */
     private $isDebug = false;
 
+    /**
+     * @var string
+     */
+    private $pidDir;
+
     public function __construct($config)
     {
         $this->config = $config;
@@ -45,5 +50,16 @@ class GlobalConfig
             $this->isDebug = $this->config['core']['debug'] === '1';
         }
         return $this->isDebug;
+    }
+
+    /**
+     * Returns the directory of pid files.
+     */
+    public function getPidDirectory()
+    {
+        if (isset($this->config['core']['pid_dir'])) {
+            $this->pidDir = $this->config['core']['pid_dir'];
+        }
+        return $this->pidDir;
     }
 }

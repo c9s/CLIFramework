@@ -63,6 +63,10 @@ abstract class Command extends CommandBase
         }
     }
 
+    public function hasApplication() {
+        return $this->getApplication() !== null;
+    }
+
     public function setName($name)
     {
         $this->name = $name;
