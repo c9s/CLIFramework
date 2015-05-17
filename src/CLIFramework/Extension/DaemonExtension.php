@@ -64,9 +64,12 @@ class DaemonExtension extends ExtensionBase
 
     public function getPidFilePath()
     {
+        if ($this->getCommandOptions() && $this->getCommandOptions()->{'pid-file'}) {
+            return $this->getCommandOptions()->{'pid-file'};
+        }
         $pid = getmypid();
-        $pidFileName = $this->command ? $this->command->getName() : $pid;
-        return $this->config->getPidDirectory() . "/$pidFileName.pid";
+        $pidFile = $this->command ? $this->command->getName() : $pid;
+        return $this->config->getPidDirectory() . "/$pidFile.pid";
     }
 
     private function bindHooks($command)
@@ -86,7 +89,7 @@ class DaemonExtension extends ExtensionBase
         if (!$options) {
             return;
         }
-        $options->add('pid-file', 'The path of pid file.');
+        $options->add('pid-file?', 'The path of pid file.');
     }
 
     private function prepareLogger()
@@ -162,10 +165,7 @@ class DaemonExtension extends ExtensionBase
 
     private function getLogPath()
     {
-        if (!$this->hasApplication()) {
-            return null;
-        }
-        $options = $this->command->getApplication()->getOptions();
+        $options = $this->getApplicationOptions();
         return $options && $options->{'log-path'} ? $options->{'log-path'} : null;
     }
 
@@ -180,6 +180,19 @@ class DaemonExtension extends ExtensionBase
         }
 
         return $this->logger;
+    }
+
+    private function getApplicationOptions()
+    {
+        if (!$this->hasApplication()) {
+            return null;
+        }
+        return $this->command->getApplication()->getOptions();
+    }
+
+    private function getCommandOptions()
+    {
+        return $this->command ? $this->command->getOptions() : null;
     }
 
     private function hasApplication()
