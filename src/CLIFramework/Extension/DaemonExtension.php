@@ -128,23 +128,23 @@ class DaemonExtension extends ExtensionBase
         }
 
         if ($this->chdir) {
-            $this->changeDirectoryToRoot();
+            $this->chdir();
         }
 
         if ($this->detach) {
-            $this->closeFileDescriptors();
+            $this->detach();
         }
 
     }
 
-    private function changeDirectoryToRoot()
+    private function chdir()
     {
         if ($this->chdir && !chdir("/")) {
             throw new ExtensionException("chdir failed");
         }
     }
 
-    private function closeFileDescriptors()
+    private function detach()
     {
         if (!fclose(STDIN)) {
             throw new ExtensionException("fclose(STDIN) failed");
