@@ -11,8 +11,8 @@ class DaemonExtension extends ExtensionBase
 {
     private $config;
     private $logger;
-    private $isNoClose = false;
-    private $isNoChangeDirectory = false;
+    private $detach = true;
+    private $chdir = false;
     private $command;
 
     public function __construct()
@@ -47,19 +47,23 @@ class DaemonExtension extends ExtensionBase
         $this->daemonize();
         $logger->debug('call hook: run.after');
         $this->callHook('run.after');
-        $logger->debug('isNoClose = ' . var_export($this->isNoClose, true));
-        $logger->debug('isNoChangeDirectory = ' . var_export($this->isNoChangeDirectory, true));
         $logger->debug('PidFilePath = ' . $this->getPidFilePath());
     }
 
-    public function noClose()
+    /**
+     * Call this method if you don't want to close STDIN, STDOUT and STDERR on making a daemon process.
+     */
+    protected function noDetach()
     {
-        $this->isNoClose = true;
+        $this->detach = false;
     }
 
-    public function noChangeDirectory()
+    /**
+     * Call this method if you want to change the current directory on making a daemon process.
+     */
+    protected function changeDirectory()
     {
-        $this->isNoChangeDirectory = true;
+        $this->chdir = true;
     }
 
     public function getPidFilePath()
@@ -126,19 +130,19 @@ class DaemonExtension extends ExtensionBase
             throw new ExtensionException("creating a pid file failed");
         }
 
-        if (!$this->isNoChangeDirectory) {
-            $this->changeDirectory();
+        if ($this->chdir) {
+            $this->changeDirectoryToRoot();
         }
 
-        if (!$this->isNoClose) {
+        if ($this->detach) {
             $this->closeFileDescriptors();
         }
 
     }
 
-    private function changeDirectory()
+    private function changeDirectoryToRoot()
     {
-        if (!$this->isNoChangeDirectory && !chdir("/")) {
+        if ($this->chdir && !chdir("/")) {
             throw new ExtensionException("chdir failed");
         }
     }
