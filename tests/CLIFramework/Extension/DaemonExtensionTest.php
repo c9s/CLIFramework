@@ -12,6 +12,7 @@ namespace tests\CLIFramework\Extension;
 
 use CLIFramework\Extension\DaemonExtension;
 use CLIFramework\Command;
+use CLIFramework\Application;
 
 class DaemonExtensionTest extends \PHPUnit_Framework_TestCase 
 {
@@ -26,6 +27,8 @@ class DaemonExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension = new DaemonExtensionForTest();
         $this->extension->noDetach();
         $this->command = new DaemonExtensionTestCommand();
+        $this->command->setApplication(new Application());
+        $this->command->_init();
         $this->extension->bind($this->command);
     }
 
