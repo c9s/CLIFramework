@@ -90,9 +90,6 @@ class DaemonExtension extends ExtensionBase
     private function bindOptions($command)
     {
         $options = $command->getOptionCollection();
-        if (!$options) {
-            return;
-        }
         $options->add('pid-file?', 'The path of pid file.');
     }
 
