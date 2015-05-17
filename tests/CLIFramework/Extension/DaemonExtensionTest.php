@@ -23,8 +23,8 @@ class DaemonExtensionTest extends \PHPUnit_Framework_TestCase
         if (!DaemonExtension::isAvailable()) {
             $this->markTestSkipped('DaemonExtension is not available.');
         }
-        $this->extension = new DaemonExtension();
-        $this->extension->noClose();
+        $this->extension = new DaemonExtensionForTest();
+        $this->extension->noDetach();
         $this->command = new DaemonExtensionTestCommand();
         $this->extension->bind($this->command);
     }
@@ -73,6 +73,14 @@ class DaemonExtensionTest extends \PHPUnit_Framework_TestCase
         $pid = getmypid();
         $this->extension->run();
         $this->assertTrue($pid !== getmypid());
+    }
+}
+
+class DaemonExtensionForTest extends DaemonExtension
+{
+    public function noDetach()
+    {
+        parent::noDetach();
     }
 }
 
