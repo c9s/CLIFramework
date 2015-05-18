@@ -484,3 +484,7 @@ How command class register works
       will try to guess the *real* command class, and try to load the command class.
 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/c9s/cliframework/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
