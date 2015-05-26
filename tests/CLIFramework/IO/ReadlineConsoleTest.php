@@ -22,8 +22,9 @@ class ReadlineConsoleTest extends ConsoleTestCase
         }
 
         $script = __DIR__ . '/../../script/CLIFramework/IO/ReadlineConsoleReadLine.php';
-        $this->runScript($script, "test\n", function($line) {
-            $this->assertSame('test', $line);
+        $self = $this;
+        $this->runScript($script, "test\n", function($line) use($self) {
+            $self->assertSame('test', $line);
         });
     }
 
@@ -34,8 +35,9 @@ class ReadlineConsoleTest extends ConsoleTestCase
         }
 
         $script = __DIR__ . '/../../script/CLIFramework/IO/ReadlineConsoleReadPassword.php';
-        $this->runScript($script, "test\n", function($line) {
-            $this->assertSame('test', $line);
+        $self = $this;
+        $this->runScript($script, "test\n", function($line) use($self) {
+            $self->assertSame('test', $line);
         });
     }
 }

@@ -182,9 +182,9 @@ class Table
                 }
 
                 if (isset($this->rows[$extraRowIdx])) {
-                    $this->rows[$extraRowIdx][ $col ] = $expandAttribute ? [$attribute, $line] : $line;
+                    $this->rows[$extraRowIdx][ $col ] = $expandAttribute ? array($attribute, $line) : $line;
                 } else {
-                    $this->rows[$extraRowIdx] = array($col => $expandAttribute ? [$attribute, $line] : $line);
+                    $this->rows[$extraRowIdx] = array($col => $expandAttribute ? array($attribute, $line) : $line);
                 }
                 $extraRowIdx++;
             }
