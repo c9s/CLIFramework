@@ -7,7 +7,7 @@ php:
 
 before_script:
   - phpenv rehash
-  - composer install --dev --no-interaction
+  - composer install --dev --no-interaction --prefer-source
   - mkdir -p build/logs
 
 script:
