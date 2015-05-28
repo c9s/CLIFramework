@@ -17,7 +17,7 @@ function is_indexed_array(array $a) {
 function output_var($a) {
     if (is_array($a)) {
         if (is_indexed_array($a)) {
-            $out = [];
+            $out = array();
             foreach ($a as $i) {
                 $out[] = output_var($i);
             }
@@ -71,7 +71,7 @@ class DevelopmentExceptionPrinter
             return '';
         }
 
-        $desc = [];
+        $desc = array();
         foreach($args as $a) {
             $desc[] = output_var($a);
         }
