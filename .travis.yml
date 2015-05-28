@@ -23,8 +23,8 @@ after_script:
 
 cache:
   apt: true
-  directories:
-    - vendor
+#  directories:
+#- vendor
 
 # notifications:
 #   webhooks:
