@@ -183,10 +183,10 @@ The call graph is like:
 
 
 
-Requirement
------------
+Basic Requirement
+-----------------
 
-* PHP 5.4
+* PHP 5.3
 
 Installation
 ------------
@@ -200,11 +200,6 @@ From composer
     }
 }
 ```
-
-Or install from repository:
-
-    $ git clone http://github.com/c9s/CLIFramework.git
-    $ pear install -f package.xml
 
 Tutorial
 --------
