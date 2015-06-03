@@ -6,6 +6,7 @@ Version next
 - Moved all singleton object builders to `CLIFramework\ServiceContainer`
 - Added more logger methods
 - Added `compile` command to compile console application into phar file.
+- Abstract IO layers (stdin/stdout, tty)
 
 Version 2.2   - Wed Dec 31 11:27:50 2014
 
