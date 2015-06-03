@@ -1,12 +1,20 @@
 
 Version next
 
-- Added ANSI Color definition class
-- Added show/hide cursor ansi code to CursorControl
-- Moved all singleton object builders to `CLIFramework\ServiceContainer`
-- Added more logger methods
+- Added ANSI Color definition class.
+- Added show/hide cursor ansi code to CursorControl.
+- Moved all singleton object builders to `CLIFramework\ServiceContainer`.
+- Added more logger methods.
+- Added powerful text table generator.
 - Added `compile` command to compile console application into phar file.
-- Abstract IO layers (stdin/stdout, tty)
+- #64 - Abstract IO layers (stdin/stdout, tty) by @shinnya++
+- #66 - Support password prompt by @shinnya++
+- #65 - Global configuration file support by @shinnya++
+- #63 - Add logException method support by @shinnya++
+- #51 - New correct: use `similar_text` instead of `levenshtein` by @dh3014++
+- #49 - Command autoloading feature by @dh3014++
+- #10 - Allow raw output even if terminal emulator support colors by @marcioAlmada++
+- Several bugfixes by @marcioAlmada++
 
 Version 2.2   - Wed Dec 31 11:27:50 2014
 
