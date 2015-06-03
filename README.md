@@ -186,7 +186,7 @@ The call graph is like:
 Requirement
 -----------
 
-* PHP5.3
+* PHP 5.4
 
 Installation
 ------------
