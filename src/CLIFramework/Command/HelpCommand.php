@@ -133,7 +133,7 @@ class HelpCommand extends Command implements CommandInterface {
             foreach($prototypes as $prototype) {
                 $logger->writeln("\t" . ' ' . $prototype);
             }
-            $logger->write("\n\n");
+            $logger->write("\n");
 
 
             if ($optionLines = $printer->render($cmd->optionSpecs)) {
