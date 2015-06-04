@@ -58,14 +58,14 @@ abstract class CommandBase
     public $aliases = array();
 
     /**
-     * @var GetOptionKit\OptionResult parsed options
+     * @var \GetOptionKit\OptionResult parsed options
      */
     public $options;
 
     /**
      * Parent commmand object. (the command caller)
      *
-     * @var CLIFramework\CommandBase or CLIFramework\Application
+     * @var \CLIFramework\CommandBase or CLIFramework\Application
      */
     public $parent;
 
@@ -113,7 +113,7 @@ abstract class CommandBase
     /**
      * Method for users to define alias.
      *
-     * @return strings[]
+     * @return string[]
      */
     public function aliases() {
     }
@@ -255,7 +255,9 @@ abstract class CommandBase
      */
     public function registerCommand($command,$class = null)
     {
-        trigger_error("'registerCommand' method is deprecated, please use 'addCommand' instead.\n");
+        $trace = debug_backtrace(false, 2);
+        $call = $trace[0]['file'].':'.$trace[0]['line'];
+        trigger_error("'registerCommand' method is deprecated, please use 'addCommand' instead. Called on $call\n");
         return $this->addCommand($command, $class);
     }
 
@@ -302,6 +304,7 @@ abstract class CommandBase
      * @param  string $command Command name or subcommand name
      * @param  string $class   Full-qualified Class name
      * @return string Loaded class name
+     * @throws CommandClassNotFoundException
      */
     public function addCommand($command,$class = null)
     {
