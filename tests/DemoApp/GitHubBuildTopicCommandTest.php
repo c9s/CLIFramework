@@ -4,6 +4,10 @@ use CLIFramework\Testing\CommandTestCase;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
+
+/**
+ * @group github-topic
+ */
 class GitHubBuildTopicCommandTest extends CommandTestCase
 {
 
