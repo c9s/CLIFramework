@@ -9,6 +9,7 @@ use CLIFramework\IO\NullStty;
 use CLIFramework\IO\UnixStty;
 use CLIFramework\IO\ReadlineConsole;
 use CLIFramework\IO\StandardConsole;
+use Universal\Event\PhpEvent;
 
 
 /**
@@ -46,6 +47,11 @@ class ServiceContainer extends Container
 
             return '';
         };
+
+        $this['event'] = function() {
+            return new PhpEvent;
+        };
+
         $this['config'] = function($c) {
             if (empty($c['config.path'])) {
                 return new GlobalConfig(array());
