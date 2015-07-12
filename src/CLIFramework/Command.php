@@ -52,7 +52,7 @@ abstract class Command extends CommandBase
             if ( ! $p ) {
                 return null;
             }
-            if ( $p instanceof \CLIFramework\Application ) {
+            if ($p instanceof Application) {
                 return $p;
             }
             $p = $p->parent;

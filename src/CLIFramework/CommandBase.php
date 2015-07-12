@@ -243,6 +243,22 @@ abstract class CommandBase
     }
 
     /**
+     * Get the main application object from parents
+     *
+     * @return CLIFramework\Application
+     */
+    public function getApplication() {
+        $p = $this->parent;
+        while ($p) {
+            if ($p instanceof Application) {
+                return $p;
+            }
+            $p = $p->parent;
+        }
+    }
+
+
+    /**
      * Autoload comands/subcommands in a given directory
      *
      * @param string|null $path path of directory commands placed at.
