@@ -2,9 +2,20 @@
 namespace CLIFramework\Extension;
 use CLIFramework\ServiceContainer;
 use CLIFramework\Command;
-use CLIFramework\Exception\ExtensionException;
+use CLIFramework\CommandBase;
+use CLIFramework\Logger;
 
-abstract class ExtensionBase implements Extension
+abstract class ExtensionBase
 {
+    protected $container;
+
+    public function __construct(ServiceContainer $container)
+    {
+        $this->container = $container;
+    }
 
 }
+
+
+
+

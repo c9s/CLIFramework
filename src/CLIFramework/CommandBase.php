@@ -131,7 +131,7 @@ abstract class CommandBase
     private function initExtensions()
     {
         foreach ($this->extensions as $extension) {
-            $extension->bind($this);
+            $extension->bindCommand($this);
         }
     }
 

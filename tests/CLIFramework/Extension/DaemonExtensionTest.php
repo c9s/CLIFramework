@@ -9,15 +9,16 @@
  *
  */
 namespace tests\CLIFramework\Extension;
-
 use CLIFramework\Extension\DaemonExtension;
 use CLIFramework\Command;
 use CLIFramework\Application;
+use CLIFramework\ServiceContainer;
 use PHPUnit_Framework_TestCase;
 
-class DaemonExtensionTest2 extends \PHPUnit_Framework_TestCase 
+class DaemonExtensionTest extends PHPUnit_Framework_TestCase 
 {
     private $extension;
+
     private $command;
 
     public function setUp()
@@ -25,22 +26,24 @@ class DaemonExtensionTest2 extends \PHPUnit_Framework_TestCase
         if (!DaemonExtension::isAvailable()) {
             $this->markTestSkipped('DaemonExtension is not available.');
         }
-        $this->extension = new DaemonExtensionForTest();
+        $this->extension = new DaemonExtensionForTest(new ServiceContainer);
         $this->extension->noDetach();
         $this->command = new DaemonExtensionTestCommand();
+
+        // Setup a new application
         $this->command->setApplication(new Application());
         $this->command->_init();
-        $this->extension->bind($this->command);
+        $this->extension->bindCommand($this->command);
     }
 
     public function testRun()
     {
         $this->assertTrue(true);
+        // $this->assertFalse(file_exists($this->extension->getPidFilePath()));
     }
 
     public function tearDown()
     {
-        $this->assertFalse(file_exists($this->extension->getPidFilePath()));
     }
 }
 

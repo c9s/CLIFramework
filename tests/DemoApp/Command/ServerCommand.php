@@ -1,6 +1,6 @@
 <?php
 namespace DemoApp\Command;
-
+use CLIFramework\ServiceContainer;
 use CLIFramework\Command;
 use CLIFramework\Extension\DaemonExtension;
 
@@ -12,7 +12,7 @@ class ServerCommand extends Command {
 
     public function init()
     {
-        $this->enableExtension(new DaemonExtension());
+        $this->enableExtension(new DaemonExtension(ServiceContainer::getInstance()));
     }
 
     public function execute($host, $port)

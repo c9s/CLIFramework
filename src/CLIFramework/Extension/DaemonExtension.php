@@ -1,33 +1,32 @@
 <?php
 namespace CLIFramework\Extension;
-
 use CLIFramework\ServiceContainer;
 use CLIFramework\Command;
 use CLIFramework\CommandBase;
 use CLIFramework\Logger;
 use CLIFramework\Exception\ExtensionException;
+use CLIFramework\Extension\CommandExtension;
 use CLIFramework\IO\StreamWriter;
 
-class DaemonExtension extends ExtensionBase
+class DaemonExtension extends ExtensionBase 
+    implements CommandExtension
 {
     private $config;
-    private $logger;
-    private $detach = true;
-    private $chdir = false;
-    private $command;
 
-    public function __construct()
-    {
-        $container = ServiceContainer::getInstance();
-        $this->config = $container['config'];
-    }
+    private $logger;
+
+    private $detach = true;
+
+    private $chdir = false;
+
+    private $command;
 
     public static function isAvailable()
     {
         return function_exists('pcntl_fork');
     }
 
-    public function bind(Command $command)
+    public function bindCommand(Command $command)
     {
         $this->command = $command;
         $this->bindOptions($command);
@@ -38,16 +37,10 @@ class DaemonExtension extends ExtensionBase
         if (!$this->isAvailable()) {
             throw new ExtensionException("pcntl_fork() is not supported.");
         }
-
         $this->prepareLogger();
         $logger = $this->getLogger();
-        $logger->debug('call hook: run.before');
-        $this->callHook('run.before');
-        $logger->debug('call daemonize()');
         $this->daemonize();
-        $logger->debug('call hook: run.after');
-        $this->callHook('run.after');
-        $logger->debug('PidFilePath = ' . $this->getPidFilePath());
+        // $logger->debug('PidFilePath = ' . $this->getPidFilePath());
     }
 
     /**
@@ -89,7 +82,7 @@ class DaemonExtension extends ExtensionBase
     }
     */
 
-    private function bindOptions(CommandBase $command)
+    private function bindOptions(Command $command)
     {
         $options = $command->getOptionCollection();
         $options->add('pid-file?', 'The path of pid file.');
