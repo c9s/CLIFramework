@@ -9,6 +9,7 @@
  */
 namespace CLIFramework;
 use Exception;
+use InvalidArgumentException;
 use ReflectionObject;
 use ArrayAccess;
 use IteratorAggregate;
