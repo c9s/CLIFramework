@@ -12,7 +12,7 @@ class ServerCommand extends Command {
 
     public function init()
     {
-        $this->enableExtension(new DaemonExtension(ServiceContainer::getInstance()));
+        $this->addExtension(new DaemonExtension(ServiceContainer::getInstance()));
     }
 
     public function execute($host, $port)
