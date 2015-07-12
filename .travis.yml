@@ -1,8 +1,11 @@
 language: php
-php:
-  - 5.4
-  - 5.5
-  - 5.6
+matrix:
+  include:
+  - php: 5.3
+    env: PHPUNIT_OPTS="--exclude-group github-topic"
+  - php: 5.4
+  - php: 5.5
+  - php: 5.6
 
 before_script:
   - phpenv rehash
@@ -10,7 +13,7 @@ before_script:
   - mkdir -p build/logs
 
 script:
-  - phpunit --coverage-clover build/logs/clover.xml
+  - phpunit $PHPUNIT_OPTS --coverage-clover build/logs/clover.xml
   - example/demo meta --zsh commit arg 0 suggestions
   - example/demo meta --zsh commit arg 1 valid-values
   - example/demo zsh --bind demo > zsh
