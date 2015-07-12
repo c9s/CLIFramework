@@ -87,9 +87,9 @@ class Application extends CommandBase
     /** @var bool */
     protected $commandAutoloadEnabled;
 
-    public function __construct()
+    public function __construct(CommandBase $parent = null)
     {
-        parent::__construct();
+        parent::__construct($parent);
 
         $this->service = new ServiceContainer;
 

@@ -27,13 +27,9 @@ abstract class Command extends CommandBase
 
     public $name;
 
-    public function __construct($parent = null)
+    public function __construct(CommandBase $parent = null)
     {
-        // this variable is optional (for backward compatibility)
-        if ($parent) {
-            $this->setParent($parent);
-        }
-        parent::__construct();
+        parent::__construct($parent);
     }
 
     public function setApplication(Application $application)
@@ -48,11 +44,11 @@ abstract class Command extends CommandBase
      * @return Application
      */
     public function getApplication() {
-        if ( $this->application ) {
+        if ($this->application) {
             return $this->application;
         }
         $p = $this->parent;
-        while ( true ) {
+        while (true) {
             if ( ! $p ) {
                 return null;
             }

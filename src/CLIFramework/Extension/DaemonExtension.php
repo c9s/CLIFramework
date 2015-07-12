@@ -3,6 +3,7 @@ namespace CLIFramework\Extension;
 
 use CLIFramework\ServiceContainer;
 use CLIFramework\Command;
+use CLIFramework\CommandBase;
 use CLIFramework\Logger;
 use CLIFramework\Exception\ExtensionException;
 use CLIFramework\IO\StreamWriter;
@@ -30,7 +31,6 @@ class DaemonExtension extends ExtensionBase
     {
         $this->command = $command;
         $this->bindOptions($command);
-        $this->bindHooks($command);
     }
 
     public function run()
@@ -76,6 +76,7 @@ class DaemonExtension extends ExtensionBase
         return $this->config->getPidDirectory() . "/$pidFile.pid";
     }
 
+    /*
     private function bindHooks($command)
     {
         $extension = $this;
@@ -86,8 +87,9 @@ class DaemonExtension extends ExtensionBase
             @unlink($extension->getPidFilePath());
         });
     }
+    */
 
-    private function bindOptions($command)
+    private function bindOptions(CommandBase $command)
     {
         $options = $command->getOptionCollection();
         $options->add('pid-file?', 'The path of pid file.');

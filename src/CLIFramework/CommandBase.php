@@ -76,7 +76,12 @@ abstract class CommandBase
 
     protected $extensions = array();
 
-    public function __construct() {
+    public function __construct(CommandBase $parent = null) 
+    {
+        // this variable is optional (for backward compatibility)
+        if ($parent) {
+            $this->setParent($parent);
+        }
     }
 
 
@@ -249,7 +254,8 @@ abstract class CommandBase
         $autoloader->autoload($path);
     }
 
-    protected function _init() 
+
+    public function _init() 
     {
         // get option parser, init specs from the command.
         $this->optionSpecs = new OptionCollection;
@@ -557,14 +563,7 @@ abstract class CommandBase
      */
     public function createCommand($commandClass)
     {
-        // if current_cmd is not application, we should save parent command object.
-        if ( $this instanceof \CLIFramework\Application ) {
-            $cmd = new $commandClass($this);
-            $cmd->parent = $this;
-        } else {
-            $cmd = new $commandClass($this->application);
-            $cmd->parent = $this;
-        }
+        $cmd = new $commandClass($this);
         $cmd->_init();
         return $cmd;
     }
