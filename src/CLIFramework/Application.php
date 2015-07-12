@@ -24,6 +24,7 @@ use CLIFramework\ServiceContainer;
 use CLIFramework\Exception\CommandNotFoundException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
 use CLIFramework\Exception\ExecuteMethodNotDefinedException;
+use Pimple\Container;
 
 use CLIFramework\ExceptionPrinter\ProductionExceptionPrinter;
 use CLIFramework\ExceptionPrinter\DevelopmentExceptionPrinter;
@@ -87,11 +88,11 @@ class Application extends CommandBase
     /** @var bool */
     protected $commandAutoloadEnabled;
 
-    public function __construct(CommandBase $parent = null)
+    public function __construct(Container $container = null, CommandBase $parent = null)
     {
         parent::__construct($parent);
 
-        $this->service = new ServiceContainer;
+        $this->service = $container ?: new ServiceContainer;
 
         // initliaze command loader
         $this->loader = $this->service['command_loader'];
