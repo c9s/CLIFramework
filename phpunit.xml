@@ -11,9 +11,18 @@
   </php>
 
   <testsuites>
-    <testsuite name="all">
+    <testsuite name="All">
       <directory suffix="Test.php">tests</directory>
     </testsuite>
+
+    <testsuite name="DemoApp">
+      <directory suffix="Test.php">tests/DemoApp</directory>
+    </testsuite>
+
+    <testsuite name="TestApp">
+      <directory suffix="Test.php">tests/TestApp</directory>
+    </testsuite>
+
   </testsuites>
 
   <filter>
