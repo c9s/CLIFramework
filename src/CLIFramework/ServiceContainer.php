@@ -53,7 +53,9 @@ class ServiceContainer extends Container
             return new GlobalConfig(parse_ini_file($c['config.path'], true));
         };
         $this['writer'] = function($c) {
-            return new StreamWriter(STDOUT);
+            // return new StreamWriter(STDOUT);
+            $output = fopen("php://output", "w");
+            return new StreamWriter($output);
         };
         $this['logger'] = function($c) {
             return new Logger;
