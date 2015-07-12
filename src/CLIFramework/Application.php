@@ -109,6 +109,15 @@ class Application extends CommandBase
         $this->disableCommandAutoload();
     }
 
+
+    /**
+     * @return Pimple\Container
+     */
+    public function getService()
+    {
+        return $this->service;
+    }
+
     /**
      * Enable command autoload feature.
      *

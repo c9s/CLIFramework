@@ -49,15 +49,15 @@ abstract class CommandBase
      *     command name => command class name
      *
      * */
-    public $commands = array();
+    protected $commands = array();
 
 
     /**
      * @var CommandGroup[]
      */
-    public $commandGroups = array();
+    protected $commandGroups = array();
 
-    public $aliases = array();
+    protected $aliases = array();
 
     /**
      * @var \GetOptionKit\OptionResult parsed options
