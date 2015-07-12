@@ -27,8 +27,6 @@ use CLIFramework\Exception\ExecuteMethodNotDefinedException;
 use CLIFramework\ArgInfo;
 use CLIFramework\ArgInfoList;
 use CLIFramework\Corrector;
-use CLIFramework\Hook\Hookable;
-use CLIFramework\Hook\HookHolder;
 use CLIFramework\Extension\Extension;
 
 /**
@@ -76,9 +74,7 @@ abstract class CommandBase
 
     public $argInfos = array();
 
-    private $hooks;
-
-    private $extensions = array();
+    protected $extensions = array();
 
     public function __construct() {
     }
@@ -115,43 +111,12 @@ abstract class CommandBase
     }
 
 
-
-
     /**
      * Method for users to define alias.
      *
      * @return string[]
      */
-    public function aliases() {
-    }
-
-    private function getHooks()
-    {
-        if (!$this->hooks) {
-            $this->hooks = new HookHolder();
-        }
-        return $this->hooks;
-    }
-
-    public function getHookPoints()
-    {
-        return $this->getHooks()->getHookPoints();
-    }
-
-    public function addHook($name, \Closure $callback)
-    {
-        $this->getHooks()->addHook($name, $callback);
-    }
-
-    public function addHookByArray(array $options)
-    {
-        $this->getHooks()->addHookByArray($options);
-    }
-
-    public function callHook($name)
-    {
-        call_user_func_array(array($this->getHooks(), 'callHook'), func_get_args());
-    }
+    public function aliases() { }
 
     public function enableExtension(Extension $extension)
     {
@@ -737,11 +702,7 @@ abstract class CommandBase
         if ( count($args) < $requiredNumber ) {
             throw new CommandArgumentNotEnoughException($this, count($args), $requiredNumber);
         }
-
-        $this->callHook('execute.before');
-        $result = call_user_func_array(array($this,'execute'), $args);
-        $this->callHook('execute.after');
-        return $result;
+        return call_user_func_array(array($this,'execute'), $args);
     }
 
     /**
