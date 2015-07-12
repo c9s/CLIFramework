@@ -28,6 +28,7 @@ use CLIFramework\ArgInfo;
 use CLIFramework\ArgInfoList;
 use CLIFramework\Corrector;
 use CLIFramework\Extension\Extension;
+use CLIFramework\Extension\CommandExtension;
 
 /**
  * Command based class (application & subcommands inherit from this class)
@@ -123,7 +124,7 @@ abstract class CommandBase
      */
     public function aliases() { }
 
-    public function enableExtension(Extension $extension)
+    public function addExtension(Extension $extension)
     {
         $this->extensions[] = $extension;
     }
@@ -131,7 +132,9 @@ abstract class CommandBase
     private function initExtensions()
     {
         foreach ($this->extensions as $extension) {
-            $extension->bindCommand($this);
+            if ($extension instanceof CommandExtension) {
+                $extension->bindCommand($this);
+            }
         }
     }
 
