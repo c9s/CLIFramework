@@ -249,7 +249,8 @@ abstract class CommandBase
         $autoloader->autoload($path);
     }
 
-    public function _init() {
+    protected function _init() 
+    {
         // get option parser, init specs from the command.
         $this->optionSpecs = new OptionCollection;
         // init application options
