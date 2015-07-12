@@ -74,7 +74,7 @@ abstract class CommandBase
 
     public $optionSpecs;
 
-    public $argInfos = array();
+    protected $argInfos = array();
 
     protected $extensions = array();
 
