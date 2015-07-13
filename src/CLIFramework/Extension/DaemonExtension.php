@@ -116,7 +116,7 @@ class DaemonExtension extends ExtensionBase
     protected function daemonize()
     {
         if ($this->detach || $this->command->options->{'detach'}) {
-            $this->command->logger->info('forking process to background..');
+            $this->command->logger->debug('forking process to background..');
             // The return value of pcntl_fork: 
             //
             // On success, the PID of the child process is returned in the parent's
@@ -170,7 +170,7 @@ class DaemonExtension extends ExtensionBase
     {
         $pidFile = $this->getPidFilePath();
         $pid = getmypid();
-        $this->command->logger->info("Pid {$pid} saved in $pidFile");
+        $this->command->logger->debug("pid {$pid} saved in $pidFile");
         return file_put_contents($pidFile, $pid);
     }
 
