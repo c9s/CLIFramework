@@ -336,6 +336,18 @@ abstract class CommandBase
 
         // init application options
         $this->options($this->optionSpecs);
+
+
+        // build argument info list 
+        $args = new ArgInfoList;
+        $this->arguments($args);
+        if (count($args) > 0) {
+            $this->argInfos = $args;
+        } else {
+            $this->argInfos = $this->getArgumentsInfoByReflection();
+        }
+
+
         $this->init();
         $this->initExtensions();
     }
@@ -737,21 +749,13 @@ abstract class CommandBase
 
     /**
      * abstract method let user define their own argument info.
+     *
+     * @param CLIFramework\ArgInfoList
      */
     public function arguments($args) { }
 
-    public function getArgumentsInfo() {
-        if (!$this->argInfos || empty($this->argInfos)) {
-            $args = new ArgInfoList;
-            $this->arguments($args);
-            if (count($args)) {
-                $this->argInfos = $args;
-            }
-        }
-        // if it still empty
-        if (!$this->argInfos || empty($this->argInfos)) {
-            $this->argInfos = $this->getArgumentsInfoByReflection();
-        }
+    public function getArgumentsInfo() 
+    {
         return $this->argInfos;
     }
 

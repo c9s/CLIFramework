@@ -70,7 +70,7 @@ class DaemonExtension extends CommandExtension
         return $this->config->getPidDirectory() . "/$pidFile.pid";
     }
 
-    public function options(OptionCollection $opts)
+    public function options($opts)
     {
         $opts->add('pid-file?', '(daemon) Path of pid file.');
         $opts->add('log-path?', '(daemon) Path of log file when running with daemon extension.');

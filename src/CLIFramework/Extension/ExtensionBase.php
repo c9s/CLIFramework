@@ -6,6 +6,7 @@ use CLIFramework\CommandBase;
 use CLIFramework\Logger;
 use GetOptionKit\OptionCollection;
 use LogicException;
+use CLIFramework\ArgInfoList;
 
 abstract class ExtensionBase
 {
@@ -35,8 +36,13 @@ abstract class ExtensionBase
         return true;
     }
 
-    public function options(OptionCollection $opts)
+    public function options($opts)
     {
+    }
+
+    public function arguments($args) 
+    {
+
     }
 
     public function prepare() 

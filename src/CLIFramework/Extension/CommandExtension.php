@@ -14,6 +14,8 @@ abstract class CommandExtension extends ExtensionBase
     {
         $this->command = $command;
         $this->options($command->getOptionCollection());
+        // $this->arguments( );
+
         $this->config = $command->getApplication()->getGlobalConfig();
         $this->setServiceContainer($command->getApplication()->getService());
     }
