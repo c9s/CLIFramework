@@ -6,7 +6,7 @@
         "php": ">=5.3.0",
         "corneltek/getoptionkit": "~2",
         "corneltek/class-template": "*",
-        "corneltek/universal": "2.0.x-dev",
+        "corneltek/universal": "~1.4",
         "pimple/pimple": "*"
     },
     "require-dev": {
