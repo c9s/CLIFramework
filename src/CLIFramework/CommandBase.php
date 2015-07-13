@@ -131,6 +131,9 @@ abstract class CommandBase
     }
 
 
+
+
+
     /**
      * Register and bind the extension
      *
@@ -144,6 +147,17 @@ abstract class CommandBase
         $this->bindExtension($extension);
         $this->extensions[] = $extension;
     }
+
+    /**
+     * method `extension` is an alias of addExtension
+     *
+     * @param CLIFramework\Extension\ExtensionBase
+     */
+    public function extension(ExtensionBase $extension)
+    {
+        return $this->addExtension($extension);
+    }
+
 
     protected function bindExtension(ExtensionBase $extension)
     {
