@@ -23,11 +23,12 @@ class DaemonExtensionTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        if (!DaemonExtension::isAvailable()) {
+        $this->extension = new DaemonExtensionForTest(new ServiceContainer);
+        if (!$this->extension->isAvailable()) {
             $this->markTestSkipped('DaemonExtension is not available.');
         }
-        $this->extension = new DaemonExtensionForTest(new ServiceContainer);
         $this->extension->noDetach();
+
         $this->command = new DaemonExtensionTestCommand();
 
         // Setup a new application
