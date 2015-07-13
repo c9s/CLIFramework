@@ -98,7 +98,7 @@ class Application extends CommandBase
 
 
     /** @var bool */
-    protected $commandAutoloadEnabled;
+    protected $commandAutoloadEnabled = false;
 
     public function __construct(Container $container = null, CommandBase $parent = null)
     {
@@ -126,7 +126,6 @@ class Application extends CommandBase
         $this->loader->addNamespace( array('\\CLIFramework\\Command' ));
 
         $this->supportReadline = extension_loaded('readline');
-        $this->disableCommandAutoload();
     }
 
 
