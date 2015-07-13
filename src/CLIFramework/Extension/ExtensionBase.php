@@ -14,6 +14,10 @@ abstract class ExtensionBase
         $this->container = $container;
     }
 
+    public function isAvailable()
+    {
+        return true;
+    }
 }
 
 
