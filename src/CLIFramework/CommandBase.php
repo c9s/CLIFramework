@@ -145,9 +145,6 @@ abstract class CommandBase
         if (!$extension->isAvailable()) {
             throw new ExtensionException("Extension " . get_class($extension) . " is not available", $extension);
         }
-
-        $extension->init();
-
         $this->bindExtension($extension);
         $this->extensions[] = $extension;
     }
