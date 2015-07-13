@@ -141,6 +141,7 @@ abstract class CommandBase
         if (!$extension->isAvailable()) {
             throw new ExtensionException("pcntl_fork() is not supported.", $extension);
         }
+        $this->bindExtension($extension);
         $this->extensions[] = $extension;
     }
 
@@ -156,7 +157,7 @@ abstract class CommandBase
     protected function initExtensions()
     {
         foreach ($this->extensions as $extension) {
-            $this->bindExtension($extension);
+
         }
     }
 
@@ -305,6 +306,7 @@ abstract class CommandBase
     {
         // get option parser, init specs from the command.
         $this->optionSpecs = new OptionCollection;
+
         // init application options
         $this->options($this->optionSpecs);
         $this->init();
