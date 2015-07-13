@@ -3,8 +3,11 @@ namespace DemoApp\Command;
 use CLIFramework\ServiceContainer;
 use CLIFramework\Command;
 use CLIFramework\Extension\DaemonExtension;
+use RuntimeException;
 
-class ServerCommand extends Command {
+class ServerCommand extends Command
+{
+
     public function brief()
     {
         return 'An example of using DaemonExtension';
@@ -12,7 +15,8 @@ class ServerCommand extends Command {
 
     public function init()
     {
-        $this->addExtension(new DaemonExtension(ServiceContainer::getInstance()));
+        $service = $this->getApplication()->getService();
+        $this->addExtension(new DaemonExtension($service));
     }
 
     public function execute($host, $port)
