@@ -7,6 +7,7 @@ use CLIFramework\Logger;
 use CLIFramework\Exception\ExtensionException;
 use CLIFramework\Extension\CommandExtension;
 use CLIFramework\IO\StreamWriter;
+use GetOptionKit\OptionCollection;
 
 class DaemonExtension extends ExtensionBase 
     implements CommandExtension
@@ -29,7 +30,7 @@ class DaemonExtension extends ExtensionBase
     public function bindCommand(Command $command)
     {
         $this->command = $command;
-        $this->bindOptions($command);
+        $this->options($command->getOptionCollection());
     }
 
     public function run()
@@ -82,10 +83,10 @@ class DaemonExtension extends ExtensionBase
     }
     */
 
-    protected function bindOptions(Command $command)
+    public function options(OptionCollection $opts)
     {
-        $options = $command->getOptionCollection();
-        $options->add('pid-file?', 'The path of pid file.');
+        $opts->add('pid-file?', 'path of pid file.');
+        $opts->add('log-path?', 'path of log file');
     }
 
     protected function prepareLogger()

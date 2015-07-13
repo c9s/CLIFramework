@@ -4,6 +4,7 @@ use CLIFramework\ServiceContainer;
 use CLIFramework\Command;
 use CLIFramework\CommandBase;
 use CLIFramework\Logger;
+use GetOptionKit\OptionCollection;
 
 abstract class ExtensionBase
 {
@@ -17,6 +18,10 @@ abstract class ExtensionBase
     public function isAvailable()
     {
         return true;
+    }
+
+    public function options(OptionCollection $opts)
+    {
     }
 }
 
