@@ -25,6 +25,7 @@ use CLIFramework\Exception\InvalidCommandArgumentException;
 use CLIFramework\Exception\CommandArgumentNotEnoughException;
 use CLIFramework\Exception\CommandClassNotFoundException;
 use CLIFramework\Exception\ExecuteMethodNotDefinedException;
+use CLIFramework\Exception\ExtensionException;
 use CLIFramework\ArgInfo;
 use CLIFramework\ArgInfoList;
 use CLIFramework\Corrector;
@@ -137,6 +138,9 @@ abstract class CommandBase
      */
     public function addExtension(ExtensionBase $extension)
     {
+        if (!$extension->isAvailable()) {
+            throw new ExtensionException("pcntl_fork() is not supported.", $extension);
+        }
         $this->extensions[] = $extension;
     }
 
