@@ -1,5 +1,9 @@
+Version 2.6
 
-Version next
+- Added CommandExtension support. @shinnya++
+- Added Event system. (Universal/Event/PhpEvent)
+
+Version 2.5
 
 - Added ANSI Color definition class.
 - Added show/hide cursor ansi code to CursorControl.
