@@ -77,6 +77,7 @@ class Application extends CommandBase
     public $programName;
 
 
+    
 
     /**
      * @var CLIFramework\ServiceContainer
@@ -88,6 +89,12 @@ class Application extends CommandBase
      * @var Unviersal\Event\PhpEvent
      */
     protected $eventService;
+
+
+    /**
+     * cliframework global config
+     */
+    protected $globalConfig;
 
 
     /** @var bool */
@@ -110,6 +117,7 @@ class Application extends CommandBase
         $this->loader    = $this->serviceContainer['command_loader'];
         $this->logger    = $this->serviceContainer['logger'];
         $this->formatter = $this->serviceContainer['formatter'];
+        $this->globalConfig = $this->serviceContainer['config'];
 
         // get current class namespace, add {App}\Command\ to loader
         $appRefClass = new ReflectionClass($this);
@@ -508,9 +516,9 @@ class Application extends CommandBase
         return $this->logger;
     }
 
-    private function getGlobalConfig()
+    public function getGlobalConfig()
     {
-        return $this->serviceContainer['config'];
+        return $this->globalConfig;
     }
 
 
