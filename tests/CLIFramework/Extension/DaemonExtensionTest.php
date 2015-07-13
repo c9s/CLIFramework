@@ -23,24 +23,21 @@ class DaemonExtensionTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->extension = new DaemonExtensionForTest(new ServiceContainer);
-        if (!$this->extension->isAvailable()) {
+        $extension = new DaemonExtensionForTest;
+        if (!$extension->isAvailable()) {
             $this->markTestSkipped('DaemonExtension is not available.');
         }
-        // $this->extension->detach();
 
         $this->command = new DaemonExtensionTestCommand();
 
         // Setup a new application
         $this->command->setApplication(new Application());
         $this->command->_init();
-        $this->extension->bindCommand($this->command);
     }
 
     public function testRun()
     {
-        $this->assertTrue(true);
-        // $this->assertFalse(file_exists($this->extension->getPidFilePath()));
+        $this->command->executeWrapper(array());
     }
 
     public function tearDown()
@@ -50,10 +47,16 @@ class DaemonExtensionTest extends PHPUnit_Framework_TestCase
 
 class DaemonExtensionForTest extends DaemonExtension
 {
+    protected $detach = false;
 }
 
 class DaemonExtensionTestCommand extends Command
 {
+    public function init()
+    {
+        $this->extension(new DaemonExtensionForTest);
+    }
+
     public function execute()
     {
     }

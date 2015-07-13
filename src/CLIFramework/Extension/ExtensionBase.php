@@ -10,9 +10,19 @@ abstract class ExtensionBase
 {
     protected $container;
 
-    public function __construct(ServiceContainer $container)
+    public function __construct()
+    {
+
+    }
+
+    public function setServiceContainer(ServiceContainer $container)
     {
         $this->container = $container;
+    }
+
+    public function init()
+    {
+
     }
 
     public function isAvailable()

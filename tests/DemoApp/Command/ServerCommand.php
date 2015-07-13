@@ -15,8 +15,7 @@ class ServerCommand extends Command
 
     public function init()
     {
-        $service = $this->getApplication()->getService();
-        $this->addExtension(new DaemonExtension($service));
+        $this->addExtension(new DaemonExtension);
     }
 
     public function execute($host, $port)

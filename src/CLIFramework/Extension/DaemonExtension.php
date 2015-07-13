@@ -176,6 +176,7 @@ class DaemonExtension extends ExtensionBase
 
     protected function getLogPath()
     {
+        // var_dump( $this->command ); 
         if ($logPath = $this->command->options->{'log-path'}) {
             return $logPath;
         }

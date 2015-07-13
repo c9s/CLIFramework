@@ -145,6 +145,11 @@ abstract class CommandBase
         if (!$extension->isAvailable()) {
             throw new ExtensionException("pcntl_fork() is not supported.", $extension);
         }
+
+        // XXX: prevent maintaining this kind of state....
+        $extension->setServiceContainer($this->getApplication()->getService());
+        $extension->init();
+
         $this->bindExtension($extension);
         $this->extensions[] = $extension;
     }
@@ -157,7 +162,7 @@ abstract class CommandBase
     public function extension($extension)
     {
         if (is_string($extension)) {
-            $extension = new $extension( $this->getApplication()->getService() );
+            $extension = new $extension;
         } else if (! $extension instanceof ExtensionBase) {
             throw new LogicException("Not an extension object or an extension class name.");
         }
@@ -326,6 +331,10 @@ abstract class CommandBase
     {
         // get option parser, init specs from the command.
         $this->optionSpecs = new OptionCollection;
+
+        // create an empty option result, please note this result object will
+        // be replaced with the parsed option result.
+        $this->options = new OptionResult;
 
         // init application options
         $this->options($this->optionSpecs);
