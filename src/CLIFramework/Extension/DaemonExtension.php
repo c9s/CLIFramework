@@ -11,17 +11,17 @@ use CLIFramework\IO\StreamWriter;
 class DaemonExtension extends ExtensionBase 
     implements CommandExtension
 {
-    private $config;
+    protected $config;
 
-    private $logger;
+    protected $logger;
 
-    private $detach = true;
+    protected $detach = true;
 
-    private $chdir = false;
+    protected $chdir = false;
 
-    private $command;
+    protected $command;
 
-    public static function isAvailable()
+    public function isAvailable()
     {
         return function_exists('pcntl_fork');
     }
@@ -82,13 +82,13 @@ class DaemonExtension extends ExtensionBase
     }
     */
 
-    private function bindOptions(Command $command)
+    protected function bindOptions(Command $command)
     {
         $options = $command->getOptionCollection();
         $options->add('pid-file?', 'The path of pid file.');
     }
 
-    private function prepareLogger()
+    protected function prepareLogger()
     {
         $logPath = $this->getLogPath();
         $logger = $this->getLogger();
@@ -107,7 +107,7 @@ class DaemonExtension extends ExtensionBase
         $logger->setWriter(new StreamWriter($resource));
     }
 
-    private function daemonize()
+    protected function daemonize()
     {
         switch (pcntl_fork()) {
         case -1:
