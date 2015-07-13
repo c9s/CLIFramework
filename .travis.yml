@@ -23,7 +23,6 @@ script:
 
 after_success:
   - php vendor/bin/coveralls -v
-  - travis restart -r phpbrew/phpbrew
 
 cache:
   apt: true
