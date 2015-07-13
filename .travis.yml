@@ -10,7 +10,7 @@ matrix:
 install:
   - phpenv rehash
   - composer self-update
-  - composer install --dev --no-interaction
+  - composer install --no-interaction
 
 before_script:
   - mkdir -p build/logs
@@ -21,8 +21,9 @@ script:
   - example/demo meta --zsh commit arg 1 valid-values
   - example/demo zsh --bind demo > zsh
 
-after_script:
+after_success:
   - php vendor/bin/coveralls -v
+  - travis restart -r phpbrew/phpbrew
 
 cache:
   apt: true
