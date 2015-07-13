@@ -376,7 +376,7 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
 
 
         // local argument_min_length=0
-        $argInfos = $cmd->getArgumentsInfo();
+        $argInfos = $cmd->getArgInfoList();
         // $buf->appendLine("local argument_min_length=" . count($argInfos));
         $buf->appendLine(local_bash_var('argument_min_length', count($argInfos)));
 

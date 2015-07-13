@@ -142,7 +142,7 @@ class MetaCommand extends Command
             switch($type) {
             case 'arg':
                 $idx = intval($arg);
-                $arginfos = $cmd->getArgumentsInfo();
+                $arginfos = $cmd->getArgInfoList();
 
                 if (! isset($arginfos[ $idx ]) ) {
                     throw new UndefinedArgumentException("Undefined argument at $idx");

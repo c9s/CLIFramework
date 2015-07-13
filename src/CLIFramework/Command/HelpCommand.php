@@ -163,7 +163,7 @@ class HelpCommand extends Command implements CommandInterface {
             if ($cmd->hasCommands() ) {
                 $logger->write(" <command>");
             } else {
-                $argInfos = $cmd->getArgumentsInfo();
+                $argInfos = $cmd->getArgInfoList();
                 foreach( $argInfos as $argInfo ) {
                     $logger->write(" <" . $argInfo->name . ">");
                 }

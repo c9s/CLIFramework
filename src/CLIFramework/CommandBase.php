@@ -344,7 +344,7 @@ abstract class CommandBase
         if (count($args) > 0) {
             $this->argInfos = $args;
         } else {
-            $this->argInfos = $this->getArgumentsInfoByReflection();
+            $this->argInfos = $this->getArgInfoListByReflection();
         }
 
 
@@ -494,7 +494,7 @@ abstract class CommandBase
         if ($this->hasCommands() ) {
             $out[] = "<subcommand>";
         } else {
-            $argInfos = $this->getArgumentsInfo();
+            $argInfos = $this->getArgInfoList();
             foreach( $argInfos as $argInfo ) {
                 $out[] = "<" . $argInfo->name . ">";
             }
@@ -754,7 +754,7 @@ abstract class CommandBase
      */
     public function arguments($args) { }
 
-    public function getArgumentsInfo() 
+    public function getArgInfoList() 
     {
         return $this->argInfos;
     }
@@ -762,7 +762,7 @@ abstract class CommandBase
     /**
      * The default behaviour: get argument info from method parameters
      */
-    public function getArgumentsInfoByReflection() { 
+    public function getArgInfoListByReflection() { 
         $argInfo = new ArgInfoList;
 
         $ro = new ReflectionObject($this);
@@ -797,7 +797,7 @@ abstract class CommandBase
     public function executeWrapper(array $args)
     {
         // Validating arguments
-        $argInfos = $this->getArgumentsInfo();
+        $argInfos = $this->getArgInfoList();
 
         for ($i = 0; $i < count($argInfos); $i++ ) {
             $argInfo = $argInfos[$i];

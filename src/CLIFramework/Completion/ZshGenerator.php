@@ -246,7 +246,7 @@ class ZshGenerator
     */
     public function command_args(CommandBase $cmd, $cmdSignature) {
         $args = array();
-        $arginfos = $cmd->getArgumentsInfo();
+        $arginfos = $cmd->getArgInfoList();
 
         // for command that does not define an argument, we just complete the argument by file paths.
         if (empty($arginfos)) {
@@ -376,7 +376,7 @@ class ZshGenerator
      */
     public function command_args_case(CommandBase $cmd) {
         $buf = new Buffer;
-        $arginfos = $cmd->getArgumentsInfo();
+        $arginfos = $cmd->getArgInfoList();
         $buf->appendLine("case \$state in");
 
         foreach($arginfos as $a) {

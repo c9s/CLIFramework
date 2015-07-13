@@ -9,7 +9,7 @@ class TestAppCommandTest extends PHPUnit_Framework_TestCase
         $command = new TestApp\Command\SimpleCommand(new Application);
         $command->_init();
 
-        $argInfos = $command->getArgumentsInfo();
+        $argInfos = $command->getArgInfoList();
         $this->assertNotEmpty($argInfos);
         $this->assertCount(1, $argInfos);
         $this->assertEquals('var', $argInfos[0]->name);
@@ -19,7 +19,7 @@ class TestAppCommandTest extends PHPUnit_Framework_TestCase
         $cmd = new TestApp\Command\ArginfoCommand(new Application);
         $cmd->_init();
 
-        $argInfos = $cmd->getArgumentsInfo();
+        $argInfos = $cmd->getArgInfoList();
         $this->assertNotEmpty($argInfos);
         $this->assertCount(3, $argInfos);
 
