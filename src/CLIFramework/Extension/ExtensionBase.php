@@ -24,6 +24,21 @@ abstract class ExtensionBase
     {
     }
 
+    public function prepare() 
+    {
+
+    }
+
+    public function execute() 
+    {
+
+    }
+
+    public function finish() 
+    {
+
+    }
+
 }
 
 

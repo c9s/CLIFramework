@@ -27,7 +27,7 @@ class DaemonExtensionTest extends PHPUnit_Framework_TestCase
         if (!$this->extension->isAvailable()) {
             $this->markTestSkipped('DaemonExtension is not available.');
         }
-        $this->extension->noDetach();
+        // $this->extension->detach();
 
         $this->command = new DaemonExtensionTestCommand();
 
@@ -50,10 +50,6 @@ class DaemonExtensionTest extends PHPUnit_Framework_TestCase
 
 class DaemonExtensionForTest extends DaemonExtension
 {
-    public function noDetach()
-    {
-        parent::noDetach();
-    }
 }
 
 class DaemonExtensionTestCommand extends Command

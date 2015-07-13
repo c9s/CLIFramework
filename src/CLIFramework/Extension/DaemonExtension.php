@@ -16,7 +16,10 @@ class DaemonExtension extends ExtensionBase
 
     protected $logger;
 
-    protected $detach = true;
+    /**
+     * @var boolean Detach from shell.
+     */
+    protected $detach = false;
 
     protected $chdir = false;
 
@@ -29,18 +32,26 @@ class DaemonExtension extends ExtensionBase
 
     public function bindCommand(Command $command)
     {
+        $extension = $this;
         $this->command = $command;
         $this->options($command->getOptionCollection());
+        $this->config = $command->getApplication()->getGlobalConfig();
 
         $event = $command->getApplication()->getEventService();
-        $event->bind('command.execute', function() { 
-       
-        });
-        $event->bind('command.execute.after', function() { 
-        });
+
+        // for global execute event
+        $event->bind('execute', function() use($extension) { });
     }
 
-    public function run()
+    public function finish()
+    {
+        $pidFile = $this->getPidFilePath();
+        if (file_exists($pidFile)) {
+            @unlink($pidFile);
+        }
+    }
+
+    public function execute()
     {
         if (!$this->isAvailable()) {
             throw new ExtensionException("pcntl_fork() is not supported.");
@@ -54,9 +65,9 @@ class DaemonExtension extends ExtensionBase
     /**
      * Call this method if you don't want to close STDIN, STDOUT and STDERR on making a daemon process.
      */
-    protected function noDetach()
+    public function detach()
     {
-        $this->detach = false;
+        $this->detach = true;
     }
 
     /**
@@ -77,23 +88,11 @@ class DaemonExtension extends ExtensionBase
         return $this->config->getPidDirectory() . "/$pidFile.pid";
     }
 
-    /*
-    private function bindHooks($command)
-    {
-        $extension = $this;
-        $command->addHook('execute.before', function() use ($extension) {
-            $extension->run();
-        });
-        $command->addHook('execute.after', function() use ($extension) {
-            @unlink($extension->getPidFilePath());
-        });
-    }
-    */
-
     public function options(OptionCollection $opts)
     {
-        $opts->add('pid-file?', 'path of pid file.');
-        $opts->add('log-path?', 'path of log file');
+        $opts->add('pid-file?', '(daemon) Path of pid file.');
+        $opts->add('log-path?', '(daemon) Path of log file when running with daemon extension.');
+        $opts->add('detach', '(daemon) Detach from the shell.');
     }
 
     protected function prepareLogger()
@@ -106,9 +105,8 @@ class DaemonExtension extends ExtensionBase
         }
 
         $resource = fopen($logPath, "a+");
-
         if ($resource === false) {
-            throw new ExtensionException("Can't open file: $logPath");
+            throw new ExtensionException("Can't open file: $logPath", $this);
         }
 
         // TODO change logging style
@@ -117,27 +115,48 @@ class DaemonExtension extends ExtensionBase
 
     protected function daemonize()
     {
-        switch (pcntl_fork()) {
-        case -1:
-            throw new ExtensionException("pcntl_fork() failed");
-        case 0:
-            break;
-        default:
-            exit(0);
+        if ($this->detach || $this->command->options->{'detach'}) {
+            $this->command->logger->info('forking process to background..');
+            // The return value of pcntl_fork: 
+            //
+            // On success, the PID of the child process is returned in the parent's
+            // thread of execution, and a 0 is returned in the child's thread of
+            // execution. On failure, a -1 will be returned in the parent's
+            // context, no child process will be created, and a PHP error is
+            // raised.
+            switch (pcntl_fork()) {
+            case -1:
+                throw new ExtensionException("pcntl_fork() failed");
+
+            // child process
+            case 0:
+                break;
+
+            // exit parent process
+            default:
+                if (!fclose(STDIN)) {
+                    throw new ExtensionException("fclose(STDIN) failed");
+                }
+
+                if (!fclose(STDOUT)) {
+                    throw new ExtensionException("fclose(STDOUT) failed");
+                }
+
+                if (!fclose(STDERR)) {
+                    throw new ExtensionException("fclose(STDERR) failed");
+                }
+                exit(0);
+            }
         }
 
-        if (!$this->createPidFile()) {
-            throw new ExtensionException("creating a pid file failed");
+        // The execution here runs in child process
+        if ($this->savePid() === false) {
+            throw new ExtensionException("pid file create failed");
         }
 
         if ($this->chdir) {
             $this->chdir();
         }
-
-        if ($this->detach) {
-            $this->detach();
-        }
-
     }
 
     private function chdir()
@@ -147,46 +166,40 @@ class DaemonExtension extends ExtensionBase
         }
     }
 
-    private function detach()
+    protected function savePid()
     {
-        if (!fclose(STDIN)) {
-            throw new ExtensionException("fclose(STDIN) failed");
-        }
-
-        if (!fclose(STDOUT)) {
-            throw new ExtensionException("fclose(STDOUT) failed");
-        }
-
-        if (!fclose(STDERR)) {
-            throw new ExtensionException("fclose(STDERR) failed");
-        }
+        $pidFile = $this->getPidFilePath();
+        $pid = getmypid();
+        $this->command->logger->info("Pid {$pid} saved in $pidFile");
+        return file_put_contents($pidFile, $pid);
     }
 
-    private function createPidFile()
+    protected function getLogPath()
     {
-        return file_put_contents($this->getPidFilePath(), getmypid());
+        if ($logPath = $this->command->options->{'log-path'}) {
+            return $logPath;
+        }
+
+        if ($options = $this->getApplicationOptions()) {
+            if ($logPath = $options->{'log-path'}) {
+                return $logPath;
+            }
+        }
+        return null;
     }
 
-    private function getLogPath()
-    {
-        $options = $this->getApplicationOptions();
-        return $options && $options->{'log-path'} ? $options->{'log-path'} : null;
-    }
-
-    private function getLogger()
+    protected function getLogger()
     {
         if ($this->hasApplication()) {
             $this->logger = $this->command->getLogger();
         }
-
         if (!$this->logger) {
             $this->logger = new Logger();
         }
-
         return $this->logger;
     }
 
-    private function getApplicationOptions()
+    protected function getApplicationOptions()
     {
         if (!$this->hasApplication()) {
             return null;

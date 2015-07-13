@@ -689,12 +689,22 @@ abstract class CommandBase
     /**
      * Prepare stage method 
      */
-    public function prepare() { }
+    public function prepare()
+    {
+        foreach ($this->extensions as $extension) { 
+            $extension->prepare();
+        }
+    }
 
     /**
      * Finalize stage method
      */
-    public function finish() { }
+    public function finish() 
+    {
+        foreach ($this->extensions as $extension) { 
+            $extension->finish();
+        }
+    }
 
     /**
      * abstract method let user define their own argument info.
@@ -793,13 +803,19 @@ abstract class CommandBase
         }
 
         $event = $this->getApplication()->getEventService();
-        $event->trigger('command.execute.before');
 
-        $event->trigger('command.execute');
+        // runs the global triggers
+        $event->trigger('execute.before');
+
+        $event->trigger('execute');
+        foreach ($this->extensions as $extension) { 
+            $extension->execute();
+        }
 
         $ret = call_user_func_array(array($this,'execute'), $args);
 
-        $event->trigger('command.execute.after');
+        $event->trigger('execute.after');
+
 
         return $ret;
     }
