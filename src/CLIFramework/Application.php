@@ -60,8 +60,6 @@ class Application extends CommandBase
     public $topics = array();
 
     /**
-     * (This should be deprecated since we use service container from now on).
-     *
      * @var CLIFramework\Formatter
      */
     public $formatter;
@@ -79,10 +77,17 @@ class Application extends CommandBase
     public $programName;
 
 
+
     /**
      * @var CLIFramework\ServiceContainer
      */
-    protected $service;
+    protected $serviceContainer;
+
+
+    /**
+     * @var Unviersal\Event\PhpEvent
+     */
+    protected $eventService;
 
 
     /** @var bool */
@@ -92,12 +97,19 @@ class Application extends CommandBase
     {
         parent::__construct($parent);
 
-        $this->service = $container ?: new ServiceContainer;
+        $this->serviceContainer = $container ?: ServiceContainer::getInstance();
+
+        if (isset($this->serviceContainer['event'])) {
+            $this->eventService = $this->serviceContainer['event'];
+        } else {
+            $this->eventService = PhpEvent::getInstance();
+        }
 
         // initliaze command loader
-        $this->loader = $this->service['command_loader'];
-        $this->logger = $this->service['logger'];
-        $this->formatter = $this->service['formatter'];
+        // TODO: if the service is not defined, we should create them with default settings.
+        $this->loader    = $this->serviceContainer['command_loader'];
+        $this->logger    = $this->serviceContainer['logger'];
+        $this->formatter = $this->serviceContainer['formatter'];
 
         // get current class namespace, add {App}\Command\ to loader
         $appRefClass = new ReflectionClass($this);
@@ -115,7 +127,12 @@ class Application extends CommandBase
      */
     public function getService()
     {
-        return $this->service;
+        return $this->serviceContainer;
+    }
+
+    public function getEventService()
+    {
+        return $this->eventService;
     }
 
     /**
@@ -483,24 +500,29 @@ class Application extends CommandBase
 
     public function getFormatter()
     {
-        return $this->service['formatter'];
+        return $this->formatter;
     }
 
     public function getLogger()
     {
-        return $this->service['logger'];
+        return $this->logger;
     }
 
     private function getGlobalConfig()
     {
-        return $this->service['config'];
+        return $this->serviceContainer['config'];
     }
 
-    public function __get($name) {
-        if (isset($this->service[$name])) {
-            return $this->service[$name];
+
+    /**
+     * A quick helper for accessing service
+     */
+    public function __get($name) 
+    {
+        if (isset($this->serviceContainer[$name])) {
+            return $this->serviceContainer[$name];
         }
-        throw new InvalidArgumentException("Application class doesn't have `$name` property.");
+        throw new InvalidArgumentException("Application class doesn't have `$name` service or property.");
     }
 
     public static function getInstance()

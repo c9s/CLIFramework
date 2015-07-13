@@ -23,6 +23,7 @@ abstract class ExtensionBase
     public function options(OptionCollection $opts)
     {
     }
+
 }
 
 

@@ -71,9 +71,9 @@ class Logger
      */
     private $writer;
 
-    public function __construct()
+    public function __construct(ServiceContainer $container = null)
     {
-        $container = ServiceContainer::getInstance();
+        $container = $container ?: ServiceContainer::getInstance();
         $this->formatter = $container['formatter']; // new Formatter;
         $this->writer = $container['writer'];
     }

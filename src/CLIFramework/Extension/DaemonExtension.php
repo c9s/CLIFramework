@@ -31,6 +31,13 @@ class DaemonExtension extends ExtensionBase
     {
         $this->command = $command;
         $this->options($command->getOptionCollection());
+
+        $event = $command->getApplication()->getEventService();
+        $event->bind('command.execute', function() { 
+       
+        });
+        $event->bind('command.execute.after', function() { 
+        });
     }
 
     public function run()

@@ -269,11 +269,15 @@ abstract class CommandBase
     }
 
     /**
-     * Get the main application object from parents
+     * Get the main application object from parents or the object itself.
      *
      * @return CLIFramework\Application
      */
     public function getApplication() {
+        if ($this instanceof Application) {
+            return $this;
+        }
+
         $p = $this->parent;
         while ($p) {
             if ($p instanceof Application) {
@@ -775,6 +779,7 @@ abstract class CommandBase
             }
         }
 
+
         // call_user_func_array(  );
         $refl = new ReflectionObject($this);
         if (!method_exists( $this,'execute' )) {
@@ -786,7 +791,17 @@ abstract class CommandBase
         if ( count($args) < $requiredNumber ) {
             throw new CommandArgumentNotEnoughException($this, count($args), $requiredNumber);
         }
-        return call_user_func_array(array($this,'execute'), $args);
+
+        $event = $this->getApplication()->getEventService();
+        $event->trigger('command.execute.before');
+
+        $event->trigger('command.execute');
+
+        $ret = call_user_func_array(array($this,'execute'), $args);
+
+        $event->trigger('command.execute.after');
+
+        return $ret;
     }
 
     /**

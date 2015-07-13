@@ -1,6 +1,5 @@
 <?php
 namespace CLIFramework;
-
 use CLIFramework\ServiceContainer;
 
 /**
@@ -12,9 +11,9 @@ class Prompter
     private $formatter;
     private $console;
 
-    public function __construct()
+    public function __construct(ServiceContainer $container = null)
     {
-        $container = ServiceContainer::getInstance();
+        $container = $container ?: ServiceContainer::getInstance();
         $this->formatter = $container['formatter'];
         $this->console = $container['console'];
     }
