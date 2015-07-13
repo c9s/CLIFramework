@@ -619,15 +619,15 @@ abstract class CommandBase
      *
      * @return Command initialized command object.
      */
-    public function getCommand($command)
+    public function getCommand($commandName)
     {
-        if ( isset($this->aliases[$command]) ) {
-            return $this->aliases[$command];
+        if ( isset($this->aliases[$commandName]) ) {
+            return $this->aliases[$commandName];
         }
-        if ( isset($this->commands[ $command ]) ) {
-            return $this->commands[ $command ];
+        if ( isset($this->commands[ $commandName ]) ) {
+            return $this->commands[ $commandName ];
         }
-        throw new CommandNotFoundException($this, $command);
+        throw new CommandNotFoundException($this, $commandName);
     }
 
     public function guessCommand($commandName) {
