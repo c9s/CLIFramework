@@ -140,12 +140,19 @@ abstract class CommandBase
         $this->extensions[] = $extension;
     }
 
+    protected function bindExtension(ExtensionBase $extension)
+    {
+        if ($extension instanceof CommandExtension) {
+            $extension->bindCommand($this);
+        } else if ($extension instanceof ApplicationExtension) {
+            $extension->bindApplication($this->getApplication());
+        }
+    }
+
     protected function initExtensions()
     {
         foreach ($this->extensions as $extension) {
-            if ($extension instanceof CommandExtension) {
-                $extension->bindCommand($this);
-            }
+            $this->bindExtension($extension);
         }
     }
 
