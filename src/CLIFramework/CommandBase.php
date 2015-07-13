@@ -9,6 +9,7 @@
  */
 namespace CLIFramework;
 use Exception;
+use LogicException;
 use InvalidArgumentException;
 use ReflectionObject;
 use ArrayAccess;
@@ -153,8 +154,13 @@ abstract class CommandBase
      *
      * @param CLIFramework\Extension\ExtensionBase
      */
-    public function extension(ExtensionBase $extension)
+    public function extension($extension)
     {
+        if (is_string($extension)) {
+            $extension = new $extension( $this->getApplication()->getService() );
+        } else if (! $extension instanceof ExtensionBase) {
+            throw new LogicException("Not an extension object or an extension class name.");
+        }
         return $this->addExtension($extension);
     }
 
