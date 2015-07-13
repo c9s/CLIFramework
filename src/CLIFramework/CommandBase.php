@@ -260,6 +260,7 @@ abstract class CommandBase
             $this->autoloadCommands();
     }
 
+
     public function isCommandAutoloadEnabled()
     {
         return $this->isApplication()
@@ -314,7 +315,7 @@ abstract class CommandBase
      * @param string $command
      * @param string $class
      */
-    public function registerCommand($command,$class = null)
+    public function registerCommand($command, $class = null)
     {
         $trace = debug_backtrace(false, 2);
         $call = $trace[0]['file'].':'.$trace[0]['line'];
@@ -340,6 +341,15 @@ abstract class CommandBase
         return CommandLoader::getInstance();
     }
 
+
+    /**
+     * Register commands into group
+     *
+     * @param string $groupName The group name
+     * @param string|array $commands The command names. when given string, it must be space-separated.
+     *
+     * @return CLIFramework\CommandGroup
+     */
     public function commandGroup($groupName, $commands = array())
     {
         if (is_string($commands)) {
@@ -348,6 +358,14 @@ abstract class CommandBase
         return $this->addCommandGroup($groupName, $commands);
     }
 
+
+    /**
+     * Register command
+     *
+     * @param string $command The command name
+     * @param string $class   (optional) The command class. if this argument is
+     *                        ignroed, the class name is automatically detected.
+     */
     public function command($command, $class = null) 
     {
         return $this->addCommand($command, $class);
@@ -394,6 +412,13 @@ abstract class CommandBase
 
 
 
+    /**
+     * getAllCommandPrototype() method is used for returning command prototype in string.
+     *
+     * Very useful when user entered command with wrong argument or format.
+     *
+     * @return string
+     */
     public function getAllCommandPrototype() {
         $lines = array();
 
@@ -435,8 +460,10 @@ abstract class CommandBase
 
 
     /**
-     * Connect command object with the current command object.
+     * connectCommand connects a command name with a command object.
      *
+     * @param string $name
+     * @param CLIFramework\CommandBase $cmd
      */
     protected function connectCommand($name, CommandBase $cmd) {
         $cmd->setName($name);
@@ -520,7 +547,15 @@ abstract class CommandBase
     }
 
 
-    public function getVisibleCommands() {
+
+    /**
+     * Some commands are not visible. when user runs 'help', we should just
+     * show them these visible commands
+     *
+     * @return array[string]CommandBase command map
+     */
+    public function getVisibleCommands() 
+    {
         $cmds = array();
         foreach( $this->getVisibleCommandList() as $name ) {
             $cmds[ $name ] = $this->commands[ $name ];
@@ -529,7 +564,15 @@ abstract class CommandBase
     }
 
 
-    public function getVisibleCommandList() {
+
+    /**
+     * Command names start with understore are hidden command. we ignore the
+     * commands.
+     *
+     * @return CommandBase[]
+     */
+    public function getVisibleCommandList() 
+    {
         return array_filter(array_keys($this->commands), function($name) {
             return !preg_match('#^_#', $name);
         });
