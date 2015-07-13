@@ -143,11 +143,9 @@ abstract class CommandBase
     public function addExtension(ExtensionBase $extension)
     {
         if (!$extension->isAvailable()) {
-            throw new ExtensionException("pcntl_fork() is not supported.", $extension);
+            throw new ExtensionException("Extension " . get_class($extension) . " is not available", $extension);
         }
 
-        // XXX: prevent maintaining this kind of state....
-        $extension->setServiceContainer($this->getApplication()->getService());
         $extension->init();
 
         $this->bindExtension($extension);

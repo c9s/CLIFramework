@@ -5,6 +5,7 @@ use CLIFramework\Command;
 use CLIFramework\CommandBase;
 use CLIFramework\Logger;
 use GetOptionKit\OptionCollection;
+use LogicException;
 
 abstract class ExtensionBase
 {
@@ -20,6 +21,10 @@ abstract class ExtensionBase
         $this->container = $container;
     }
 
+
+    /**
+     * init method is called when the extension is added to the pool.
+     */
     public function init()
     {
 
@@ -47,6 +52,14 @@ abstract class ExtensionBase
     public function finish() 
     {
 
+    }
+
+    public function __get($accessor) 
+    {
+        if (isset($this->container[$accessor])) {
+            return $this->container[$accessor];
+        }
+        throw new LogicException("Undefined accessor '$accessor'");
     }
 
 }

@@ -9,11 +9,8 @@ use CLIFramework\Extension\CommandExtension;
 use CLIFramework\IO\StreamWriter;
 use GetOptionKit\OptionCollection;
 
-class DaemonExtension extends ExtensionBase 
-    implements CommandExtension
+class DaemonExtension extends CommandExtension
 {
-    protected $config;
-
     protected $logger;
 
     /**
@@ -23,24 +20,9 @@ class DaemonExtension extends ExtensionBase
 
     protected $chdir = false;
 
-    protected $command;
-
     public function isAvailable()
     {
         return function_exists('pcntl_fork');
-    }
-
-    public function bindCommand(Command $command)
-    {
-        $extension = $this;
-        $this->command = $command;
-        $this->options($command->getOptionCollection());
-        $this->config = $command->getApplication()->getGlobalConfig();
-
-        $event = $command->getApplication()->getEventService();
-
-        // for global execute event
-        $event->bind('execute', function() use($extension) { });
     }
 
     public function finish()
