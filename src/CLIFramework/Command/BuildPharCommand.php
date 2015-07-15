@@ -5,6 +5,7 @@ use CLIFramework\Autoload\ComposerAutoloadGenerator;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use RuntimeException;
+use Exception;
 use Phar;
 use CodeGen\Expr\NewObjectExpr;
 use CodeGen\Block;
@@ -24,15 +25,42 @@ class BuildPharCommand extends Command
 
     public function options($opts)
     {
-        // $opts->add('composer', 'composer config file');
+
+        // append executable (bootstrap scripts, if it's not defined, it's just a library phar file.
+        $opts->add('bootstrap?','bootstrap or executable php file');
+
+        $opts->add('c|compress?', 'compress type: gz, bz2')
+            ->defaultValue('gz')
+            ->validValues([ 'gz', 'bz2' ])
+            ;
+
+        $opts->add('no-compress', 'do not compress phar file.');
+
+        $opts->add('add+', 'add a path respectively');
+
+        $opts->add('exclude+' , 'exclude pattern');
+        /*
+
+        // optional classloader script (use Universal ClassLoader by default 
+        $opts->add('classloader?','embed a classloader in phar file');
+
+        $opts->add('executable','make the phar file executable');
+
+        $opts->add('lib+','library path');
+
+
+
+        $opts->add('output:','output');
+         */
     }
 
     public function arguments($args)
     {
         $args->add('composer-config')->isa('file');
+        $args->add('phar-file');
     }
 
-    public function execute($composerConfigFile)
+    public function execute($composerConfigFile, $pharFile = 'output.phar')
     {
         if (!extension_loaded('json')) {
             throw new RuntimeException('json extension is required.');
@@ -40,6 +68,50 @@ class BuildPharCommand extends Command
 
         $generator = new ComposerAutoloadGenerator;
         echo $generator->generate($composerConfigFile);
+
+        ini_set('phar.readonly', 0);
+        $this->logger->info("Creating phar file $pharFile...");
+
+        $phar = new Phar($pharFile, 0, $pharFile);
+        $phar->setSignatureAlgorithm(Phar::SHA1);
+        $phar->startBuffering();
+
+        if ($adds = $this->options->add) {
+            foreach ($adds as $add ) {
+                $phar->buildFromIterator(
+                    new RecursiveIteratorIterator(
+                        new RecursiveDirectoryIterator($add)),
+                    getcwd()
+                );
+            }
+        }
+
+
+        // Finish building...
+        $phar->stopBuffering();
+
+        $compressType = Phar::GZ;
+        if ($this->options->{'no-compress'} ) {
+            $compressType = null;
+        } else if ($type = $this->options->compress) {
+            switch ($type) {
+            case 'gz':
+                $compressType = Phar::GZ;
+                break;
+            case 'bz2':
+                $compressType = Phar::BZ2;
+                break;
+            default:
+                throw new Exception("Phar compression: $type is not supported, valid values are gz, bz2");
+                break;
+            }
+        }
+        if ($compressType) {
+            $this->logger->info( "Compressing phar ..." );
+            $phar->compressFiles($compressType);
+        }
+
+        $this->logger->info('Done');
     }
 
 }

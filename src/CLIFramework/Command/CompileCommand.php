@@ -48,8 +48,7 @@ class CompileCommand extends Command
 
     public function execute()
     {
-        // xxx: read package config and get src role directories for compiling
-        ini_set('phar.readonly',0);
+        ini_set('phar.readonly', 0);
 
         $options = $this->options;
         $logger = $this->logger;
@@ -59,11 +58,13 @@ class CompileCommand extends Command
         $output = 'output.phar';
         $classloader = null;
 
-        if( $options->bootstrap )
+        if ($options->bootstrap) {
             $bootstrap = $options->bootstrap;
+        }
 
-        if( $options->lib )
+        if ($options->lib) {
             $lib_dirs = $options->lib;
+        }
 
         if( $options->output )
             $output = $options->output;
@@ -80,11 +81,9 @@ class CompileCommand extends Command
         $phar->setSignatureAlgorithm(Phar::SHA1);
         $phar->startBuffering();
 
-        $excludePatterns = $options->exclude ? $options->exclude : null;
-
-
-        if( $options->include ) {
-            foreach( $options->include as $include ) {
+        $excludePatterns = $this->options->exclude ? $options->exclude : null;
+        if ($this->options->include) {
+            foreach ($options->include as $include ) {
                 $phar->buildFromIterator(
                     new RecursiveIteratorIterator(
                         new RecursiveDirectoryIterator($include)),
@@ -201,13 +200,10 @@ EOT;
         $phar->stopBuffering();
 
         $compress_type = Phar::GZ;
-        if( $options->{'no-compress'} ) 
-        {
+        if ($options->{'no-compress'} ) {
             $compress_type = null;
 
-        } 
-        elseif( $options->compress ) 
-        {
+        } else if ( $options->compress ) {
             switch( $v = $options->compress ) {
             case 'gz':
                 $compress_type = Phar::GZ;
