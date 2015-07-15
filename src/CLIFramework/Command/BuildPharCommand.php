@@ -35,6 +35,7 @@ class BuildPharCommand extends Command
 
     public function options($opts)
     {
+        $opts->add('working-dir|d:', 'If specified, use the given directory as working directory.');
 
         // append executable (bootstrap scripts, if it's not defined, it's just a library phar file.
         $opts->add('bootstrap?','bootstrap or executable php file')
@@ -102,9 +103,9 @@ class BuildPharCommand extends Command
         $this->logger->info("Setting up stub..." );
         $stubs[] = "Phar::mapPhar('$pharFile');";
 
+        $workingDir = $this->options->{'working-dir'} ?: getcwd();
+        // $workingDir = dirname(realpath($composerConfigFile));
 
-
-        $workingDir = getcwd();
         $requires = array(
             GetClassPath('Universal\\ClassLoader\\ClassLoader', $workingDir),
             GetClassPath('Universal\\ClassLoader\\Psr0ClassLoader', $workingDir),
