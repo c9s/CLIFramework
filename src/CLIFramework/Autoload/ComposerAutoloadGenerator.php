@@ -149,7 +149,7 @@ class ComposerAutoloadGenerator
 
             } else {
 
-                throw new Exception('Unsupported autoloading type');
+                throw new Exception('Unsupported autoloading type: ' . join(',', array_keys($autoload)));
 
             }
         }
