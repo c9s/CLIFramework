@@ -47,7 +47,7 @@ class BuildPharCommand extends Command
 
         $opts->add('c|compress?', 'compress type: gz, bz2')
             ->defaultValue('gz')
-            ->validValues([ 'gz', 'bz2' ])
+            ->validValues(array( 'gz', 'bz2'))
             ;
 
         $opts->add('no-compress', 'do not compress phar file.');
@@ -92,7 +92,7 @@ class BuildPharCommand extends Command
 
         $phar->startBuffering();
 
-        $stubs = [];
+        $stubs = array();
         if ($this->options->executable) {
             $this->logger->debug( 'Add shell bang...' );
             $stubs[] = "#!/usr/bin/env php";
