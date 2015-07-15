@@ -263,6 +263,7 @@ class Application extends CommandBase
             'bash'                => 'CLIFramework\\Command\\BashCompletionCommand',
             'meta'                => 'CLIFramework\\Command\\MetaCommand',
             'compile'             => 'CLIFramework\\Command\\CompileCommand',
+            'build-phar'          => 'CLIFramework\\Command\\BuildPharCommand',
             'github:build-topics' => 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand',
         ))->setId('dev');
     }
