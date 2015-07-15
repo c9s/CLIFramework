@@ -104,11 +104,16 @@ class BuildPharCommand extends Command
         $stubs[] = "Phar::mapPhar('$pharFile');";
 
 
+
+        $requires = array(
+            GetClassPath('Universal\\ClassLoader\\ClassLoader'),
+            GetClassPath('Universal\\ClassLoader\\Psr0ClassLoader'),
+            GetClassPath('Universal\\ClassLoader\\Psr4ClassLoader'),
+            GetClassPath('Universal\\ClassLoader\\MapClassLoader'),
+        );
+
         // Generate class loader stub
-        $interfacePath = GetClassPath('Universal\\ClassLoader\\ClassLoader');
-        $psr0path = GetClassPath('Universal\\ClassLoader\\Psr0ClassLoader');
-        $psr4path = GetClassPath('Universal\\ClassLoader\\Psr4ClassLoader');
-        $fileinfo = new SplFileInfo($psr0path);
+        $fileinfo = new SplFileInfo($requires[0]);
 
         // $phar->buildFromDirectory($fileinfo->getPath());
 
@@ -117,9 +122,9 @@ class BuildPharCommand extends Command
             getcwd()
         );
 
-        $stubs[] = "require 'phar://$pharFile/$interfacePath';";
-        $stubs[] = "require 'phar://$pharFile/$psr0path';";
-        $stubs[] = "require 'phar://$pharFile/$psr4path';";
+        foreach ($requires as $requirefile) {
+            $stubs[] = "require 'phar://$pharFile/$requirefile';";
+        }
 
         if ($bootstrap = $this->options->bootstrap) {
             $this->logger->info("Add $bootstrap");
