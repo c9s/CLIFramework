@@ -93,16 +93,17 @@ class CompileCommand extends Command
         }
 
         // archive library directories into phar file.
-        foreach( $lib_dirs as $src_dir ) {
-            if( ! file_exists($src_dir) )
+        foreach ($lib_dirs as $src_dir ) {
+            if (! file_exists($src_dir)) {
                 die( "$src_dir does not exist." );
+            }
 
             $src_dir = realpath( $src_dir );
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($src_dir),
                                     RecursiveIteratorIterator::CHILD_FIRST);
 
             // compile php file only (currently)
-            foreach( $iterator as $path ) {
+            foreach ($iterator as $path) {
                 if( $path->isFile() ) {
                     $rel_path = substr($path->getPathname(),strlen($src_dir) + 1);
 
@@ -122,13 +123,12 @@ class CompileCommand extends Command
 
 
                     // if it's php file.
-                    if( preg_match('/\.php$/',$path->getFilename() ) ) {
+                    if (preg_match('/\.php$/',$path->getFilename())) {
                         $content = php_strip_whitespace( $path->getRealPath() );
                         # echo $path->getPathname() . "\n";
                         $logger->debug2("add " . $rel_path);
                         $phar->addFromString($rel_path, $content);
-                    }
-                    else {
+                    } else {
                         $logger->debug2("add " . $rel_path);
                         $phar->addFile($path->getPathname(), $rel_path);
                     }
