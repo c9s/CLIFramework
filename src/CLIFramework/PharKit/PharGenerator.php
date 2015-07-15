@@ -3,6 +3,13 @@ namespace CLIFramework\PharKit;
 use Phar;
 use CLIFramework\Logger;
 
+use CodeGen\Block;
+use CodeGen\Expr\NewObjectExpr;
+use CodeGen\Statement\UseStatement;
+use CodeGen\Statement\FunctionCallStatement;
+use CodeGen\Statement\AssignStatement;
+use CodeGen\Statement\MethodCallStatement;
+
 
 class PharGenerator
 {
@@ -26,7 +33,7 @@ class PharGenerator
         if ($alias) {
             $this->alias = $alias;
         } else {
-            $this->alias = basename($alias);
+            $this->alias = basename($pharFile);
         }
 
         $this->phar = new Phar($this->pharFile, 0, $this->alias);
