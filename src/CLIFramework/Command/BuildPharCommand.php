@@ -136,10 +136,9 @@ class BuildPharCommand extends Command
             $stubs[] = "require 'phar://$pharFile/$bootstrap';";
         }
 
-
         $this->logger->info('Generating classLoader stubs');
         $generator = new ComposerAutoloadGenerator;
-        $generator->scanComposerJsonFiles($vendorDir);
+        $generator->scanComposerJsonFiles($workingDir . DIRECTORY_SEPARATOR . $vendorDir);
 
         $autoloads = $generator->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDir, true);
         foreach($autoloads as $packageName => $autoload) {
@@ -148,7 +147,6 @@ class BuildPharCommand extends Command
                 foreach ($map as $mapPaths) {
                     $paths = (array) $mapPaths;
                     foreach ($paths as $path) {
-
                         if (is_dir($path)) {
                             $phar->buildFromIterator(
                                 new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)),
