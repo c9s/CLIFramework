@@ -13,7 +13,9 @@
     },
     "require-dev": {
         "corneltek/phpunit-testmore": "dev-master",
-        "satooshi/php-coveralls": "dev-master"
+        "satooshi/php-coveralls": "dev-master",
+        "symfony/finder": "^2.7",
+        "symfony/debug": "2.6.*"
     },
     "license": "MIT",
     "authors": [

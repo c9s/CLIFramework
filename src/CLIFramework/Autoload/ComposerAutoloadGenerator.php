@@ -6,9 +6,14 @@ use CodeGen\Block;
 use CodeGen\Statement\UseStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
+use Symfony\Component\Finder\Finder;
 
 class ComposerAutoloadGenerator
 {
+    /**
+     * @var array[ package name ] = array
+     */
+    protected $packages = array();
 
     public function traceAutoloadsWithComposerJson($composerJson = 'composer.json', $vendorDir = 'vendor', $includeRootDev = false)
     {
@@ -17,7 +22,7 @@ class ComposerAutoloadGenerator
         return $this->traceAutoloads($obj, $vendorDir, $includeRootDev);
     }
 
-    public function traceAutoloadsWithRequirements(array $requirements = array(), $vendorDir = 'vendor')
+    public function traceAutoloadsWithRequirements(array $config, array $requirements = array(), $vendorDir = 'vendor')
     {
         $autoloads = array();
         foreach($requirements as $packageName => $requirement) {
@@ -27,12 +32,23 @@ class ComposerAutoloadGenerator
                 continue;
             }
 
+
+            // get config from composer.json
             $packageComposerJson = $vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR . 'composer.json';
-            if (!file_exists($packageComposerJson)) {
+            if (file_exists($packageComposerJson)) {
+
+                $packageAutoloads = $this->traceAutoloadsWithComposerJson($packageComposerJson, $vendorDir, false); // don't include require-dev for dependencies
+                $autoloads = array_merge($autoloads, $packageAutoloads);
+
+            } else if (isset($this->packages[ $packageName ])) {
+
+                $config = $this->packages[ $packageName ];
+                $autoloads = $this->traceAutoloads($config, $vendorDir, false);
+
+            } else {
+                // if (!file_exists($packageComposerJson)) {
                 throw new RuntimeException("Missing composer.json file: $packageComposerJson");
             }
-            $packageAutoloads = $this->traceAutoloadsWithComposerJson($packageComposerJson, $vendorDir, false); // don't include require-dev for dependencies
-            $autoloads = array_merge($autoloads, $packageAutoloads);
         }
         return $autoloads;
     }
@@ -43,10 +59,10 @@ class ComposerAutoloadGenerator
 
         // @see https://getcomposer.org/doc/02-libraries.md#platform-packages
         if (isset($config['require'])) {
-            $autoloads = array_merge($autoloads, $this->traceAutoloadsWithRequirements($config['require']));
+            $autoloads = array_merge($autoloads, $this->traceAutoloadsWithRequirements($config, $config['require']));
         }
         if ($includeRootDev && isset($config['require-dev'])) {
-            $autoloads = array_merge($autoloads, $this->traceAutoloadsWithRequirements($config['require-dev']));
+            $autoloads = array_merge($autoloads, $this->traceAutoloadsWithRequirements($config, $config['require-dev']));
         }
 
         if (isset($config['autoload'])) {
@@ -55,14 +71,22 @@ class ComposerAutoloadGenerator
             // @see https://getcomposer.org/doc/04-schema.md#target-dir
             if (isset($config['target-dir'])) {
 
-            }
+                $autoloads[$config['name']] = $this->prependAutoloadPathPrefix($config['autoload'], $config['target-dir']);
 
-            // Rewrite autoload path with vendor base dir
-            $autoloads[$config['name'] ] = $config['autoload'];
+            } else {
+
+                $autoloads[$config['name'] ] = $config['autoload'];
+
+            }
         }
         return $autoloads;
     }
 
+
+    /**
+     * Prepend a prefix for the structure in 'autoload' property. 
+     * e.g., { 'psr-0': ... 'psr-4': ...  }
+     */
     public function prependAutoloadPathPrefix($autoloads, $prefix)
     {
         $newAutoloads = array();
@@ -84,10 +108,19 @@ class ComposerAutoloadGenerator
     }
 
 
-    public function generate($composerConfigFile, $pharFile = 'output.phar')
+    public function generate($composerConfigFile, $pharFile = 'output.phar', $vendorDir = 'vendor')
     {
         $pharMap = 'phar://' . $pharFile . '/';
-        $vendorDir = 'vendor';
+
+        // Find composer.json files that are not in their corresponding package directory
+        $finder = new Finder();
+        $finder->name('composer.json');
+        $finder->in($vendorDir);
+        foreach ($finder as $file) {
+            $config = json_decode(file_get_contents($file), true);
+            $this->packages[ $config['name'] ] = $config;
+        }
+
         $autoloads = $this->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDir, true);
 
         $block   = new Block;
@@ -97,14 +130,25 @@ class ComposerAutoloadGenerator
         $psr0 = array();
         $psr4 = array();
         $files = array();
+
         foreach($autoloads as $packageName => $autoload) {
+
             $autoload = $this->prependAutoloadPathPrefix($autoload, $pharMap . $vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
             if (isset($autoload['psr-4'])) {
+
                 $psr4 = array_merge($psr4, $autoload['psr-4']);
-            } else if (isset($autoload['prs-0'])) {
+
+            } else if (isset($autoload['psr-0'])) {
+
                 $psr0 = array_merge($psr0, $autoload['psr-0']);
+
             } else if (isset($autoload['files'])) {
+
                 $files = array_merge($autoload['files']);
+
+            } else {
+
+                throw new Exception;
             }
         }
 
