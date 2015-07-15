@@ -185,7 +185,7 @@ EOT;
         }
 
 
-        if( $bootstrap ) {
+        if ($bootstrap) {
             $logger->info2( "Adding bootstrap script..." );
         $stub .=<<<"EOT"
 require 'phar://$pharFile/$bootstrap';
@@ -202,7 +202,6 @@ EOT;
         $compress_type = Phar::GZ;
         if ($options->{'no-compress'} ) {
             $compress_type = null;
-
         } else if ( $options->compress ) {
             switch( $v = $options->compress ) {
             case 'gz':

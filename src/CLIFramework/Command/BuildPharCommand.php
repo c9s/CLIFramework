@@ -86,6 +86,14 @@ class BuildPharCommand extends Command
             }
         }
 
+        $stubs = [];
+        if ($bootstrap = $this->options->bootstrap) {
+            $this->logger->info( "Adding bootstrap script: $bootstrap" );
+            $stubs[] = "require 'phar://$pharFile/$bootstrap';";
+        }
+        $stubs[] = '__HALT_COMPILER();';
+        $phar->setStub(join("\n",$stubs));
+
 
         // Finish building...
         $phar->stopBuffering();
