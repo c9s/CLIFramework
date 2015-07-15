@@ -17,10 +17,10 @@ use CLIFramework\PharKit\PharGenerator;
 use ReflectionClass;
 use SplFileInfo;
 
-function GetClassPath($class) {
+function GetClassPath($class, $baseDir) {
     $refclass = new ReflectionClass($class);
     $path = $refclass->getFilename();
-    return ltrim(str_replace(getcwd(), '', $path ), DIRECTORY_SEPARATOR);
+    return ltrim(str_replace($baseDir, '', $path ), DIRECTORY_SEPARATOR);
 }
 
 /**
@@ -104,11 +104,12 @@ class BuildPharCommand extends Command
 
 
 
+        $workingDir = getcwd();
         $requires = array(
-            GetClassPath('Universal\\ClassLoader\\ClassLoader'),
-            GetClassPath('Universal\\ClassLoader\\Psr0ClassLoader'),
-            GetClassPath('Universal\\ClassLoader\\Psr4ClassLoader'),
-            GetClassPath('Universal\\ClassLoader\\MapClassLoader'),
+            GetClassPath('Universal\\ClassLoader\\ClassLoader', $workingDir),
+            GetClassPath('Universal\\ClassLoader\\Psr0ClassLoader', $workingDir),
+            GetClassPath('Universal\\ClassLoader\\Psr4ClassLoader', $workingDir),
+            GetClassPath('Universal\\ClassLoader\\MapClassLoader', $workingDir),
         );
 
         // Generate class loader stub
@@ -118,7 +119,7 @@ class BuildPharCommand extends Command
 
         $phar->buildFromIterator(
             new RecursiveIteratorIterator(new RecursiveDirectoryIterator($fileinfo->getPath())),
-            getcwd()
+            $workingDir
         );
 
         foreach ($requires as $requirefile) {
@@ -139,6 +140,29 @@ class BuildPharCommand extends Command
         $this->logger->info('Generating classLoader stubs');
         $generator = new ComposerAutoloadGenerator;
         $generator->scanComposerJsonFiles($vendorDir);
+
+        $autoloads = $generator->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDir, true);
+        foreach($autoloads as $packageName => $autoload) {
+            $autoload = $generator->prependAutoloadPathPrefix($autoload, $vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+            foreach ($autoload as $type => $map) {
+                foreach ($map as $mapPaths) {
+                    $paths = (array) $mapPaths;
+                    foreach ($paths as $path) {
+
+                        if (is_dir($path)) {
+                            $phar->buildFromIterator(
+                                new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)),
+                                $workingDir
+                            );
+                        } else if (is_file($path)) {
+                            $phar->addFile($path, $path);
+                        }
+
+                    }
+                }
+            }
+        }
+
 
         echo $generator->generate($composerConfigFile, $pharFile, $vendorDir);
 
