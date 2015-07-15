@@ -142,9 +142,6 @@ class ComposerAutoloadGenerator
     public function generate($composerConfigFile, $pharFile = 'output.phar', $vendorDir = 'vendor')
     {
         $pharMap = 'phar://' . $pharFile . '/';
-
-        $this->scanComposerJsonFiles($vendorDir);
-
         $autoloads = $this->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDir, true);
 
         $psr0 = array();
