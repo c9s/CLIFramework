@@ -146,11 +146,12 @@ class ComposerAutoloadGenerator
 
             } else if (isset($autoload['files'])) {
 
-                $files = array_merge($autoload['files']);
+                $files = array_merge($files, $autoload['files']);
 
             } else if (isset($autoload['classmap'])) {
 
-                // ClassMapGenerator::createMap(__DIR__.'/library');
+                // $autoload['classmap']
+                // ClassMapGenerator::createMap();
 
             } else {
 
