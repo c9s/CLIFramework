@@ -143,11 +143,6 @@ class ComposerAutoloadGenerator
 
         $autoloads = $this->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDir, true);
 
-        $block   = new Block;
-        $block[] = new UseStatement('Universal\\ClassLoader\\Psr0ClassLoader');
-        $block[] = new UseStatement('Universal\\ClassLoader\\Psr4ClassLoader');
-        $block[] = new UseStatement('Universal\\ClassLoader\\MapClassLoader');
-
         $psr0 = array();
         $psr4 = array();
         $files = array();
@@ -179,6 +174,13 @@ class ComposerAutoloadGenerator
 
             }
         }
+
+
+        // Generate classloader initialization code
+        $block   = new Block;
+        $block[] = new UseStatement('Universal\\ClassLoader\\Psr0ClassLoader');
+        $block[] = new UseStatement('Universal\\ClassLoader\\Psr4ClassLoader');
+        $block[] = new UseStatement('Universal\\ClassLoader\\MapClassLoader');
 
         if (!empty($files)) {
             foreach ($files as $file) {
