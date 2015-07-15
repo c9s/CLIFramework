@@ -82,8 +82,6 @@ class BuildPharCommand extends Command
         }
 
 
-        $generator = new ComposerAutoloadGenerator;
-        echo $generator->generate($composerConfigFile, $pharFile);
 
 
 
@@ -132,6 +130,11 @@ class BuildPharCommand extends Command
             $this->logger->info( "Adding bootstrap script: $bootstrap" );
             $stubs[] = "require 'phar://$pharFile/$bootstrap';";
         }
+
+        $generator = new ComposerAutoloadGenerator;
+        echo $generator->generate($composerConfigFile, $pharFile);
+
+        $stubs[] = $generator->generate($composerConfigFile, $pharFile);
 
 
         $stubs[] = '__HALT_COMPILER();';
