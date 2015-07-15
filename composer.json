@@ -22,8 +22,8 @@
         }
     ],
     "autoload": {
-        "psr-0": {
-            "CLIFramework": "src"
+        "psr-4": {
+            "CLIFramework\\": "src/CLIFramework/"
         }
     },
     "version": "2.6.2"
