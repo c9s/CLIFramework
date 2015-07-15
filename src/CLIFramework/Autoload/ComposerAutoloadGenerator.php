@@ -50,8 +50,15 @@ class ComposerAutoloadGenerator
         }
 
         if (isset($config['autoload'])) {
+            // target-dir is deprecated, but somehow we need to support some
+            // psr-0 class loader with target-dir
+            // @see https://getcomposer.org/doc/04-schema.md#target-dir
+            if (isset($config['target-dir'])) {
+
+            }
+
             // Rewrite autoload path with vendor base dir
-            $autoloads[ $config['name'] ] = $config['autoload'];
+            $autoloads[$config['name'] ] = $config['autoload'];
         }
         return $autoloads;
     }
