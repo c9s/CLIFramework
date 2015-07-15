@@ -127,11 +127,8 @@ class ComposerAutoloadGenerator
         return $newAutoloads;
     }
 
-
-    public function generate($composerConfigFile, $pharFile = 'output.phar', $vendorDir = 'vendor')
+    public function scanComposerJsonFiles($vendorDir)
     {
-        $pharMap = 'phar://' . $pharFile . '/';
-
         // Find composer.json files that are not in their corresponding package directory
         $finder = new Finder();
         $finder->name('composer.json');
@@ -140,6 +137,13 @@ class ComposerAutoloadGenerator
             $config = json_decode(file_get_contents($file), true);
             $this->packages[ $config['name'] ] = $config;
         }
+    }
+
+    public function generate($composerConfigFile, $pharFile = 'output.phar', $vendorDir = 'vendor')
+    {
+        $pharMap = 'phar://' . $pharFile . '/';
+
+        $this->scanComposerJsonFiles($vendorDir);
 
         $autoloads = $this->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDir, true);
 
