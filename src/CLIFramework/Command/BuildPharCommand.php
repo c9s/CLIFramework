@@ -207,7 +207,8 @@ class BuildPharCommand extends Command
             }
         }
         if ($compressType) {
-            $this->logger->info( "Compressing phar ..." );
+            $this->logger->info( "Compressing phar files...");
+            // $phar = $phar->compress($compressType);
             $phar->compressFiles($compressType);
         }
 
