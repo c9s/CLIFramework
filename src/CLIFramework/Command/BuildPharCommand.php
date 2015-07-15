@@ -137,6 +137,8 @@ class BuildPharCommand extends Command
         }
 
         $generator = new ComposerAutoloadGenerator;
+
+        $this->logger->info('ClassLoader Stubs');
         echo $generator->generate($composerConfigFile, $pharFile);
 
         $stubs[] = $generator->generate($composerConfigFile, $pharFile);
