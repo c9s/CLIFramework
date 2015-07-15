@@ -156,34 +156,33 @@ class ComposerAutoloadGenerator
         foreach($autoloads as $packageName => $autoload) {
 
             $autoload = $this->prependAutoloadPathPrefix($autoload, $pharMap . $vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+
             if (isset($autoload['psr-4'])) {
 
                 $psr4 = array_merge($psr4, $autoload['psr-4']);
 
-            } else if (isset($autoload['psr-0'])) {
+            }
+            if (isset($autoload['psr-0'])) {
 
                 $psr0 = array_merge($psr0, $autoload['psr-0']);
 
-            } else if (isset($autoload['files'])) {
+            }
+            if (isset($autoload['files'])) {
 
                 $files = array_merge($files, $autoload['files']);
 
-            } else if (isset($autoload['classmap'])) {
+            }
+            if (isset($autoload['classmap'])) {
 
                 // the classmap here is an expanded classmap associative array
                 $map = array_merge($map, $autoload['classmap']);
-
-            } else {
-
-                throw new Exception('Unsupported autoloading type: ' . join(',', array_keys($autoload)));
 
             }
         }
 
         if (!empty($files)) {
             foreach ($files as $file) {
-                var_dump( $file ); 
-                // $block[] = new RequireStatement($file);
+                $block[] = new RequireStatement($file);
             }
         }
 
