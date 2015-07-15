@@ -87,6 +87,12 @@ class ComposerAutoloadGenerator
                 foreach ($config['autoload']['classmap'] as $path) {
                     $map = array_merge($map, ClassMapGenerator::createMap($baseDir . DIRECTORY_SEPARATOR . $path));
                 }
+
+                // strip base dir
+                foreach ($map as $k => $filepath) {
+                    $map[$k] = str_replace( getcwd() . DIRECTORY_SEPARATOR . $baseDir . DIRECTORY_SEPARATOR, '', $filepath);
+                }
+
                 $config['autoload']['classmap'] = $map;
 
             }
