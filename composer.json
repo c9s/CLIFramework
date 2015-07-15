@@ -10,6 +10,7 @@
         "corneltek/universal": ">= 1.4",
         "corneltek/codegen": "dev-master as 2.99",
         "pimple/pimple": "*"
+        "symfony/class-loader": "^2.7"
     },
     "require-dev": {
         "corneltek/phpunit-testmore": "dev-master",

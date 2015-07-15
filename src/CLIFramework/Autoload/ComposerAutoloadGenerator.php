@@ -8,6 +8,7 @@ use CodeGen\Statement\UseStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\ClassLoader\ClassMapGenerator;
 
 class ComposerAutoloadGenerator
 {
@@ -146,6 +147,10 @@ class ComposerAutoloadGenerator
             } else if (isset($autoload['files'])) {
 
                 $files = array_merge($autoload['files']);
+
+            } else if (isset($autoload['classmap'])) {
+
+                // ClassMapGenerator::createMap(__DIR__.'/library');
 
             } else {
 
