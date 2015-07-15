@@ -9,7 +9,8 @@
         "corneltek/class-template": "*",
         "corneltek/codegen": "dev-master as 2.99",
         "corneltek/universal": "dev-master",
-        "pimple/pimple": "*"
+        "pimple/pimple": "*",
+        "symfony/class-loader": "^2.7"
     },
     "require-dev": {
         "corneltek/phpunit-testmore": "dev-master",
