@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Autoload;
 use RuntimeException;
+use Exception;
 use CodeGen\Expr\NewObjectExpr;
 use CodeGen\Block;
 use CodeGen\Statement\UseStatement;
