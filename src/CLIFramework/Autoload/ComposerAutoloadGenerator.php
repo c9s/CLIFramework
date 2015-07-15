@@ -149,7 +149,8 @@ class ComposerAutoloadGenerator
 
             } else {
 
-                throw new Exception;
+                throw new Exception('Unsupported autoloading type');
+
             }
         }
 
