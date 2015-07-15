@@ -82,8 +82,7 @@ class BuildPharCommand extends Command
         }
 
 
-
-
+        $vendorDir = 'vendor';
 
         $pharGenerator = new PharGenerator($this->logger, $pharFile);
         $phar = $pharGenerator->getPhar();
@@ -136,12 +135,14 @@ class BuildPharCommand extends Command
             $stubs[] = "require 'phar://$pharFile/$bootstrap';";
         }
 
+
+        $this->logger->info('Generating classLoader stubs');
         $generator = new ComposerAutoloadGenerator;
+        $generator->scanComposerJsonFiles($vendorDir);
 
-        $this->logger->info('ClassLoader Stubs');
-        echo $generator->generate($composerConfigFile, $pharFile);
+        echo $generator->generate($composerConfigFile, $pharFile, $vendorDir);
 
-        $stubs[] = $generator->generate($composerConfigFile, $pharFile);
+        $stubs[] = $generator->generate($composerConfigFile, $pharFile, $vendorDir);
 
 
         $stubs[] = '__HALT_COMPILER();';
