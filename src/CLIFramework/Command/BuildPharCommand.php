@@ -12,6 +12,7 @@ use CodeGen\Block;
 use CodeGen\Statement\UseStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
+use CLIFramework\PharKit\PharGenerator;
 
 /**
  * Build phar file from composer.json
@@ -71,6 +72,8 @@ class BuildPharCommand extends Command
             throw new RuntimeException('json extension is required.');
         }
 
+        $pharGenerator = new PharGenerator($this->logger, $pharFile);
+
         $generator = new ComposerAutoloadGenerator;
         echo $generator->generate($composerConfigFile, $pharFile);
 
@@ -82,7 +85,6 @@ class BuildPharCommand extends Command
         $phar->startBuffering();
 
         $stubs = [];
-
         if ($this->options->executable) {
             $this->logger->debug( 'Add shell bang...' );
             $stubs[] = "#!/usr/bin/env php";
@@ -102,7 +104,6 @@ class BuildPharCommand extends Command
             $this->logger->info( "Adding bootstrap script: $bootstrap" );
             $stubs[] = "require 'phar://$pharFile/$bootstrap';";
         }
-
 
         if ($adds = $this->options->add) {
             foreach ($adds as $add ) {
