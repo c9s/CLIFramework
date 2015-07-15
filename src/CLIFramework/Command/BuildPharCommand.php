@@ -27,7 +27,13 @@ class BuildPharCommand extends Command
     {
 
         // append executable (bootstrap scripts, if it's not defined, it's just a library phar file.
-        $opts->add('bootstrap?','bootstrap or executable php file');
+        $opts->add('bootstrap?','bootstrap or executable php file')
+            ;
+
+        $opts->add('executable','make the phar file executable')
+            ->isa('bool')
+            ->defaultValue(true)
+            ;
 
         $opts->add('c|compress?', 'compress type: gz, bz2')
             ->defaultValue('gz')
@@ -44,7 +50,6 @@ class BuildPharCommand extends Command
         // optional classloader script (use Universal ClassLoader by default 
         $opts->add('classloader?','embed a classloader in phar file');
 
-        $opts->add('executable','make the phar file executable');
 
         $opts->add('lib+','library path');
 
@@ -67,7 +72,7 @@ class BuildPharCommand extends Command
         }
 
         $generator = new ComposerAutoloadGenerator;
-        echo $generator->generate($composerConfigFile);
+        echo $generator->generate($composerConfigFile, $pharFile);
 
         ini_set('phar.readonly', 0);
         $this->logger->info("Creating phar file $pharFile...");
@@ -75,6 +80,29 @@ class BuildPharCommand extends Command
         $phar = new Phar($pharFile, 0, $pharFile);
         $phar->setSignatureAlgorithm(Phar::SHA1);
         $phar->startBuffering();
+
+        $stubs = [];
+
+        if ($this->options->executable) {
+            $this->logger->debug( 'Add shell bang...' );
+            $stubs[] = "#!/usr/bin/env php";
+        }
+        // prepend open tag
+        $stubs[] = '<?php';
+
+        $this->logger->info("Setting up stub..." );
+        $stubs[] = "Phar::mapPhar('$pharFile');";
+
+        if ($bootstrap = $this->options->bootstrap) {
+            $this->logger->info("Add $bootstrap");
+            $content = php_strip_whitespace($bootstrap);
+            $content = preg_replace('{^#!/usr/bin/env\s+php\s*}', '', $content);
+            $phar->addFromString($bootstrap, $content);
+
+            $this->logger->info( "Adding bootstrap script: $bootstrap" );
+            $stubs[] = "require 'phar://$pharFile/$bootstrap';";
+        }
+
 
         if ($adds = $this->options->add) {
             foreach ($adds as $add ) {
@@ -86,11 +114,6 @@ class BuildPharCommand extends Command
             }
         }
 
-        $stubs = [];
-        if ($bootstrap = $this->options->bootstrap) {
-            $this->logger->info( "Adding bootstrap script: $bootstrap" );
-            $stubs[] = "require 'phar://$pharFile/$bootstrap';";
-        }
         $stubs[] = '__HALT_COMPILER();';
         $phar->setStub(join("\n",$stubs));
 

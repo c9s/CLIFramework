@@ -136,8 +136,8 @@ class CompileCommand extends Command
             }
         }
 
-        // including bootstrap file
-        if( $bootstrap ) {
+        // Including bootstrap file
+        if ($bootstrap) {
             $logger->info2("Compile $bootstrap");
             $content = php_strip_whitespace($bootstrap);
             $content = preg_replace('{^#!/usr/bin/env\s+php\s*}', '', $content);
@@ -145,8 +145,7 @@ class CompileCommand extends Command
         }
 
         $stub = '';
-
-        if( $options->executable ) {
+        if ($options->executable) {
             $logger->debug2( 'Adding shell bang...' );
             $stub .= "#!/usr/bin/env php\n";
         }
@@ -158,7 +157,7 @@ Phar::mapPhar('$pharFile');
 EOT;
 
         // use stream to resolve Universal\ClassLoader\Autoloader;
-        if( $options->has('classloader') ) {
+        if ($options->has('classloader')) {
 
             $logger->info2( "Adding classloader..." );
 
