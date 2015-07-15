@@ -7,6 +7,7 @@ use CodeGen\Block;
 use CodeGen\Statement\UseStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
+use CodeGen\Statement\RequireStatement;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\ClassLoader\ClassMapGenerator;
 
@@ -68,18 +69,29 @@ class ComposerAutoloadGenerator
         }
 
         if (isset($config['autoload'])) {
+            $baseDir = $vendorDir . DIRECTORY_SEPARATOR . $config['name'];
+
             // target-dir is deprecated, but somehow we need to support some
             // psr-0 class loader with target-dir
             // @see https://getcomposer.org/doc/04-schema.md#target-dir
             if (isset($config['target-dir'])) {
-
+                $baseDir = $config['target-dir'];
                 $autoloads[$config['name']] = $this->prependAutoloadPathPrefix($config['autoload'], $config['target-dir']);
+            }
+            
+            if (isset($config['autoload']['classmap'])) {
 
-            } else {
 
-                $autoloads[$config['name'] ] = $config['autoload'];
+                // Expand and replace classmap array
+                $map = array();
+                foreach ($config['autoload']['classmap'] as $path) {
+                    $map = array_merge($map, ClassMapGenerator::createMap($baseDir . DIRECTORY_SEPARATOR . $path));
+                }
+                $config['autoload']['classmap'] = $map;
 
             }
+
+            $autoloads[$config['name'] ] = $config['autoload'];
         }
         return $autoloads;
     }
@@ -128,10 +140,12 @@ class ComposerAutoloadGenerator
         $block   = new Block;
         $block[] = new UseStatement('Universal\\ClassLoader\\Psr0ClassLoader');
         $block[] = new UseStatement('Universal\\ClassLoader\\Psr4ClassLoader');
+        $block[] = new UseStatement('Universal\\ClassLoader\\MapClassLoader');
 
         $psr0 = array();
         $psr4 = array();
         $files = array();
+        $map = array();
 
         foreach($autoloads as $packageName => $autoload) {
 
@@ -150,8 +164,8 @@ class ComposerAutoloadGenerator
 
             } else if (isset($autoload['classmap'])) {
 
-                // $autoload['classmap']
-                // ClassMapGenerator::createMap();
+                // the classmap here is an expanded classmap associative array
+                $map = array_merge($map, $autoload['classmap']);
 
             } else {
 
@@ -160,6 +174,17 @@ class ComposerAutoloadGenerator
             }
         }
 
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                var_dump( $file ); 
+                // $block[] = new RequireStatement($file);
+            }
+        }
+
+        if (!empty($map)) {
+            $block[] = new AssignStatement('$map', new NewObjectExpr('MapClassLoader', [$map]));
+            $block[] = new MethodCallStatement('$map','register',[ false ]);
+        }
 
         if (!empty($psr4)) {
             $block[] = new AssignStatement('$psr4', new NewObjectExpr('Psr4ClassLoader', [$psr4]));
