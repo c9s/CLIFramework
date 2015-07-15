@@ -93,7 +93,7 @@ class CompileCommand extends Command
         }
 
         // archive library directories into phar file.
-        foreach ($lib_dirs as $src_dir ) {
+        foreach ($lib_dirs as $src_dir) {
             if (! file_exists($src_dir)) {
                 die( "$src_dir does not exist." );
             }
@@ -161,8 +161,7 @@ EOT;
 
             $logger->info2( "Adding classloader..." );
 
-            if( is_string( $options->classloader ) && file_exists( $options->classloader ) )
-            {
+            if (is_string( $options->classloader ) && file_exists( $options->classloader )) {
                 $classloader_file = $options->classloader;
                 $content = php_strip_whitespace($classloader_file);
                 $phar->addFromString($classloader_file,$content);

@@ -7,12 +7,21 @@ use RecursiveDirectoryIterator;
 use RuntimeException;
 use Exception;
 use Phar;
-use CodeGen\Expr\NewObjectExpr;
 use CodeGen\Block;
+use CodeGen\Expr\NewObjectExpr;
 use CodeGen\Statement\UseStatement;
+use CodeGen\Statement\FunctionCallStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
 use CLIFramework\PharKit\PharGenerator;
+use ReflectionClass;
+use SplFileInfo;
+
+function GetClassPath($class) {
+    $refclass = new ReflectionClass($class);
+    $path = $refclass->getFilename();
+    return ltrim(str_replace(getcwd(), '', $path ), DIRECTORY_SEPARATOR);
+}
 
 /**
  * Build phar file from composer.json
@@ -96,6 +105,24 @@ class BuildPharCommand extends Command
         $this->logger->info("Setting up stub..." );
         $stubs[] = "Phar::mapPhar('$pharFile');";
 
+
+        // Generate class loader stub
+        $interfacePath = GetClassPath('Universal\\ClassLoader\\ClassLoader');
+        $psr0path = GetClassPath('Universal\\ClassLoader\\Psr0ClassLoader');
+        $psr4path = GetClassPath('Universal\\ClassLoader\\Psr4ClassLoader');
+        $fileinfo = new SplFileInfo($psr0path);
+
+        // $phar->buildFromDirectory($fileinfo->getPath());
+
+        $phar->buildFromIterator(
+            new RecursiveIteratorIterator(new RecursiveDirectoryIterator($fileinfo->getPath())),
+            getcwd()
+        );
+
+        $stubs[] = "require 'phar://$pharFile/$interfacePath';";
+        $stubs[] = "require 'phar://$pharFile/$psr0path';";
+        $stubs[] = "require 'phar://$pharFile/$psr4path';";
+
         if ($bootstrap = $this->options->bootstrap) {
             $this->logger->info("Add $bootstrap");
             $content = php_strip_whitespace($bootstrap);
@@ -106,18 +133,24 @@ class BuildPharCommand extends Command
             $stubs[] = "require 'phar://$pharFile/$bootstrap';";
         }
 
+
+        $stubs[] = '__HALT_COMPILER();';
+        $phar->setStub(join("\n",$stubs));
+
+
+        // Include files in phar's root
         if ($adds = $this->options->add) {
-            foreach ($adds as $add ) {
+            foreach ($adds as $add) {
                 $phar->buildFromIterator(
-                    new RecursiveIteratorIterator(
-                        new RecursiveDirectoryIterator($add)),
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($add)),
                     getcwd()
                 );
             }
         }
 
-        $stubs[] = '__HALT_COMPILER();';
-        $phar->setStub(join("\n",$stubs));
+
+
+
 
 
         // Finish building...
