@@ -8,6 +8,7 @@
         "corneltek/getoptionkit": "~2",
         "corneltek/class-template": "*",
         "corneltek/universal": ">= 1.4",
+        "corneltek/codegen": "dev-master as 2.99",
         "pimple/pimple": "*"
     },
     "require-dev": {
