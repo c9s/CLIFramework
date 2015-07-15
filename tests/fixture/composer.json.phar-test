@@ -11,11 +11,12 @@
         "corneltek/universal": "dev-master",
         "pimple/pimple": "*",
         "symfony/class-loader": "^2.7",
-        "sebastian/version": "^1.0"
+        "illuminate/support": "^5.1"
     },
     "require-dev": {
         "corneltek/phpunit-testmore": "dev-master",
         "satooshi/php-coveralls": "dev-master",
+        "sebastian/version": "^1.0",
         "symfony/finder": "^2.7",
         "symfony/debug": "2.6.*"
     },
