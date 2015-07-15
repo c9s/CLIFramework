@@ -46,6 +46,8 @@ class PharGenerator
     public function generate()
     {
         $this->phar->startBuffering();
+
+
    
    
     }

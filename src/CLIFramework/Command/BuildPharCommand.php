@@ -72,16 +72,17 @@ class BuildPharCommand extends Command
             throw new RuntimeException('json extension is required.');
         }
 
-        $pharGenerator = new PharGenerator($this->logger, $pharFile);
 
         $generator = new ComposerAutoloadGenerator;
         echo $generator->generate($composerConfigFile, $pharFile);
 
+
+
+        $pharGenerator = new PharGenerator($this->logger, $pharFile);
+        $phar = $pharGenerator->getPhar();
         ini_set('phar.readonly', 0);
         $this->logger->info("Creating phar file $pharFile...");
 
-        $phar = new Phar($pharFile, 0, $pharFile);
-        $phar->setSignatureAlgorithm(Phar::SHA1);
         $phar->startBuffering();
 
         $stubs = [];
