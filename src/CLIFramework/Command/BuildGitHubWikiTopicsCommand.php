@@ -19,7 +19,8 @@ class BuildGitHubWikiTopicsCommand extends Command
     public function options($opts) 
     {
         $opts->add('ns:', 'Class namespace');
-        $opts->add('dir:', 'Output directory');
+        $opts->add('dir:', 'Output directory')
+            ;
         $opts->add('update', 'Update wiki repository');
     }
 
@@ -42,7 +43,7 @@ class BuildGitHubWikiTopicsCommand extends Command
         // Use git to clone the wiki
         $wikiGitURI = "https://github.com/$user/$repo.wiki.git";
         $wikiBaseUrl = "https://github.com/$user/$repo/wiki";
-        $localRepoPath = "/tmp/$repo.wiki";
+        $localRepoPath = "tmp/$repo.wiki";
 
         $currentDir = getcwd();
 
@@ -55,6 +56,11 @@ class BuildGitHubWikiTopicsCommand extends Command
                 }
             }
         } else {
+            $dirname = dirname($localRepoPath);
+            if (!file_exists($dirname)) {
+                mkdir($dirname, 0755, true);
+            }
+
             $this->logger->info("Cloning $wikiGitURI...");
             system("git clone $wikiGitURI $localRepoPath", $retval);
             if ($retval != 0) {

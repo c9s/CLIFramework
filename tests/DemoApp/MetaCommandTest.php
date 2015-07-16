@@ -1,12 +1,16 @@
 <?php
 namespace DemoApp;
 use CLIFramework\Testing\CommandTestCase;
+use CLIFramework\ServiceContainer;
 
 class MetaCommandTest extends CommandTestCase
 {
 
     public function setupApplication() {
-        return new \DemoApp\Application;
+        $service = new ServiceContainer;
+        $service['logger']->setQuiet();
+        $app = new \DemoApp\Application($service);
+        return $app;
     }
 
     public function testMetaArgValidValuesGroups()

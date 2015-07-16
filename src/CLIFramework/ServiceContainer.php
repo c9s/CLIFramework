@@ -64,8 +64,8 @@ class ServiceContainer extends Container
             $output = fopen("php://output", "w");
             return new StreamWriter($output);
         };
-        $this['logger'] = function($c) {
-            return new Logger;
+        $this['logger'] = function($c) use ($that) {
+            return new Logger($that);
         };
         $this['formatter'] = function($c) {
             return new Formatter;

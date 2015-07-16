@@ -18,12 +18,18 @@ class GitHubBuildTopicCommandTest extends CommandTestCase
     public function testBuildGitHubTopics()
     {
         $outputDir = 'tests/blah';
+        $this->cleanUp("tmp");
+        $this->cleanUp($outputDir);
+
         $this->expectOutputRegex("!Creating .*?/.*?/Topic/ContributionTopic.php!xs");
         $this->runCommand("example/demo github:build-topics --ns PHPBrew:Topic --dir $outputDir phpbrew phpbrew");
         $this->cleanUp($outputDir);
     }
 
     public function cleanUp($path) {
+        if (!file_exists($path)) {
+            return;
+        }
         $directoryIterator = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
         $iterator = new RecursiveIteratorIterator($directoryIterator, RecursiveIteratorIterator::CHILD_FIRST);
         foreach($iterator as $file) {
