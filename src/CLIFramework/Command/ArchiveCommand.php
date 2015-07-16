@@ -14,19 +14,14 @@ use CodeGen\Statement\FunctionCallStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
 use CLIFramework\PharKit\PharGenerator;
+use CLIFramework\Utils;
 use ReflectionClass;
 use SplFileInfo;
 
-function GetClassPath($class, $baseDir) {
-    $refclass = new ReflectionClass($class);
-    $path = $refclass->getFilename();
-    return ltrim(str_replace($baseDir, '', $path ), DIRECTORY_SEPARATOR);
-}
-
 /**
- * Build phar file from composer.json
+ * Archive: build phar file from composer.json
  */
-class BuildPharCommand extends Command
+class ArchiveCommand extends Command
 {
     public function brief()
     {
@@ -35,7 +30,11 @@ class BuildPharCommand extends Command
 
     public function options($opts)
     {
-        $opts->add('working-dir|d:', 'If specified, use the given directory as working directory.');
+        $opts->add('d|working-dir:', 'If specified, use the given directory as working directory.');
+
+        $opts->add('c|composer:', 'The composer.json file. If --working-dir is ignored, dirname of the composer.json will be used.')
+            ->defaultValue('composer.json')
+            ;
 
         // append executable (bootstrap scripts, if it's not defined, it's just a library phar file.
         $opts->add('bootstrap?','bootstrap or executable php file')
@@ -72,15 +71,28 @@ class BuildPharCommand extends Command
 
     public function arguments($args)
     {
-        $args->add('composer-config')->isa('file');
         $args->add('phar-file');
     }
 
-    public function execute($composerConfigFile, $pharFile = 'output.phar')
+    public function execute($pharFile = 'output.phar')
     {
         if (!extension_loaded('json')) {
             throw new RuntimeException('json extension is required.');
         }
+
+        $composerConfigFile = $this->options->{'composer'} ?: 'composer.json';
+
+        if (!file_exists($composerConfigFile)) {
+            throw new Exception("$composerConfigFile doesn't exist.");
+        }
+
+        $workingDir = $this->options->{'working-dir'} ?: getcwd();
+        if (!file_exists($workingDir)) {
+            throw new Exception("$workingDir doesn't exist.");
+        }
+
+
+
 
 
         $vendorDir = 'vendor';
@@ -103,14 +115,13 @@ class BuildPharCommand extends Command
         $this->logger->info("Setting up stub..." );
         $stubs[] = "Phar::mapPhar('$pharFile');";
 
-        $workingDir = $this->options->{'working-dir'} ?: getcwd();
         // $workingDir = dirname(realpath($composerConfigFile));
 
         $requires = array(
-            GetClassPath('Universal\\ClassLoader\\ClassLoader', $workingDir),
-            GetClassPath('Universal\\ClassLoader\\Psr0ClassLoader', $workingDir),
-            GetClassPath('Universal\\ClassLoader\\Psr4ClassLoader', $workingDir),
-            GetClassPath('Universal\\ClassLoader\\MapClassLoader', $workingDir),
+            Utils::getClassPath('Universal\\ClassLoader\\ClassLoader', $workingDir),
+            Utils::getClassPath('Universal\\ClassLoader\\Psr0ClassLoader', $workingDir),
+            Utils::getClassPath('Universal\\ClassLoader\\Psr4ClassLoader', $workingDir),
+            Utils::getClassPath('Universal\\ClassLoader\\MapClassLoader', $workingDir),
         );
 
         // Generate class loader stub
