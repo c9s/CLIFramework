@@ -15,6 +15,7 @@ use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
 use CodeGen\Statement\RequireStatement;
 use CLIFramework\PharKit\PharGenerator;
+use CLIFramework\PharKit\PharURI;
 use CLIFramework\Utils;
 use ReflectionClass;
 use SplFileInfo;
@@ -46,6 +47,8 @@ class ArchiveCommand extends Command
 
         // append executable (bootstrap scripts, if it's not defined, it's just a library phar file.
         $opts->add('bootstrap?','bootstrap or executable php file')
+            ->multiple()
+            ->isa('file')
             ;
 
         $opts->add('executable','make the phar file executable')
@@ -63,16 +66,12 @@ class ArchiveCommand extends Command
         $opts->add('add+', 'add a path respectively');
 
         $opts->add('exclude+' , 'exclude pattern');
-        /*
 
+
+        /*
         // optional classloader script (use Universal ClassLoader by default 
         $opts->add('classloader?','embed a classloader in phar file');
-
-
         $opts->add('lib+','library path');
-
-
-
         $opts->add('output:','output');
          */
     }
@@ -159,19 +158,24 @@ class ArchiveCommand extends Command
          */
         foreach ($classPaths as $classPath) {
             $this->logger->debug("Adding require statment for class loader: " . basename($classPath));
-            $stmt = new RequireStatement("phar://$pharFile/" . basename($classPath));
+            $stmt = new RequireStatement(new PharURI($pharFile, basename($classPath)));
             $stubs[] = $stmt->render();
         }
 
 
-        if ($bootstrap = $this->options->bootstrap) {
-            $this->logger->info("Adding bootstrap: $bootstrap");
-            $content = php_strip_whitespace($bootstrap);
-            $content = preg_replace('{^#!/usr/bin/env\s+php\s*}', '', $content);
-            $phar->addFromString($bootstrap, $content);
+        if ($bootstraps = $this->options->bootstrap) {
+            foreach ($bootstraps as $bootstrap) {
+                $this->logger->info("Adding bootstrap: $bootstrap");
+                $content = php_strip_whitespace($bootstrap);
+                $content = preg_replace('{^#!/usr/bin/env\s+php\s*}', '', $content);
 
-            $stmt = new RequireStatement("phar://$pharFile/" . $bootstrap);
-            $stubs[] = $stmt->render();
+                $localPath = str_replace($workingDir->getPathname(), '', $bootstrap->getRealPath());
+
+                $phar->addFromString($localPath, $content);
+
+                $stmt = new RequireStatement(new PharURI($pharFile, $localPath));
+                $stubs[] = $stmt->render();
+            }
         }
 
         $this->logger->info('Generating classLoader stubs');
