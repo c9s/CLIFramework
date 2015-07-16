@@ -9,6 +9,7 @@
  *
  */
 namespace CLIFramework;
+use ReflectionClass;
 
 class Utils
 {
@@ -28,5 +29,18 @@ class Utils
 
         return $subclass;
     }
+
+    public static function getClassPath($class, $baseDir) 
+    {
+        $refclass = new ReflectionClass($class);
+        if ($path = $refclass->getFilename()) {
+            return str_replace(
+                rtrim($baseDir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR,
+                '', 
+                $path);
+        }
+        return null;
+    }
+
 
 }
