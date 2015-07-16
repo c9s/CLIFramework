@@ -402,6 +402,14 @@ Built-in styles:
     'strong_white' => array('fg' => 'white','bold' => 1),
 
 
+Building Phar Archive file
+--------------------------
+
+    COMPOSER=tests/fixture/composer.json.phar-test composer install
+    php example/demo archive --working-dir /Users/c9s/work/php/CLIFramework \
+            --composer tests/fixture/composer.json.phar-test \
+            app.phar
+
 Prompter Component
 ------------------
 
