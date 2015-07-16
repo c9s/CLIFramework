@@ -419,13 +419,27 @@ class Application extends CommandBase
         $this->startedAt = microtime(true);
         $options = $this->getOptions();
         $config = $this->getGlobalConfig();
-        if ($options->verbose || $config->isVerbose()) {
-            $this->getLogger()->setVerbose();
-        } elseif ($options->debug || $config->isDebug()) {
-            $this->getLogger()->setDebug();
-        } elseif ($options->quiet) {
-            $this->getLogger()->setLevel(2);
+
+        if ($options->debug || $options->verbose || $options->quiet) {
+
+            if ($options->debug) {
+                $this->getLogger()->setDebug();
+            } else if ($options->verbose) {
+                $this->getLogger()->setVerbose();
+            } else if ($options->quiet) {
+                $this->getLogger()->setLevel(2);
+            }
+
+        } else {
+
+            if ($config->isDebug()) {
+                $this->getLogger()->setDebug();
+            } else if ($config->isVerbose()) {
+                $this->getLogger()->setVerbose();
+            }
+
         }
+
         return true;
     }
 
