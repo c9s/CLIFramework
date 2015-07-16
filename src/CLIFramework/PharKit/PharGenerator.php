@@ -9,6 +9,7 @@ use CodeGen\Statement\UseStatement;
 use CodeGen\Statement\FunctionCallStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
+use GetOptionKit\OptionResult;
 
 
 class PharGenerator
@@ -25,9 +26,12 @@ class PharGenerator
 
     protected $logger;
 
-    public function __construct(Logger $logger, $pharFile, $alias = null)
+    protected $options;
+
+    public function __construct(Logger $logger, OptionResult $options, $pharFile, $alias = null)
     {
         $this->logger = $logger;
+        $this->options = $options;
         $this->pharFile = $pharFile;
 
         if ($alias) {
@@ -52,12 +56,35 @@ class PharGenerator
 
     public function generate()
     {
-        $this->phar->startBuffering();
+        // $this->phar->startBuffering();
 
 
-   
-   
+        // Finish building...
+        $this->phar->stopBuffering();
+
+        $compressType = Phar::GZ;
+        if ($this->options->{'no-compress'} ) {
+            $compressType = null;
+        } else if ($type = $this->options->compress) {
+            switch ($type) {
+            case 'gz':
+                $compressType = Phar::GZ;
+                break;
+            case 'bz2':
+                $compressType = Phar::BZ2;
+                break;
+            default:
+                throw new Exception("Phar compression: $type is not supported, valid values are gz, bz2");
+                break;
+            }
+        }
+        if ($compressType) {
+            $this->logger->info( "Compressing phar files...");
+            $this->phar->compressFiles($compressType);
+        }
     }
+
+
 
 
 

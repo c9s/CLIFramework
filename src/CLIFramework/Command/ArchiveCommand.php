@@ -118,7 +118,7 @@ class ArchiveCommand extends Command
 
         $vendorDirName = $this->options->vendor ?: 'vendor';
 
-        $pharGenerator = new PharGenerator($this->logger, $pharFile);
+        $pharGenerator = new PharGenerator($this->logger, $this->options, $pharFile);
         $phar = $pharGenerator->getPhar();
         ini_set('phar.readonly', 0);
         $this->logger->info("Creating phar file $pharFile...");
@@ -243,39 +243,10 @@ class ArchiveCommand extends Command
             }
         }
 
+        $pharGenerator->generate();
 
-
-
-
-
-        // Finish building...
-        $phar->stopBuffering();
-
-        $compressType = Phar::GZ;
-        if ($this->options->{'no-compress'} ) {
-            $compressType = null;
-        } else if ($type = $this->options->compress) {
-            switch ($type) {
-            case 'gz':
-                $compressType = Phar::GZ;
-                break;
-            case 'bz2':
-                $compressType = Phar::BZ2;
-                break;
-            default:
-                throw new Exception("Phar compression: $type is not supported, valid values are gz, bz2");
-                break;
-            }
-        }
-        if ($compressType) {
-            $this->logger->info( "Compressing phar files...");
-            // $phar = $phar->compress($compressType);
-            $phar->compressFiles($compressType);
-        }
 
         $this->logger->info('Done');
-
-
     }
 
 }
