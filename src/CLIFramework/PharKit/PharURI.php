@@ -1,7 +1,8 @@
 <?php
 namespace CLIFramework\PharKit;
+use CodeGen\Renderable;
 
-class PharURI
+class PharURI implements Renderable
 {
     protected $alias;
 
@@ -22,6 +23,16 @@ class PharURI
     {
         return $this->alias;
     }
+
+
+    /**
+     * 'render' is a method of Renderable interface
+     */
+    public function render(array $args = array())
+    {
+        return $this->__toString();
+    }
+
 
     public function __toString()
     {
