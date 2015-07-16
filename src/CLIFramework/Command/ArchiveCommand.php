@@ -213,6 +213,8 @@ class BuildPharCommand extends Command
         }
 
         $this->logger->info('Done');
+
+
     }
 
 }
