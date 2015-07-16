@@ -10,6 +10,7 @@ use CodeGen\Statement\MethodCallStatement;
 use CodeGen\Statement\RequireStatement;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\ClassLoader\ClassMapGenerator;
+use CLIFramework\Logger;
 
 class ComposerAutoloadGenerator
 {
@@ -22,9 +23,12 @@ class ComposerAutoloadGenerator
 
     protected $vendorDir = 'vendor';
 
-    public function __construct() 
+    protected $logger;
+
+    public function __construct(Logger $logger) 
     {
         $this->workingDir = getcwd(); // by default workingDir is current directory.
+        $this->logger = $logger;
     }
 
     public function setWorkingDir($workingDir)
@@ -37,15 +41,20 @@ class ComposerAutoloadGenerator
         $this->vendorDir = $vendorDir;
     }
 
-    public function traceAutoloadsWithComposerJson($composerJson = 'composer.json', $includeRootDev = false)
+    public function traceAutoloadsWithComposerJson($composerJson = 'composer.json', $isRoot = false)
     {
         $json = file_get_contents($composerJson);
-        $obj = json_decode($json, true);
-        return $this->traceAutoloads($obj, $includeRootDev);
+        $config = json_decode($json, true);
+        if ($isRoot) {
+            $config['root'] = true;
+        }
+        return $this->traceAutoloads($config, $isRoot);
     }
 
     public function traceAutoloadsWithRequirements(array $config, array $requirements = array())
     {
+        $this->logger->debug('Tracing autoload from package: ' . @$config['name']);
+
         $autoloads = array();
         foreach($requirements as $packageName => $requirement) {
             if (in_array($packageName, array('php', 'hhvm'))) {
@@ -65,7 +74,7 @@ class ComposerAutoloadGenerator
             } else if (isset($this->packages[ $packageName ])) {
 
                 $config = $this->packages[ $packageName ];
-                $autoloads = $this->traceAutoloads($config, false);
+                $autoloads = array_merge($autoloads, $this->traceAutoloads($config, false));
 
             } else {
                 // if (!file_exists($packageComposerJson)) {
@@ -75,25 +84,34 @@ class ComposerAutoloadGenerator
         return $autoloads;
     }
 
-    public function traceAutoloads(array $config, $includeRootDev = false )
+    public function traceAutoloads(array $config, $isRoot = false )
     {
         $autoloads = array();
 
         // @see https://getcomposer.org/doc/02-libraries.md#platform-packages
         if (isset($config['require'])) {
+            $this->logger->debug('Tracing package autoload from "require" section');
             $autoloads = array_merge($autoloads, $this->traceAutoloadsWithRequirements($config, $config['require']));
         }
-        if ($includeRootDev && isset($config['require-dev'])) {
+        if ($isRoot && isset($config['require-dev'])) {
+            $this->logger->debug('Tracing package autoload from "require-dev" section');
             $autoloads = array_merge($autoloads, $this->traceAutoloadsWithRequirements($config, $config['require-dev']));
         }
 
         if (isset($config['autoload'])) {
-            $baseDir = $this->vendorDir . DIRECTORY_SEPARATOR . $config['name'];
+
+            if ($isRoot) {
+                $baseDir = $this->workingDir;
+            } else {
+                $baseDir = $this->workingDir . DIRECTORY_SEPARATOR . $this->vendorDir . DIRECTORY_SEPARATOR . $config['name'];
+            }
 
             // target-dir is deprecated, but somehow we need to support some
             // psr-0 class loader with target-dir
             // @see https://getcomposer.org/doc/04-schema.md#target-dir
             if (isset($config['target-dir'])) {
+                $this->logger->warn("Found deprecated property 'target-dir' in package " . $config['name']);
+
                 $baseDir = $config['target-dir'];
                 $autoloads[$config['name']] = $this->prependAutoloadPathPrefix($config['autoload'], $config['target-dir']);
             }
@@ -104,21 +122,22 @@ class ComposerAutoloadGenerator
                 // Expand and replace classmap array
                 $map = array();
                 foreach ($config['autoload']['classmap'] as $path) {
-                    $map = array_merge($map, ClassMapGenerator::createMap($this->workingDir . DIRECTORY_SEPARATOR . $baseDir . DIRECTORY_SEPARATOR . $path));
+                    $this->logger->debug("Scanning classmap in $path");
+                    $map = array_merge($map, ClassMapGenerator::createMap($baseDir . DIRECTORY_SEPARATOR . $path));
                 }
 
                 // Strip paths with working directory:
                 // ClassMapGenerator returns class map with files in absolute paths,
                 // We need them to be relative paths.
                 foreach ($map as $k => $filepath) {
-                    $map[$k] = str_replace( $this->workingDir . DIRECTORY_SEPARATOR . $baseDir . DIRECTORY_SEPARATOR, '', $filepath);
+                    $map[$k] = str_replace($baseDir . DIRECTORY_SEPARATOR, '', $filepath);
                 }
 
                 $config['autoload']['classmap'] = $map;
 
             }
 
-            $autoloads[$config['name'] ] = $config['autoload'];
+            $autoloads[$config['name'] ] = $config;
         }
         return $autoloads;
     }
@@ -128,7 +147,7 @@ class ComposerAutoloadGenerator
      * Prepend a prefix for the structure in 'autoload' property. 
      * e.g., { 'psr-0': ... 'psr-4': ...  }
      */
-    public function prependAutoloadPathPrefix($autoloads, $prefix)
+    public function prependAutoloadPathPrefix(array $autoloads, $prefix)
     {
         $newAutoloads = array();
         foreach ($autoloads as $autoloadType => & $autoloadConfig) {
@@ -170,11 +189,18 @@ class ComposerAutoloadGenerator
         $files = array();
         $map = array();
 
-        foreach($autoloads as $packageName => $autoload) {
+
+        foreach($autoloads as $packageName => $config) {
+
+            $autoload = $config['autoload'];
 
             // The returned autoload paths are relative paths in their packages
             // We need to prepend the package base dir path
-            $autoload = $this->prependAutoloadPathPrefix($autoload, $pharMap . $this->vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+            if (!isset($config['root'])) {
+                $autoload = $this->prependAutoloadPathPrefix($autoload, $pharMap . $this->vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+            } else {
+                $autoload = $this->prependAutoloadPathPrefix($autoload, $pharMap);
+            }
 
             if (isset($autoload['psr-4'])) {
 
@@ -199,6 +225,7 @@ class ComposerAutoloadGenerator
             }
         }
 
+        $this->logger->debug('Generating class loader code...');
 
         // Generate classloader initialization code
         $block   = new Block;
@@ -213,19 +240,27 @@ class ComposerAutoloadGenerator
         }
 
         if (!empty($map)) {
+            $this->logger->debug('Found classmap autoload, adding MapClassLoader...');
+
             $block[] = new AssignStatement('$map', new NewObjectExpr('MapClassLoader', [$map]));
             $block[] = new MethodCallStatement('$map','register',[ false ]);
         }
 
         if (!empty($psr4)) {
+            $this->logger->debug('Found PSR-4 autoload, adding Psr4ClassLoader...');
+
             $block[] = new AssignStatement('$psr4', new NewObjectExpr('Psr4ClassLoader', [$psr4]));
             $block[] = new MethodCallStatement('$psr4','register',[ false ]);
         }
 
         if (!empty($psr0)) {
+            $this->logger->debug('Found PSR-0 autoload, adding Psr0ClassLoader...');
+
             $block[] = new AssignStatement('$psr0', new NewObjectExpr('Psr0ClassLoader', [$psr0]));
             $block[] = new MethodCallStatement('$psr0','register',[ false ]);
         }
+
+        $this->logger->debug('Rendering code using CodeGen...');
         return $block->render([]);
     }
 

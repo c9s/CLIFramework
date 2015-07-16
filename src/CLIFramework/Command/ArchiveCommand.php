@@ -175,14 +175,23 @@ class ArchiveCommand extends Command
         }
 
         $this->logger->info('Generating classLoader stubs');
-        $generator = new ComposerAutoloadGenerator;
+        $generator = new ComposerAutoloadGenerator($this->logger);
         $generator->setVendorDir('vendor');
         $generator->setWorkingDir($workingDir->getPathname());
         $generator->scanComposerJsonFiles($workingDir . DIRECTORY_SEPARATOR . $vendorDirName);
 
         $autoloads = $generator->traceAutoloadsWithComposerJson($composerConfigFile, $workingDir . DIRECTORY_SEPARATOR . $vendorDirName, true);
-        foreach($autoloads as $packageName => $autoload) {
-            $autoload = $generator->prependAutoloadPathPrefix($autoload, $vendorDirName . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+        foreach($autoloads as $packageName => $config) {
+            if (!isset($config['autoload'])) {
+                continue;
+            }
+
+            $autoload = $config['autoload'];
+
+            if (!isset($config['root'])) {
+                $autoload = $generator->prependAutoloadPathPrefix($autoload, $vendorDirName . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+            }
+
             foreach ($autoload as $type => $map) {
                 foreach ($map as $mapPaths) {
                     $paths = (array) $mapPaths;
