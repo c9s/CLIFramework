@@ -22,6 +22,12 @@ use SplFileInfo;
 
 /**
  * Archive: build phar file from composer.json
+ *
+ * Debug commands:
+ *
+ *    php example/demo --debug archive --no-compress --composer ../AssetKit/composer.json --bootstrap ../AssetKit/scripts/assetkit.php app.phar && php app.phar
+ *
+ *    php example/demo --debug archive
  */
 class ArchiveCommand extends Command
 {
@@ -158,7 +164,7 @@ class ArchiveCommand extends Command
          */
         foreach ($classPaths as $classPath) {
             $this->logger->debug("Adding require statment for class loader: " . basename($classPath));
-            $stmt = new RequireStatement(new PharURI($pharFile, basename($classPath)));
+            $stmt = new RequireStatement((string) new PharURI($pharFile, basename($classPath)));
             $stubs[] = $stmt->render();
         }
 
@@ -173,7 +179,7 @@ class ArchiveCommand extends Command
 
                 $phar->addFromString($localPath, $content);
 
-                $stmt = new RequireStatement(new PharURI($pharFile, $localPath));
+                $stmt = new RequireStatement((string) new PharURI($pharFile, $localPath));
                 $stubs[] = $stmt->render();
             }
         }
