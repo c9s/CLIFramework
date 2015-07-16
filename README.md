@@ -410,30 +410,6 @@ Building Phar Archive file
             --composer tests/fixture/composer.json.phar-test \
             app.phar
 
-Prompter Component
-------------------
-
-Show prompt with a message.
-
-```php
-$prompter = new CLIFramework\Prompter;
-
-$prompter->setStyle('strong_white');
-
-$value = $prompter->ask( "Please enter your email" );
-
-$value = $prompter->ask( "Apple or Banana" , array( 'Apple', 'Banana' ) );
-```
-
-Show password prompt with a message, which doesn't display user input.
-
-```php
-$prompter = new CLIFramework\Prompter;
-
-$prompter->setStyle('strong_white');
-
-$value = $prompter->password( "Please enter your password" );
-```
 
 Chooser Component
 -----------------
@@ -451,9 +427,7 @@ Todos in the next release
 -------------------------
 [ ] provide a easy way to define chained commands
 [ ] inheritable options for subcommands.
-[ ] bash completion generator
 [ ] human readable exception renderer.
-[ ] command alias
 [ ] interact utilities
 
 Hacking
