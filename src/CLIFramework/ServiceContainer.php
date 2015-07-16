@@ -33,6 +33,7 @@ class ServiceContainer extends Container
     {
         $that = $this;
         $this['config.path'] = function($c) {
+
             $filename = 'cliframework.ini';
             $configAtCurrentDirectory = getcwd() . DIRECTORY_SEPARATOR . $filename;
             $configAtHomeDirectory = getenv('HOME') . DIRECTORY_SEPARATOR . $filename;

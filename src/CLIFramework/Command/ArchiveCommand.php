@@ -13,6 +13,7 @@ use CodeGen\Statement\UseStatement;
 use CodeGen\Statement\FunctionCallStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
+use CodeGen\Statement\RequireStatement;
 use CLIFramework\PharKit\PharGenerator;
 use CLIFramework\Utils;
 use ReflectionClass;
@@ -97,18 +98,20 @@ class ArchiveCommand extends Command
         // $composerConfigFile is a SplFileInfo object since wuse ->isa('file')
         $composerConfigFile = $this->options->{'composer'} ?: 'composer.json';
         if (!file_exists($composerConfigFile)) {
-            throw new Exception("$composerConfigFile doesn't exist.");
+            throw new Exception("composer config '$composerConfigFile' doesn't exist.");
         }
+        $composerConfigFile = new SplFileInfo(realpath($composerConfigFile));
+        $this->logger->debug("Found composer config at $composerConfigFile");
 
 
         // workingDir is a SplFileInfo object since we use ->isa('Dir')
-        $workingDir = $this->options->{'working-dir'} ?: new SplFileInfo(getcwd());
+        $workingDir = $this->options->{'working-dir'} ?: new SplFileInfo($composerConfigFile->getPath());
         if (!file_exists($workingDir)) {
-            throw new Exception("$workingDir doesn't exist.");
+            throw new Exception("working directory '$workingDir' doesn't exist.");
         }
+        $this->logger->debug("Working directory: " . $workingDir->getPathname());
 
         $vendorDirName = $this->options->vendor ?: 'vendor';
-
 
         $pharGenerator = new PharGenerator($this->logger, $pharFile);
         $phar = $pharGenerator->getPhar();
@@ -119,7 +122,7 @@ class ArchiveCommand extends Command
 
         $stubs = array();
         if ($this->options->executable) {
-            $this->logger->debug( 'Add shell bang...' );
+            $this->logger->debug( 'Adding shell bang...' );
             $stubs[] = "#!/usr/bin/env php";
         }
         // prepend open tag
@@ -132,52 +135,69 @@ class ArchiveCommand extends Command
 
 
         // Get class paths by ReflectionClass, they should be relative path.
+        // However the class path might be in another directory because the
+        // classes are loaded from vendor/autoload.php
         $classPaths = array(
-            Utils::getClassPath('Universal\\ClassLoader\\ClassLoader', $workingDir->getPathname()),
-            Utils::getClassPath('Universal\\ClassLoader\\Psr0ClassLoader', $workingDir->getPathname()),
-            Utils::getClassPath('Universal\\ClassLoader\\Psr4ClassLoader', $workingDir->getPathname()),
-            Utils::getClassPath('Universal\\ClassLoader\\MapClassLoader', $workingDir->getPathname()),
+            Utils::getClassPath('Universal\\ClassLoader\\ClassLoader'),
+            Utils::getClassPath('Universal\\ClassLoader\\Psr0ClassLoader'),
+            Utils::getClassPath('Universal\\ClassLoader\\Psr4ClassLoader'),
+            Utils::getClassPath('Universal\\ClassLoader\\MapClassLoader'),
         );
 
         // Generate class loader stub
+        $this->logger->debug("Adding class loader files...");
+        foreach ($classPaths as $classPath) {
+            $phar->addFile($classPath, basename($classPath));
+        }
+
+        /*
         $classDir = dirname($classPaths[0]);
         $phar->buildFromIterator(
             new RecursiveIteratorIterator(new RecursiveDirectoryIterator($classDir)),
             $workingDir
         );
+         */
         foreach ($classPaths as $classPath) {
-            $stubs[] = "require 'phar://$pharFile/$classPath';";
+            $this->logger->debug("Adding require statment for class loader: " . basename($classPath));
+            $stmt = new RequireStatement("phar://$pharFile/" . basename($classPath));
+            $stubs[] = $stmt->render();
         }
 
 
         if ($bootstrap = $this->options->bootstrap) {
-            $this->logger->info("Add $bootstrap");
+            $this->logger->info("Adding bootstrap: $bootstrap");
             $content = php_strip_whitespace($bootstrap);
             $content = preg_replace('{^#!/usr/bin/env\s+php\s*}', '', $content);
             $phar->addFromString($bootstrap, $content);
 
-            $this->logger->info( "Adding bootstrap script: $bootstrap" );
-            $stubs[] = "require 'phar://$pharFile/$bootstrap';";
+            $stmt = new RequireStatement("phar://$pharFile/" . $bootstrap);
+            $stubs[] = $stmt->render();
         }
 
         $this->logger->info('Generating classLoader stubs');
         $generator = new ComposerAutoloadGenerator;
+        $generator->setVendorDir('vendor');
+        $generator->setWorkingDir($workingDir->getPathname());
         $generator->scanComposerJsonFiles($workingDir . DIRECTORY_SEPARATOR . $vendorDirName);
 
-        $autoloads = $generator->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDirName, true);
+        $autoloads = $generator->traceAutoloadsWithComposerJson($composerConfigFile, $workingDir . DIRECTORY_SEPARATOR . $vendorDirName, true);
         foreach($autoloads as $packageName => $autoload) {
             $autoload = $generator->prependAutoloadPathPrefix($autoload, $vendorDirName . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
             foreach ($autoload as $type => $map) {
                 foreach ($map as $mapPaths) {
                     $paths = (array) $mapPaths;
                     foreach ($paths as $path) {
-                        if (is_dir($path)) {
+                        $absolutePath = $workingDir . DIRECTORY_SEPARATOR . $path;
+
+                        if (is_dir($absolutePath)) {
                             $phar->buildFromIterator(
-                                new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)),
+                                new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
                                 $workingDir
                             );
-                        } else if (is_file($path)) {
-                            $phar->addFile($path, $path);
+                        } else if (is_file($absolutePath)) {
+                            $phar->addFile($absolutePath, $path);
+                        } else {
+                            $this->logger->error("File '$absolutePath' is not found.");
                         }
 
                     }
@@ -185,10 +205,10 @@ class ArchiveCommand extends Command
             }
         }
 
-        $classloaderStub = $generator->generate($composerConfigFile, $pharFile, $vendorDirName);
+        $classloaderStub = $generator->generate($composerConfigFile, $pharFile);
         $this->logger->debug($classloaderStub);
 
-        $stubs[] = $generator->generate($composerConfigFile, $pharFile, $vendorDirName);
+        $stubs[] = $generator->generate($composerConfigFile, $pharFile);
 
         $stubs[] = '__HALT_COMPILER();';
         $phar->setStub(join("\n",$stubs));
