@@ -30,16 +30,17 @@ class Utils
         return $subclass;
     }
 
-    public static function getClassPath($class, $baseDir) 
+    public static function getClassPath($class, $baseDir = null) 
     {
         $refclass = new ReflectionClass($class);
-        if ($path = $refclass->getFilename()) {
+        $path = $refclass->getFilename();
+        if ($path && $baseDir) {
             return str_replace(
                 rtrim(realpath($baseDir),DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR,
                 '', 
                 $path);
         }
-        return null;
+        return $path;
     }
 
 
