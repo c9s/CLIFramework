@@ -30,10 +30,17 @@ class ArchiveCommand extends Command
 
     public function options($opts)
     {
-        $opts->add('d|working-dir:', 'If specified, use the given directory as working directory.');
+        $opts->add('d|working-dir:', 'If specified, use the given directory as working directory.')
+            ->isa('dir')
+            ;
 
         $opts->add('c|composer:', 'The composer.json file. If --working-dir is ignored, dirname of the composer.json will be used.')
+            ->isa('file')
             ->defaultValue('composer.json')
+            ;
+        
+        $opts->add('vendor:', 'Vendor directory name')
+            ->defaultValue('vendor')
             ;
 
         // append executable (bootstrap scripts, if it's not defined, it's just a library phar file.
@@ -80,22 +87,21 @@ class ArchiveCommand extends Command
             throw new RuntimeException('json extension is required.');
         }
 
+        // $composerConfigFile is a SplFileInfo object since wuse ->isa('file')
         $composerConfigFile = $this->options->{'composer'} ?: 'composer.json';
-
         if (!file_exists($composerConfigFile)) {
             throw new Exception("$composerConfigFile doesn't exist.");
         }
 
-        $workingDir = $this->options->{'working-dir'} ?: getcwd();
+
+        // workingDir is a SplFileInfo object since we use ->isa('Dir')
+        $workingDir = $this->options->{'working-dir'} ?: new SplFileInfo(getcwd());
         if (!file_exists($workingDir)) {
             throw new Exception("$workingDir doesn't exist.");
         }
 
+        $vendorDirName = $this->options->vendor ?: 'vendor';
 
-
-
-
-        $vendorDir = 'vendor';
 
         $pharGenerator = new PharGenerator($this->logger, $pharFile);
         $phar = $pharGenerator->getPhar();
@@ -117,26 +123,25 @@ class ArchiveCommand extends Command
 
         // $workingDir = dirname(realpath($composerConfigFile));
 
-        $requires = array(
-            Utils::getClassPath('Universal\\ClassLoader\\ClassLoader', $workingDir),
-            Utils::getClassPath('Universal\\ClassLoader\\Psr0ClassLoader', $workingDir),
-            Utils::getClassPath('Universal\\ClassLoader\\Psr4ClassLoader', $workingDir),
-            Utils::getClassPath('Universal\\ClassLoader\\MapClassLoader', $workingDir),
+
+        // Get class paths by ReflectionClass, they should be relative path.
+        $classPaths = array(
+            Utils::getClassPath('Universal\\ClassLoader\\ClassLoader', $workingDir->getPathname()),
+            Utils::getClassPath('Universal\\ClassLoader\\Psr0ClassLoader', $workingDir->getPathname()),
+            Utils::getClassPath('Universal\\ClassLoader\\Psr4ClassLoader', $workingDir->getPathname()),
+            Utils::getClassPath('Universal\\ClassLoader\\MapClassLoader', $workingDir->getPathname()),
         );
 
         // Generate class loader stub
-        $fileinfo = new SplFileInfo($requires[0]);
-
-        // $phar->buildFromDirectory($fileinfo->getPath());
-
+        $classDir = dirname($classPaths[0]);
         $phar->buildFromIterator(
-            new RecursiveIteratorIterator(new RecursiveDirectoryIterator($fileinfo->getPath())),
+            new RecursiveIteratorIterator(new RecursiveDirectoryIterator($classDir)),
             $workingDir
         );
-
-        foreach ($requires as $requirefile) {
-            $stubs[] = "require 'phar://$pharFile/$requirefile';";
+        foreach ($classPaths as $classPath) {
+            $stubs[] = "require 'phar://$pharFile/$classPath';";
         }
+
 
         if ($bootstrap = $this->options->bootstrap) {
             $this->logger->info("Add $bootstrap");
@@ -150,11 +155,11 @@ class ArchiveCommand extends Command
 
         $this->logger->info('Generating classLoader stubs');
         $generator = new ComposerAutoloadGenerator;
-        $generator->scanComposerJsonFiles($workingDir . DIRECTORY_SEPARATOR . $vendorDir);
+        $generator->scanComposerJsonFiles($workingDir . DIRECTORY_SEPARATOR . $vendorDirName);
 
-        $autoloads = $generator->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDir, true);
+        $autoloads = $generator->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDirName, true);
         foreach($autoloads as $packageName => $autoload) {
-            $autoload = $generator->prependAutoloadPathPrefix($autoload, $vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+            $autoload = $generator->prependAutoloadPathPrefix($autoload, $vendorDirName . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
             foreach ($autoload as $type => $map) {
                 foreach ($map as $mapPaths) {
                     $paths = (array) $mapPaths;
@@ -173,11 +178,10 @@ class ArchiveCommand extends Command
             }
         }
 
+        $classloaderStub = $generator->generate($composerConfigFile, $pharFile, $vendorDirName);
+        $this->logger->debug($classloaderStub);
 
-        echo $generator->generate($composerConfigFile, $pharFile, $vendorDir);
-
-        $stubs[] = $generator->generate($composerConfigFile, $pharFile, $vendorDir);
-
+        $stubs[] = $generator->generate($composerConfigFile, $pharFile, $vendorDirName);
 
         $stubs[] = '__HALT_COMPILER();';
         $phar->setStub(join("\n",$stubs));

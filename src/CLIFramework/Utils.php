@@ -35,7 +35,7 @@ class Utils
         $refclass = new ReflectionClass($class);
         if ($path = $refclass->getFilename()) {
             return str_replace(
-                rtrim($baseDir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR,
+                rtrim(realpath($baseDir),DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR,
                 '', 
                 $path);
         }
