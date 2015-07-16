@@ -73,10 +73,10 @@ class ArchiveCommand extends Command
 
         $opts->add('exclude+' , 'exclude pattern');
 
+        $opts->add('no-classloader','do not embed a built-in classloader in the generated phar file.')
+            ;
 
         /*
-        // optional classloader script (use Universal ClassLoader by default 
-        $opts->add('classloader?','embed a classloader in phar file');
         $opts->add('lib+','library path');
         $opts->add('output:','output');
          */
@@ -184,61 +184,62 @@ class ArchiveCommand extends Command
             }
         }
 
-        $this->logger->info('Generating classLoader stubs');
-        $generator = new ComposerAutoloadGenerator($this->logger);
-        $generator->setVendorDir('vendor');
-        $generator->setWorkingDir($workingDir->getPathname());
-        $generator->scanComposerJsonFiles($workingDir . DIRECTORY_SEPARATOR . $vendorDirName);
+        if (!$this->options->{'no-classloader'}) {
+            $this->logger->info('Generating classLoader stubs');
+            $autoloadGenerator = new ComposerAutoloadGenerator($this->logger);
+            $autoloadGenerator->setVendorDir('vendor');
+            $autoloadGenerator->setWorkingDir($workingDir->getPathname());
+            $autoloadGenerator->scanComposerJsonFiles($workingDir . DIRECTORY_SEPARATOR . $vendorDirName);
 
-        $autoloads = $generator->traceAutoloadsWithComposerJson($composerConfigFile, $workingDir . DIRECTORY_SEPARATOR . $vendorDirName, true);
-        foreach($autoloads as $packageName => $config) {
-            if (!isset($config['autoload'])) {
-                continue;
-            }
+            $autoloads = $autoloadGenerator->traceAutoloadsWithComposerJson($composerConfigFile, $workingDir . DIRECTORY_SEPARATOR . $vendorDirName, true);
+            foreach($autoloads as $packageName => $config) {
+                if (!isset($config['autoload'])) {
+                    continue;
+                }
 
-            $autoload = $config['autoload'];
+                $autoload = $config['autoload'];
 
-            if (!isset($config['root'])) {
-                $autoload = $generator->prependAutoloadPathPrefix($autoload, $vendorDirName . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
-            }
+                if (!isset($config['root'])) {
+                    $autoload = $autoloadGenerator->prependAutoloadPathPrefix($autoload, $vendorDirName . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+                }
 
-            foreach ($autoload as $type => $map) {
-                foreach ($map as $mapPaths) {
-                    $paths = (array) $mapPaths;
-                    foreach ($paths as $path) {
-                        $absolutePath = $workingDir . DIRECTORY_SEPARATOR . $path;
+                foreach ($autoload as $type => $map) {
+                    foreach ($map as $mapPaths) {
+                        $paths = (array) $mapPaths;
+                        foreach ($paths as $path) {
+                            $absolutePath = $workingDir . DIRECTORY_SEPARATOR . $path;
 
-                        if (is_dir($absolutePath)) {
-                            $phar->buildFromIterator(
-                                new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                                $workingDir
-                            );
-                        } else if (is_file($absolutePath)) {
-                            $phar->addFile($absolutePath, $path);
-                        } else {
-                            $this->logger->error("File '$absolutePath' is not found.");
+                            if (is_dir($absolutePath)) {
+                                $phar->buildFromIterator(
+                                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                                    $workingDir
+                                );
+                            } else if (is_file($absolutePath)) {
+                                $phar->addFile($absolutePath, $path);
+                            } else {
+                                $this->logger->error("File '$absolutePath' is not found.");
+                            }
+
                         }
-
                     }
                 }
             }
+            $classloaderStub = $autoloadGenerator->generate($composerConfigFile, $pharFile);
+            $this->logger->debug("ClassLoader stub:");
+            $this->logger->debug($classloaderStub);
+            $stubs[] = $autoloadGenerator->generate($composerConfigFile, $pharFile);
         }
-
-        $classloaderStub = $generator->generate($composerConfigFile, $pharFile);
-        $this->logger->debug($classloaderStub);
-
-        $stubs[] = $generator->generate($composerConfigFile, $pharFile);
 
         $stubs[] = '__HALT_COMPILER();';
         $phar->setStub(join("\n",$stubs));
 
 
-        // Include files in phar's root
+        // Add some extra files in phar's root
         if ($adds = $this->options->add) {
             foreach ($adds as $add) {
                 $phar->buildFromIterator(
                     new RecursiveIteratorIterator(new RecursiveDirectoryIterator($add)),
-                    getcwd()
+                    $workingDir
                 );
             }
         }
