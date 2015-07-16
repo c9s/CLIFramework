@@ -81,6 +81,13 @@ class ArchiveCommand extends Command
         $args->add('phar-file');
     }
 
+
+    public function aliases()
+    {
+        return [ 'a', 'ar' ];
+    }
+
+
     public function execute($pharFile = 'output.phar')
     {
         if (!extension_loaded('json')) {
