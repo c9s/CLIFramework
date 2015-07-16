@@ -18,14 +18,33 @@ class ComposerAutoloadGenerator
      */
     protected $packages = array();
 
-    public function traceAutoloadsWithComposerJson($composerJson = 'composer.json', $vendorDir = 'vendor', $includeRootDev = false)
+    protected $workingDir = '';
+
+    protected $vendorDir = 'vendor';
+
+    public function __construct() 
+    {
+        $this->workingDir = getcwd(); // by default workingDir is current directory.
+    }
+
+    public function setWorkingDir($workingDir)
+    {
+        $this->workingDir = $workingDir;
+    }
+
+    public function setVendorDir($vendorDir)
+    {
+        $this->vendorDir = $vendorDir;
+    }
+
+    public function traceAutoloadsWithComposerJson($composerJson = 'composer.json', $includeRootDev = false)
     {
         $json = file_get_contents($composerJson);
         $obj = json_decode($json, true);
-        return $this->traceAutoloads($obj, $vendorDir, $includeRootDev);
+        return $this->traceAutoloads($obj, $includeRootDev);
     }
 
-    public function traceAutoloadsWithRequirements(array $config, array $requirements = array(), $vendorDir = 'vendor')
+    public function traceAutoloadsWithRequirements(array $config, array $requirements = array())
     {
         $autoloads = array();
         foreach($requirements as $packageName => $requirement) {
@@ -37,16 +56,16 @@ class ComposerAutoloadGenerator
 
 
             // get config from composer.json
-            $packageComposerJson = $vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR . 'composer.json';
+            $packageComposerJson = $this->workingDir . DIRECTORY_SEPARATOR . $this->vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR . 'composer.json';
             if (file_exists($packageComposerJson)) {
 
-                $packageAutoloads = $this->traceAutoloadsWithComposerJson($packageComposerJson, $vendorDir, false); // don't include require-dev for dependencies
+                $packageAutoloads = $this->traceAutoloadsWithComposerJson($packageComposerJson, false); // don't include require-dev for dependencies
                 $autoloads = array_merge($autoloads, $packageAutoloads);
 
             } else if (isset($this->packages[ $packageName ])) {
 
                 $config = $this->packages[ $packageName ];
-                $autoloads = $this->traceAutoloads($config, $vendorDir, false);
+                $autoloads = $this->traceAutoloads($config, false);
 
             } else {
                 // if (!file_exists($packageComposerJson)) {
@@ -56,7 +75,7 @@ class ComposerAutoloadGenerator
         return $autoloads;
     }
 
-    public function traceAutoloads(array $config, $vendorDir = 'vendor', $includeRootDev = false )
+    public function traceAutoloads(array $config, $includeRootDev = false )
     {
         $autoloads = array();
 
@@ -69,7 +88,7 @@ class ComposerAutoloadGenerator
         }
 
         if (isset($config['autoload'])) {
-            $baseDir = $vendorDir . DIRECTORY_SEPARATOR . $config['name'];
+            $baseDir = $this->vendorDir . DIRECTORY_SEPARATOR . $config['name'];
 
             // target-dir is deprecated, but somehow we need to support some
             // psr-0 class loader with target-dir
@@ -85,12 +104,14 @@ class ComposerAutoloadGenerator
                 // Expand and replace classmap array
                 $map = array();
                 foreach ($config['autoload']['classmap'] as $path) {
-                    $map = array_merge($map, ClassMapGenerator::createMap($baseDir . DIRECTORY_SEPARATOR . $path));
+                    $map = array_merge($map, ClassMapGenerator::createMap($this->workingDir . DIRECTORY_SEPARATOR . $baseDir . DIRECTORY_SEPARATOR . $path));
                 }
 
-                // strip base dir
+                // Strip paths with working directory:
+                // ClassMapGenerator returns class map with files in absolute paths,
+                // We need them to be relative paths.
                 foreach ($map as $k => $filepath) {
-                    $map[$k] = str_replace( getcwd() . DIRECTORY_SEPARATOR . $baseDir . DIRECTORY_SEPARATOR, '', $filepath);
+                    $map[$k] = str_replace( $this->workingDir . DIRECTORY_SEPARATOR . $baseDir . DIRECTORY_SEPARATOR, '', $filepath);
                 }
 
                 $config['autoload']['classmap'] = $map;
@@ -127,22 +148,22 @@ class ComposerAutoloadGenerator
         return $newAutoloads;
     }
 
-    public function scanComposerJsonFiles($vendorDir)
+    public function scanComposerJsonFiles()
     {
         // Find composer.json files that are not in their corresponding package directory
         $finder = new Finder();
         $finder->name('composer.json');
-        $finder->in($vendorDir);
+        $finder->in($this->workingDir . DIRECTORY_SEPARATOR . $this->vendorDir);
         foreach ($finder as $file) {
             $config = json_decode(file_get_contents($file), true);
             $this->packages[ $config['name'] ] = $config;
         }
     }
 
-    public function generate($composerConfigFile, $pharFile = 'output.phar', $vendorDir = 'vendor')
+    public function generate($composerConfigFile, $pharFile = 'output.phar')
     {
         $pharMap = 'phar://' . $pharFile . '/';
-        $autoloads = $this->traceAutoloadsWithComposerJson($composerConfigFile, $vendorDir, true);
+        $autoloads = $this->traceAutoloadsWithComposerJson($composerConfigFile, $this->vendorDir, true);
 
         $psr0 = array();
         $psr4 = array();
@@ -151,7 +172,9 @@ class ComposerAutoloadGenerator
 
         foreach($autoloads as $packageName => $autoload) {
 
-            $autoload = $this->prependAutoloadPathPrefix($autoload, $pharMap . $vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+            // The returned autoload paths are relative paths in their packages
+            // We need to prepend the package base dir path
+            $autoload = $this->prependAutoloadPathPrefix($autoload, $pharMap . $this->vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
 
             if (isset($autoload['psr-4'])) {
 
