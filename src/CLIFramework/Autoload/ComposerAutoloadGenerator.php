@@ -242,26 +242,26 @@ class ComposerAutoloadGenerator
         if (!empty($map)) {
             $this->logger->debug('Found classmap autoload, adding MapClassLoader...');
 
-            $block[] = new AssignStatement('$map', new NewObjectExpr('MapClassLoader', [$map]));
-            $block[] = new MethodCallStatement('$map','register',[ false ]);
+            $block[] = new AssignStatement('$map', new NewObjectExpr('MapClassLoader', array($map)));
+            $block[] = new MethodCallStatement('$map','register',array(false));
         }
 
         if (!empty($psr4)) {
             $this->logger->debug('Found PSR-4 autoload, adding Psr4ClassLoader...');
 
-            $block[] = new AssignStatement('$psr4', new NewObjectExpr('Psr4ClassLoader', [$psr4]));
-            $block[] = new MethodCallStatement('$psr4','register',[ false ]);
+            $block[] = new AssignStatement('$psr4', new NewObjectExpr('Psr4ClassLoader', array($psr4)));
+            $block[] = new MethodCallStatement('$psr4','register', array(false));
         }
 
         if (!empty($psr0)) {
             $this->logger->debug('Found PSR-0 autoload, adding Psr0ClassLoader...');
 
-            $block[] = new AssignStatement('$psr0', new NewObjectExpr('Psr0ClassLoader', [$psr0]));
-            $block[] = new MethodCallStatement('$psr0','register',[ false ]);
+            $block[] = new AssignStatement('$psr0', new NewObjectExpr('Psr0ClassLoader', array($psr0)));
+            $block[] = new MethodCallStatement('$psr0','register',array( false ));
         }
 
         $this->logger->debug('Rendering code using CodeGen...');
-        return $block->render([]);
+        return $block->render();
     }
 
 }
