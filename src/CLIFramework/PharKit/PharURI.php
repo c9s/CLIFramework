@@ -37,7 +37,7 @@ class PharURI implements Renderable
     public function __toString()
     {
         // $stmt = new RequireStatement("phar://$pharFile/" . $localPath);
-        return 'phar://' . $this->alias . '/' . $this->localPath;
+        return var_export('phar://' . $this->alias . '/' . $this->localPath, true);
     }
 
 }
