@@ -9,8 +9,8 @@ matrix:
 
 install:
   - phpenv rehash
-  - composer self-update
-  - composer install --no-interaction
+  - travis_retry composer self-update
+  - travis_retry composer install --no-interaction
 
 before_script:
   - mkdir -p build/logs
