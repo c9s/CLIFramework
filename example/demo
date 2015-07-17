@@ -31,5 +31,12 @@ require 'tests/DemoApp/Command/FooCommand/SubFooCommand.php';
 require 'tests/DemoApp/Command/ServerCommand.php';
 
 $app = new DemoApp\Application;
+
+
+
+
 // $app->runWithTry($argv);
 $app->run($argv);
+
+
+

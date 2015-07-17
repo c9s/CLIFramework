@@ -18,6 +18,7 @@ use CLIFramework\PharKit\PharGenerator;
 use CLIFramework\PharKit\PharURI;
 use CLIFramework\Utils;
 use ReflectionClass;
+use ReflectionObject;
 use SplFileInfo;
 
 /**
@@ -127,7 +128,7 @@ class ArchiveCommand extends Command
 
         $phar->startBuffering();
 
-        $stubs = array();
+        $stubs = new Block;
         if ($this->options->executable) {
             $this->logger->debug( 'Adding shell bang...' );
             $stubs[] = "#!/usr/bin/env php";
@@ -166,8 +167,7 @@ class ArchiveCommand extends Command
          */
         foreach ($classPaths as $classPath) {
             $this->logger->debug("Adding require statment for class loader: " . basename($classPath));
-            $stmt = new RequireStatement(new PharURI($pharFile, basename($classPath)));
-            $stubs[] = $stmt->render();
+            $stubs[] = new RequireStatement(new PharURI($pharFile, basename($classPath)));
         }
 
         if (!$this->options->{'no-classloader'}) {
@@ -226,15 +226,24 @@ class ArchiveCommand extends Command
 
                 $phar->addFromString($localPath, $content);
 
-                $stmt = new RequireStatement(new PharURI($pharFile, $localPath));
-                $stubs[] = $stmt->render();
+                $stubs[] = new RequireStatement(new PharURI($pharFile, $localPath));
             }
         }
 
+        if ($this->options->app) {
+            $app = $this->getApplication();
+            $refObject = new ReflectionObject($app);
+            $appClassName = $refObject->getName();
+            $stubs[] = new AssignStatement('$app', new NewObjectExpr($appClassName));
+            $stubs[] = new MethodCallStatement('$app', 'runWithTry', [ '$argv' ]);
+        }
 
 
         $stubs[] = '__HALT_COMPILER();';
-        $phar->setStub(join("\n",$stubs));
+
+        $stubstr = $stubs->render();
+        $this->logger->debug($stubstr);
+        $phar->setStub($stubstr);
 
 
         // Add some extra files in phar's root
