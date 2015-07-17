@@ -90,7 +90,7 @@ class ArchiveCommand extends Command
 
     public function aliases()
     {
-        return [ 'a', 'ar' ];
+        return array('a', 'ar');
     }
 
 
