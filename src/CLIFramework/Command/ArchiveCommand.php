@@ -76,6 +76,8 @@ class ArchiveCommand extends Command
         $opts->add('no-classloader','do not embed a built-in classloader in the generated phar file.')
             ;
 
+        $opts->add('app', 'Include CLIFramework app runner as a bootstrap script.');
+
         /*
         $opts->add('lib+','library path');
         $opts->add('output:','output');
@@ -168,22 +170,6 @@ class ArchiveCommand extends Command
             $stubs[] = $stmt->render();
         }
 
-
-        if ($bootstraps = $this->options->bootstrap) {
-            foreach ($bootstraps as $bootstrap) {
-                $this->logger->info("Adding bootstrap: $bootstrap");
-                $content = php_strip_whitespace($bootstrap);
-                $content = preg_replace('{^#!/usr/bin/env\s+php\s*}', '', $content);
-
-                $localPath = str_replace($workingDir->getPathname(), '', $bootstrap->getRealPath());
-
-                $phar->addFromString($localPath, $content);
-
-                $stmt = new RequireStatement(new PharURI($pharFile, $localPath));
-                $stubs[] = $stmt->render();
-            }
-        }
-
         if (!$this->options->{'no-classloader'}) {
             $this->logger->info('Generating classLoader stubs');
             $autoloadGenerator = new ComposerAutoloadGenerator($this->logger);
@@ -229,6 +215,23 @@ class ArchiveCommand extends Command
             $this->logger->debug($classloaderStub);
             $stubs[] = $autoloadGenerator->generate($composerConfigFile, $pharFile);
         }
+
+        if ($bootstraps = $this->options->bootstrap) {
+            foreach ($bootstraps as $bootstrap) {
+                $this->logger->info("Adding bootstrap: $bootstrap");
+                $content = php_strip_whitespace($bootstrap);
+                $content = preg_replace('{^#!/usr/bin/env\s+php\s*}', '', $content);
+
+                $localPath = str_replace($workingDir->getPathname(), '', $bootstrap->getRealPath());
+
+                $phar->addFromString($localPath, $content);
+
+                $stmt = new RequireStatement(new PharURI($pharFile, $localPath));
+                $stubs[] = $stmt->render();
+            }
+        }
+
+
 
         $stubs[] = '__HALT_COMPILER();';
         $phar->setStub(join("\n",$stubs));
