@@ -8,10 +8,10 @@
         "corneltek/getoptionkit": "~2",
         "corneltek/class-template": "*",
         "corneltek/universal": ">= 1.4",
+        "corneltek/codegen": "~2.1",
         "pimple/pimple": "*",
         "symfony/finder": "^2.7",
-        "symfony/class-loader": "^2.7",
-        "corneltek/codegen": "dev-master as 2.99"
+        "symfony/class-loader": "^2.7"
     },
     "require-dev": {
         "corneltek/phpunit-testmore": "dev-master",
