@@ -77,7 +77,7 @@ class ArchiveCommand extends Command
         $opts->add('no-classloader','do not embed a built-in classloader in the generated phar file.')
             ;
 
-        $opts->add('app', 'Include CLIFramework app runner as a bootstrap script.');
+        $opts->add('app-bootstrap', 'Include CLIFramework bootstrap script.');
 
         /*
         $opts->add('lib+','library path');
