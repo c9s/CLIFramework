@@ -134,9 +134,6 @@ class CommitCommand extends CLIFramework\Command {
 }
 ```
 
-## Documentation
-
-See documentation on our wiki <https://github.com/c9s/CLIFramework/wiki>
 
 ### Automatic Zsh Completion Generator
 
@@ -149,6 +146,12 @@ See documentation on our wiki <https://github.com/c9s/CLIFramework/wiki>
 #### Bash Completion
 
 ![Imgur](http://i.imgur.com/sF5UPX5.gif)
+
+
+Documentation
+-------------
+
+See documentation on our wiki <https://github.com/c9s/CLIFramework/wiki>
 
 
 Command Forms
@@ -205,104 +208,7 @@ From composer
 }
 ```
 
-Tutorial
---------
 
-To use CLIFramework, please define the application class first,
-
-`src/YourApp/CLIApplication.php`:
-
-```php
-namespace YourApp;
-use CLIFramework\Application;
-
-class CLIApplication extends Application
-{
-
-    /* init your application options here */
-    public function options($opts)
-    {
-        $opts->add('v|verbose', 'verbose message');
-        $opts->add('path:', 'required option with a value.');
-        $opts->add('path?', 'optional option with a value');
-        $opts->add('path+', 'multiple value option.');
-    }
-
-    /* register your command here */
-    public function init()
-    {
-        $this->command( 'list', '\YourApp\Command\ListCommand' );
-        $this->command( 'foo', '\YourApp\Command\FooCommand' );
-        $this->command( 'bar' );    // initialize with \YourApp\Command\BarCommand
-    }
-
-}
-```
-
-Then define your command class:
-
-`src/YourApp/Command/ListCommand.php`:
-
-```php
-namespace YourApp\Command;
-use CLIFramework\Command;
-class ListCommand extends Command {
-
-    function init()
-    {
-        // register your subcommand here ..
-    }
-
-    function options($opts)
-    {
-        // command options
-
-    }
-
-    function execute($arg1,$arg2,$arg3 = 0)
-    {
-        $logger = $this->logger;
-
-        $logger->info('execute');
-        $logger->error('error');
-
-        $input = $this->ask('Please type something');
-
-    }
-}
-```
-
-To start your Application:
-
-```php
-// include your PSR-0 autoloader to load classes here...
-$app = new \YourApp\Application;
-$app->run( $argv );
-```
-
-Defining Command Argument Info
---------------------------------
-In order to provide more information about your command, and generate
-meaningful completion script, CLIFramework provides a way for you to define the
-argument info of a command:
-
-```php
-namespace YourApp\Command;
-use CLIFramework\Command;
-class FooCommand extends Command {
-
-    public function arguments($args) {
-
-        $args->add('user')
-            ->desc('user name')
-            ->validValues(['c9s','bar','foo']);
-
-        $args->add('repo')
-            ->desc('repository')
-            ->validValues(['CLIFramework','GetOptionKit']);
-    }
-}
-```
 
 
 Zsh Completion Generator
