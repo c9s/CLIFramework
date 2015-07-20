@@ -134,6 +134,10 @@ class CommitCommand extends CLIFramework\Command {
 }
 ```
 
+## Documentation
+
+See documentation on our wiki <https://github.com/c9s/CLIFramework/wiki>
+
 ### Automatic Zsh Completion Generator
 
 ![Imgur](http://imgur.com/sU3mrDe.gif)
