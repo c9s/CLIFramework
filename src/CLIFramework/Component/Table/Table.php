@@ -192,7 +192,8 @@ class Table
         return $this;
     }
 
-    public function getColumnWidth($col) {
+    public function getColumnWidth($col)
+    {
         $lengths = array();
         foreach($this->rows as $row) {
             if ($row instanceof RowSeparator) {
@@ -210,7 +211,12 @@ class Table
             }
         }
 
+        $headerColumnWidth = mb_strlen($this->headers[$col]);
+        $maxContentWidth = max($lengths);;
 
+        if (empty($lengths) || $headerColumnWidth > $maxContentWidth) {
+            return $this->columnWidth[$col] = $headerColumnWidth;
+        }
         return $this->columnWidth[$col] = max($lengths);
     }
 
