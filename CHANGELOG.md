@@ -1,3 +1,13 @@
+
+
+Version 2.6.2
+
+- Fixed column header width checking
+
+Version 2.6.1
+
+- Fixed column width for empty cell.
+
 Version 2.6
 
 - Added CommandExtension support. @shinnya++
