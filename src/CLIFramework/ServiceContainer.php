@@ -45,8 +45,7 @@ class ServiceContainer extends Container
             if (file_exists($configAtHomeDirectory)) {
                 return $configAtHomeDirectory;
             }
-
-            return '';
+            return null;
         };
 
         $this['event'] = function() {
@@ -54,7 +53,7 @@ class ServiceContainer extends Container
         };
 
         $this['config'] = function($c) {
-            if (empty($c['config.path'])) {
+            if (empty($c['config.path']) || !$c['config.path']) {
                 return new GlobalConfig(array());
             }
             return new GlobalConfig(parse_ini_file($c['config.path'], true));
