@@ -1,5 +1,9 @@
 
 
+Version 2.6.3
+
+- Use universal package that is newer than 1.4
+
 Version 2.6.2
 
 - Fixed column header width checking
