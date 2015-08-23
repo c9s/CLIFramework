@@ -235,7 +235,7 @@ class ArchiveCommand extends Command
             $refObject = new ReflectionObject($app);
             $appClassName = $refObject->getName();
             $stubs[] = new AssignStatement('$app', new NewObjectExpr($appClassName));
-            $stubs[] = new MethodCallStatement('$app', 'runWithTry', [ '$argv' ]);
+            $stubs[] = new MethodCallStatement('$app', 'runWithTry', array('$argv'));
         }
 
 
