@@ -8,7 +8,7 @@
         "corneltek/getoptionkit": "~2",
         "corneltek/class-template": "*",
         "corneltek/universal": ">= 1.4",
-        "corneltek/codegen": "~2.1",
+        "corneltek/codegen": "^2",
         "pimple/pimple": "*",
         "symfony/finder": "^2.7",
         "symfony/class-loader": "^2.7"
