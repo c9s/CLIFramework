@@ -2,7 +2,14 @@
     "name": "corneltek/cliframework",
     "homepage": "http://github.com/c9s/CLIFramework",
     "description": "Command-line framework for PHP",
-    "keywords": [ "command", "command-line", "completion", "zsh", "framework", "getopt" ],
+    "keywords": [
+        "command",
+        "command-line",
+        "completion",
+        "zsh",
+        "framework",
+        "getopt"
+    ],
     "require": {
         "php": ">=5.3.0",
         "corneltek/getoptionkit": "~2",
@@ -30,5 +37,5 @@
             "CLIFramework\\": "src/CLIFramework/"
         }
     },
-    "version": "2.6.2"
+    "version": "2.7.0"
 }

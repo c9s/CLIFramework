@@ -1,4 +1,6 @@
+Version 2.7.0
 
+- Rewrite the whole compile command with composer.json support.
 
 Version 2.6.3
 
