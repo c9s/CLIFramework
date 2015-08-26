@@ -25,6 +25,13 @@ class DaemonExtension extends CommandExtension
         return function_exists('pcntl_fork');
     }
 
+
+    static public function isSupported()
+    {
+        return function_exists('pcntl_fork');
+    }
+
+
     public function finish()
     {
         $pidFile = $this->getPidFilePath();

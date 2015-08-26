@@ -31,6 +31,11 @@ abstract class ExtensionBase
 
     }
 
+    static public function isSupported()
+    {
+        return true;
+    }
+
     public function isAvailable()
     {
         return true;

@@ -15,7 +15,9 @@ class ServerCommand extends Command
 
     public function init()
     {
-        $this->addExtension(new DaemonExtension);
+        if (DaemonExtension::isSupported()) {
+            $this->addExtension(new DaemonExtension);
+        }
     }
 
     public function execute($host, $port)
