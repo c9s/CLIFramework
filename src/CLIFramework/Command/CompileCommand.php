@@ -170,8 +170,10 @@ require 'phar://$pharFile/$classloader_file';
 EOT;
             }
             else {
+                $classloader_interface = 'Universal/ClassLoader/ClassLoader.php';
                 $classloader_file = 'Universal/ClassLoader/SplClassLoader.php';
                 $stub .=<<<"EOT"
+require 'phar://$pharFile/$classloader_interface';
 require 'phar://$pharFile/$classloader_file';
 \$classLoader = new \\Universal\\ClassLoader\\SplClassLoader;
 \$classLoader->addFallback( 'phar://$pharFile' );
