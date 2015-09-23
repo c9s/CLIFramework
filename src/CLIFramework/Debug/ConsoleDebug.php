@@ -20,6 +20,11 @@ class ConsoleDebug
         $output = [];
         $output[] = '[' . get_class($e) . '] was thrown with "' . $e->getMessage() . '".';
         $output[] = $indicator->indicateFile($e->getFile(), $e->getLine());
+
+        $output[] = "Exception Stack Trace";
+        $output[] = "=====================";
+        $output[] = "";
+        $output[] = $e->getTraceAsString();
         return join(PHP_EOL, $output);
     }
 
