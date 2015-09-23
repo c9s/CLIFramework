@@ -12,18 +12,34 @@ use CLIFramework\Component\Table\RowSeparator;
 
 class ConsoleDebug
 {
-    static public function dumpArray(array $array)
+    static public function dumpRows(array $array, array $options = array())
     {
         $table = new Table;
-        if (isset($array[0])) {
-            $table->setHeaders(array_keys($array[0]));
+
+        $keys = null;
+        if (isset($options['keys'])) {
+            $keys = $options['keys'];
+        } else if (isset($array[0])) {
+            $keys = array_keys($array[0]);
+        }
+
+        if ($keys) {
+            $table->setHeaders($keys);
+        }
+
+        if (empty($array)) {
+            return 'array contains 0 rows.' . PHP_EOL;
         }
 
         foreach ($array as $item) {
-            $values = array_values($item);
+            $values = [];
+            foreach ($keys as $key) {
+                $values[] = $item[$key];
+            }
             $table->addRow($values);
         }
-        echo $table->render(), PHP_EOL;
+        return $table->render() . PHP_EOL
+            . 'array contains ' . count($array) . ' rows.' . PHP_EOL;
     }
 }
 
