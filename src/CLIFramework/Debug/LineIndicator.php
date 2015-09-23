@@ -22,16 +22,18 @@ class LineIndicator
     public function indicateFile($file, $line)
     {
         $lines = file($file);
-        $fromLine = max($line - $this->contextLines, 0);
-        $toLine = min($line + $this->contextLines, count($lines));
+        $fromIndex = max($line - 1 - $this->contextLines, 0);
+        $toIndex = min($line - 1 + $this->contextLines, count($lines));
 
-        if ($fromLine === $toLine) {
-            $indexRange = [ $fromLine ];
+        if ($fromIndex === $toIndex) {
+            $indexRange = [ $fromIndex ];
         } else {
-            $indexRange = range($fromLine, $toLine);
+            $indexRange = range($fromIndex, $toIndex);
         }
 
         $output = [];
+        $output[] = "$file @ line " . join(',', (array) $line);
+        $output[] = str_repeat('=', strlen($output[0]) );
         foreach($indexRange as $index) {
             if ((is_integer($line) && $index + 1 == $line) ||  (is_array($line) && in_array($index + 1, $line) ) ) {
                 $output[] = sprintf($this->indicatedLineFormat, $index + 1, rtrim($lines[$index]));
