@@ -9,9 +9,30 @@ use CLIFramework\Component\Table\NumberFormatCell;
 use CLIFramework\Component\Table\CurrencyCellAttribute;
 use CLIFramework\Component\Table\SpellOutNumberFormatCell;
 use CLIFramework\Component\Table\RowSeparator;
+use LazyRecord\BaseCollection;
+use Exception;
 
 class ConsoleDebug
 {
+    static public function dumpException(Exception $e)
+    {
+        $indicator = new LineIndicator;
+        $output = [];
+        $output[] = '[' . get_class($e) . '] was thrown with "' . $e->getMessage() . '".';
+        $output[] = $indicator->indicateFile($e->getFile(), $e->getLine());
+        return join(PHP_EOL, $output);
+    }
+
+
+    /**
+     * Dump Record Collection
+     */
+    static public function dumpCollection(BaseCollection $collection, array $options = array())
+    {
+        return $this->dumpRows($collection->toArray(), $options);
+    }
+
+
     static public function dumpRows(array $array, array $options = array())
     {
         $table = new Table;
