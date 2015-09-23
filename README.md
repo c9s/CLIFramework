@@ -333,6 +333,31 @@ $value = $chooser->choose( "System Options" , array(
 ));
 ```
 
+
+Debug Utilities
+-----------------------
+
+### LineIndicator
+
+```php
+use CLIFramework\Debug\LineIndicator;
+$indicator = new LineIndicator;
+echo PHP_EOL, $indicator->indicateFile(__FILE__, __LINE__);
+```
+
+
+### ConsoleDebug class
+
+```php
+use CLIFramework\Debug\ConsoleDebug;
+
+ConsoleDebug::dumpRows($pdo->fetchAll());
+
+ConsoleDebug::dumpException($e);
+```
+
+
+
 Todos in the next release
 -------------------------
 [ ] provide a easy way to define chained commands
