@@ -1,3 +1,10 @@
+
+Version 2.7.2
+
+- Merged Commit bc318ab: Merge pull request #85 from marcioAlmada/fix/compile
+
+   Fix Compile Command
+
 Version 2.7.0
 
 - Rewrite the whole compile command with composer.json support.
