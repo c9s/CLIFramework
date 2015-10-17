@@ -1,4 +1,9 @@
 
+Version 2.8.0
+
+- Added debug tools.
+- Fix table component bug.
+
 Version 2.7.2
 
 - Merged Commit bc318ab: Merge pull request #85 from marcioAlmada/fix/compile
