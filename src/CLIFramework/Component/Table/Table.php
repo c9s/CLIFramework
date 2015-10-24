@@ -204,9 +204,9 @@ class Table
                     if (!isset($row[$col][1])) {
                         throw new InvalidArgumentException('Incorrect cell structure. Expecting [attribute, text].');
                     }
-                    $lengths[] = mb_strlen($row[$col][1]);
+                    $lengths[] = mb_strlen(preg_replace('/\033.*?m/','',$row[$col][1]));
                 } else {
-                    $lengths[] = mb_strlen($row[$col]);
+                    $lengths[] = mb_strlen(preg_replace('/\033.*?m/','',$row[$col]));
                 }
             }
         }
