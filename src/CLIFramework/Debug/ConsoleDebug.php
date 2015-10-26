@@ -34,7 +34,7 @@ class ConsoleDebug
      */
     static public function dumpCollection(BaseCollection $collection, array $options = array())
     {
-        return $this->dumpRows($collection->toArray(), $options);
+        return self::dumpRows($collection->toArray(), $options);
     }
 
 
@@ -54,7 +54,7 @@ class ConsoleDebug
         }
 
         if (empty($array)) {
-            return 'array contains 0 rows.' . PHP_EOL;
+            return '0 rows.' . PHP_EOL;
         }
 
         foreach ($array as $item) {
@@ -65,7 +65,7 @@ class ConsoleDebug
             $table->addRow($values);
         }
         return $table->render() . PHP_EOL
-            . 'array contains ' . count($array) . ' rows.' . PHP_EOL;
+            . count($array) . ' rows.' . PHP_EOL;
     }
 }
 
