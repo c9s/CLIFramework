@@ -15,7 +15,7 @@ use CLIFramework\Logger;
 class ComposerAutoloadGenerator
 {
     /**
-     * @var array[ package name ] = array
+     * @var array[ package name ] = composer config array
      */
     protected $packages = array();
 
@@ -48,6 +48,9 @@ class ComposerAutoloadGenerator
         if ($isRoot) {
             $config['root'] = true;
         }
+        if (isset($config['name'])) {
+            $this->packages[ $config['name'] ] = $config;
+        }
         return $this->traceAutoloads($config, $isRoot);
     }
 
@@ -63,9 +66,13 @@ class ComposerAutoloadGenerator
                 continue;
             }
 
-
             // get config from composer.json
-            $packageComposerJson = $this->workingDir . DIRECTORY_SEPARATOR . $this->vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR . 'composer.json';
+            if (isset($config['name']) && $config['name'] === $packageName) {
+                $packageComposerJson = $this->workingDir . DIRECTORY_SEPARATOR . 'composer.json';
+            } else {
+                $packageComposerJson = $this->workingDir . DIRECTORY_SEPARATOR . $this->vendorDir . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR . 'composer.json';
+            }
+
             if (file_exists($packageComposerJson)) {
 
                 $packageAutoloads = $this->traceAutoloadsWithComposerJson($packageComposerJson, false); // don't include require-dev for dependencies
