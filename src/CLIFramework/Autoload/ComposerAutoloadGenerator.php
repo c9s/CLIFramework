@@ -257,18 +257,22 @@ class ComposerAutoloadGenerator
             $this->logger->debug('Found PSR-4 autoload, adding Psr4ClassLoader...');
 
             // translate psr-4 mapping for Psr4ClassLoader
-            $newPsr4 = [];
+            $arg = [];
             foreach ($psr4 as $prefix => $paths) {
-                $newPsr4[] = [$prefix, $paths];
+                $arg[] = [$prefix, $paths];
             }
-            $block[] = new AssignStatement('$psr4', new NewObjectExpr('Psr4ClassLoader', array($newPsr4)));
+            $block[] = new AssignStatement('$psr4', new NewObjectExpr('Psr4ClassLoader', array($arg)));
             $block[] = new MethodCallStatement('$psr4','register', array(false));
         }
 
         if (!empty($psr0)) {
             $this->logger->debug('Found PSR-0 autoload, adding Psr0ClassLoader...');
 
-            $block[] = new AssignStatement('$psr0', new NewObjectExpr('Psr0ClassLoader', array($psr0)));
+            $arg = [];
+            foreach ($psr0 as $prefix => $paths) {
+                $arg[$prefix] = (array)$paths;
+            }
+            $block[] = new AssignStatement('$psr0', new NewObjectExpr('Psr0ClassLoader', array($arg)));
             $block[] = new MethodCallStatement('$psr0','register',array( false ));
         }
 
