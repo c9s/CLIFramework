@@ -196,11 +196,13 @@ class ArchiveCommand extends Command
                             $absolutePath = $workingDir . DIRECTORY_SEPARATOR . $path;
 
                             if (is_dir($absolutePath)) {
+                                $this->logger->debug("Add files from directory $absolutePath under $workingDir");
                                 $phar->buildFromIterator(
                                     new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
                                     $workingDir
                                 );
                             } else if (is_file($absolutePath)) {
+                                $this->logger->debug("Add file $absolutePath under $path");
                                 $phar->addFile($absolutePath, $path);
                             } else {
                                 $this->logger->error("File '$absolutePath' is not found.");
@@ -230,12 +232,12 @@ class ArchiveCommand extends Command
             }
         }
 
-        if ($this->options->app) {
+        if ($this->options->{'app-bootstrap'}) {
             $app = $this->getApplication();
             $refObject = new ReflectionObject($app);
             $appClassName = $refObject->getName();
             $stubs[] = new AssignStatement('$app', new NewObjectExpr($appClassName));
-            $stubs[] = new MethodCallStatement('$app', 'runWithTry', array('$argv'));
+            $stubs[] = new MethodCallStatement('$app', 'run', array('$argv'));
         }
 
 
