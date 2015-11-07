@@ -38,7 +38,7 @@ class Application extends CommandBase
     implements CommandInterface
 {
     const CORE_VERSION = '2.5.4';
-    const VERSION = "2.8.0";
+    const VERSION = "2.8.1";
     const NAME = 'CLIFramework';
 
 

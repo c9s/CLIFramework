@@ -1,3 +1,10 @@
+Version 2.8.1
+
+Several bug fixes:
+
+- class loader generator.
+- table component column width calculation.
+- fix archive command app-boostrap option
 
 Version 2.8.0
 
