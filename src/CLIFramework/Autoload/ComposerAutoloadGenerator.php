@@ -257,7 +257,7 @@ class ComposerAutoloadGenerator
             $this->logger->debug('Found PSR-4 autoload, adding Psr4ClassLoader...');
 
             // translate psr-4 mapping for Psr4ClassLoader
-            $arg = [];
+            $arg = array();
             foreach ($psr4 as $prefix => $paths) {
                 $arg[] = [$prefix, $paths];
             }
@@ -268,7 +268,7 @@ class ComposerAutoloadGenerator
         if (!empty($psr0)) {
             $this->logger->debug('Found PSR-0 autoload, adding Psr0ClassLoader...');
 
-            $arg = [];
+            $arg = array();
             foreach ($psr0 as $prefix => $paths) {
                 $arg[$prefix] = (array)$paths;
             }
