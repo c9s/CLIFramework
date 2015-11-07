@@ -6,6 +6,11 @@ if (isset($argv[1])) {
 }
 $phar = new Phar($file, 0);
 foreach (new RecursiveIteratorIterator($phar) as $file) {
+    if ($file->isDir()) {
+        echo "D ";
+    } else {
+        echo "F ";
+    }
     echo $file->getPathname(), PHP_EOL;
 }
 echo "Stub:\n";
