@@ -4,6 +4,7 @@ use CLIFramework\Command;
 use CLIFramework\Autoload\ComposerAutoloadGenerator;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use FilesystemIterator;
 use RuntimeException;
 use Exception;
 use Phar;
@@ -197,10 +198,29 @@ class ArchiveCommand extends Command
 
                             if (is_dir($absolutePath)) {
                                 $this->logger->debug("Add files from directory $absolutePath under $workingDir");
-                                $phar->buildFromIterator(
-                                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+
+                                $it = new RecursiveIteratorIterator(
+                                    new RecursiveDirectoryIterator($absolutePath, FilesystemIterator::SKIP_DOTS)
+                                );
+
+                                foreach ($it as $fileinfo) {
+                                    $pathName = $fileinfo->getPathname();
+                                    if (preg_match('/(\.(?:git|svn|hg)|Tests|Test\.php)/', $pathName)) {
+                                        continue;
+                                    }
+                                    $localPath = str_replace($workingDir . DIRECTORY_SEPARATOR, "", $pathName);
+                                    $this->logger->debug("Adding $localPath");
+                                    $phar->addFile($pathName, $localPath);
+                                }
+
+                                /*
+                                $builtFiles = $phar->buildFromIterator(
+                                    new RecursiveIteratorIterator(
+                                        new RecursiveDirectoryIterator($absolutePath, FilesystemIterator::SKIP_DOTS)
+                                    ),
                                     $workingDir
                                 );
+                                */
                             } else if (is_file($absolutePath)) {
                                 $this->logger->debug("Add file $absolutePath under $path");
                                 $phar->addFile($absolutePath, $path);
@@ -236,8 +256,11 @@ class ArchiveCommand extends Command
             $app = $this->getApplication();
             $refObject = new ReflectionObject($app);
             $appClassName = $refObject->getName();
-            $stubs[] = new AssignStatement('$app', new NewObjectExpr($appClassName));
-            $stubs[] = new MethodCallStatement('$app', 'run', array('$argv'));
+
+            $block = new Block;
+            $block[] = new AssignStatement('$app', new NewObjectExpr($appClassName));
+            $block[] = new MethodCallStatement('$app', 'run', array('$argv'));
+            $stubs[] = $block;
         }
 
 
