@@ -371,7 +371,7 @@ Hacking
 Setup
 -------
 
-1. Download & install Onion from http://github.com/c9s/Onion
+1. Download & install Onion from https://github.com/phpbrew/Onion
 
 2. Use Onion to bundle the dependencies:
 
