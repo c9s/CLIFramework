@@ -9,9 +9,9 @@ class CursorControl
 
     protected $fd;
 
-    public function __construct($fd)
+    public function __construct($fd = null)
     {
-        $this->fd = $fd;
+        $this->fd = $fd ?: fopen('php://stderr','w');
     }
 
     /**
