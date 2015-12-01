@@ -1,10 +1,7 @@
 <?php
+
 namespace CLIFramework\Logger;
 
-interface Logger 
+interface Logger
 {
-
 }
-
-
-

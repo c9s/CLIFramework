@@ -1,5 +1,7 @@
 <?php
+
 namespace CLIFramework\Command;
+
 use CLIFramework\Command;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
@@ -21,20 +23,20 @@ class CompileCommand extends Command
     public function options($opts)
     {
         // optional classloader script (use Universal ClassLoader by default 
-        $opts->add('classloader?','embed classloader source file');
+        $opts->add('classloader?', 'embed classloader source file');
 
         // append executable (bootstrap scripts, if it's not defined, it's just a library phar file.
-        $opts->add('bootstrap?','bootstrap or executable source file');
+        $opts->add('bootstrap?', 'bootstrap or executable source file');
 
-        $opts->add('executable','is a executable script ?');
+        $opts->add('executable', 'is a executable script ?');
 
-        $opts->add('lib+','library path');
+        $opts->add('lib+', 'library path');
 
         $opts->add('include+', 'include path');
 
-        $opts->add('exclude+' , 'exclude pattern');
+        $opts->add('exclude+', 'exclude pattern');
 
-        $opts->add('output:','output');
+        $opts->add('output:', 'output');
 
         $opts->add('c|compress?', 'phar file compress type: gz, bz2');
 
@@ -66,14 +68,14 @@ class CompileCommand extends Command
             $lib_dirs = $options->lib;
         }
 
-        if( $options->output )
+        if ($options->output) {
             $output = $options->output;
-
+        }
 
         $logger->info('Compiling Phar...');
 
         $pharFile = $output;
-        $src_dirs  = $lib_dirs;
+        $src_dirs = $lib_dirs;
 
         $logger->debug2("Creating phar file $pharFile...");
 
@@ -83,7 +85,7 @@ class CompileCommand extends Command
 
         $excludePatterns = $this->options->exclude ? $options->exclude : null;
         if ($this->options->include) {
-            foreach ($options->include as $include ) {
+            foreach ($options->include as $include) {
                 $phar->buildFromIterator(
                     new RecursiveIteratorIterator(
                         new RecursiveDirectoryIterator($include)),
@@ -94,42 +96,41 @@ class CompileCommand extends Command
 
         // archive library directories into phar file.
         foreach ($lib_dirs as $src_dir) {
-            if (! file_exists($src_dir)) {
-                die( "$src_dir does not exist." );
+            if (!file_exists($src_dir)) {
+                die("$src_dir does not exist.");
             }
 
-            $src_dir = realpath( $src_dir );
+            $src_dir = realpath($src_dir);
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($src_dir),
                                     RecursiveIteratorIterator::CHILD_FIRST);
 
             // compile php file only (currently)
             foreach ($iterator as $path) {
-                if( $path->isFile() ) {
-                    $rel_path = substr($path->getPathname(),strlen($src_dir) + 1);
+                if ($path->isFile()) {
+                    $rel_path = substr($path->getPathname(), strlen($src_dir) + 1);
 
-                    if( $excludePatterns )  {
+                    if ($excludePatterns) {
                         $exclude = false;
-                        foreach( $excludePatterns as $pattern ) {
-                            if( preg_match( '#' . $pattern . '#' , $rel_path ) ) {
+                        foreach ($excludePatterns as $pattern) {
+                            if (preg_match('#'.$pattern.'#', $rel_path)) {
                                 $exclude = true;
                                 break;
                             }
                         }
-                        if( $exclude ) {
-                            $logger->debug2("exclude " . $rel_path);
+                        if ($exclude) {
+                            $logger->debug2('exclude '.$rel_path);
                             continue;
                         }
                     }
 
-
                     // if it's php file.
-                    if (preg_match('/\.php$/',$path->getFilename())) {
-                        $content = php_strip_whitespace( $path->getRealPath() );
+                    if (preg_match('/\.php$/', $path->getFilename())) {
+                        $content = php_strip_whitespace($path->getRealPath());
                         # echo $path->getPathname() . "\n";
-                        $logger->debug2("add " . $rel_path);
+                        $logger->debug2('add '.$rel_path);
                         $phar->addFromString($rel_path, $content);
                     } else {
-                        $logger->debug2("add " . $rel_path);
+                        $logger->debug2('add '.$rel_path);
                         $phar->addFile($path->getPathname(), $rel_path);
                     }
                 }
@@ -146,11 +147,11 @@ class CompileCommand extends Command
 
         $stub = '';
         if ($options->executable) {
-            $logger->debug2( 'Adding shell bang...' );
+            $logger->debug2('Adding shell bang...');
             $stub .= "#!/usr/bin/env php\n";
         }
 
-        $logger->info2( "Setting up stub..." );
+        $logger->info2('Setting up stub...');
         $stub .= <<<"EOT"
 <?php
 Phar::mapPhar('$pharFile');
@@ -158,41 +159,36 @@ EOT;
 
         // use stream to resolve Universal\ClassLoader\Autoloader;
         if ($options->has('classloader')) {
+            $logger->info2('Adding classloader...');
 
-            $logger->info2( "Adding classloader..." );
-
-            if (is_string( $options->classloader ) && file_exists( $options->classloader )) {
+            if (is_string($options->classloader) && file_exists($options->classloader)) {
                 $classloader_file = $options->classloader;
                 $content = php_strip_whitespace($classloader_file);
-                $phar->addFromString($classloader_file,$content);
-                $stub .=<<<"EOT"
+                $phar->addFromString($classloader_file, $content);
+                $stub .= <<<"EOT"
 require 'phar://$pharFile/$classloader_file';
 EOT;
-            }
-            else {
+            } else {
                 $classloader_interface = 'Universal/ClassLoader/ClassLoader.php';
                 $classloader_file = 'Universal/ClassLoader/SplClassLoader.php';
-                $stub .=<<<"EOT"
+                $stub .= <<<"EOT"
 require 'phar://$pharFile/$classloader_interface';
 require 'phar://$pharFile/$classloader_file';
 \$classLoader = new \\Universal\\ClassLoader\\SplClassLoader;
 \$classLoader->addFallback( 'phar://$pharFile' );
 \$classLoader->register(true);
 EOT;
-
             }
-
         }
 
-
         if ($bootstrap) {
-            $logger->info2( "Adding bootstrap script..." );
-        $stub .=<<<"EOT"
+            $logger->info2('Adding bootstrap script...');
+            $stub .= <<<"EOT"
 require 'phar://$pharFile/$bootstrap';
 EOT;
         }
 
-        $stub .=<<<"EOT"
+        $stub .= <<<"EOT"
 __HALT_COMPILER();
 EOT;
 
@@ -200,10 +196,10 @@ EOT;
         $phar->stopBuffering();
 
         $compress_type = Phar::GZ;
-        if ($options->{'no-compress'} ) {
+        if ($options->{'no-compress'}) {
             $compress_type = null;
-        } else if ( $options->compress ) {
-            switch( $v = $options->compress ) {
+        } elseif ($options->compress) {
+            switch ($v = $options->compress) {
             case 'gz':
                 $compress_type = Phar::GZ;
                 break;
@@ -216,8 +212,8 @@ EOT;
             }
         }
 
-        if( $compress_type ) {
-            $logger->info( "Compressing phar ..." );
+        if ($compress_type) {
+            $logger->info('Compressing phar ...');
             $phar->compressFiles($compress_type);
         }
 

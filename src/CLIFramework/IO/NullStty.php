@@ -1,4 +1,5 @@
 <?php
+
 namespace CLIFramework\IO;
 
 class NullStty implements Stty

@@ -1,4 +1,5 @@
 <?php
+
 namespace CLIFramework\IO;
 
 /**
@@ -25,12 +26,13 @@ class ReadlineConsole implements Console
     {
         $line = $this->doReadLine($prompt);
         readline_add_history($line);
+
         return $line;
     }
 
     public function readPassword($prompt)
     {
-        return $this->noEcho(function() use ($prompt) {
+        return $this->noEcho(function () use ($prompt) {
             return $this->doReadLine($prompt);
         });
     }

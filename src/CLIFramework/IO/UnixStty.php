@@ -1,4 +1,5 @@
 <?php
+
 namespace CLIFramework\IO;
 
 class UnixStty implements Stty
@@ -42,6 +43,6 @@ class UnixStty implements Stty
             return;
         }
 
-        shell_exec('stty ' . $style);
+        shell_exec('stty '.$style);
     }
 }

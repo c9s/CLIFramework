@@ -1,4 +1,5 @@
 <?php
+
 namespace CLIFramework\IO;
 
 /**
@@ -12,7 +13,7 @@ class StreamWriter implements Writer
     public function __construct($stream)
     {
         if (!is_resource($stream)) {
-            throw new \RuntimeException("invalid stream");
+            throw new \RuntimeException('invalid stream');
         }
 
         $this->stream = $stream;
@@ -25,7 +26,7 @@ class StreamWriter implements Writer
 
     public function writeln($text)
     {
-        fwrite($this->stream, $text . "\n");
+        fwrite($this->stream, $text."\n");
     }
 
     public function writef($format)

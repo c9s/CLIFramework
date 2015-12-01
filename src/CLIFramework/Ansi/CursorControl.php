@@ -1,4 +1,5 @@
 <?php
+
 namespace CLIFramework\Ansi;
 
 /**
@@ -6,12 +7,11 @@ namespace CLIFramework\Ansi;
  */
 class CursorControl
 {
-
     protected $fd;
 
     public function __construct($fd = null)
     {
-        $this->fd = $fd ?: fopen('php://stderr','w');
+        $this->fd = $fd ?: fopen('php://stderr', 'w');
     }
 
     /**
@@ -19,38 +19,43 @@ class CursorControl
      * row/column parameters are provided (ie. <ESC>[H), the cursor will move 
      * to the home position, at the upper left of the screen.
      */
-    public function home($row, $col) {
-        fwrite($this->fd,"\e[{$row};{$column}H");
+    public function home($row, $col)
+    {
+        fwrite($this->fd, "\e[{$row};{$column}H");
     }
 
-
-    public function up($count = 1) {
-        fwrite($this->fd,"\e[{$count}A");
+    public function up($count = 1)
+    {
+        fwrite($this->fd, "\e[{$count}A");
     }
 
-    public function down($count = 1) {
-        fwrite($this->fd,"\e[{$count}B");
+    public function down($count = 1)
+    {
+        fwrite($this->fd, "\e[{$count}B");
     }
 
-    public function forward($count = 1) {
-        fwrite($this->fd,"\e[{$count}C");
+    public function forward($count = 1)
+    {
+        fwrite($this->fd, "\e[{$count}C");
     }
 
-    public function backward($count = 1) {
+    public function backward($count = 1)
+    {
         fwrite($this->fd, "\e[{$count}D");
     }
 
     /**
-     * Force Cursor Position
+     * Force Cursor Position.
      *
      * Identical to Cursor Home.
      */
-    public function position($row, $column) {
+    public function position($row, $column)
+    {
         fwrite($this->fd, "\e[{$row},{$column}f");
     }
 
     /**
-     * Save Cursor & Attrs
+     * Save Cursor & Attrs.
      *
      * Save current cursor position.
      */
@@ -62,13 +67,13 @@ class CursorControl
         fwrite($this->fd, "\e[s");
     }
 
-
     /**
-     * Restore Cursor & Attrs
+     * Restore Cursor & Attrs.
      *
      * Restores cursor position after a Save Cursor.
      */
-    public function restore($attrs = true) {
+    public function restore($attrs = true)
+    {
         if ($attrs) {
             fwrite($this->fd, "\e8");
         }
@@ -85,6 +90,3 @@ class CursorControl
         fwrite($this->fd, "\e[?25h");
     }
 }
-
-
-

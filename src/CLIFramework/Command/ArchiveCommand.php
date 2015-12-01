@@ -1,5 +1,7 @@
 <?php
+
 namespace CLIFramework\Command;
+
 use CLIFramework\Command;
 use CLIFramework\Autoload\ComposerAutoloadGenerator;
 use RecursiveIteratorIterator;
@@ -10,8 +12,6 @@ use Exception;
 use Phar;
 use CodeGen\Block;
 use CodeGen\Expr\NewObjectExpr;
-use CodeGen\Statement\UseStatement;
-use CodeGen\Statement\FunctionCallStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
 use CodeGen\Statement\RequireStatement;
@@ -23,7 +23,7 @@ use ReflectionObject;
 use SplFileInfo;
 
 /**
- * Archive: build phar file from composer.json
+ * Archive: build phar file from composer.json.
  *
  * Debug commands:
  *
@@ -48,34 +48,34 @@ class ArchiveCommand extends Command
             ->isa('file')
             ->defaultValue('composer.json')
             ;
-        
+
         $opts->add('vendor:', 'Vendor directory name')
             ->defaultValue('vendor')
             ;
 
         // append executable (bootstrap scripts, if it's not defined, it's just a library phar file.
-        $opts->add('bootstrap?','bootstrap or executable php file')
+        $opts->add('bootstrap?', 'bootstrap or executable php file')
             ->multiple()
             ->isa('file')
             ;
 
-        $opts->add('executable','make the phar file executable')
+        $opts->add('executable', 'make the phar file executable')
             ->isa('bool')
             ->defaultValue(true)
             ;
 
         $opts->add('c|compress?', 'compress type: gz, bz2')
             ->defaultValue('gz')
-            ->validValues(array( 'gz', 'bz2'))
+            ->validValues(array('gz', 'bz2'))
             ;
 
         $opts->add('no-compress', 'do not compress phar file.');
 
         $opts->add('add+', 'add a path respectively');
 
-        $opts->add('exclude+' , 'exclude pattern');
+        $opts->add('exclude+', 'exclude pattern');
 
-        $opts->add('no-classloader','do not embed a built-in classloader in the generated phar file.')
+        $opts->add('no-classloader', 'do not embed a built-in classloader in the generated phar file.')
             ;
 
         $opts->add('app-bootstrap', 'Include CLIFramework bootstrap script.');
@@ -91,12 +91,10 @@ class ArchiveCommand extends Command
         $args->add('phar-file');
     }
 
-
     public function aliases()
     {
         return array('a', 'ar');
     }
-
 
     public function execute($pharFile = 'output.phar')
     {
@@ -112,13 +110,12 @@ class ArchiveCommand extends Command
         $composerConfigFile = new SplFileInfo(realpath($composerConfigFile));
         $this->logger->debug("Found composer config at $composerConfigFile");
 
-
         // workingDir is a SplFileInfo object since we use ->isa('Dir')
         $workingDir = $this->options->{'working-dir'} ?: new SplFileInfo($composerConfigFile->getPath());
         if (!file_exists($workingDir)) {
             throw new Exception("working directory '$workingDir' doesn't exist.");
         }
-        $this->logger->debug("Working directory: " . $workingDir->getPathname());
+        $this->logger->debug('Working directory: '.$workingDir->getPathname());
 
         $vendorDirName = $this->options->vendor ?: 'vendor';
 
@@ -129,15 +126,15 @@ class ArchiveCommand extends Command
 
         $phar->startBuffering();
 
-        $stubs = new Block;
+        $stubs = new Block();
         if ($this->options->executable) {
-            $this->logger->debug( 'Adding shell bang...' );
-            $stubs[] = "#!/usr/bin/env php";
+            $this->logger->debug('Adding shell bang...');
+            $stubs[] = '#!/usr/bin/env php';
         }
         // prepend open tag
         $stubs[] = '<?php';
 
-        $this->logger->info("Setting up stub..." );
+        $this->logger->info('Setting up stub...');
         $stubs[] = "Phar::mapPhar('$pharFile');";
 
         // $workingDir = dirname(realpath($composerConfigFile));
@@ -154,7 +151,7 @@ class ArchiveCommand extends Command
         );
 
         // Generate class loader stub
-        $this->logger->debug("Adding class loader files...");
+        $this->logger->debug('Adding class loader files...');
         foreach ($classPaths as $classPath) {
             $phar->addFile($classPath, basename($classPath));
         }
@@ -167,7 +164,7 @@ class ArchiveCommand extends Command
         );
          */
         foreach ($classPaths as $classPath) {
-            $this->logger->debug("Adding require statment for class loader: " . basename($classPath));
+            $this->logger->debug('Adding require statment for class loader: '.basename($classPath));
             $stubs[] = new RequireStatement(new PharURI($pharFile, basename($classPath)));
         }
 
@@ -176,10 +173,10 @@ class ArchiveCommand extends Command
             $autoloadGenerator = new ComposerAutoloadGenerator($this->logger);
             $autoloadGenerator->setVendorDir('vendor');
             $autoloadGenerator->setWorkingDir($workingDir->getPathname());
-            $autoloadGenerator->scanComposerJsonFiles($workingDir . DIRECTORY_SEPARATOR . $vendorDirName);
+            $autoloadGenerator->scanComposerJsonFiles($workingDir.DIRECTORY_SEPARATOR.$vendorDirName);
 
-            $autoloads = $autoloadGenerator->traceAutoloadsWithComposerJson($composerConfigFile, $workingDir . DIRECTORY_SEPARATOR . $vendorDirName, true);
-            foreach($autoloads as $packageName => $config) {
+            $autoloads = $autoloadGenerator->traceAutoloadsWithComposerJson($composerConfigFile, $workingDir.DIRECTORY_SEPARATOR.$vendorDirName, true);
+            foreach ($autoloads as $packageName => $config) {
                 if (!isset($config['autoload'])) {
                     continue;
                 }
@@ -187,14 +184,14 @@ class ArchiveCommand extends Command
                 $autoload = $config['autoload'];
 
                 if (!isset($config['root'])) {
-                    $autoload = $autoloadGenerator->prependAutoloadPathPrefix($autoload, $vendorDirName . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR);
+                    $autoload = $autoloadGenerator->prependAutoloadPathPrefix($autoload, $vendorDirName.DIRECTORY_SEPARATOR.$packageName.DIRECTORY_SEPARATOR);
                 }
 
                 foreach ($autoload as $type => $map) {
                     foreach ($map as $mapPaths) {
                         $paths = (array) $mapPaths;
                         foreach ($paths as $path) {
-                            $absolutePath = $workingDir . DIRECTORY_SEPARATOR . $path;
+                            $absolutePath = $workingDir.DIRECTORY_SEPARATOR.$path;
 
                             if (is_dir($absolutePath)) {
                                 $this->logger->debug("Add files from directory $absolutePath under $workingDir");
@@ -208,7 +205,7 @@ class ArchiveCommand extends Command
                                     if (preg_match('/(\.(?:git|svn|hg)|Tests|Test\.php)/', $pathName)) {
                                         continue;
                                     }
-                                    $localPath = str_replace($workingDir . DIRECTORY_SEPARATOR, "", $pathName);
+                                    $localPath = str_replace($workingDir.DIRECTORY_SEPARATOR, '', $pathName);
                                     $this->logger->debug("Adding $localPath");
                                     $phar->addFile($pathName, $localPath);
                                 }
@@ -221,19 +218,18 @@ class ArchiveCommand extends Command
                                     $workingDir
                                 );
                                 */
-                            } else if (is_file($absolutePath)) {
+                            } elseif (is_file($absolutePath)) {
                                 $this->logger->debug("Add file $absolutePath under $path");
                                 $phar->addFile($absolutePath, $path);
                             } else {
                                 $this->logger->error("File '$absolutePath' is not found.");
                             }
-
                         }
                     }
                 }
             }
             $classloaderStub = $autoloadGenerator->generate($composerConfigFile, $pharFile);
-            $this->logger->debug("ClassLoader stub:");
+            $this->logger->debug('ClassLoader stub:');
             $this->logger->debug($classloaderStub);
             $stubs[] = $autoloadGenerator->generate($composerConfigFile, $pharFile);
         }
@@ -257,19 +253,17 @@ class ArchiveCommand extends Command
             $refObject = new ReflectionObject($app);
             $appClassName = $refObject->getName();
 
-            $block = new Block;
+            $block = new Block();
             $block[] = new AssignStatement('$app', new NewObjectExpr($appClassName));
             $block[] = new MethodCallStatement('$app', 'run', array('$argv'));
             $stubs[] = $block;
         }
-
 
         $stubs[] = '__HALT_COMPILER();';
 
         $stubstr = $stubs->render();
         $this->logger->debug($stubstr);
         $phar->setStub($stubstr);
-
 
         // Add some extra files in phar's root
         if ($adds = $this->options->add) {
@@ -283,11 +277,6 @@ class ArchiveCommand extends Command
 
         $pharGenerator->generate();
 
-
         $this->logger->info('Done');
     }
-
 }
-
-
-

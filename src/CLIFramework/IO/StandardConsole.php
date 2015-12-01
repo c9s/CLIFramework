@@ -1,4 +1,5 @@
 <?php
+
 namespace CLIFramework\IO;
 
 /**
@@ -19,13 +20,15 @@ class StandardConsole implements Console
     public function readLine($prompt)
     {
         echo $prompt;
+
         return $this->read();
     }
 
     public function readPassword($prompt)
     {
         echo $prompt;
-        return $this->noEcho(function() use ($prompt) {
+
+        return $this->noEcho(function () use ($prompt) {
             return $this->read();
         });
     }

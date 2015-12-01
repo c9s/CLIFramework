@@ -1,4 +1,5 @@
 <?php
+
 namespace CLIFramework\IO;
 
 /**
@@ -18,15 +19,17 @@ interface Stty
 
     /**
      * Dump all current settings in a-stty readable form.
+     *
      * @return string
      */
     public function dump();
 
     /**
      * Turn off echoing and execute the callback function.
+     *
      * @param Closure $callback
+     *
      * @return mixed
      */
     public function withoutEcho(\Closure $callback);
 }
-
