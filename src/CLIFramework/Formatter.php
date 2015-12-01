@@ -49,6 +49,8 @@ class Formatter
         'done'    => array('fg' => 'black', 'bg' => 'green' ),
         'success' => array('fg' => 'black', 'bg' => 'green' ),
         'fail'    => array('fg' => 'black', 'bg' => 'red' ),
+
+        'action' => array('fg' => 'white', 'bg' => 'green' ),
     );
 
     protected $options = array(
