@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Logger;
 use CLIFramework\Formatter;
+use CLIFramework\Ansi\CursorControl;
 
 class LogAction
 {
@@ -12,12 +13,17 @@ class LogAction
 
     protected $logger;
 
+    protected $cursorControl;
+
     public function __construct($logger, $title, $desc, $status = 'waiting')
     {
         $this->logger = $logger;
         $this->title  = $title;
         $this->desc   = $desc;
         $this->status = $status;
+
+        $this->cursorControl = new CursorControl($this->logger->fd);
+        $this->cursorControl->hide();
     }
 
     public function setStatus($status)
@@ -41,6 +47,7 @@ class LogAction
     {
         fwrite($this->logger->fd, "\n");
         fflush($this->logger->fd);
+        $this->cursorControl->show();
     }
 
     public function done()

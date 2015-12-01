@@ -7,30 +7,37 @@ namespace CLIFramework\Ansi;
 class CursorControl
 {
 
+    protected $fd;
+
+    public function __construct($fd)
+    {
+        $this->fd = $fd;
+    }
+
     /**
      * Sets the cursor position where subsequent text will begin. If no 
      * row/column parameters are provided (ie. <ESC>[H), the cursor will move 
      * to the home position, at the upper left of the screen.
      */
-    static public function home($row, $col) {
-        echo "\e[{$row};{$column}H";
+    public function home($row, $col) {
+        fwrite($this->fd,"\e[{$row};{$column}H");
     }
 
 
-    static public function up($count = 1) {
-        echo "\e[{$count}A";
+    public function up($count = 1) {
+        fwrite($this->fd,"\e[{$count}A");
     }
 
-    static public function down($count = 1) {
-        echo "\e[{$count}B";
+    public function down($count = 1) {
+        fwrite($this->fd,"\e[{$count}B");
     }
 
-    static public function forward($count = 1) {
-        echo "\e[{$count}C";
+    public function forward($count = 1) {
+        fwrite($this->fd,"\e[{$count}C");
     }
 
-    static public function backward($count = 1) {
-        echo "\e[{$count}D";
+    public function backward($count = 1) {
+        fwrite($this->fd, "\e[{$count}D");
     }
 
     /**
@@ -38,8 +45,8 @@ class CursorControl
      *
      * Identical to Cursor Home.
      */
-    static public function position($row, $column) {
-        echo "\e[{$row},{$column}f";
+    public function position($row, $column) {
+        fwrite($this->fd, "\e[{$row},{$column}f");
     }
 
     /**
@@ -47,11 +54,12 @@ class CursorControl
      *
      * Save current cursor position.
      */
-    static public function save($attrs = true) {
+    public function save($attrs = true)
+    {
         if ($attrs) {
-            echo "\e7";
+            fwrite($this->fd, "\e7");
         }
-        echo "\e[s";
+        fwrite($this->fd, "\e[s");
     }
 
 
@@ -60,21 +68,21 @@ class CursorControl
      *
      * Restores cursor position after a Save Cursor.
      */
-    static public function restore($attrs = true) {
+    public function restore($attrs = true) {
         if ($attrs) {
-            echo "\e8";
+            fwrite($this->fd, "\e8");
         }
-        echo "\e[u";
+        fwrite($this->fd, "\e[u");
     }
 
-    static public function hide()
+    public function hide()
     {
-        echo "\e[?25l";
+        fwrite($this->fd, "\e[?25l");
     }
 
-    static public function show()
+    public function show()
     {
-        echo "\e[?25h";
+        fwrite($this->fd, "\e[?25h");
     }
 }
 

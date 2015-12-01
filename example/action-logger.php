@@ -7,7 +7,7 @@ use CLIFramework\Formatter;
 $logger = new ActionLogger(fopen('php://stderr','w'), new Formatter);
 
 
-foreach (['ProductSchema','OrderSchema'] as $title) {
+foreach (['ProductSchema','OrderSchema', 'OrderItemSchema'] as $title) {
     $logAction = $logger->newAction($title, 'Update schema class files...');
     foreach (['checking', 'updating', 'pulling'] as $status) {
         $logAction->setStatus($status);
