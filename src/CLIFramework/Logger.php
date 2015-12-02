@@ -108,6 +108,11 @@ class Logger
         $this->level = $this->getLevelByName('info2');
     }
 
+    public function isVerbose()
+    {
+        return $this->level == $this->getLevelByName('info2');
+    }
+
     public function setDebug()
     {
         $this->level = $this->getLevelByName('debug2');
