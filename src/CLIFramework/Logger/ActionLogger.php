@@ -28,17 +28,17 @@ class LogAction
         $this->cursorControl->hide();
     }
 
-    public function setStatus($status)
+    public function setStatus($status, $style = 'green')
     {
         $this->status = $status;
-        $this->update();
+        $this->update($style);
     }
 
-    protected function update()
+    protected function update($style = 'green')
     {
-        $padding = max(20 - strlen($this->title), 1);
-        $buf = sprintf('    %s % -20s',
-            $this->logger->formatter->format(sprintf('%s', $this->title), 'green').str_repeat(' ', $padding),
+        $padding = max(40 - strlen($this->title), 1);
+        $buf = sprintf('  %s % -20s',
+            $this->logger->formatter->format(sprintf('%s', $this->title), $style).str_repeat(' ', $padding),
             $this->status
         );
         fwrite($this->logger->fd, $buf."\r");
