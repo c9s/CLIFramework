@@ -17,6 +17,8 @@ class LogAction
 
     protected $cursorControl;
 
+    protected $actionColumnWidth = 38;
+
     public function __construct($logger, $title, $desc, $status = 'waiting')
     {
         $this->logger = $logger;
@@ -34,9 +36,14 @@ class LogAction
         $this->update($style);
     }
 
+    public function setActionColumnWidth($width)
+    {
+        $this->actionColumnWidth = $width;
+    }
+
     protected function update($style = 'green')
     {
-        $padding = max(40 - strlen($this->title), 1);
+        $padding = max($this->actionColumnWidth - strlen($this->title), 1);
         $buf = sprintf('  %s % -20s',
             $this->logger->formatter->format(sprintf('%s', $this->title), $style).str_repeat(' ', $padding),
             $this->status
@@ -71,10 +78,9 @@ class ActionLogger
         $this->formatter = $formatter ?: new Formatter();
     }
 
-    public function newAction($title, $desc, $status = 'waiting')
+    public function newAction($title, $desc = '', $status = 'waiting')
     {
         $logAction = new LogAction($this, $title, $desc);
-
         return $logAction;
     }
 }
