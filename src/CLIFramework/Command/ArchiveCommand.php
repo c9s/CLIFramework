@@ -60,7 +60,7 @@ class ArchiveCommand extends Command
             ;
 
         $opts->add('executable', 'make the phar file executable')
-            ->isa('bool')
+            ->isa('boolean')
             ->defaultValue(true)
             ;
 
