@@ -34,7 +34,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "CLIFramework\\": "src/CLIFramework/"
+            "CLIFramework\\": "src/"
         }
     },
     "extra": { "branch-alias": { "dev-master": "3.0.x-dev" } }
