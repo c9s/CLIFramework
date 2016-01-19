@@ -1,3 +1,8 @@
+Version 3.0.0
+
+- Added Progress Component.
+
+
 Version 2.8.1
 
 Several bug fixes:
