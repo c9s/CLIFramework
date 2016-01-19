@@ -2,60 +2,56 @@
 namespace CLIFramework\Component\Progress;
 use Exception;
 use CLIFramework\Formatter;
+use CLIFramework\ConsoleInfo\EnvConsoleInfo;
+use CLIFramework\ConsoleInfo\ConsoleInfoFactory;
 
 class ProgressBar implements ProgressReporter
 {
+    protected $terminalWidth = 78;
 
-    public $done = false;
+    protected $formatter;
 
-    public $terminalWidth = 78;
+    protected $stream;
 
-    public $formatter;
+    protected $console;
 
-    public function __construct()
+    protected $decoratorLeft = '[';
+
+    protected $decoratorRight = ']';
+
+    protected $barCharacter = '=';
+
+    protected $progressDescFormat = ' %d/%d %2d%%';
+
+    public function __construct($stream)
     {
+        $this->stream = $stream;
         $this->formatter = new Formatter;
+        if ($this->console = ConsoleInfoFactory::create()) {
+            $this->terminalWidth = $this->console->getColumns();
+        }
     }
 
-    public function reset() {
-        $this->done = false;
-    }
-
-    /**
-     * 5.5.0 Added the cURL resource as the first argument to the CURLOPT_PROGRESSFUNCTION callback.
-     */
-    public function curlCallback($ch, $downloadSize, $downloaded, $uploadSize, $uploaded)
+    public function update($finished, $total)
     {
-        if ($this->done || $downloadSize == 0) {
-            return;
-        }
-        $unit = 'B';
-        if ($downloadSize > 1024 * 1024 ) {
-            $unit = 'MB';
-            $downloadSize /= (1024 * 1024.0);
-            $downloaded /= (1024 * 1024.0);
-        } elseif ($downloadSize > 1024) {
-            $unit = 'KB';
-            $downloadSize /= 1024.0;
-            $downloaded /= 1024.0;
-        }
+        $percentage = $total > 0 ? round($finished / $total, 2) : 0.0;
+        $desc = sprintf($this->progressDescFormat, $finished, $total, $percentage * 100);
 
-        $barSize = $this->terminalWidth - 12;
-        $percentage = ($downloaded > 0 && $downloadSize > 0 ? round($downloaded / $downloadSize, 2) : 0.0);
+        $barSize = $this->terminalWidth - strlen($desc) - strlen($this->decoratorLeft) - strlen($this->decoratorRight);
         $sharps = ceil($barSize * $percentage);
 
-        fwrite(STDOUT,"\r"
-            . $this->formatter->format('[','strong_white')
-            . str_repeat('=', $sharps)
-            . str_repeat(' ', $barSize - $sharps )
-            . $this->formatter->format(']','strong_white')
-            . sprintf( ' %.2f/%.2f%s %2d%%', $downloaded, $downloadSize, $unit, $percentage * 100 )
+        fwrite($this->stream, "\r"
+            . $this->formatter->format($this->decoratorLeft,'strong_white')
+            . str_repeat($this->barCharacter, $sharps)
+            . str_repeat(' ', $barSize - $sharps)
+            . $this->formatter->format($this->decoratorRight,'strong_white')
+            . $desc
             );
+    }
 
-        if ($downloadSize === $downloaded && $downloadSize > 0) {
-            $this->done = true;
-            fwrite(STDOUT,"\n");
-        }
+    public function finish()
+    {
+        fwrite($this->stream, PHP_EOL);
     }
 }
 

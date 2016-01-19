@@ -3,6 +3,6 @@ namespace CLIFramework\Component\Progress;
 
 interface ProgressReporter
 {
-    public function reportProgress($finishedValue, $totalValue);
+    public function update($finishedValue, $totalValue);
 }
 
