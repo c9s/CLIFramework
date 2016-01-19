@@ -178,7 +178,9 @@ class ComposerAutoloadGenerator
         $finder->in($this->workingDir.DIRECTORY_SEPARATOR.$this->vendorDir);
         foreach ($finder as $file) {
             $config = json_decode(file_get_contents($file), true);
-            $this->packages[ $config['name'] ] = $config;
+            if (isset($config['name'])) {
+                $this->packages[ $config['name'] ] = $config;
+            }
         }
     }
 
