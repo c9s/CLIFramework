@@ -15,9 +15,10 @@ class ProgressBar implements ProgressReporter
 
     protected $console;
 
-    protected $decoratorLeft = '[';
+    // protected $leftDecorator = '[';
+    protected $leftDecorator = "❰";
 
-    protected $decoratorRight = ']';
+    protected $rightDecorator = "❱";
 
     protected $barCharacter = '=';
 
@@ -45,14 +46,14 @@ class ProgressBar implements ProgressReporter
         $percentage = $total > 0 ? round($finished / $total, 2) : 0.0;
         $desc = sprintf($this->descFormat, $finished, $total, $percentage * 100);
 
-        $barSize = $this->terminalWidth - strlen($desc) - strlen($this->decoratorLeft) - strlen($this->decoratorRight);
+        $barSize = $this->terminalWidth - mb_strlen($desc) - mb_strlen($this->leftDecorator) - mb_strlen($this->rightDecorator);
         $sharps = ceil($barSize * $percentage);
 
         fwrite($this->stream, "\r"
-            . $this->formatter->format($this->decoratorLeft, 'strong_white')
+            . $this->formatter->format($this->leftDecorator, 'strong_white')
             . str_repeat($this->barCharacter, $sharps)
             . str_repeat(' ', $barSize - $sharps)
-            . $this->formatter->format($this->decoratorRight, 'strong_white')
+            . $this->formatter->format($this->rightDecorator, 'strong_white')
             . $desc
             );
     }
