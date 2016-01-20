@@ -21,7 +21,7 @@ class ProgressBar implements ProgressReporter
     // protected $rightDecorator = "❱";
     protected $rightDecorator = "]";
 
-    protected $barCharacter = '=';
+    protected $barCharacter = '#';
 
     protected $descFormat = ' %d/%d %3d%%';
 
