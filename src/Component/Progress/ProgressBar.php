@@ -5,6 +5,33 @@ use CLIFramework\Formatter;
 use CLIFramework\ConsoleInfo\EnvConsoleInfo;
 use CLIFramework\ConsoleInfo\ConsoleInfoFactory;
 
+class ProgressBarStyle
+{
+    public $leftDecorator = "|";
+
+    public $rightDecorator = "|";
+
+    public $barCharacter = '#';
+}
+
+class SharpProgressBarStyle extends ProgressBarStyle
+{
+    public $leftDecorator = "[";
+
+    public $rightDecorator = "]";
+
+    public $barCharacter = '#';
+}
+
+class LaserProgressBarStyle extends ProgressBarStyle
+{
+    public $leftDecorator = "❰";
+
+    public $rightDecorator = "❱";
+
+    public $barCharacter = '#';
+}
+
 class ProgressBar implements ProgressReporter
 {
     protected $terminalWidth = 78;
