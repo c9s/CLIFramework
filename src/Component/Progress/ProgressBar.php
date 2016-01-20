@@ -15,14 +15,15 @@ class ProgressBar implements ProgressReporter
 
     protected $console;
 
-    // protected $leftDecorator = '[';
-    protected $leftDecorator = "❰";
+    // protected $leftDecorator = "❰";
+    protected $leftDecorator = "[";
 
-    protected $rightDecorator = "❱";
+    // protected $rightDecorator = "❱";
+    protected $rightDecorator = "]";
 
     protected $barCharacter = '=';
 
-    protected $descFormat = ' % 3d/% 3d %3d%%';
+    protected $descFormat = ' %d/%d %3d%%';
 
     public function __construct($stream, $container = null)
     {
