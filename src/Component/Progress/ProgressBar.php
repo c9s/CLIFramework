@@ -92,7 +92,7 @@ class ProgressBar implements ProgressReporter
     public function update($finished, $total)
     {
         $percentage = $total > 0 ? round($finished / $total, 2) : 0.0;
-        $trigger = $finished % 5;
+        $trigger = $finished % 3;
 
         if ($trigger) {
             $this->etaTime = date('H:i',ETACalculator::calculateEstimatedTime($finished, $total, $this->start, microtime(true)));
@@ -122,7 +122,6 @@ class ProgressBar implements ProgressReporter
 
         $sharps = ceil($barSize * $percentage);
 
-
         fwrite($this->stream, "\r"
             . ( $this->title ? $this->title . $this->columnDecorator : "")
             . Colors::decorate($this->leftDecorator, $trigger ? 'purple' : 'light_purple')
@@ -132,6 +131,12 @@ class ProgressBar implements ProgressReporter
             . $this->columnDecorator 
             . Colors::decorate($desc, $trigger ? 'light_gray' : 'white')
             );
+
+        // hide cursor
+        // fputs($this->stream, "\033[?25l");
+
+        // show cursor
+        // fputs($this->stream, "\033[?25h");
     }
 
     public function finish($title = null)
@@ -141,5 +146,6 @@ class ProgressBar implements ProgressReporter
         }
         fwrite($this->stream, PHP_EOL);
     }
+
 }
 
