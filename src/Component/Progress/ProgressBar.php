@@ -34,9 +34,13 @@ class ProgressBar implements ProgressReporter
 
     protected $barCharacter = '#';
 
-    protected $descFormat = '%d/%d %3d%%';
+    protected $descFormat = '%finished%/%total% %unit% %percentage%';
+
+    protected $unit;
 
     protected $title;
+
+    protected $start;
 
     public function __construct($stream, $container = null)
     {
@@ -66,11 +70,27 @@ class ProgressBar implements ProgressReporter
         $this->title = $title;
     }
 
+    public function setUnit($unit)
+    {
+        $this->unit = $unit;
+    }
+
+    public function start($title = null)
+    {
+        if ($title) {
+            $this->setTitle($title);
+        }
+        $this->start = microtime(true);
+    }
 
     public function update($finished, $total)
     {
         $percentage = $total > 0 ? round($finished / $total, 2) : 0.0;
-        $desc = sprintf($this->descFormat, $finished, $total, $percentage * 100);
+        $desc = str_replace([
+            '%finished%', '%total%', '%unit%', '%percentage%',
+        ], [
+            $finished, $total, $this->unit, ($percentage * 100) . '%'
+        ], $this->descFormat);
 
         $barSize = $this->terminalWidth 
             - mb_strlen($desc) 
@@ -96,8 +116,11 @@ class ProgressBar implements ProgressReporter
             );
     }
 
-    public function finish()
+    public function finish($title = null)
     {
+        if ($title) {
+            $this->setTitle($title);
+        }
         fwrite($this->stream, PHP_EOL);
     }
 }

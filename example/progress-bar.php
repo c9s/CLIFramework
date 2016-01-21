@@ -11,9 +11,9 @@
 require 'vendor/autoload.php';
 
 $progress = new CLIFramework\Component\Progress\ProgressBar(STDERR);
-
-$progress->setTitle('downloading file');
-$total = 100;
+$progress->setUnit('bytes');
+$progress->start('downloading file');
+$total = 3213;
 for ($i = 0; $i <= $total; $i++) {
     usleep(5 * 10000);
     $progress->updateLayout();
