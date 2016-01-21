@@ -44,6 +44,10 @@ class ProgressBar implements ProgressReporter
 
     protected $start;
 
+    protected $etaTime = '--:--';
+
+    protected $etaPeriod = '--';
+
     public function __construct($stream, $container = null)
     {
         $this->stream = $stream;
@@ -88,9 +92,12 @@ class ProgressBar implements ProgressReporter
     public function update($finished, $total)
     {
         $percentage = $total > 0 ? round($finished / $total, 2) : 0.0;
+        $trigger = $finished % 5;
 
-        $etaTime = ETACalculator::calculateEstimatedTime($finished, $total, $this->start, microtime(true));
-        $etaPeriod = ETACalculator::calculateEstimatedPeriod($finished, $total, $this->start, microtime(true));
+        if ($trigger) {
+            $this->etaTime = date('H:i',ETACalculator::calculateEstimatedTime($finished, $total, $this->start, microtime(true)));
+            $this->etaPeriod = ETACalculator::calculateEstimatedPeriod($finished, $total, $this->start, microtime(true));
+        }
         $desc = str_replace([
             '%finished%', '%total%', '%unit%', '%percentage%', '%eta_time%', '%eta_period%',
         ], [
@@ -98,8 +105,8 @@ class ProgressBar implements ProgressReporter
             $total,
             $this->unit,
             ($percentage * 100) . '%',
-            'ETA: ' . ($etaTime ? date('H:i', $etaTime) : '--'),
-            'ETA: ' . $etaPeriod,
+            'ETA: ' . $this->etaTime,
+            'ETA: ' . $this->etaPeriod,
         ], $this->descFormat);
 
         $barSize = $this->terminalWidth 
@@ -115,16 +122,15 @@ class ProgressBar implements ProgressReporter
 
         $sharps = ceil($barSize * $percentage);
 
-        $lightup = $finished % 5;
 
         fwrite($this->stream, "\r"
             . ( $this->title ? $this->title . $this->columnDecorator : "")
-            . Colors::decorate($this->leftDecorator, $lightup ? 'purple' : 'light_purple')
-            . Colors::decorate(str_repeat($this->barCharacter, $sharps), $lightup ? 'purple' : 'light_purple')
+            . Colors::decorate($this->leftDecorator, $trigger ? 'purple' : 'light_purple')
+            . Colors::decorate(str_repeat($this->barCharacter, $sharps), $trigger ? 'purple' : 'light_purple')
             . str_repeat(' ', $barSize - $sharps)
-            . Colors::decorate($this->rightDecorator, $lightup ? 'purple' : 'light_purple')
+            . Colors::decorate($this->rightDecorator, $trigger ? 'purple' : 'light_purple')
             . $this->columnDecorator 
-            . Colors::decorate($desc, $lightup ? 'light_gray' : 'white')
+            . Colors::decorate($desc, $trigger ? 'light_gray' : 'white')
             );
     }
 
