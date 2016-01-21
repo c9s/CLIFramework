@@ -5,6 +5,7 @@ use CLIFramework\Formatter;
 use CLIFramework\ConsoleInfo\EnvConsoleInfo;
 use CLIFramework\ConsoleInfo\ConsoleInfoFactory;
 use CLIFramework\Component\Progress\ETACalculator;
+use CLIFramework\Ansi\Colors;
 
 class LaserProgressBarStyle extends ProgressBarStyle
 {
@@ -114,14 +115,16 @@ class ProgressBar implements ProgressReporter
 
         $sharps = ceil($barSize * $percentage);
 
+        $lightup = $finished % 10;
+
         fwrite($this->stream, "\r"
             . ( $this->title ? $this->title . $this->columnDecorator : "")
-            . $this->formatter->format($this->leftDecorator, 'strong_white')
-            . str_repeat($this->barCharacter, $sharps)
+            . Colors::decorate($this->leftDecorator, $lightup ? 'purple' : 'light_purple')
+            . Colors::decorate(str_repeat($this->barCharacter, $sharps), $lightup ? 'purple' : 'light_purple')
             . str_repeat(' ', $barSize - $sharps)
-            . $this->formatter->format($this->rightDecorator, 'strong_white')
+            . Colors::decorate($this->rightDecorator, $lightup ? 'purple' : 'light_purple')
             . $this->columnDecorator 
-            . $desc
+            . Colors::decorate($desc, $lightup ? 'light_gray' : 'white')
             );
     }
 
