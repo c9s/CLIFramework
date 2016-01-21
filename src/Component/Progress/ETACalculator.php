@@ -3,33 +3,62 @@ namespace CLIFramework\Component\Progress;
 
 class ETACalculator
 {
-    protected $start;
-
-    public function __construct()
+    static public function calculateRemainingSeconds($proceeded, $total, $start, $now)
     {
-        $this->start = microtime(true);
-    }
-
-    public function start()
-    {
-        $this->start = microtime(true);
-    }
-
-    public function calculateRemainingSeconds($proceeded, $total)
-    {
-        $now = microtime(true);
-        $secondDiff = ($now - $this->start);
-        $speed = $proceeded / $secondDiff;
+        $secondDiff = ($now - $start);
+        $speed = $secondDiff > 0 ? $proceeded / $secondDiff : 0;
         $remaining = $total - $proceeded;
-        $remainingSeconds = $remaining/$speed;
-        return $remainingSeconds;
+        if ($speed > 0) {
+            $remainingSeconds = $remaining / $speed;
+            return $remainingSeconds;
+        }
     }
 
-    public function calculate($proceeded, $total)
+    static public function calculateEstimatedPeriod($proceeded, $total, $start, $now)
     {
-        $remainingSeconds = $this->calculateRemainingSeconds($proceeded, $total);
-        $etaTimestamp = microtime(true) + $remainingSeconds;
-        return $etaTimestamp;
+        $str = '--';
+        if ($remainingSeconds = self::calculateRemainingSeconds($proceeded, $total, $start, $now)) {
+            $str = '';
+
+            $days = 0;
+            $hours = 0;
+            $minutes = 0;
+            if ($remainingSeconds > (3600 * 24)) {
+                $days = ceil($remainingSeconds / (3600 * 24));
+                $remainingSeconds = $remainingSeconds % (3600 * 24);
+            }
+
+            if ($remainingSeconds > 3600) {
+                $hours = ceil($remainingSeconds / 3600);
+                $remainingSeconds = $remainingSeconds % 3600;
+            }
+
+            if ($remainingSeconds > 60) {
+                $minutes = ceil($remainingSeconds / 60);
+                $remainingSeconds = $remainingSeconds % 60;
+            }
+
+            if ($days > 0) {
+                $str .= $days . 'd'; 
+            }
+            if ($hours) {
+                $str .= $hours . 'h';
+            }
+            if ($minutes) {
+                $str .= $minutes . 'm';
+            }
+            if ($remainingSeconds > 0) {
+                $str .= intval($remainingSeconds) . 's';
+            }
+        }
+        return $str;
+    }
+
+    static public function calculateEstimatedTime($proceeded, $total, $start, $now)
+    {
+        if ($remainingSeconds = self::calculateRemainingSeconds($proceeded, $total, $start, $now)) {
+            return $now + $remainingSeconds;
+        }
     }
 }
 

@@ -4,6 +4,7 @@ use Exception;
 use CLIFramework\Formatter;
 use CLIFramework\ConsoleInfo\EnvConsoleInfo;
 use CLIFramework\ConsoleInfo\ConsoleInfoFactory;
+use CLIFramework\Component\Progress\ETACalculator;
 
 class LaserProgressBarStyle extends ProgressBarStyle
 {
@@ -34,7 +35,7 @@ class ProgressBar implements ProgressReporter
 
     protected $barCharacter = '#';
 
-    protected $descFormat = '%finished%/%total% %unit% %percentage%';
+    protected $descFormat = '%finished%/%total% %unit% | %percentage% | %eta_period%';
 
     protected $unit;
 
@@ -86,10 +87,18 @@ class ProgressBar implements ProgressReporter
     public function update($finished, $total)
     {
         $percentage = $total > 0 ? round($finished / $total, 2) : 0.0;
+
+        $etaTime = ETACalculator::calculateEstimatedTime($finished, $total, $this->start, microtime(true));
+        $etaPeriod = ETACalculator::calculateEstimatedPeriod($finished, $total, $this->start, microtime(true));
         $desc = str_replace([
-            '%finished%', '%total%', '%unit%', '%percentage%',
+            '%finished%', '%total%', '%unit%', '%percentage%', '%eta_time%', '%eta_period%',
         ], [
-            $finished, $total, $this->unit, ($percentage * 100) . '%'
+            $finished,
+            $total,
+            $this->unit,
+            ($percentage * 100) . '%',
+            'ETA: ' . ($etaTime ? date('H:i', $etaTime) : '--'),
+            'ETA: ' . $etaPeriod,
         ], $this->descFormat);
 
         $barSize = $this->terminalWidth 
