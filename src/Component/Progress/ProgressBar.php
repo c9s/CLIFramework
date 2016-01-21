@@ -5,24 +5,6 @@ use CLIFramework\Formatter;
 use CLIFramework\ConsoleInfo\EnvConsoleInfo;
 use CLIFramework\ConsoleInfo\ConsoleInfoFactory;
 
-class ProgressBarStyle
-{
-    public $leftDecorator = "|";
-
-    public $rightDecorator = "|";
-
-    public $barCharacter = '#';
-}
-
-class SharpProgressBarStyle extends ProgressBarStyle
-{
-    public $leftDecorator = "[";
-
-    public $rightDecorator = "]";
-
-    public $barCharacter = '#';
-}
-
 class LaserProgressBarStyle extends ProgressBarStyle
 {
     public $leftDecorator = "❰";
@@ -48,9 +30,13 @@ class ProgressBar implements ProgressReporter
     // protected $rightDecorator = "❱";
     protected $rightDecorator = "]";
 
+    protected $columnDecorator = " | ";
+
     protected $barCharacter = '#';
 
-    protected $descFormat = ' %d/%d %3d%%';
+    protected $descFormat = '%d/%d %3d%%';
+
+    protected $title;
 
     public function __construct($stream, $container = null)
     {
@@ -63,25 +49,49 @@ class ProgressBar implements ProgressReporter
             }
         } else {
             $this->formatter = new Formatter;
-            if ($this->console = ConsoleInfoFactory::create()) {
-                $this->terminalWidth = $this->console->getColumns();
-            }
+            $this->console = ConsoleInfoFactory::create();
+            $this->updateLayout();
         }
     }
+
+    public function updateLayout()
+    {
+        if ($this->console) {
+            $this->terminalWidth = $this->console->getColumns();
+        }
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
 
     public function update($finished, $total)
     {
         $percentage = $total > 0 ? round($finished / $total, 2) : 0.0;
         $desc = sprintf($this->descFormat, $finished, $total, $percentage * 100);
 
-        $barSize = $this->terminalWidth - mb_strlen($desc) - mb_strlen($this->leftDecorator) - mb_strlen($this->rightDecorator);
+        $barSize = $this->terminalWidth 
+            - mb_strlen($desc) 
+            - mb_strlen($this->leftDecorator) 
+            - mb_strlen($this->rightDecorator)
+            - mb_strlen($this->columnDecorator)
+            ;
+
+        if ($this->title) {
+            $barSize -= (mb_strlen($this->title) + mb_strlen($this->columnDecorator));
+        }
+
         $sharps = ceil($barSize * $percentage);
 
         fwrite($this->stream, "\r"
+            . ( $this->title ? $this->title . $this->columnDecorator : "")
             . $this->formatter->format($this->leftDecorator, 'strong_white')
             . str_repeat($this->barCharacter, $sharps)
             . str_repeat(' ', $barSize - $sharps)
             . $this->formatter->format($this->rightDecorator, 'strong_white')
+            . $this->columnDecorator 
             . $desc
             );
     }
