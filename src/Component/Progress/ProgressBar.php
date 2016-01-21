@@ -115,7 +115,7 @@ class ProgressBar implements ProgressReporter
 
         $sharps = ceil($barSize * $percentage);
 
-        $lightup = $finished % 10;
+        $lightup = $finished % 5;
 
         fwrite($this->stream, "\r"
             . ( $this->title ? $this->title . $this->columnDecorator : "")
