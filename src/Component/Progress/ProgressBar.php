@@ -126,7 +126,7 @@ class ProgressBar implements ProgressReporter
             . ( $this->title ? $this->title . $this->columnDecorator : "")
             . Colors::decorate($this->leftDecorator, $trigger ? 'purple' : 'light_purple')
             . Colors::decorate(str_repeat($this->barCharacter, $sharps), $trigger ? 'purple' : 'light_purple')
-            . str_repeat(' ', min($barSize - $sharps,0))
+            . str_repeat(' ', max($barSize - $sharps,0))
             . Colors::decorate($this->rightDecorator, $trigger ? 'purple' : 'light_purple')
             . $this->columnDecorator 
             . Colors::decorate($desc, $trigger ? 'light_gray' : 'white')
