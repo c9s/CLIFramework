@@ -26,6 +26,8 @@ class ComposerAutoloadGenerator
 
     protected $logger;
 
+    protected $includeDevDependencies = false;
+
     public function __construct(Logger $logger)
     {
         $this->workingDir = getcwd(); // by default workingDir is current directory.
@@ -99,7 +101,7 @@ class ComposerAutoloadGenerator
             $this->logger->debug('Tracing package autoload from "require" section');
             $autoloads = array_merge($autoloads, $this->traceAutoloadsWithRequirements($config, $config['require']));
         }
-        if ($isRoot && isset($config['require-dev'])) {
+        if ($isRoot && $this->includeDevDependencies && isset($config['require-dev'])) {
             $this->logger->debug('Tracing package autoload from "require-dev" section');
             $autoloads = array_merge($autoloads, $this->traceAutoloadsWithRequirements($config, $config['require-dev']));
         }
