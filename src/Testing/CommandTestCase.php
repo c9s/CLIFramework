@@ -33,7 +33,7 @@ abstract class CommandTestCase extends PHPUnit_Framework_TestCase
 
     public function runCommand($args) {
         if (is_string($args)) {
-            $args = preg_split('/\s+/',$args);
+            $args = Parser::getArguments($args);
         }
         return $this->app->run($args);
     }
