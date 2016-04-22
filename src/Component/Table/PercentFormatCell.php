@@ -3,7 +3,7 @@ namespace CLIFramework\Component\Table;
 use CLIFramework\Component\Table\CellAttribute;
 use NumberFormatter;
 
-class DurationFormatCell extends NumberFormatCell
+class PercentFormatCell extends NumberFormatCell
 {
     public function __construct($locale) {
         $this->locale = $locale;
