@@ -59,7 +59,7 @@ class ServiceContainer extends Container
             return new GlobalConfig(parse_ini_file($c['config.path'], true));
         };
         $this['writer'] = function($c) {
-            // return new StreamWriter(STDOUT);
+            // TODO: When command failed, we should write these messages to stderr instead of stdout
             $output = fopen("php://output", "w");
             return new StreamWriter($output);
         };

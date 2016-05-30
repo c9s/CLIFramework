@@ -165,6 +165,24 @@ class Logger
         $this->indent = 0;
     }
 
+    /**
+     * error method write message to STDERR
+     *
+     * @param string $msg
+     */
+    public function error($msg)
+    {
+        $level = $this->getLevelByName('error');
+        $style = $this->getStyleByName('error');
+        if ($level > $this->level) {
+            return;
+        }
+        if ($this->level <= 4 && $level >= 4) {
+            $style = 'dim';
+        }
+        fprintf(STDERR, $this->formatter->format($msg , $style) . PHP_EOL);
+    }
+
     public function __call($method, $args)
     {
         $msg = $args[0];
@@ -183,7 +201,6 @@ class Logger
         if ($this->indent) {
             $this->writer->write(str_repeat($this->indentCharacter, $this->indent));
         }
-
         /* detect object */
         if (is_object($msg) || is_array($msg)) {
             $this->writer->writeln($this->formatter->format(print_r($msg , 1), $style));
@@ -247,6 +264,8 @@ class Logger
             return $this->levelStyles[$levelName];
         }
     }
+
+
 
     /**
      * Return the log level name of the given level
