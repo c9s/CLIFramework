@@ -11,7 +11,7 @@
 namespace CLIFramework;
 use GetOptionKit\OptionCollection;
 use GetOptionKit\Option;
-use GetOptionKit\OptionPrinter\OptionPrinterInterface;
+use GetOptionKit\OptionPrinter\OptionPrinter as OptionPrinterInterface;
 use CLIFramework\Formatter;
 
 class OptionPrinter implements OptionPrinterInterface
