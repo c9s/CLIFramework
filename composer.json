@@ -14,7 +14,7 @@
         "php": ">=5.3.0",
         "corneltek/getoptionkit": "^2.4",
         "corneltek/class-template": "^3.0.0",
-        "corneltek/universal": ">= 1.4",
+        "corneltek/universal": "^1.7",
         "corneltek/codegen": "^3.0.0",
         "pimple/pimple": "*",
         "symfony/finder": "^2.7",
