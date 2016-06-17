@@ -37,10 +37,9 @@ use BadMethodCallException;
 class Application extends CommandBase
     implements CommandInterface
 {
-    const CORE_VERSION = '2.5.4';
-    const VERSION = "2.8.1";
+    const CORE_VERSION = '3.0.0';
+    const VERSION = "3.0.0";
     const NAME = 'CLIFramework';
-
 
     /**
      * timestamp when started
