@@ -1,7 +1,10 @@
+# dev-master
+
+- Chooser component update to support associative arrays properly.
+
 Version 3.0.0
 
 - Added Progress Component.
-
 
 Version 2.8.1
 

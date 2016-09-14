@@ -36,19 +36,21 @@ class Chooser
         echo $prompt . ": \n";
 
         $choicesMap = array();
+        $isAssoc = (array_keys($choices) !== range(0, count($choices) - 1));
 
-        // Not an indexed array
-        if (! isset($choices[0])) {
-            $i = 0;
+        $i = 0;
+        if($isAssoc) {
             foreach ($choices as $choice => $value) {
                 $i++;
                 $choicesMap[ $i ] = $value;
-                echo "\t" . ($i) . "  $choice\n";
+                echo "\t$i: " . $choice . " => " . $value . "\n";
             }
         } else {
-            foreach ($choices as $choice => $desc) {
-                $choicesMap[$choice] = $choice;
-                echo "\t$choice: $desc\n";
+            //is sequential
+            foreach ($choices as $choice) {
+                $i++;
+                $choicesMap[ $i ] = $choice;
+                echo "\t$i: $choice\n";
             }
         }
 
@@ -60,7 +62,7 @@ class Chooser
         $choosePrompt = "Please Choose 1-$i > ";
         while (1) {
             if (extension_loaded('readline')) {
-                $success = readline_completion_function(function($string, $index) use ($completionItems) { 
+                $success = readline_completion_function(function($string, $index) use ($completionItems) {
                     return $completionItems;
                 });
                 $answer = readline($choosePrompt);
