@@ -360,10 +360,10 @@ ConsoleDebug::dumpException($e);
 
 Todos in the next release
 -------------------------
-[ ] provide a easy way to define chained commands
-[ ] inheritable options for subcommands.
-[ ] human readable exception renderer.
-[ ] interact utilities
+ * [ ] provide a easy way to define chained commands
+ * [ ] inheritable options for subcommands.
+ * [ ] human readable exception renderer.
+ * [ ] interact utilities
 
 Hacking
 =======
