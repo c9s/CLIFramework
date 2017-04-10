@@ -12,7 +12,7 @@ namespace tests\CLIFramework\IO;
 
 use CLIFramework\IO\NullStty;
 
-class NullSttyTest extends \PHPUnit_Framework_TestCase 
+class NullSttyTest extends \PHPUnit\Framework\TestCase 
 {
     private $stty;
 

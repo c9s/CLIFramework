@@ -3,8 +3,9 @@ namespace tests\CLIFramework;
 
 use CLIFramework\Command;
 use CLIFramework\Application;
+use PHPUnit\Framework\TestCase;
 
-class CommandTest extends \PHPUnit_Framework_TestCase
+class CommandTest extends TestCase
 {
     private $command;
 

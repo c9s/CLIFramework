@@ -1,18 +1,18 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 use CLIFramework\ConsoleInfo\TputConsoleInfo;
 
-class TputConsoleInfoTest extends PHPUnit_Framework_TestCase
+class TputConsoleInfoTest extends TestCase
 {
     public function test()
     {
         if (!TputConsoleInfo::hasSupport()) {
-            skip('tput is not supported.');
+            return $this->markTestSkipped('tput is not supported.');
         }
         $info = new TputConsoleInfo;
-        ok($info);
-
-        ok($info->getColumns());
-        ok($info->getRows());
+        $this->assertNotNull($info->getColumns());
+        $this->assertNotNull($info->getRows());
     }
 }
 

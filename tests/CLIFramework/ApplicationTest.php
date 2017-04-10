@@ -10,46 +10,43 @@
  */
 namespace tests\CLIFramework;
 use TestApp\Application;
+use PHPUnit\Framework\TestCase;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
-    function test()
+    public function test()
     {
         $app = new Application;
-        ok( $app );
 
         $argv = explode(' ','app -v -d list foo arg1 arg2 arg3');
         $ret = $app->run($argv);
-        ok( $ret );
+        $this->assertTrue($ret);
 
         $logger = $app->getLogger();
-        ok( $logger );
 
         global $_prepare;
         global $_execute;
         global $_finish;
-        ok( $_prepare );
-        ok( $_execute );
-        ok( $_finish );
+        $this->assertNotNull( $_prepare );
+        $this->assertNotNull( $_execute );
+        $this->assertNotNull( $_finish );
     }
 
 
     function testOptionParsing()
     {
         $app = new Application;
-        ok( $app );
         $argv = explode(' ','app -v -d test1 --as AS ARG1 ARG2');
         $ret = $app->run($argv);
-        ok( $ret );
+        $this->assertTrue( $ret );
     }
 
     function testExtraArguments()
     {
         $app = new Application;
-        ok( $app );
         $argv = explode(' ','app -v -d list extra --as AS ARG1 ARG2');
         $ret = $app->run($argv);
-        ok( $ret );
+        $this->assertTrue( $ret );
     }
 
 }

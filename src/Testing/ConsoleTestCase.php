@@ -1,7 +1,7 @@
 <?php
 namespace CLIFramework\Testing;
 
-class ConsoleTestCase extends \PHPUnit_Framework_TestCase
+class ConsoleTestCase extends \PHPUnit\Framework\TestCase
 {
     protected function runScript($path, $input, $callback)
     {

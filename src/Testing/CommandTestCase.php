@@ -1,8 +1,8 @@
 <?php
 namespace CLIFramework\Testing;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-abstract class CommandTestCase extends PHPUnit_Framework_TestCase
+abstract class CommandTestCase extends TestCase
 {
     public $app;
 

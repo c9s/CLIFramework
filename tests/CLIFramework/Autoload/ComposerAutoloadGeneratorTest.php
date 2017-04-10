@@ -1,8 +1,10 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 use CLIFramework\Logger;
 use CLIFramework\Autoload\ComposerAutoloadGenerator;
 
-class ComposerAutoloadGeneratorTest extends PHPUnit_Framework_TestCase
+class ComposerAutoloadGeneratorTest extends TestCase
 {
     public function test()
     {

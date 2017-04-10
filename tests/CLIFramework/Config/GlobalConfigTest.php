@@ -12,7 +12,7 @@ namespace tests\CLIFramework\Config;
 
 use CLIFramework\Config\GlobalConfig;
 
-class GlobalConfigTest extends \PHPUnit_Framework_TestCase 
+class GlobalConfigTest extends \PHPUnit\Framework\TestCase 
 {
     /**
      * @test

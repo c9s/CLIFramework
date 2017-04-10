@@ -1,7 +1,8 @@
 <?php
+use PHPUnit\Framework\TestCase;
 use CLIFramework\ValueCollection;
 
-class ValueCollectionTest extends PHPUnit_Framework_TestCase
+class ValueCollectionTest extends TestCase
 {
     public function test()
     {
@@ -10,19 +11,17 @@ class ValueCollectionTest extends PHPUnit_Framework_TestCase
         $groups->group('version-related', 'Version Related Commands', array('use', 'switch', 'off' ));
 
         foreach( $groups as $groupId => $values) {
-            ok($values);
+            $this->assertNotNull($values);
         }
 
         $values = $groups->getGroup('extension-commands');
-        ok($values);
-        ok(is_array($values));
+        $this->assertNotEmpty($values);
+        $this->assertTrue(is_array($values));
 
-        ok($groups->containsValue('disable'));
+        $this->assertTrue($groups->containsValue('disable'));
 
-        ok(! $groups->containsValue('foobar'));
-
+        $this->assertFalse($groups->containsValue('foobar'));
         $json = $groups->toJson();
-        ok($json);
     }
 }
 

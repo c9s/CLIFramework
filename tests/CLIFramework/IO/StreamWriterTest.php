@@ -12,7 +12,7 @@ namespace tests\CLIFramework\IO;
 
 use CLIFramework\IO\StreamWriter;
 
-class StreamWriterTest extends \PHPUnit_Framework_TestCase 
+class StreamWriterTest extends \PHPUnit\Framework\TestCase 
 {
     private $writer;
     private $stream;

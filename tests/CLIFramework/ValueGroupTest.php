@@ -1,23 +1,21 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 use CLIFramework\ValueGroup;
 
-class ValueGroupTest extends PHPUnit_Framework_TestCase
+class ValueGroupTest extends TestCase
 {
     public function testValueGroup()
     {
         $group = new ValueGroup;
-        ok($group);
-
         $group->add('aaa')
             ->add('bbb')
             ->add('bar')
             ->add('zoo');
 
         $keys = $group->keys();
-        ok($keys);
-
-        ok($group);
-        is(4, $group->count());
+        $this->assertNotEmpty($keys);
+        $this->assertCount(4, $group);
     }
 }
 

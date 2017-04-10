@@ -1,17 +1,18 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 use CLIFramework\ConsoleInfo\EnvConsoleInfo;
 
-class EnvConsoleInfoTest extends PHPUnit_Framework_TestCase
+class EnvConsoleInfoTest extends TestCase
 {
     public function test()
     {
         if (!EnvConsoleInfo::hasSupport()) {
-            skip('env console info is not supported.');
+            return $this->markTestSkipped('env console info is not supported.');
         }
         $info = new EnvConsoleInfo;
-        ok($info);
-        ok($info->getColumns());
-        ok($info->getRows());
+        $this->assertNotNull($info->getColumns());
+        $this->assertNotNull($info->getRows());
     }
 }
 

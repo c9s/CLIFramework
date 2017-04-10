@@ -28,8 +28,7 @@
     "authors": [
         {
             "name": "Yo-An Lin",
-            "email": "cornelius.howl@gmail.com",
-            "homepage": "http://c9s.me"
+            "email": "cornelius.howl@gmail.com"
         }
     ],
     "autoload": {

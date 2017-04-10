@@ -1,17 +1,17 @@
 <?php
 use CLIFramework\ArgInfo;
+use PHPUnit\Framework\TestCase;
 
-class ArgInfoTest extends PHPUnit_Framework_TestCase
+
+class ArgInfoTest extends TestCase
 {
     public function test()
     {
         $info = new ArgInfo('user');
-        ok($info);
-
         $info->isa('number');
-        ok($info->validate('123'));
+        $this->assertTrue($info->validate('123'));
 
-        ok(!$info->validate('foo'));
+        $this->assertFalse($info->validate('foo'));
     }
 }
 

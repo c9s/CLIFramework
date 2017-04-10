@@ -13,9 +13,9 @@ use CLIFramework\Extension\DaemonExtension;
 use CLIFramework\Command;
 use CLIFramework\Application;
 use CLIFramework\ServiceContainer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class DaemonExtensionTest extends PHPUnit_Framework_TestCase 
+class DaemonExtensionTest extends TestCase 
 {
     private $extension;
 

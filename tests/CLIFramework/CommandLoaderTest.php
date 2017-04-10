@@ -8,20 +8,20 @@
  * file that was distributed with this source code.
  *
  */
+use PHPUnit\Framework\TestCase;
 
-class CommandLoaderTest extends PHPUnit_Framework_TestCase 
+
+class CommandLoaderTest extends TestCase 
 {
     public function test()
     {
-        $command = new TestApp\Command\SimpleCommand( new TestApp\Application );
-        ok( $command );
-
+        $command = new TestApp\Command\SimpleCommand(new TestApp\Application);
         $text = $command->getFormattedHelpText();
-        ok( $text );
 
-        // echo $text;
-        
+        // tODO: use string format assertion API to verify this
+        $this->assertNotNull($text);
+
         $return = $command->execute(123);
-        ok( $return );
+        $this->assertNotNull( $return );
     }
 }

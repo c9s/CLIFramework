@@ -3,7 +3,7 @@ namespace tests\CLIFramework\Testing;
 
 use CLIFramework\Testing\Parser;
 
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetArguments_OneArgument()
     {

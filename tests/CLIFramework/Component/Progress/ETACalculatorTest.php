@@ -1,7 +1,9 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 use CLIFramework\Component\Progress\ETACalculator;
 
-class ETACalculatorTest extends PHPUnit_Framework_TestCase
+class ETACalculatorTest extends TestCase
 {
 
     public function testCalculateRemainingSeconds()

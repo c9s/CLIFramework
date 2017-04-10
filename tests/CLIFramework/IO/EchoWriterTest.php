@@ -12,7 +12,7 @@ namespace tests\CLIFramework\IO;
 
 use CLIFramework\IO\EchoWriter;
 
-class EchoWriterTest extends \PHPUnit_Framework_TestCase 
+class EchoWriterTest extends \PHPUnit\Framework\TestCase 
 {
     private $writer;
 

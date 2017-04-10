@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the {{ }} package.
  *
@@ -8,9 +9,10 @@
  * file that was distributed with this source code.
  *
  */
+use PHPUnit\Framework\TestCase;
 use CLIFramework\IO\EchoWriter;
 
-class LoggerTest extends PHPUnit_Framework_TestCase 
+class LoggerTest extends TestCase 
 {
     private $logger;
 

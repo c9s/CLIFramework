@@ -1,4 +1,6 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 use CLIFramework\Component\Table\Table;
 use CLIFramework\Component\Table\TableStyle;
 use CLIFramework\Component\Table\CompactTableStyle;
@@ -9,7 +11,7 @@ use CLIFramework\Component\Table\CurrencyCellAttribute;
 use CLIFramework\Component\Table\SpellOutNumberFormatCell;
 use CLIFramework\Component\Table\RowSeparator;
 
-class TableTest extends PHPUnit_Framework_TestCase
+class TableTest extends TestCase
 {
 
     public function testNumberFormatCell()

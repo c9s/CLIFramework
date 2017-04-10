@@ -1,7 +1,9 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 use CLIFramework\Component\Table\DateFormatCell;
 
-class DateFormatCellTest extends PHPUnit_Framework_TestCase
+class DateFormatCellTest extends TestCase
 {
     public function testDateFormat()
     {
