@@ -28,36 +28,42 @@ PHPBrew
 AssetKit
 ActionKit
 ");
-        ok( $this->runCommand('example/demo meta --zsh commit arg 1 valid-values'));
+        $this->assertTrue( $this->runCommand('example/demo meta --zsh commit arg 1 valid-values'));
     }
 
     public function testOptValidValues() {
         ob_start();
-        ok( $this->runCommand('example/demo meta --zsh commit opt reuse-message valid-values'));
+        $this->assertTrue( $this->runCommand('example/demo meta --zsh commit opt reuse-message valid-values'));
         $output = ob_get_contents();
         ob_end_clean();
         $lines = explode("\n",trim($output));
 
-        is('#values',$lines[0]);
+        $this->assertEquals('#values',$lines[0]);
         array_shift($lines);
         foreach($lines as $line) {
-            like('/^\w{7}$/', $line);
+            $this->assertRegExp('/^\w{7}$/', $line);
         }
     }
 
     public function testGenerateZshCompletion() {
         $this->expectOutputRegex("!compdef _demo demo!");
-        ok( $this->runCommand('example/demo zsh --program demo --bind demo') );
+        $this->assertTrue( $this->runCommand('example/demo zsh --program demo --bind demo') );
     }
 
-    public function testCommandNotFound() {
-        $this->setExpectedException('CLIFramework\\Exception\\CommandNotFoundException');
-        ok( $this->runCommand('example/demo --no-interact zzz') );
+    /**
+     * @expectedException CLIFramework\Exception\CommandNotFoundException
+     */
+    public function testCommandNotFound()
+    {
+        $this->assertTrue( $this->runCommand('example/demo --no-interact zzz') );
     }
 
-    public function testArgument() {
-        $this->setExpectedException('CLIFramework\\Exception\\CommandArgumentNotEnoughException');
-        ok( $this->runCommand('example/demo commit') );
+    /**
+     * @expectedException CLIFramework\Exception\CommandArgumentNotEnoughException
+     */
+    public function testArgument()
+    {
+        $this->assertTrue( $this->runCommand('example/demo commit') );
     }
 
 }
