@@ -250,7 +250,7 @@ class ComposerAutoloadGenerator
             // translate psr-4 mapping for Psr4ClassLoader
             $arg = array();
             foreach ($psr4 as $prefix => $paths) {
-                $arg[] = array($prefix, $paths);
+                $arg[] = array($prefix, [$paths]);
             }
             $block[] = new AssignStatement('$psr4', new NewObjectExpr('Psr4ClassLoader', array($arg)));
             $block[] = new MethodCallStatement('$psr4', 'register', array(false));
