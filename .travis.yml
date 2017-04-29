@@ -9,6 +9,9 @@ matrix:
 git:
   depth: 1
 
+git:
+  depth: 1
+
 install:
   - phpenv rehash
   - travis_retry composer self-update
