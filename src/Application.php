@@ -354,7 +354,7 @@ class Application extends CommandBase
         $arguments = array();
 
         // get command list from application self
-        while ( ! $getopt->isEnd() ) {
+        while (! $getopt->isEnd()) {
             $a = $getopt->getCurrentArgument();
 
             // if current command is in subcommand list.
@@ -376,13 +376,18 @@ class Application extends CommandBase
                 $currentCmd = $currentCmd->getCommand($a);
                 $getopt->setSpecs($currentCmd->optionSpecs);
 
-                // parse options for command.
+                // parse option result for command.
                 $currentCmd->setOptions($getopt->continueParse());
                 $command_stack[] = $currentCmd; // save command object into the stack
 
             } else {
-                $a = $getopt->advance();
-                $arguments[] = $a;
+                $r = $getopt->continueParse();
+                if (count($r)) {
+                    $currentCmd->getOptions()->merge($r);
+                } else {
+                    $a = $getopt->advance();
+                    $arguments[] = $a;
+                }
             }
         }
 

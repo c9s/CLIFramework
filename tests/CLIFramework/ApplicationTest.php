@@ -14,10 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends TestCase
 {
-    public function test()
+    public function testGlobalVars()
     {
         $app = new Application;
-
         $argv = explode(' ','app -v -d list foo arg1 arg2 arg3');
         $ret = $app->run($argv);
         $this->assertTrue($ret);
@@ -32,16 +31,23 @@ class ApplicationTest extends TestCase
         $this->assertNotNull( $_finish );
     }
 
+    public function testPostOptionParsing()
+    {
+        $app = new Application;
+        $argv = explode(' ','app -v -d test1 ARG1 ARG2 --as AS');
+        $ret = $app->run($argv);
+        $this->assertTrue($ret);
+    }
 
-    function testOptionParsing()
+    public function testOptionParsing()
     {
         $app = new Application;
         $argv = explode(' ','app -v -d test1 --as AS ARG1 ARG2');
         $ret = $app->run($argv);
-        $this->assertTrue( $ret );
+        $this->assertTrue($ret);
     }
 
-    function testExtraArguments()
+    public function testExtraArguments()
     {
         $app = new Application;
         $argv = explode(' ','app -v -d list extra --as AS ARG1 ARG2');
