@@ -78,7 +78,7 @@ abstract class CommandBase
 
     public $optionSpecs;
 
-    protected $argInfos = array();
+    protected $argInfos;
 
     protected $extensions = array();
 
@@ -333,17 +333,6 @@ abstract class CommandBase
 
         // init application options
         $this->options($this->optionSpecs);
-
-
-        // build argument info list 
-        $args = new ArgInfoList;
-        $this->arguments($args);
-        if (count($args) > 0) {
-            $this->argInfos = $args;
-        } else {
-            $this->argInfos = $this->getArgInfoListByReflection();
-        }
-
 
         $this->init();
         $this->initExtensions();
@@ -760,13 +749,23 @@ abstract class CommandBase
      */
     public function getArgInfoList()
     {
+        if ($this->argInfos === null) {
+            // build arg info
+            $args = new ArgInfoList;
+            $this->arguments($args);
+            if (!empty($args)) {
+                return $this->argInfos = $args;
+            }
+            return $this->argInfos = $this->getArgInfoListByReflection();
+        }
         return $this->argInfos;
     }
 
     /**
      * The default behaviour: get argument info from method parameters
      */
-    public function getArgInfoListByReflection() { 
+    public function getArgInfoListByReflection()
+    {
         $argInfo = new ArgInfoList;
 
         $ro = new ReflectionObject($this);
