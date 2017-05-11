@@ -9,6 +9,7 @@
  *
  */
 namespace CLIFramework;
+
 use GetOptionKit\OptionCollection;
 use GetOptionKit\Option;
 use GetOptionKit\OptionPrinter\OptionPrinter as OptionPrinterInterface;
@@ -20,7 +21,8 @@ class OptionPrinter implements OptionPrinterInterface
 
     public $formatter;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->formatter = new Formatter;
     }
 
@@ -31,11 +33,11 @@ class OptionPrinter implements OptionPrinterInterface
     {
         $columns = array();
         if ($opt->short) {
-            $columns[] = $this->formatter->format(sprintf('-%s',$opt->short), 'strong_white') 
+            $columns[] = $this->formatter->format(sprintf('-%s', $opt->short), 'strong_white')
                 . $this->renderOptionValueHint($opt, false);
         }
         if ($opt->long) {
-            $columns[] = $this->formatter->format(sprintf('--%s',$opt->long ), 'strong_white')
+            $columns[] = $this->formatter->format(sprintf('--%s', $opt->long), 'strong_white')
                 . $this->renderOptionValueHint($opt, true);
         }
         return join(', ', $columns);
@@ -50,9 +52,9 @@ class OptionPrinter implements OptionPrinterInterface
             $n = $opt->isa;
         }
 
-        if ( $opt->isRequired() ) {
-            return sprintf('%s<%s>',   $assign ? '=' : ' ', $this->formatter->format($n, 'underline') );
-        } elseif ( $opt->isOptional() ) {
+        if ($opt->isRequired()) {
+            return sprintf('%s<%s>', $assign ? '=' : ' ', $this->formatter->format($n, 'underline'));
+        } elseif ($opt->isOptional()) {
             return sprintf('%s[<%s>]', $assign ? '=' : ' ', $this->formatter->format($n, 'underline'));
         }
 
@@ -68,14 +70,12 @@ class OptionPrinter implements OptionPrinterInterface
     {
         # echo "* Available options:\n";
         $lines = array();
-        foreach( $options as $option ) {
+        foreach ($options as $option) {
             $c1 = $this->renderOption($option);
             $lines[] = "\t" . $c1;
             $lines[] = wordwrap("\t\t" . $option->desc, $this->screenWidth, "\n\t\t");  # wrap text
             $lines[] = "";
         }
-        return join("\n",$lines);
+        return join("\n", $lines);
     }
 }
-
-

@@ -8,7 +8,7 @@ class TestAppCommandTest extends TestCase
     public function testSimpleCommand()
     {
         $command = new TestApp\Command\SimpleCommand(new Application);
-        $command->_init();
+        $command->init();
 
         $argInfos = $command->getArgInfoList();
         $this->assertNotEmpty($argInfos);
@@ -18,7 +18,7 @@ class TestAppCommandTest extends TestCase
 
     public function testArginfoCommand() {
         $cmd = new TestApp\Command\ArginfoCommand(new Application);
-        $cmd->_init();
+        $cmd->init();
 
         $argInfos = $cmd->getArgInfoList();
         $this->assertNotEmpty($argInfos);

@@ -1,8 +1,7 @@
 <?php
 namespace CLIFramework;
+
 use CLIFramework\Command;
-
-
 
 /**
  * A ChainedCommand contains multiple commands together,
@@ -17,17 +16,18 @@ class ChainedCommand extends Command
      */
     public $commands = array();
 
-    public function options($opts) 
+    public function options($opts)
     {
         $cmds = $this->getChainedCommands();
-        foreach($cmds as $cmd)
+        foreach ($cmds as $cmd) {
             $cmd->options($opts);
+        }
     }
 
-    public function getChainedCommands() 
+    public function getChainedCommands()
     {
         $cmds = array();
-        foreach( $this->commands as $command ) {
+        foreach ($this->commands as $command) {
             $cmd = new $command($this->application);
             $cmd->logger = $this->logger;
             $cmd->parent = $this;
@@ -36,16 +36,15 @@ class ChainedCommand extends Command
         return $cmds;
     }
 
-    public function execute() 
+    public function execute()
     {
-        $this->logger->info('Executing chained commands: ' . join(',', $this->commands ));
+        $this->logger->info('Executing chained commands: ' . join(',', $this->commands));
         $args = func_get_args();
         $cmds = $this->getChainedCommands();
-        foreach( $cmds as $cmd ) {
+        foreach ($cmds as $cmd) {
             $cmd->options = $this->options;
             $cmd->executeWrapper($args);
         }
         $this->logger->info('Done');
     }
 }
-

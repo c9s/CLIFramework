@@ -19,4 +19,3 @@ class MarkdownTableStyle extends TableStyle
 
     public $drawTableBorder = false;
 }
-

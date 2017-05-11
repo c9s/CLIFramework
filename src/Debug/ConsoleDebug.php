@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Debug;
+
 use CLIFramework\Component\Table\Table;
 use CLIFramework\Component\Table\TableStyle;
 use CLIFramework\Component\Table\CompactTableStyle;
@@ -14,7 +15,7 @@ use Exception;
 
 class ConsoleDebug
 {
-    static public function dumpException(Exception $e)
+    public static function dumpException(Exception $e)
     {
         $indicator = new LineIndicator;
         $output = [];
@@ -32,20 +33,20 @@ class ConsoleDebug
     /**
      * Dump Record Collection
      */
-    static public function dumpCollection(BaseCollection $collection, array $options = array())
+    public static function dumpCollection(BaseCollection $collection, array $options = array())
     {
         return self::dumpRows($collection->toArray(), $options);
     }
 
 
-    static public function dumpRows(array $array, array $options = array())
+    public static function dumpRows(array $array, array $options = array())
     {
         $table = new Table;
 
         $keys = null;
         if (isset($options['keys'])) {
             $keys = $options['keys'];
-        } else if (isset($array[0])) {
+        } elseif (isset($array[0])) {
             $keys = array_keys($array[0]);
         }
 
@@ -68,6 +69,3 @@ class ConsoleDebug
             . count($array) . ' rows.' . PHP_EOL;
     }
 }
-
-
-

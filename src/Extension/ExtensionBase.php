@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Extension;
+
 use CLIFramework\ServiceContainer;
 use CLIFramework\Command;
 use CLIFramework\CommandBase;
@@ -14,7 +15,6 @@ abstract class ExtensionBase
 
     public function __construct()
     {
-
     }
 
     public function setServiceContainer(ServiceContainer $container)
@@ -28,10 +28,9 @@ abstract class ExtensionBase
      */
     public function init()
     {
-
     }
 
-    static public function isSupported()
+    public static function isSupported()
     {
         return true;
     }
@@ -45,36 +44,27 @@ abstract class ExtensionBase
     {
     }
 
-    public function arguments($args) 
+    public function arguments($args)
     {
-
     }
 
-    public function prepare() 
+    public function prepare()
     {
-
     }
 
-    public function execute() 
+    public function execute()
     {
-
     }
 
-    public function finish() 
+    public function finish()
     {
-
     }
 
-    public function __get($accessor) 
+    public function __get($accessor)
     {
         if (isset($this->container[$accessor])) {
             return $this->container[$accessor];
         }
         throw new LogicException("Undefined accessor '$accessor'");
     }
-
 }
-
-
-
-

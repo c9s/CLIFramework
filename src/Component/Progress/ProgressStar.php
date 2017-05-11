@@ -14,15 +14,15 @@ class ProgressStar implements ProgressReporter
     public function prettySize($bytes)
     {
         if ($bytes > 1000000) {
-            return round( $bytes / 1000000, 2) . 'M';
-        }
-        elseif ($bytes > 1000) {
+            return round($bytes / 1000000, 2) . 'M';
+        } elseif ($bytes > 1000) {
             return round($bytes / 1000, 2) . 'K';
         }
-        return round($bytes,2) . 'B';
+        return round($bytes, 2) . 'B';
     }
 
-    public function reset() {
+    public function reset()
+    {
         $this->done = false;
     }
 
@@ -41,18 +41,17 @@ class ProgressStar implements ProgressReporter
         // printf("%s % 4d%%", $s , $percent );
         if ($downloadSize != 0 && $downloadSize === $downloaded) {
             $this->done = true;
-            printf("\r\t%-60s                           \n",$this->url);
+            printf("\r\t%-60s                           \n", $this->url);
         } else {
-            $percent = ($downloaded > 0 ? (float) ($downloaded / $downloadSize) : 0.0 );
-            if( ++$this->i > 3 )
+            $percent = ($downloaded > 0 ? (float) ($downloaded / $downloadSize) : 0.0);
+            if (++$this->i > 3) {
                 $this->i = 0;
+            }
 
             /* 8 + 1 + 60 + 1 + 1 + 1 + 6 = */
             printf("\r\tFetching %-60s %s % -3.1f%% %s", $this->url,
-                $this->stars[ $this->i ], 
-                $percent * 100, $this->prettySize($downloaded) );
+                $this->stars[ $this->i ],
+                $percent * 100, $this->prettySize($downloaded));
         }
     }
 }
-
-

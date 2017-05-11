@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Extension;
+
 use CLIFramework\Command;
 use CLIFramework\Extension\Extension;
 use CLIFramework\Extension\ExtensionBase;
@@ -20,5 +21,4 @@ abstract class CommandExtension extends ExtensionBase
         $this->setServiceContainer($command->getApplication()->getService());
         $this->init();
     }
-
 }

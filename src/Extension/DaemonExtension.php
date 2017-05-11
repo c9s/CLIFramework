@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Extension;
+
 use CLIFramework\ServiceContainer;
 use CLIFramework\Command;
 use CLIFramework\CommandBase;
@@ -26,7 +27,7 @@ class DaemonExtension extends CommandExtension
     }
 
 
-    static public function isSupported()
+    public static function isSupported()
     {
         return function_exists('pcntl_fork');
     }
@@ -106,7 +107,7 @@ class DaemonExtension extends CommandExtension
     {
         if ($this->detach || $this->command->options->{'detach'}) {
             $this->command->logger->debug('forking process to background..');
-            // The return value of pcntl_fork: 
+            // The return value of pcntl_fork:
             //
             // On success, the PID of the child process is returned in the parent's
             // thread of execution, and a 0 is returned in the child's thread of
@@ -165,7 +166,7 @@ class DaemonExtension extends CommandExtension
 
     protected function getLogPath()
     {
-        // var_dump( $this->command ); 
+        // var_dump( $this->command );
         if ($logPath = $this->command->options->{'log-path'}) {
             return $logPath;
         }

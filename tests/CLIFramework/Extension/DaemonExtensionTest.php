@@ -32,7 +32,7 @@ class DaemonExtensionTest extends TestCase
 
         // Setup a new application
         $this->command->setApplication(new Application());
-        $this->command->_init();
+        $this->command->init();
     }
 
     public function testRun()

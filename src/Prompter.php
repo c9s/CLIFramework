@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework;
+
 use CLIFramework\ServiceContainer;
 
 /**
@@ -29,26 +30,26 @@ class Prompter
     /**
      * show prompt with message
      */
-    public function ask($prompt, $validAnswers = NULL, $default = NULL)
+    public function ask($prompt, $validAnswers = null, $default = null)
     {
         if ($validAnswers) {
-            $prompt .= ' [' . join('/',$validAnswers) . ']';
+            $prompt .= ' [' . join('/', $validAnswers) . ']';
         }
         $prompt .= ' ';
 
         if ($this->style) {
-            echo $this->formatter->getStartMark( $this->style );
+            echo $this->formatter->getStartMark($this->style);
             // $prompt = $this->formatter->getStartMark( $this->style ) . $prompt . $this->formatter->getClearMark();
         }
 
         $answer = null;
         while (1) {
-            $answer = trim($this->console->readLine( $prompt ));
+            $answer = trim($this->console->readLine($prompt));
             if ($validAnswers) {
-                if (in_array($answer,$validAnswers) ) {
+                if (in_array($answer, $validAnswers)) {
                     break;
                 } else {
-                    if (trim($answer) === "" && $default ) {
+                    if (trim($answer) === "" && $default) {
                         $answer = $default;
                         break;
                     }
@@ -69,7 +70,7 @@ class Prompter
     public function password($prompt)
     {
         if ($this->style) {
-            echo $this->formatter->getStartMark( $this->style );
+            echo $this->formatter->getStartMark($this->style);
         }
 
         $result = $this->console->readPassword($prompt);

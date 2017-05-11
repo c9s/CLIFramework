@@ -1,9 +1,10 @@
 <?php
 namespace CLIFramework\Component\Table;
+
 use CLIFramework\Ansi\Colors;
 
-class CellAttribute { 
-
+class CellAttribute
+{
     const ALIGN_RIGHT = 1;
 
     const ALIGN_LEFT = 2;
@@ -30,7 +31,7 @@ class CellAttribute {
     /*
     protected $style;
 
-    public function __construct(TableStyle $style) 
+    public function __construct(TableStyle $style)
     {
         $this->style = $style;
     }
@@ -41,7 +42,7 @@ class CellAttribute {
     }
     */
 
-    public function setAlignment($alignment) 
+    public function setAlignment($alignment)
     {
         $this->alignment = $alignment;
     }
@@ -64,27 +65,30 @@ class CellAttribute {
     /**
      * The default cell text formatter
      */
-    public function format($cell) { 
+    public function format($cell)
+    {
         if ($this->formatter) {
             return call_user_func($this->formatter, $cell);
         }
         return $cell;
     }
 
-    public function setBackgroundColor($color) {
+    public function setBackgroundColor($color)
+    {
         $this->backgroundColor = $color;
     }
 
-    public function setForegroundColor($color) {
+    public function setForegroundColor($color)
+    {
         $this->foregroundColor = $color;
     }
 
-    public function getForegroundColor() 
+    public function getForegroundColor()
     {
         return $this->foregroundColor; // TODO: fallback to table style
     }
 
-    public function getBackgroundColor() 
+    public function getBackgroundColor()
     {
         return $this->backgroundColor; // TODO: fallback to table style
     }
@@ -95,13 +99,13 @@ class CellAttribute {
      */
     public function handleTextOverflow($cell, $maxWidth)
     {
-        $lines = explode("\n",$cell);
+        $lines = explode("\n", $cell);
         if ($this->textOverflow == self::WRAP) {
             $maxLineWidth = max(array_map('mb_strlen', $lines));
             if ($maxLineWidth > $maxWidth) {
                 $cell = wordwrap($cell, $maxWidth, "\n");
                 // Re-explode the lines
-                $lines = explode("\n",$cell);
+                $lines = explode("\n", $cell);
             }
         } elseif ($this->textOverflow == self::ELLIPSIS) {
             if (mb_strlen($lines[0]) > $maxWidth) {
@@ -145,4 +149,3 @@ class CellAttribute {
         return $out;
     }
 }
-

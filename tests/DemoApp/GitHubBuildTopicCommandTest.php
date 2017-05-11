@@ -11,7 +11,7 @@ use RecursiveDirectoryIterator;
 class GitHubBuildTopicCommandTest extends CommandTestCase
 {
 
-    public function setupApplication() {
+    public static function setupApplication() {
         return new \DemoApp\Application;
     }
 

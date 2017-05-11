@@ -1,26 +1,33 @@
 <?php
 namespace CLIFramework\Component\Table;
+
 use InvalidArgumentException;
 
 use CLIFramework\Component\Table\TableStyle;
 use CLIFramework\Component\Table\MarkdownTableStyle;
 use CLIFramework\Component\Table\CellAttribute;
 
-interface Separator { }
+interface Separator
+{
+}
 
 /**
  * RowSeparator is a slight separator for separating distinct rows...
  */
-class RowSeparator implements Separator { }
+class RowSeparator implements Separator
+{
+}
 
 /**
  * TableSeparator is more likely a section separator, the style is customizable.
  */
-class TableSeparator implements Separator { }
+class TableSeparator implements Separator
+{
+}
 
 /**
  * Feature:
- * 
+ *
  * - Support column wrapping if the cell text is too long.
  * - Table style
  */
@@ -66,7 +73,7 @@ class Table
 
 
     /**
-     * @var bool strip the white spaces from the begining of a 
+     * @var bool strip the white spaces from the begining of a
      * string and the end of a string.
      */
     protected $trimSpaces = true;
@@ -77,12 +84,14 @@ class Table
 
     protected $footer;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->style = new TableStyle;
         $this->defaultCellAttribute = new CellAttribute;
     }
 
-    public function setHeaders(array $headers) {
+    public function setHeaders(array $headers)
+    {
         $this->headers = $headers;
         return $this;
     }
@@ -133,7 +142,8 @@ class Table
         return $this->numberOfColumns = max($columns);
     }
 
-    public function addRow($row) {
+    public function addRow($row)
+    {
         $this->rows[] = $row;
 
         if ($row instanceof RowSeparator) {
@@ -168,7 +178,7 @@ class Table
 
             // Handle extra lines
             $extraRowIdx = $lastRowIdx;
-            foreach($lines as $line) {
+            foreach ($lines as $line) {
                 // trim the leading space
                 if ($this->trimSpaces) {
                     $line = trim($line);
@@ -195,7 +205,7 @@ class Table
     public function getColumnWidth($col)
     {
         $lengths = array();
-        foreach($this->rows as $row) {
+        foreach ($this->rows as $row) {
             if ($row instanceof RowSeparator) {
                 continue;
             }
@@ -204,15 +214,16 @@ class Table
                     if (!isset($row[$col][1])) {
                         throw new InvalidArgumentException('Incorrect cell structure. Expecting [attribute, text].');
                     }
-                    $lengths[] = mb_strlen(preg_replace('/\033.*?m/','',$row[$col][1]));
+                    $lengths[] = mb_strlen(preg_replace('/\033.*?m/', '', $row[$col][1]));
                 } else {
-                    $lengths[] = mb_strlen(preg_replace('/\033.*?m/','',$row[$col]));
+                    $lengths[] = mb_strlen(preg_replace('/\033.*?m/', '', $row[$col]));
                 }
             }
         }
 
         $headerColumnWidth = isset($this->headers[$col]) ? mb_strlen($this->headers[$col]) : 0;
-        $maxContentWidth = max($lengths);;
+        $maxContentWidth = max($lengths);
+        ;
 
         if (empty($lengths) || $headerColumnWidth > $maxContentWidth) {
             return $this->columnWidth[$col] = $headerColumnWidth;
@@ -220,7 +231,8 @@ class Table
         return $this->columnWidth[$col] = max($lengths);
     }
 
-    public function renderRow($rowIndex, $row) {
+    public function renderRow($rowIndex, $row)
+    {
         $out = $this->style->verticalBorderChar;
         $columnNumber = $this->getNumberOfColumns();
         for ($c = 0 ; $c < $columnNumber ; $c++) {
@@ -231,7 +243,6 @@ class Table
             }
             $out .= $this->renderCell($c, $cell);
             $out .= $this->style->verticalBorderChar;
-
         }
         if ($rowIndex > 0 && isset($this->rowIndex[$rowIndex]) && $this->style->drawRowSeparator) {
             return $this->renderSeparator() . $out . "\n";
@@ -254,7 +265,8 @@ class Table
         return $this;
     }
 
-    public function renderSeparator() {
+    public function renderSeparator()
+    {
         $columnNumber = $this->getNumberOfColumns();
         $out = $this->style->rowSeparatorLeftmostCrossChar;
         for ($c = 0 ; $c < $columnNumber ; $c++) {
@@ -270,7 +282,8 @@ class Table
         return $out . "\n";
     }
 
-    public function renderHeader() {
+    public function renderHeader()
+    {
         $out = '';
 
         if ($this->style->drawTableBorder) {
@@ -294,7 +307,7 @@ class Table
     }
 
 
-    public function getTableInnerWidth() 
+    public function getTableInnerWidth()
     {
         $columnNumber = $this->getNumberOfColumns();
         $width = 0;
@@ -331,14 +344,14 @@ class Table
             $out = '';
             $width = $this->getTableInnerWidth();
             $out .= $this->renderSeparator();
-            $out .= $this->style->verticalBorderChar 
+            $out .= $this->style->verticalBorderChar
                 . str_repeat($this->style->cellPaddingChar, $this->style->cellPadding)
-                . str_pad($this->footer, $width - $this->style->cellPadding * 2) 
+                . str_pad($this->footer, $width - $this->style->cellPadding * 2)
                 . str_repeat($this->style->cellPaddingChar, $this->style->cellPadding)
                 . $this->style->verticalBorderChar . "\n";
 
             if ($this->style->drawTableBorder) {
-                $out .= $this->style->rowSeparatorLeftmostCrossChar . str_repeat($this->style->rowSeparatorBorderChar, $width) 
+                $out .= $this->style->rowSeparatorLeftmostCrossChar . str_repeat($this->style->rowSeparatorBorderChar, $width)
                     . $this->style->rowSeparatorRightmostCrossChar . "\n";
             }
             return $out;
@@ -366,7 +379,8 @@ class Table
         return $out;
     }
 
-    public function render() {
+    public function render()
+    {
         $out = '';
 
         if (!empty($this->headers)) {
@@ -375,7 +389,7 @@ class Table
             $out .= $this->renderSeparator();
         }
 
-        foreach($this->rows as $rowIndex => $row) {
+        foreach ($this->rows as $rowIndex => $row) {
             if ($row instanceof RowSeparator) {
                 $out .= $this->renderSeparator();
             } else {
@@ -393,9 +407,4 @@ class Table
         }
         return $out;
     }
-
 }
-
-
-
-

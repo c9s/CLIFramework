@@ -1,14 +1,14 @@
 <?php
 namespace CLIFramework;
+
 use IteratorAggregate;
 use ArrayIterator;
 
 /**
- * 
+ *
  */
 class ValueCollection implements IteratorAggregate
 {
-
     public $groups = array();
 
     /**
@@ -25,14 +25,15 @@ class ValueCollection implements IteratorAggregate
      *     ->group('id', 'ID', [ 'label' => 'desc' ]);
      *
      */
-    public function group($groupId, $label, $values) {
+    public function group($groupId, $label, $values)
+    {
         // for indexed array
         if (is_array($values)) {
-            if ( !isset($this->groups[ $groupId ])) {
+            if (!isset($this->groups[ $groupId ])) {
                 $this->groups[$groupId] = $values;
             } else {
                 $this->groups[ $groupId ] = array_merge(
-                    $this->groups[ $groupId ], $values );
+                    $this->groups[ $groupId ], $values);
             }
         } else {
             $this->groups[ $groupId ][] = $values;
@@ -42,31 +43,37 @@ class ValueCollection implements IteratorAggregate
 
 
 
-    public function getGroups() {
+    public function getGroups()
+    {
         return $this->groups;
     }
 
 
-    public function setGroup($groupId, $values) {
+    public function setGroup($groupId, $values)
+    {
         $this->groups[ $groupId ] = $values;
     }
 
-    public function getGroup($groupId) {
+    public function getGroup($groupId)
+    {
         return $this->groups[ $groupId ];
     }
 
-    public function setGroupLabel($groupId, $label) {
+    public function setGroupLabel($groupId, $label)
+    {
         $this->labels[ $groupId ] = $label;
     }
 
-    public function getGroupLabel($groupId) {
-        if ( isset($this->labels[ $groupId ]) ) {
+    public function getGroupLabel($groupId)
+    {
+        if (isset($this->labels[ $groupId ])) {
             return $this->labels[ $groupId ];
         }
     }
 
-    public function containsValue($value) {
-        foreach($this->groups as $groupId => $values) {
+    public function containsValue($value)
+    {
+        foreach ($this->groups as $groupId => $values) {
             if (in_array($value, $values)) {
                 return true;
             }
@@ -74,17 +81,18 @@ class ValueCollection implements IteratorAggregate
         return false;
     }
 
-    public function getGroupLabels() {
+    public function getGroupLabels()
+    {
         return $this->labels;
     }
 
-    public function toJson() {
+    public function toJson()
+    {
         return json_encode($this->groups);
     }
 
-    public function getIterator() {
-        return new ArrayIterator( $this->groups );
+    public function getIterator()
+    {
+        return new ArrayIterator($this->groups);
     }
 }
-
-

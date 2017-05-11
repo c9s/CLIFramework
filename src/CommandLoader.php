@@ -9,6 +9,7 @@
  *
  */
 namespace CLIFramework;
+
 use CLIFramework\Exception\CommandClassNotFoundException;
 use Exception;
 
@@ -16,7 +17,7 @@ class CommandLoader
 {
     public $namespaces = array();
 
-    public function addNamespace( $ns )
+    public function addNamespace($ns)
     {
         $nss = (array) $ns;
         foreach ($nss as $n) {
@@ -38,11 +39,11 @@ class CommandLoader
      */
     public function translate($command)
     {
-        $args = explode('-',$command);
-        foreach($args as & $a) {
+        $args = explode('-', $command);
+        foreach ($args as & $a) {
             $a = ucfirst($a);
         }
-        return join('',$args) . 'Command';
+        return join('', $args) . 'Command';
     }
 
     /**
@@ -58,13 +59,16 @@ class CommandLoader
      */
     public function inverseTranslate($className)
     {
-        if (substr($className, -7) !== 'Command')
+        if (substr($className, -7) !== 'Command') {
             throw new \InvalidArgumentException("Command class name need to end with 'Command'");
+        }
         // remove the suffix 'Command', then lower case the first letter
         $className = lcfirst(substr($className, 0, -7));
         return preg_replace_callback(
             '/[A-Z]/',
-            function ($matches) { return '-' . strtolower($matches[0]); },
+            function ($matches) {
+                return '-' . strtolower($matches[0]);
+            },
             $className
         );
     }
@@ -78,7 +82,7 @@ class CommandLoader
     public function load($command)
     {
         $subclass = $this->translate($command);
-        return $this->loadClass( $subclass );
+        return $this->loadClass($subclass);
     }
 
     /**
@@ -119,12 +123,12 @@ class CommandLoader
         return $this->loadClass($class);
     }
 
-    static public function getInstance() {
+    public static function getInstance()
+    {
         static $instance;
-        if ( $instance ) {
+        if ($instance) {
             return $instance;
         }
         return $instance = new self;
     }
-
 }

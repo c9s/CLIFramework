@@ -9,6 +9,7 @@
  *
  */
 namespace CLIFramework;
+
 use CLIFramework\Formatter;
 use CLIFramework\ServiceContainer;
 use CLIFramework\IO\Writer;
@@ -123,7 +124,8 @@ class Logger
         return $this->level == $this->getLevelByName('debug2') || $this->level == $this->getLevelByName('debug');
     }
 
-    public function isQuiet() {
+    public function isQuiet()
+    {
         return $this->level == 2;
     }
 
@@ -153,15 +155,18 @@ class Logger
         $this->writer = $writer;
     }
 
-    public function indent($level = 1) {
+    public function indent($level = 1)
+    {
         $this->indent += $level;
     }
 
-    public function unIndent($level = 1) {
-        $this->indent = max(0 ,$this->indent - $level);
+    public function unIndent($level = 1)
+    {
+        $this->indent = max(0, $this->indent - $level);
     }
 
-    public function resetIndent() {
+    public function resetIndent()
+    {
         $this->indent = 0;
     }
 
@@ -180,7 +185,7 @@ class Logger
         if ($this->level <= 4 && $level >= 4) {
             $style = 'dim';
         }
-        fprintf(STDERR, $this->formatter->format($msg , $style) . PHP_EOL);
+        fprintf(STDERR, $this->formatter->format($msg, $style) . PHP_EOL);
     }
 
     public function __call($method, $args)
@@ -203,9 +208,9 @@ class Logger
         }
         /* detect object */
         if (is_object($msg) || is_array($msg)) {
-            $this->writer->writeln($this->formatter->format(print_r($msg , 1), $style));
+            $this->writer->writeln($this->formatter->format(print_r($msg, 1), $style));
         } else {
-            $this->writer->writeln($this->formatter->format($msg , $style));
+            $this->writer->writeln($this->formatter->format($msg, $style));
         }
     }
 
@@ -216,7 +221,8 @@ class Logger
      *
      * @param string $format
      */
-    public function writef($format) {
+    public function writef($format)
+    {
         $args = func_get_args();
         $this->writer->write(call_user_func_array('sprintf', $args));
     }
@@ -224,7 +230,8 @@ class Logger
     /**
      * @param string $text text to write by `writer`
      */
-    public function write($text) {
+    public function write($text)
+    {
         $this->writer->write($text);
     }
 

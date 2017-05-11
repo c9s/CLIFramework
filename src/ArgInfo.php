@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework;
+
 use CLIFramework\ValueCollection;
 
 class ArgInfo
@@ -29,32 +30,38 @@ class ArgInfo
         }
     }
 
-    public function isa($isa) {
+    public function isa($isa)
+    {
         $this->isa = $isa;
         return $this;
     }
 
-    public function desc($desc) {
+    public function desc($desc)
+    {
         $this->desc = $desc;
         return $this;
     }
 
-    public function optional($optional = true) {
+    public function optional($optional = true)
+    {
         $this->optional = $optional;
         return $this;
     }
 
-    public function multiple($a = true) {
+    public function multiple($a = true)
+    {
         $this->multiple = $a;
         return $this;
     }
 
-    public function validValues($val) {
+    public function validValues($val)
+    {
         $this->validValues = $val;
         return $this;
     }
 
-    public function validator($cb) {
+    public function validator($cb)
+    {
         $this->validator = $cb;
         return $this;
     }
@@ -68,7 +75,8 @@ class ArgInfo
      *
      * If $value is string, the prefix "zsh:" will be translated into zsh function call.
      */
-    public function suggestions($values) {
+    public function suggestions($values)
+    {
         $this->suggestions = $values;
         return $this;
     }
@@ -77,13 +85,15 @@ class ArgInfo
     /**
      * Specify argument glob pattern
      */
-    public function glob($g) {
+    public function glob($g)
+    {
         $this->glob = $g;
         return $this;
     }
 
 
-    public function getSuggestions() {
+    public function getSuggestions()
+    {
         if ($this->suggestions) {
             if (is_callable($this->suggestions)) {
                 return call_user_func($this->suggestions);
@@ -93,7 +103,8 @@ class ArgInfo
     }
 
 
-    public function getValidValues() {
+    public function getValidValues()
+    {
         if ($this->validValues) {
             if (is_callable($this->validValues)) {
                 return call_user_func($this->validValues);
@@ -105,9 +116,10 @@ class ArgInfo
     /**
      * Test a value if it match the spec
      */
-    public function validate($value) {
+    public function validate($value)
+    {
         if ($this->isa) {
-            switch($this->isa) {
+            switch ($this->isa) {
             case "number":
                 return is_numeric($value);
             case "boolean":
@@ -119,7 +131,7 @@ class ArgInfo
         $validValues = $this->getValidValues();
         if ($validValues && $validValues instanceof ValueCollection) {
             return $validValues->containsValue($value);
-        } elseif ( is_array($validValues) ) {
+        } elseif (is_array($validValues)) {
             return in_array($value, $validValues);
         }
         if ($this->validator) {
@@ -127,7 +139,4 @@ class ArgInfo
         }
         return true;
     }
-
 }
-
-

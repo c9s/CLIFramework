@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Completion;
+
 use CLIFramework\Buffer;
 use CLIFramework\Application;
 use CLIFramework\ArgInfo;
@@ -9,32 +10,39 @@ use CLIFramework\Completion\Utils;
 use GetOptionKit\Option;
 use Exception;
 
-function indent($level) {
+function indent($level)
+{
     return str_repeat('  ', $level);
 }
 
-function str_indent($content, $level = 1) {
+function str_indent($content, $level = 1)
+{
     $space = str_repeat('  ', $level);
     $lines = explode("\n", $content);
-    $lines = array_map(function($line) use ($space) { return $space . $line; }, $lines);
+    $lines = array_map(function ($line) use ($space) {
+        return $space . $line;
+    }, $lines);
     return join("\n", $lines);
 }
 
-function array_indent(array $lines, $level = 1) {
+function array_indent(array $lines, $level = 1)
+{
     $space = str_repeat('  ', $level);
-    return array_map(function($line) use ($space) {
+    return array_map(function ($line) use ($space) {
         return $space . $line;
     }, $lines);
 }
 
-function join_indent(array $lines, $level = 1) {
-    return join("\n",array_indent($lines, $level));
+function join_indent(array $lines, $level = 1)
+{
+    return join("\n", array_indent($lines, $level));
 }
 
 /**
  * wrap zsh code with function
  */
-function zsh_comp_function($name, $code , $guard = false) {
+function zsh_comp_function($name, $code, $guard = false)
+{
     $buf = new Buffer;
     if ($guard) {
         $buf->appendLine("(( \$+functions[$name] )) ||");
@@ -47,7 +55,8 @@ function zsh_comp_function($name, $code , $guard = false) {
     return $buf;
 }
 
-function case_in($name, $code) {
+function case_in($name, $code)
+{
     return "case $name in\n"
         . str_indent($code, 1) . "\n"
         . "esac\n"
@@ -55,18 +64,20 @@ function case_in($name, $code) {
 }
 
 
-function case_case($pattern, $code) {
+function case_case($pattern, $code)
+{
     return "($pattern)\n"
         . str_indent($code, 1) . "\n"
         . ";;\n"
         ;
 }
 
-function zsh_comp_desc_array(array $array) {
+function zsh_comp_desc_array(array $array)
+{
     $out = new Buffer;
     $out->appendLine('(');
     $out->indent();
-    foreach($array as $item => $desc) {
+    foreach ($array as $item => $desc) {
         $out->appendLine("'" . addslashes("$item:$desc") . "'");
     }
     $out->unindent();
@@ -106,24 +117,27 @@ class ZshGenerator
     }
 
 
-    public function output() {
+    public function output()
+    {
         return $this->complete_application();
     }
 
-    public function visible_commands(array $cmds) {
+    public function visible_commands(array $cmds)
+    {
         $visible = array();
         foreach ($cmds as $name => $cmd) {
-            if (! preg_match('#^_#', $name) ) {
+            if (! preg_match('#^_#', $name)) {
                 $visible[$name] = $cmd;
             }
         }
         return $visible;
     }
 
-    public function command_desc_array(array $cmds) {
+    public function command_desc_array(array $cmds)
+    {
         $args = array();
-        foreach ( $cmds as $name => $cmd ) {
-            if ( preg_match('#^_#', $name) ) {
+        foreach ($cmds as $name => $cmd) {
+            if (preg_match('#^_#', $name)) {
                 continue;
             }
             $args[] = "$name:" . Utils::q($cmd->brief());
@@ -132,7 +146,8 @@ class ZshGenerator
     }
 
 
-    public function describe_commands(array $cmds, $level = 0) {
+    public function describe_commands(array $cmds, $level = 0)
+    {
         $buf = new Buffer;
         $buf->setIndent($level);
         $buf->appendLine("local commands; commands=(");
@@ -150,11 +165,11 @@ class ZshGenerator
     *
     *
     * Generate an zsh option format like this:
-   
+
     '(-v --invert-match)'{-v,--invert-match}'[invert match: select non-matching lines]'
-    
+
     Or:
-    
+
     '-gcflags[flags for 5g/6g/8g]:flags'
     '-p[number of parallel builds]:number'
 
@@ -163,7 +178,8 @@ class ZshGenerator
                                                                             strip\:"remove both whitespace and commentary lines"
                                                                             default\:"act as '\''strip'\'' if the message is to be edited and as '\''whitespace'\'' otherwise"))' \
     */
-    public function option_flag_item(Option $opt, $cmdSignature) {
+    public function option_flag_item(Option $opt, $cmdSignature)
+    {
         // TODO: Check conflict options
         $str = "";
 
@@ -176,22 +192,21 @@ class ZshGenerator
             }
             $str .= "{-" . $opt->short . ',' . '--' . $opt->long . $optspec . "}";
             $str .= "'";
-        } else if ($opt->long) {
+        } elseif ($opt->long) {
             $str .= "'--" . $opt->long . $optspec;
-        } else if ($opt->short) {
+        } elseif ($opt->short) {
             $str .= "'-" . $opt->short . $optspec;
         } else {
             throw new Exception('undefined option type');
         }
 
         // output description
-        $str .= "[" . addcslashes($opt->desc,'[]:') . "]";
+        $str .= "[" . addcslashes($opt->desc, '[]:') . "]";
 
         $placeholder = ($opt->valueName) ? $opt->valueName : $opt->isa ? $opt->isa : null;
 
         // has anything to complete
         if ($opt->validValues || $opt->suggestions || $opt->isa) {
-
             $str .= ':'; // for the value name
 
             if ($placeholder) {
@@ -200,23 +215,22 @@ class ZshGenerator
 
             if ($opt->validValues || $opt->suggestions) {
                 if ($opt->validValues) {
-                    if ( is_callable($opt->validValues) ) {
+                    if (is_callable($opt->validValues)) {
                         $str .= ':{' . join(' ', array($this->meta_command_name(), Utils::qq($placeholder), $cmdSignature, 'opt', $optName, 'valid-values')) . '}';
                     } elseif ($values = $opt->getValidValues()) {
                         // not callable, generate static array
                         $str .= ':(' . join(' ', Utils::array_qq($values)) . ')';
                     }
                 } elseif ($opt->suggestions) {
-                    if ( is_callable($opt->suggestions) ) {
-                        $str .= ':{' . join(' ', array($this->meta_command_name(), Utils::qq($placeholder), $cmdSignature, 'opt', $optName, 'suggestions') ) . '}';
+                    if (is_callable($opt->suggestions)) {
+                        $str .= ':{' . join(' ', array($this->meta_command_name(), Utils::qq($placeholder), $cmdSignature, 'opt', $optName, 'suggestions')) . '}';
                     } elseif ($values = $opt->getSuggestions()) {
                         // not callable, generate static array
                         $str .= ':(' . join(' ', Utils::array_qq($values)) . ')';
                     }
                 }
-
-            } elseif ( in_array($opt->isa, array('file', 'dir', 'path')) ) {
-                switch($opt->isa) {
+            } elseif (in_array($opt->isa, array('file', 'dir', 'path'))) {
+                switch ($opt->isa) {
                     case 'file':
                         $str .= ':_files';
                     break;
@@ -227,7 +241,7 @@ class ZshGenerator
                         $str .= ':_path_files';
                     break;
                 }
-                if ( isset($opt->glob) ) {
+                if (isset($opt->glob)) {
                     $str .= ' -g "' . $opt->glob . '"';
                 }
             }
@@ -244,7 +258,8 @@ class ZshGenerator
     *
     *  "*:args:{ _alternative ':importpaths:__go_list' ':files:_path_files -g \"*.go\"' }"
     */
-    public function command_args(CommandBase $cmd, $cmdSignature) {
+    public function command_args(CommandBase $cmd, $cmdSignature)
+    {
         $args = array();
         $arginfos = $cmd->getArgInfoList();
 
@@ -254,7 +269,7 @@ class ZshGenerator
         }
 
         $idx = 0;
-        foreach($arginfos as $a) {
+        foreach ($arginfos as $a) {
             $comp = '';
 
             if ($a->multiple) {
@@ -271,15 +286,15 @@ class ZshGenerator
                     } elseif ($values = $a->getValidValues()) {
                         $comp .= ':(' . join(" ", Utils::array_qq($values)) . ')';
                     }
-                } elseif ($a->suggestions ) {
+                } elseif ($a->suggestions) {
                     if (is_callable($a->suggestions)) {
                         $comp .= ':{' . join(' ', array($this->meta_command_name(), Utils::qq($a->name), $cmdSignature, 'arg', $idx, 'suggestions')) . '}';
                     } elseif ($values = $a->getSuggestions()) {
                         $comp .= ':(' . join(" ", Utils::array_qq($values)) . ')';
                     }
                 }
-            } elseif (in_array($a->isa,array('file','path','dir'))) {
-                switch($a->isa) {
+            } elseif (in_array($a->isa, array('file','path','dir'))) {
+                switch ($a->isa) {
                     case "file":
                         $comp .= ":_files";
                         break;
@@ -297,14 +312,15 @@ class ZshGenerator
             $args[] = Utils::q($comp);
             $idx++;
         }
-        return empty($args) ? NULL : $args;
+        return empty($args) ? null : $args;
     }
 
 
     /**
      * Complete commands with options and its arguments (without subcommands)
      */
-    public function complete_command_options_arguments(CommandBase $subcmd, $level = 1) {
+    public function complete_command_options_arguments(CommandBase $subcmd, $level = 1)
+    {
         $cmdSignature = $subcmd->getSignature();
 
 
@@ -314,17 +330,17 @@ class ZshGenerator
         $args  = $this->command_args($subcmd, $cmdSignature);
         $flags = $this->command_flags($subcmd, $cmdSignature);
 
-        if ( $flags || $args ) {
+        if ($flags || $args) {
             $buf->appendLine("_arguments -w -S -s \\");
             $buf->indent();
 
             if ($flags) {
-                foreach($flags as $line) {
+                foreach ($flags as $line) {
                     $buf->appendLine($line . " \\");
                 }
             }
             if ($args) {
-                foreach($args as $line) {
+                foreach ($args as $line) {
                     $buf->appendLine($line . " \\");
                 }
             }
@@ -334,9 +350,10 @@ class ZshGenerator
         return $buf->__toString();
     }
 
-    public function render_argument_completion_handler(ArgInfo $a) {
+    public function render_argument_completion_handler(ArgInfo $a)
+    {
         $comp = '';
-        switch($a->isa) {
+        switch ($a->isa) {
             case "file":
                 $comp .= "_files";
                 break;
@@ -355,12 +372,13 @@ class ZshGenerator
 
 
 
-    public function render_argument_completion_values(ArgInfo $a) {
+    public function render_argument_completion_values(ArgInfo $a)
+    {
         if ($a->validValues || $a->suggestions) {
             $values = array();
             if ($a->validValues) {
                 $values = $a->getValidValues();
-            } elseif ($a->suggestions ) {
+            } elseif ($a->suggestions) {
                 $values = $a->getSuggestions();
             }
             return join(" ", $values);
@@ -374,17 +392,18 @@ class ZshGenerator
     /**
      * complete argument cases
      */
-    public function command_args_case(CommandBase $cmd) {
+    public function command_args_case(CommandBase $cmd)
+    {
         $buf = new Buffer;
         $arginfos = $cmd->getArgInfoList();
         $buf->appendLine("case \$state in");
 
-        foreach($arginfos as $a) {
+        foreach ($arginfos as $a) {
             $buf->appendLine("({$a->name})");
 
             if ($a->validValues || $a->suggestions) {
                 $buf->appendLine("_values " . $this->render_argument_completion_values($a) . ' && ret=0');
-            } elseif (in_array($a->isa,array('file','path','dir'))) {
+            } elseif (in_array($a->isa, array('file','path','dir'))) {
                 $buf->appendLine($this->render_argument_completion_handler($a) . ' && ret=0');
             }
             $buf->appendLine(";;");
@@ -398,17 +417,18 @@ class ZshGenerator
      *
      * @return string[]
      */
-    public function command_flags(CommandBase $cmd, $cmdSignature) {
+    public function command_flags(CommandBase $cmd, $cmdSignature)
+    {
         $args = array();
         $specs = $cmd->getOptionCollection();
         /*
         '(- 1 *)--version[display version and copyright information]' \
         '(- 1 *)--help[print a short help statement]' \
         */
-        foreach ($specs->options as $opt ) {
+        foreach ($specs->options as $opt) {
             $args[] = $this->option_flag_item($opt, $cmdSignature);
         }
-        return empty($args) ? NULL : $args;
+        return empty($args) ? null : $args;
     }
 
 
@@ -419,16 +439,18 @@ class ZshGenerator
      *
      * @return string[]
      */
-    public function command_subcommand_states(CommandBase $cmd) {
+    public function command_subcommand_states(CommandBase $cmd)
+    {
         $args = array();
         $cmds = $this->visible_commands($cmd->getCommands());
-        foreach($cmds as $c) {
+        foreach ($cmds as $c) {
             $args[] = sprintf("'%s:->%s'", $c->getName(), $c->getName()); // generate argument states
         }
         return $args;
     }
 
-    public function commandmeta_function() {
+    public function commandmeta_function()
+    {
         $buf = new Buffer;
         $buf->indent();
         $buf->appendLine("local curcontext=\$curcontext state line ret=1");
@@ -447,7 +469,7 @@ class ZshGenerator
 
         $metaCommand = array($this->programName, 'meta', '--zsh', '$cmdsig', '$valtype', '$pos', '$completion');
 
-        $buf->appendLine('output=$(' . join(" ",$metaCommand) . ')');
+        $buf->appendLine('output=$(' . join(" ", $metaCommand) . ')');
 
         // zsh: split lines into array
         // lines=("${(@f)output}") ; echo ${lines[1]}
@@ -482,8 +504,9 @@ class ZshGenerator
         return zsh_comp_function($this->meta_command_name(), $buf);
     }
 
-    public function meta_command_name() {
-        return '__' . preg_replace('/\W/','_',$this->compName) . 'meta';
+    public function meta_command_name()
+    {
+        return '__' . preg_replace('/\W/', '_', $this->compName) . 'meta';
     }
 
 
@@ -493,7 +516,8 @@ class ZshGenerator
      * example/demo meta commit arg 1 valid-values
      * appName meta sub1.sub2.sub3 opt email valid-values
      */
-    public function commandmeta_callback_function(CommandBase $cmd) {
+    public function commandmeta_callback_function(CommandBase $cmd)
+    {
         $cmdSignature = $cmd->getSignature();
         
         
@@ -516,7 +540,7 @@ class ZshGenerator
         $buf->appendLine("local completion=\$5");
 
         $metaCommand = array($this->programName,'meta', $cmdSignature, '$valtype', '$pos', '$completion');
-        $buf->appendLine('$(' . join(" ",$metaCommand) . ')');
+        $buf->appendLine('$(' . join(" ", $metaCommand) . ')');
         $buf->appendLine('_values $desc ${=values} && ret=0'); // expand value array as arguments
         $buf->appendLine('return ret');
 
@@ -524,24 +548,26 @@ class ZshGenerator
         return zsh_comp_function($funcName, $buf);
     }
 
-    public function commandmeta_callback_functions(CommandBase $cmd) {
+    public function commandmeta_callback_functions(CommandBase $cmd)
+    {
         $cmdSignature = $cmd->getSignature();
         
 
 
         $buf = new Buffer;
         $subcmds = $this->visible_commands($cmd->getCommands());
-        foreach($subcmds as $subcmd) {
+        foreach ($subcmds as $subcmd) {
             $buf->append($this->commandmeta_callback_function($subcmd));
 
             if ($subcmd->hasCommands()) {
-                $buf->appendBuffer( $this->commandmeta_callback_functions($subcmd) );
+                $buf->appendBuffer($this->commandmeta_callback_functions($subcmd));
             }
         }
         return $buf;
     }
 
-    public function complete_application() {
+    public function complete_application()
+    {
         $buf = new Buffer;
         $buf->appendLines(array(
             "# {$this->programName} zsh completion script generated by CLIFramework",
@@ -551,7 +577,7 @@ class ZshGenerator
 
         $metaName = '_' . $this->programName . 'meta';
 
-        $buf->append( $this->commandmeta_function() );
+        $buf->append($this->commandmeta_function());
 
         $buf->appendLines(array(
             "{$this->compName}() {",
@@ -572,12 +598,14 @@ class ZshGenerator
      *
      * @param string $sig
      */
-    public function command_function_name($signature) {
-        return '__' . $this->compName . '_' . preg_replace('#\W#','_', $signature);
+    public function command_function_name($signature)
+    {
+        return '__' . $this->compName . '_' . preg_replace('#\W#', '_', $signature);
     }
 
 
-    public function complete_with_subcommands(CommandBase $cmd, $level = 1) {
+    public function complete_with_subcommands(CommandBase $cmd, $level = 1)
+    {
         $cmdSignature = $cmd->getSignature();
 
         $buf = new Buffer;
@@ -638,5 +666,3 @@ class ZshGenerator
         return $buf->__toString();
     }
 }
-
-

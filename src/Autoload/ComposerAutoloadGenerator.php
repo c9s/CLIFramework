@@ -149,7 +149,7 @@ class ComposerAutoloadGenerator
     }
 
     /**
-     * Prepend a prefix for the structure in 'autoload' property. 
+     * Prepend a prefix for the structure in 'autoload' property.
      * e.g., { 'psr-0': ... 'psr-4': ...  }.
      */
     public function prependAutoloadPathPrefix(array $autoloads, $prefix)

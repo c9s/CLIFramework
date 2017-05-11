@@ -21,4 +21,3 @@ class CompactTableStyle extends TableStyle
 
     public $rowSeparatorRightmostCrossChar = '-';
 }
-

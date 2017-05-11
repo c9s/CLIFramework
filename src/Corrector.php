@@ -28,12 +28,14 @@ class Corrector
      * @param string $input user's input
      * @return string corrected input
      */
-    public function correct($input) {
+    public function correct($input)
+    {
         $guess = $this->match($input);
-        if ($guess === $input)
+        if ($guess === $input) {
             return $guess;
-        else
+        } else {
             return $this->askForGuess($guess) ? $guess : $input;
+        }
     }
 
     /**
@@ -44,8 +46,9 @@ class Corrector
      */
     public function match($input)
     {
-        if (empty($this->possibleTokens))
+        if (empty($this->possibleTokens)) {
             return $input;
+        }
 
         $bestSimilarity = -1;
         $bestGuess = $input;
@@ -65,5 +68,4 @@ class Corrector
         $answer = $prompter->ask("Did you mean '$guess'?", array('Y','n'), 'Y');
         return !$answer || strtolower($answer) == 'y';
     }
-
 }

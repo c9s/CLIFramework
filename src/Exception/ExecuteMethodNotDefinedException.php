@@ -1,10 +1,8 @@
 <?php
 namespace CLIFramework\Exception;
+
 use Exception;
 
-class ExecuteMethodNotDefinedException extends CommandBaseException { }
-
-
-
-
-
+class ExecuteMethodNotDefinedException extends CommandBaseException
+{
+}

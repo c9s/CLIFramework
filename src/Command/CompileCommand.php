@@ -22,7 +22,7 @@ class CompileCommand extends Command
 {
     public function options($opts)
     {
-        // optional classloader script (use Universal ClassLoader by default 
+        // optional classloader script (use Universal ClassLoader by default
         $opts->add('classloader?', 'embed classloader source file');
 
         // append executable (bootstrap scripts, if it's not defined, it's just a library phar file.

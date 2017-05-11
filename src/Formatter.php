@@ -97,12 +97,12 @@ class Formatter
         $this->supportsColors = false;
     }
 
-    public function addStyle( $name, $style )
+    public function addStyle($name, $style)
     {
         $this->styles[ $name ] = $style;
     }
 
-    public function hasStyle( $name )
+    public function hasStyle($name)
     {
         return isset($this->styles[ $name ]);
     }

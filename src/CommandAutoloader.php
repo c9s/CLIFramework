@@ -32,8 +32,9 @@ class CommandAutoloader
      */
     public function autoload($path = null)
     {
-        if (is_null($path))
+        if (is_null($path)) {
             $path = $this->getCurrentCommandDirectory();
+        }
         $commands = $this->scanCommandsInPath($path);
         $this->addCommandsForParent($commands);
     }
@@ -57,8 +58,9 @@ class CommandAutoloader
     
     private function scanCommandsInPath($path)
     {
-        if (!is_dir($path))
+        if (!is_dir($path)) {
             return array();
+        }
         $files = scandir($path);
         return $this->translateFileNamesToCommands($files);
     }
@@ -71,7 +73,9 @@ class CommandAutoloader
         );
         return array_filter(
             $commands,
-            function ($command) { return $command !== false; }
+            function ($command) {
+                return $command !== false;
+            }
         );
     }
 
@@ -88,7 +92,8 @@ class CommandAutoloader
 
     private function addCommandsForParent($commands)
     {
-        foreach ($commands as $command)
+        foreach ($commands as $command) {
             $this->parent->addCommand($command);
+        }
     }
 }

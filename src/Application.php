@@ -9,6 +9,7 @@
  *
  */
 namespace CLIFramework;
+
 use GetOptionKit\ContinuousOptionParser;
 use GetOptionKit\OptionCollection;
 
@@ -34,8 +35,7 @@ use ReflectionClass;
 use InvalidArgumentException;
 use BadMethodCallException;
 
-class Application extends CommandBase
-    implements CommandInterface
+class Application extends CommandBase implements CommandInterface
 {
     const CORE_VERSION = '3.0.0';
     const VERSION = "3.0.0";
@@ -121,8 +121,8 @@ class Application extends CommandBase
         // get current class namespace, add {App}\Command\ to loader
         $appRefClass = new ReflectionClass($this);
         $appNs = $appRefClass->getNamespaceName();
-        $this->loader->addNamespace( '\\' . $appNs . '\\Command' );
-        $this->loader->addNamespace( array('\\CLIFramework\\Command' ));
+        $this->loader->addNamespace('\\' . $appNs . '\\Command');
+        $this->loader->addNamespace(array('\\CLIFramework\\Command' ));
 
         $this->supportReadline = extension_loaded('readline');
     }
@@ -167,7 +167,8 @@ class Application extends CommandBase
      *
      * @return string classname
      */
-    public function getCurrentAppNamespace() {
+    public function getCurrentAppNamespace()
+    {
         $refClass = new ReflectionClass($this);
         return $refClass->getNamespaceName();
     }
@@ -190,22 +191,22 @@ class Application extends CommandBase
      */
     public function options($opts)
     {
-        $opts->add('v|verbose','Print verbose message.');
-        $opts->add('d|debug'  ,'Print debug message.');
-        $opts->add('q|quiet'  ,'Be quiet.');
-        $opts->add('h|help'   ,'Show help.');
-        $opts->add('version'  ,'Show version.');
+        $opts->add('v|verbose', 'Print verbose message.');
+        $opts->add('d|debug', 'Print debug message.');
+        $opts->add('q|quiet', 'Be quiet.');
+        $opts->add('h|help', 'Show help.');
+        $opts->add('version', 'Show version.');
 
-        $opts->add('p|profile','Display timing and memory usage information.');
+        $opts->add('p|profile', 'Display timing and memory usage information.');
         $opts->add('log-path?', 'The path of a log file.');
         // Un-implemented options
-        $opts->add('no-interact','Do not ask any interactive question.');
+        $opts->add('no-interact', 'Do not ask any interactive question.');
         // $opts->add('no-ansi', 'Disable ANSI output.');
     }
 
-    public function topics(array $topics) 
+    public function topics(array $topics)
     {
-        foreach($topics as $key => $val) {
+        foreach ($topics as $key => $val) {
             if (is_numeric($key)) {
                 $this->topics[$val] = $this->loadTopic($val);
             } else {
@@ -214,19 +215,19 @@ class Application extends CommandBase
         }
     }
 
-    public function topic($topicId, $topicClass = null) 
+    public function topic($topicId, $topicClass = null)
     {
         $this->topics[$topicId] = $topicClass ? new $topicClass: $this->loadTopic($topicId);
     }
 
-    public function getTopic($topicId) 
+    public function getTopic($topicId)
     {
         if (isset($this->topics[$topicId])) {
             return $this->topics[$topicId];
         }
     }
 
-    public function loadTopic($topicId) 
+    public function loadTopic($topicId)
     {
         // existing class name or full-qualified class name
         if (class_exists($topicId, true)) {
@@ -238,7 +239,7 @@ class Application extends CommandBase
             $className = ucfirst($topicId);
         }
         $possibleNs = array($this->getCurrentAppNamespace(), 'CLIFramework');
-        foreach($possibleNs as $ns) {
+        foreach ($possibleNs as $ns) {
             $class = $ns . '\\' . 'Topic' . '\\' . $className;
             if (class_exists($class, true)) {
                 return new $class;
@@ -256,7 +257,7 @@ class Application extends CommandBase
     {
         // $this->addCommand('list','CLIFramework\\Command\\ListCommand');
         parent::init();
-        $this->command('help','CLIFramework\\Command\\HelpCommand');
+        $this->command('help', 'CLIFramework\\Command\\HelpCommand');
         $this->commandGroup("Development Commands", array(
             'zsh'                 => 'CLIFramework\\Command\\ZshCompletionCommand',
             'bash'                => 'CLIFramework\\Command\\BashCompletionCommand',
@@ -280,27 +281,24 @@ class Application extends CommandBase
         try {
             return $this->run($argv);
         } catch (CommandArgumentNotEnoughException $e) {
-            $this->logger->error( $e->getMessage() );
+            $this->logger->error($e->getMessage());
             $this->logger->writeln("Expected argument prototypes:");
-            foreach($e->getCommand()->getAllCommandPrototype() as $p) {
+            foreach ($e->getCommand()->getAllCommandPrototype() as $p) {
                 $this->logger->writeln("\t" . $p);
             }
             $this->logger->newline();
         } catch (CommandNotFoundException $e) {
-            $this->logger->error( $e->getMessage() . " available commands are: " . join(', ', $e->getCommand()->getVisibleCommandList())  );
+            $this->logger->error($e->getMessage() . " available commands are: " . join(', ', $e->getCommand()->getVisibleCommandList()));
             $this->logger->newline();
 
             $this->logger->writeln("Please try the command below to see the details:");
             $this->logger->newline();
-            $this->logger->writeln("\t" . $this->getProgramName() . ' help ' );
+            $this->logger->writeln("\t" . $this->getProgramName() . ' help ');
             $this->logger->newline();
         } catch (BadMethodCallException $e) {
-
             $this->logger->error($e->getMessage());
             $this->logger->error("Seems like an application logic error, please contact the developer.");
-
         } catch (Exception $e) {
-
             if ($this->options && $this->options->debug) {
                 $printer = new DevelopmentExceptionPrinter($this->getLogger());
                 $printer->dump($e);
@@ -322,7 +320,7 @@ class Application extends CommandBase
      * @return bool return true for success, false for failure. the returned
      *              state will be reflected to the exit code of the process.
      * */
-    public function run(Array $argv)
+    public function run(array $argv)
     {
         $this->setProgramName($argv[0]);
 
@@ -330,7 +328,7 @@ class Application extends CommandBase
 
         // init application,
         // before parsing options, we have to known the registered commands.
-        $currentCmd->_init();
+        $currentCmd->init();
 
         // use getoption kit to parse application options
         $getopt = new ContinuousOptionParser($currentCmd->optionSpecs);
@@ -343,7 +341,7 @@ class Application extends CommandBase
         //                  |->> parser
         //
         //
-        $appOptions = $getopt->parse( $argv );
+        $appOptions = $getopt->parse($argv);
         $currentCmd->setOptions($appOptions);
         if (false === $currentCmd->prepare()) {
             return false;
@@ -362,8 +360,8 @@ class Application extends CommandBase
             if ($currentCmd->hasCommands()) {
                 $a = $getopt->getCurrentArgument();
 
-                if (!$currentCmd->hasCommand($a) ) {
-                    if (!$appOptions->noInteract && ($guess = $currentCmd->guessCommand($a)) !== NULL) {
+                if (!$currentCmd->hasCommand($a)) {
+                    if (!$appOptions->noInteract && ($guess = $currentCmd->guessCommand($a)) !== null) {
                         $a = $guess;
                     } else {
                         throw new CommandNotFoundException($currentCmd, $a);
@@ -379,7 +377,6 @@ class Application extends CommandBase
                 // parse option result for command.
                 $currentCmd->setOptions($getopt->continueParse());
                 $command_stack[] = $currentCmd; // save command object into the stack
-
             } else {
                 $r = $getopt->continueParse();
                 if (count($r)) {
@@ -398,16 +395,16 @@ class Application extends CommandBase
         }
 
         // get last command and run
-        if ( $last_cmd = array_pop( $command_stack ) ) {
-            $return = $last_cmd->executeWrapper( $arguments );
+        if ($last_cmd = array_pop($command_stack)) {
+            $return = $last_cmd->executeWrapper($arguments);
             $last_cmd->finish();
-            while ( $cmd = array_pop( $command_stack ) ) {
+            while ($cmd = array_pop($command_stack)) {
                 // call finish stage.. of every command.
                 $cmd->finish();
             }
         } else {
             // no command specified.
-            return $this->executeWrapper( $arguments );
+            return $this->executeWrapper($arguments);
         }
         $currentCmd->finish();
         $this->finish();
@@ -425,29 +422,26 @@ class Application extends CommandBase
         $config = $this->getGlobalConfig();
 
         if ($options->debug || $options->verbose || $options->quiet) {
-
             if ($options->debug) {
                 $this->getLogger()->setDebug();
-            } else if ($options->verbose) {
+            } elseif ($options->verbose) {
                 $this->getLogger()->setVerbose();
-            } else if ($options->quiet) {
+            } elseif ($options->quiet) {
                 $this->getLogger()->setLevel(2);
             }
-
         } else {
-
             if ($config->isDebug()) {
                 $this->getLogger()->setDebug();
-            } else if ($config->isVerbose()) {
+            } elseif ($config->isVerbose()) {
                 $this->getLogger()->setVerbose();
             }
-
         }
 
         return true;
     }
 
-    public function finish() {
+    public function finish()
+    {
         if ($this->options->profile) {
             $this->logger->info(
                 sprintf('Memory usage: %.2fMB (peak: %.2fMB), time: %.4fs',
@@ -461,38 +455,40 @@ class Application extends CommandBase
 
     public function getCoreVersion()
     {
-        if ( defined('static::core_version') ) {
+        if (defined('static::core_version')) {
             return static::core_version;
         }
-        if ( defined('static::CORE_VERSION') ) {
+        if (defined('static::CORE_VERSION')) {
             return static::CORE_VERSION;
         }
     }
 
     public function getVersion()
     {
-        if ( defined('static::VERSION') ) {
+        if (defined('static::VERSION')) {
             return static::VERSION;
         }
-        if ( defined('static::version') ) {
+        if (defined('static::version')) {
             return static::version;
         }
     }
 
-    public function setProgramName($programName) {
+    public function setProgramName($programName)
+    {
         $this->programName = $programName;
     }
 
-    public function getProgramName() {
+    public function getProgramName()
+    {
         return $this->programName;
     }
 
     public function getName()
     {
-        if ( defined('static::NAME') ) {
+        if (defined('static::NAME')) {
             return static::NAME;
         }
-        if ( defined('static::name') ) {
+        if (defined('static::name')) {
             return static::name;
         }
     }
@@ -543,7 +539,7 @@ class Application extends CommandBase
     /**
      * A quick helper for accessing service
      */
-    public function __get($name) 
+    public function __get($name)
     {
         if (isset($this->serviceContainer[$name])) {
             return $this->serviceContainer[$name];
@@ -554,10 +550,9 @@ class Application extends CommandBase
     public static function getInstance()
     {
         static $app;
-        if( $app )
+        if ($app) {
             return $app;
+        }
         return $app = new static;
     }
-    
-
 }

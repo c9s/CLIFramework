@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Component\Progress;
+
 use Exception;
 use CLIFramework\Formatter;
 use CLIFramework\ConsoleInfo\EnvConsoleInfo;
@@ -95,7 +96,7 @@ class ProgressBar implements ProgressReporter
         $trigger = $finished % 3;
 
         if ($trigger) {
-            $this->etaTime = date('H:i',ETACalculator::calculateEstimatedTime($finished, $total, $this->start, microtime(true)));
+            $this->etaTime = date('H:i', ETACalculator::calculateEstimatedTime($finished, $total, $this->start, microtime(true)));
             $this->etaPeriod = ETACalculator::calculateEstimatedPeriod($finished, $total, $this->start, microtime(true));
         }
         $desc = str_replace([
@@ -109,9 +110,9 @@ class ProgressBar implements ProgressReporter
             'ETA: ' . $this->etaPeriod,
         ], $this->descFormat);
 
-        $barSize = $this->terminalWidth 
-            - mb_strlen($desc) 
-            - mb_strlen($this->leftDecorator) 
+        $barSize = $this->terminalWidth
+            - mb_strlen($desc)
+            - mb_strlen($this->leftDecorator)
             - mb_strlen($this->rightDecorator)
             - mb_strlen($this->columnDecorator)
             ;
@@ -123,12 +124,12 @@ class ProgressBar implements ProgressReporter
         $sharps = ceil($barSize * $percentage);
 
         fwrite($this->stream, "\r"
-            . ( $this->title ? $this->title . $this->columnDecorator : "")
+            . ($this->title ? $this->title . $this->columnDecorator : "")
             . Colors::decorate($this->leftDecorator, $trigger ? 'purple' : 'light_purple')
             . Colors::decorate(str_repeat($this->barCharacter, $sharps), $trigger ? 'purple' : 'light_purple')
-            . str_repeat(' ', max($barSize - $sharps,0))
+            . str_repeat(' ', max($barSize - $sharps, 0))
             . Colors::decorate($this->rightDecorator, $trigger ? 'purple' : 'light_purple')
-            . $this->columnDecorator 
+            . $this->columnDecorator
             . Colors::decorate($desc, $trigger ? 'light_gray' : 'white')
             );
 
@@ -146,6 +147,4 @@ class ProgressBar implements ProgressReporter
         }
         fwrite($this->stream, PHP_EOL);
     }
-
 }
-

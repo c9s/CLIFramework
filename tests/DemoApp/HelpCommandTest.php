@@ -5,7 +5,7 @@ use CLIFramework\Testing\CommandTestCase;
 class HelpCommandTest extends CommandTestCase
 {
 
-    public function setupApplication() {
+    public static function setupApplication() {
         return new \DemoApp\Application;
     }
 

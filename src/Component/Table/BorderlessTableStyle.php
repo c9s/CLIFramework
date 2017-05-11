@@ -21,4 +21,3 @@ class BorderlessTableStyle extends TableStyle
 
     public $rowSeparatorRightmostCrossChar = ' ';
 }
-

@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\PharKit;
+
 use CodeGen\Renderable;
 
 class PharURI implements Renderable
@@ -39,9 +40,4 @@ class PharURI implements Renderable
         // $stmt = new RequireStatement("phar://$pharFile/" . $localPath);
         return var_export('phar://' . $this->alias . '/' . $this->localPath, true);
     }
-
 }
-
-
-
-

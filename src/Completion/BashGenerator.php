@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Completion;
+
 use CLIFramework\Buffer;
 use Exception;
 use CLIFramework\Application;
@@ -11,10 +12,11 @@ use CLIFramework\CommandBase;
  *
  * @see https://devmanual.gentoo.org/tasks-reference/completion/index.html
  */
-function array_to_bash(array $array) {
+function array_to_bash(array $array)
+{
     $out = '(';
-    foreach($array as $key => $value) {
-        $out .= '["' . addcslashes($key, '"') . '"]="' . addcslashes($value,'"') . '"';
+    foreach ($array as $key => $value) {
+        $out .= '["' . addcslashes($key, '"') . '"]="' . addcslashes($value, '"') . '"';
         $out .= ' ';
     }
     $out .= ')';
@@ -26,17 +28,18 @@ function set_bash_array($name, array $array)
     return $name . '=' . array_to_bash($array);
 }
 
-function set_bash_var($name, $value) 
+function set_bash_var($name, $value)
 {
     return $name . '=' . $value;
 }
 
-function local_bash_var($name, $value) 
+function local_bash_var($name, $value)
 {
     return 'local ' . $name . '=' . $value;
 }
 
-function command_signature_suffix(CommandBase $command) {
+function command_signature_suffix(CommandBase $command)
+{
     return $command->getSignature();
     // return str_replace('.','_', $command->getSignature());
 }
@@ -71,26 +74,29 @@ class BashGenerator
         $this->buffer = new Buffer;
     }
 
-    public function output() {
+    public function output()
+    {
         return $this->complete_application();
     }
 
-    public function visible_commands(array $cmds) {
+    public function visible_commands(array $cmds)
+    {
         $visible = array();
         foreach ($cmds as $name => $cmd) {
-            if ( ! preg_match('#^_#', $name) ) {
+            if (! preg_match('#^_#', $name)) {
                 $visible[$name] = $cmd;
             }
         }
         return $visible;
     }
 
-    public function render_argument_completion_values(ArgInfo $a) {
+    public function render_argument_completion_values(ArgInfo $a)
+    {
         if ($a->validValues || $a->suggestions) {
             $values = array();
             if ($a->validValues) {
                 $values = $a->getValidValues();
-            } elseif ($a->suggestions ) {
+            } elseif ($a->suggestions) {
                 $values = $a->getSuggestions();
             }
             return join(" ", $values);
@@ -98,7 +104,8 @@ class BashGenerator
         return '';
     }
 
-    public function complete_application() {
+    public function complete_application()
+    {
         $bindName = $this->bindName;
         $compName = $this->compName;
 
@@ -296,7 +303,7 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         $funcSuffix = command_signature_suffix($cmd);
         $buf->appendLine("{$compPrefix}_complete_{$funcSuffix} ()");
         $buf->appendLine("{");
-        $buf->appendLine(local_bash_var('comp_prefix',$compPrefix));
+        $buf->appendLine(local_bash_var('comp_prefix', $compPrefix));
         $buf->append('
         local cur words cword prev
         _get_comp_words_by_ref -n =: cur words cword prev
@@ -329,8 +336,8 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         $commandOptionMap = array();
         $commandOptionRequireValueMap = array();
         $commandSignMap = array();
-        foreach($subcommands as $subcommand) {
-            foreach( $subcommand->aliases() as $alias) {
+        foreach ($subcommands as $subcommand) {
+            foreach ($subcommand->aliases() as $alias) {
                 $subcommandAliasMap[$alias] = $subcommand->getName();
             }
             $subcommandDescMap[ $subcommand->getName() ] = $subcommand->brief();
@@ -343,8 +350,8 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         //      subcommands=(["add"]="command to add" ["commit"]="command to commit")
         //      subcommand_alias=(["a"]="add" ["c"]="commit")
         //
-        $buf->appendLine(set_bash_array('subcommands',$subcommandDescMap));
-        $buf->appendLine(set_bash_array('subcommand_alias',$subcommandAliasMap));
+        $buf->appendLine(set_bash_array('subcommands', $subcommandDescMap));
+        $buf->appendLine(set_bash_array('subcommand_alias', $subcommandAliasMap));
         $buf->appendLine(set_bash_array('subcommand_signs', $commandSignMap));
 
         // Generate the bash array for command options
@@ -352,7 +359,7 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         //      options=(["--debug"]=1 ["--verbose"]=1 ["--log-dir"]=1)
         //
         $options = $cmd->getOptionCollection();
-        foreach($options as $option) {
+        foreach ($options as $option) {
             if ($option->short) {
                 $commandOptionMap[ '-' . $option->short ] = 1;
             }
@@ -361,15 +368,15 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
             }
 
             if ($option->required || $option->multiple) {
-                if ($option->short ) {
+                if ($option->short) {
                     $commandOptionRequireValueMap[ '-' . $option->short ] = 1;
                 }
-                if ($option->long ) {
+                if ($option->long) {
                     $commandOptionRequireValueMap[ '--' . $option->long ] = 1;
                 }
             }
         }
-        $buf->appendLine(set_bash_array('options',$commandOptionMap));
+        $buf->appendLine(set_bash_array('options', $commandOptionMap));
 
         //  options_require_value=(["--log-dir"]="__complete_directory")
         $buf->appendLine(set_bash_array('options_require_value', $commandOptionRequireValueMap));
@@ -462,7 +469,7 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
 
             // expand the argument case
             $buf->appendLine('  case $argument_index in');
-            foreach($argInfos as $index => $a) {
+            foreach ($argInfos as $index => $a) {
                 // TODO: when $a->multiple is enabled, we will use "*" for the case pattern.
                 $pattern = $index;
                 if ($a->multiple) {
@@ -477,7 +484,7 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
                             $buf->appendLine("      __complete_meta \"\$command_signature\" \"arg\" $index \"valid-values\"");
                             $buf->appendLine('      return');
                         } elseif ($values = $a->getValidValues()) {
-                            $buf->appendLine('      COMPREPLY=( $(compgen -W "' . join("\n",$values) . '" -- $cur) )');
+                            $buf->appendLine('      COMPREPLY=( $(compgen -W "' . join("\n", $values) . '" -- $cur) )');
                             $buf->appendLine('      return');
                         }
                     } elseif ($a->suggestions) {
@@ -489,9 +496,9 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
                             $buf->appendLine('      return');
                         }
                     }
-                } elseif (in_array($a->isa,array('file','path','dir'))) {
+                } elseif (in_array($a->isa, array('file','path','dir'))) {
                     $compopt = '';
-                    switch($a->isa) {
+                    switch ($a->isa) {
                         case "file":
                             $compopt .= ' -A file';
                             // $buf->appendLine('COMPREPLY=($(compgen -A file -- $cur))');
@@ -568,8 +575,9 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
     }
 
 
-    public function generateCommandCompletionRecursively(Buffer $buf, $command, $compPrefix) {
-        foreach($command->getCommands() as $subcommand) {
+    public function generateCommandCompletionRecursively(Buffer $buf, $command, $compPrefix)
+    {
+        foreach ($command->getCommands() as $subcommand) {
             if ($subcommand->hasCommands()) {
                 $this->generateCommandCompletionRecursively($buf, $subcommand, $compPrefix);
             }
@@ -577,11 +585,4 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         }
         $this->generateCompleteFunction($buf, $command, $compPrefix);
     }
-
-
-
-
-
 }
-
-

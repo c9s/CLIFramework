@@ -89,7 +89,7 @@ class BuildGitHubWikiTopicsCommand extends Command
                 // $topicId = strtolower(preg_replace(array('/.md$/'),array(''),$file->getFileName()));
 
                 // The readable topic title
-                // TODO: Support non-ascii characters 
+                // TODO: Support non-ascii characters
                 $entryName = preg_replace('/.md$/', '', $file->getFileName());
                 $entryNameNonEnChars = trim(preg_replace('/[^a-zA-Z0-9-\s]/', '', $entryName));
                 $topicClassName = implode('', array_map('ucfirst', explode('-', str_replace(' ', '', $entryNameNonEnChars)))).'Topic';
@@ -105,7 +105,7 @@ class BuildGitHubWikiTopicsCommand extends Command
                     'template' => 'Class.php.twig',
                 ));
 
-                $cTemplate->addProperty('id',  $topicId);
+                $cTemplate->addProperty('id', $topicId);
                 $cTemplate->addProperty('url', $topicRemoteUrl);
                 $cTemplate->addProperty('title', $topicTitle);
 

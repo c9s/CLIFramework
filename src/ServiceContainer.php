@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework;
+
 use Pimple\Container;
 use CLIFramework\Logger;
 use CLIFramework\CommandLoader;
@@ -10,7 +11,6 @@ use CLIFramework\IO\UnixStty;
 use CLIFramework\IO\ReadlineConsole;
 use CLIFramework\IO\StandardConsole;
 use Universal\Event\PhpEvent;
-
 
 /**
  *
@@ -32,8 +32,7 @@ class ServiceContainer extends Container
     public function __construct()
     {
         $that = $this;
-        $this['config.path'] = function($c) {
-
+        $this['config.path'] = function ($c) {
             $filename = 'cliframework.ini';
             $configAtCurrentDirectory = getcwd() . DIRECTORY_SEPARATOR . $filename;
             $configAtHomeDirectory = getenv('HOME') . DIRECTORY_SEPARATOR . $filename;
@@ -48,41 +47,41 @@ class ServiceContainer extends Container
             return null;
         };
 
-        $this['event'] = function() {
+        $this['event'] = function () {
             return new PhpEvent;
         };
 
-        $this['config'] = function($c) {
+        $this['config'] = function ($c) {
             if (empty($c['config.path']) || !$c['config.path']) {
                 return new GlobalConfig(array());
             }
             return new GlobalConfig(parse_ini_file($c['config.path'], true));
         };
-        $this['writer'] = function($c) {
+        $this['writer'] = function ($c) {
             // TODO: When command failed, we should write these messages to stderr instead of stdout
             $output = fopen("php://output", "w");
             return new StreamWriter($output);
         };
-        $this['logger'] = function($c) use ($that) {
+        $this['logger'] = function ($c) use ($that) {
             return new Logger($that);
         };
-        $this['formatter'] = function($c) {
+        $this['formatter'] = function ($c) {
             return new Formatter;
         };
-        $this['console.stty'] = function($c) use ($that){
+        $this['console.stty'] = function ($c) use ($that) {
             if ($that->isWindows()) {
                 // TODO support Windows
                 return new NullStty();
             }
             return new UnixStty();
         };
-        $this['console'] = function($c) {
+        $this['console'] = function ($c) {
             if (ReadlineConsole::isAvailable()) {
                 return new ReadlineConsole($c['console.stty']);
             }
             return new StandardConsole($c['console.stty']);
         };
-        $this['command_loader'] = function($c) {
+        $this['command_loader'] = function ($c) {
             return CommandLoader::getInstance();
         };
         parent::__construct();
@@ -93,7 +92,7 @@ class ServiceContainer extends Container
         return preg_match('/^Win/', PHP_OS);
     }
 
-    static public function getInstance()
+    public static function getInstance()
     {
         static $instance;
 
@@ -104,5 +103,3 @@ class ServiceContainer extends Container
         return $instance;
     }
 }
-
-

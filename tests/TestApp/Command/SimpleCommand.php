@@ -16,6 +16,11 @@ class SimpleCommand extends Command
 HELP;
     }
 
+    public function arguments($args)
+    {
+        $args->add('var');
+    }
+
     public function execute($var)
     {
         return $var;

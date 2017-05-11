@@ -11,7 +11,6 @@ class LineIndicator
 
     public function __construct()
     {
-
     }
 
     /**
@@ -33,9 +32,9 @@ class LineIndicator
 
         $output = [];
         $output[] = "$file @ line " . join(',', (array) $line);
-        $output[] = str_repeat('=', strlen($output[0]) );
-        foreach($indexRange as $index) {
-            if ((is_integer($line) && $index + 1 == $line) ||  (is_array($line) && in_array($index + 1, $line) ) ) {
+        $output[] = str_repeat('=', strlen($output[0]));
+        foreach ($indexRange as $index) {
+            if ((is_integer($line) && $index + 1 == $line) ||  (is_array($line) && in_array($index + 1, $line))) {
                 $output[] = sprintf($this->indicatedLineFormat, $index + 1, rtrim($lines[$index]));
             } else {
                 $output[] = sprintf($this->contextLineFormat, $index + 1, rtrim($lines[$index]));
@@ -44,8 +43,3 @@ class LineIndicator
         return join(PHP_EOL, $output) . PHP_EOL;
     }
 }
-
-
-
-
-

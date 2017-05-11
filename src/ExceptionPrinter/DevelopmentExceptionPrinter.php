@@ -1,49 +1,47 @@
 <?php
 namespace CLIFramework\ExceptionPrinter;
+
 use Exception;
 use CLIFramework\ServiceContainer;
 use CLIFramework\Logger;
 
-function is_assoc_array(array $a) {
+function is_assoc_array(array $a)
+{
     return ! is_indexed_array($a);
 }
 
-function is_indexed_array(array $a) {
+function is_indexed_array(array $a)
+{
     $keys = array_keys($a);
     $indexes = array_filter($keys, 'is_numeric');
-    return count($indexes) ? True : False;
+    return count($indexes) ? true : false;
 }
 
-function output_var($a) {
+function output_var($a)
+{
     if (is_array($a)) {
         if (is_indexed_array($a)) {
             $out = array();
             foreach ($a as $i) {
                 $out[] = output_var($i);
             }
-            return '[' . join(', ',$out) . ']';
+            return '[' . join(', ', $out) . ']';
         } else {
-
             $out = '[';
             foreach ($a as $k => $i) {
                 $out .= $k . ' => ' . output_var($i);
             }
             $out .= ']';
             return $out;
-
         }
-    } else if (is_scalar($a)) {
-
+    } elseif (is_scalar($a)) {
         return var_export($a, true);
-
-    } else if (is_object($a)) {
-
+    } elseif (is_object($a)) {
         if (method_exists($a, '__toString')) {
             return $a->__toString();
         } else {
             return get_class($a);
         }
-
     } else {
         return '...';
     }
@@ -72,7 +70,7 @@ class DevelopmentExceptionPrinter
         }
 
         $desc = array();
-        foreach($args as $a) {
+        foreach ($args as $a) {
             $desc[] = output_var($a);
         }
         return join(', ', $desc);
@@ -82,7 +80,7 @@ class DevelopmentExceptionPrinter
     {
         $this->logger->info("Trace:\n");
         $trace = $e->getTrace();
-        foreach($trace as $idx => $entry) {
+        foreach ($trace as $idx => $entry) {
             $argDesc = $this->dumpArgs($entry['args']);
             $this->logger->info(sprintf("    %d) %s%s%s(%s)", $idx, @$entry['class'], @$entry['type'], $entry['function'], $argDesc));
         }
@@ -93,8 +91,7 @@ class DevelopmentExceptionPrinter
     {
         $this->logger->info("Trace:\n");
         $trace = $e->getTrace();
-        foreach($trace as $idx => $entry) {
-
+        foreach ($trace as $idx => $entry) {
             $argDesc = $this->dumpArgs($entry['args']);
 
             $this->logger->info(sprintf("    %d) %s%s%s(%s)", $idx, @$entry['class'], @$entry['type'], $entry['function'], $argDesc));
@@ -112,7 +109,7 @@ class DevelopmentExceptionPrinter
 
         $lines = file($file);
         $indexRange = range(max($line - 4, 0), min($line + 3, count($lines)));
-        foreach($indexRange as $index) {
+        foreach ($indexRange as $index) {
             if ($index == ($line - 1)) {
                 $this->logger->warn(sprintf("> % 3d", $index + 1) . rtrim($lines[$index]));
             } else {
@@ -141,14 +138,10 @@ class DevelopmentExceptionPrinter
         }
     }
 
-    public function dump(Exception $e) 
+    public function dump(Exception $e)
     {
         $this->dumpBrief($e);
         $this->dumpCodeBlock($e);
         $this->dumpTrace($e);
     }
 }
-
-
-
-

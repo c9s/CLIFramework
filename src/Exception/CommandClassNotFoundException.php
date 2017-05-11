@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Exception;
+
 use Exception;
 
 class CommandClassNotFoundException extends Exception
@@ -10,12 +11,13 @@ class CommandClassNotFoundException extends Exception
 
     public $possibleClasses = array();
 
-    public function __construct($class, $registeredNamespaces = array()) {
+    public function __construct($class, $registeredNamespaces = array())
+    {
         $this->class = $class;
         $this->registeredNamespaces = $registeredNamespaces;
 
         $this->possibleClasses[] = $class;
-        foreach( $registeredNamespaces as $ns ) {
+        foreach ($registeredNamespaces as $ns) {
             $this->possibleClasses[] = $ns . '\\' . ltrim($class, '\\');
         }
 
@@ -29,13 +31,13 @@ class CommandClassNotFoundException extends Exception
         parent::__construct($desc);
     }
 
-    public function getRegisteredNamespaces() {
+    public function getRegisteredNamespaces()
+    {
         return $this->registeredNamespaces;
     }
 
-    public function getPossibleClasses() {
+    public function getPossibleClasses()
+    {
         return $this->possibleClasses;
     }
 }
-
-

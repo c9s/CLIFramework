@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\PharKit;
+
 use Phar;
 use CLIFramework\Logger;
 
@@ -10,7 +11,6 @@ use CodeGen\Statement\FunctionCallStatement;
 use CodeGen\Statement\AssignStatement;
 use CodeGen\Statement\MethodCallStatement;
 use GetOptionKit\OptionResult;
-
 
 class PharGenerator
 {
@@ -63,9 +63,9 @@ class PharGenerator
         $this->phar->stopBuffering();
 
         $compressType = Phar::GZ;
-        if ($this->options->{'no-compress'} ) {
+        if ($this->options->{'no-compress'}) {
             $compressType = null;
-        } else if ($type = $this->options->compress) {
+        } elseif ($type = $this->options->compress) {
             switch ($type) {
             case 'gz':
                 $compressType = Phar::GZ;
@@ -79,14 +79,8 @@ class PharGenerator
             }
         }
         if ($compressType) {
-            $this->logger->info( "Compressing phar files...");
+            $this->logger->info("Compressing phar files...");
             $this->phar->compressFiles($compressType);
         }
     }
-
-
-
-
-
 }
-

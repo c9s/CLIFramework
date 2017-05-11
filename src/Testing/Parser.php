@@ -9,10 +9,8 @@ class Parser
         $result = array();
         $i = 0;
         $next = strpos($command, " ");
-        while ($next)
-        {
-            if ($command[$i] == "\"")
-            {
+        while ($next) {
+            if ($command[$i] == "\"") {
                 $i = $i + 1;
                 $next = strpos($command, "\"", $i);
             }
@@ -32,4 +30,3 @@ class Parser
         return preg_replace('/"\s+/', '"', $command);
     }
 }
-?>

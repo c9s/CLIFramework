@@ -36,5 +36,5 @@
             "CLIFramework\\": "src/"
         }
     },
-    "extra": { "branch-alias": { "dev-master": "3.0.x-dev" } }
+    "extra": { "branch-alias": { "dev-master": "4.0.x-dev" } }
 }

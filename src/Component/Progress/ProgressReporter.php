@@ -5,4 +5,3 @@ interface ProgressReporter
 {
     public function update($finishedValue, $totalValue);
 }
-

@@ -69,7 +69,7 @@ class ArgumentEditor
     /**
      * Filter all arguments through a closure.
      *
-     * @param Closue 
+     * @param Closue
      */
     public function filter($callback)
     {

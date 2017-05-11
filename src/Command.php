@@ -8,6 +8,7 @@
  * file that was distributed with this source code.
  */
 namespace CLIFramework;
+
 use Exception;
 use CLIFramework\CommandInterface;
 use CLIFramework\Exception\CommandClassNotFoundException;
@@ -17,8 +18,7 @@ use CLIFramework\Application;
  * abstract command class
  *
  */
-abstract class Command extends CommandBase
-    implements CommandInterface
+abstract class Command extends CommandBase implements CommandInterface
 {
     /**
      * @var CLIFramework\Application Application object.
@@ -43,13 +43,14 @@ abstract class Command extends CommandBase
      *
      * @return Application
      */
-    public function getApplication() {
+    public function getApplication()
+    {
         if ($this->application) {
             return $this->application;
         }
         $p = $this->parent;
         while (true) {
-            if ( ! $p ) {
+            if (! $p) {
                 return null;
             }
             if ($p instanceof Application) {
@@ -59,7 +60,8 @@ abstract class Command extends CommandBase
         }
     }
 
-    public function hasApplication() {
+    public function hasApplication()
+    {
         return $this->getApplication() !== null;
     }
 
@@ -82,10 +84,10 @@ abstract class Command extends CommandBase
         // Extract command name from the class name.
         $class = get_class($this);
         // strip command suffix
-        $parts = explode('\\',$class);
+        $parts = explode('\\', $class);
         $class = end($parts);
-        $class = preg_replace( '/Command$/','', $class );
-        return strtolower( preg_replace( '/(?<=[a-z])([A-Z])/', '-\1' , $class ) );
+        $class = preg_replace('/Command$/', '', $class);
+        return strtolower(preg_replace('/(?<=[a-z])([A-Z])/', '-\1', $class));
     }
 
 
@@ -114,7 +116,8 @@ abstract class Command extends CommandBase
     /**
      * User may register their aliases
      */
-    public function aliases() {
+    public function aliases()
+    {
         return array();
     }
 
@@ -127,11 +130,9 @@ abstract class Command extends CommandBase
     {
         if ($k === 'logger') {
             return $this->getLogger();
-        }
-        elseif( $k === 'formatter' ) {
+        } elseif ($k === 'formatter') {
             return $this->getFormatter();
         }
-        throw new Exception( "$k is not defined." );
+        throw new Exception("$k is not defined.");
     }
-
 }

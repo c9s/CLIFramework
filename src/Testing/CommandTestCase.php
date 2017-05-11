@@ -1,5 +1,6 @@
 <?php
 namespace CLIFramework\Testing;
+
 use PHPUnit\Framework\TestCase;
 
 abstract class CommandTestCase extends TestCase
@@ -8,7 +9,7 @@ abstract class CommandTestCase extends TestCase
 
     public $outputBufferingActive = false;
 
-    abstract public function setupApplication();
+    abstract public static function setupApplication();
 
     public function getApplication()
     {
@@ -20,18 +21,19 @@ abstract class CommandTestCase extends TestCase
         if ($this->outputBufferingActive) {
             ob_start();
         }
-        $this->app = $this->setupApplication();
+        $this->app = static::setupApplication();
     }
 
     public function tearDown()
     {
-        $this->app = NULL;
+        $this->app = null;
         if ($this->outputBufferingActive) {
             ob_end_clean();
         }
     }
 
-    public function runCommand($args) {
+    public function runCommand($args)
+    {
         if (is_string($args)) {
             $args = Parser::getArguments($args);
         }

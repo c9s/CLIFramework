@@ -22,17 +22,17 @@ class TableStyle
 
     public $drawRowSeparator = false;
 
-    public function setCellPadding($padding) 
+    public function setCellPadding($padding)
     {
         $this->cellPadding = $padding;
     }
 
-    public function setCellPaddingChar($c) 
+    public function setCellPaddingChar($c)
     {
         $this->cellPaddingChar = $c;
     }
 
-    public function setVerticalBorderChar($c) 
+    public function setVerticalBorderChar($c)
     {
         $this->verticalBorderChar = $c;
     }
@@ -52,8 +52,8 @@ class TableStyle
         $this->rowSeparatorLeftmostCrossChar = $c;
     }
 
-    public function setRowSeparatorBorderChar($c) {
+    public function setRowSeparatorBorderChar($c)
+    {
         $this->rowSeparatorBorderChar = $c;
     }
-
 }

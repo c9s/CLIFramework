@@ -8,6 +8,7 @@
  * file that was distributed with this source code.
  */
 namespace CLIFramework;
+
 use Exception;
 use LogicException;
 use InvalidArgumentException;
@@ -40,8 +41,7 @@ use CLIFramework\Extension\ApplicationExtension;
  *
  * register subcommands.
  */
-abstract class CommandBase
-    implements ArrayAccess, IteratorAggregate, CommandInterface
+abstract class CommandBase implements ArrayAccess, IteratorAggregate, CommandInterface
 {
 
 
@@ -82,12 +82,19 @@ abstract class CommandBase
 
     protected $extensions = array();
 
-    public function __construct(CommandBase $parent = null) 
+    public function __construct(CommandBase $parent = null)
     {
         // this variable is optional (for backward compatibility)
         if ($parent) {
             $this->setParent($parent);
         }
+
+        // get option parser, init specs from the command.
+        $this->optionSpecs = new OptionCollection;
+
+        // create an empty option result, please note this result object will
+        // be replaced with the parsed option result.
+        $this->options = new OptionResult;
     }
 
 
@@ -108,7 +115,6 @@ abstract class CommandBase
      */
     public function usage()
     {
-    
     }
 
     /**
@@ -127,8 +133,8 @@ abstract class CommandBase
      *
      * @return string[]
      */
-    public function aliases() 
-    { 
+    public function aliases()
+    {
     }
 
 
@@ -158,7 +164,7 @@ abstract class CommandBase
     {
         if (is_string($extension)) {
             $extension = new $extension;
-        } else if (! $extension instanceof ExtensionBase) {
+        } elseif (! $extension instanceof ExtensionBase) {
             throw new LogicException("Not an extension object or an extension class name.");
         }
         return $this->addExtension($extension);
@@ -169,7 +175,7 @@ abstract class CommandBase
     {
         if ($extension instanceof CommandExtension) {
             $extension->bindCommand($this);
-        } else if ($extension instanceof ApplicationExtension) {
+        } elseif ($extension instanceof ApplicationExtension) {
             $extension->bindApplication($this->getApplication());
         }
     }
@@ -177,7 +183,6 @@ abstract class CommandBase
     protected function initExtensions()
     {
         foreach ($this->extensions as $extension) {
-
         }
     }
 
@@ -188,9 +193,10 @@ abstract class CommandBase
      * @param array  $commands  Command array combines indexed command names or command class assoc array.
      * @return CommandGroup
      */
-    public function addCommandGroup($groupName, $commands = array() ) {
+    public function addCommandGroup($groupName, $commands = array())
+    {
         $group = new CommandGroup($groupName);
-        foreach($commands as $key => $val) {
+        foreach ($commands as $key => $val) {
             $name = $val;
             if (is_numeric($key)) {
                 $cmd = $this->addCommand($val);
@@ -204,11 +210,13 @@ abstract class CommandBase
         return $group;
     }
 
-    public function getCommandGroups() {
+    public function getCommandGroups()
+    {
         return $this->commandGroups;
     }
 
-    public function isApplication() {
+    public function isApplication()
+    {
         return $this instanceof Application;
     }
 
@@ -222,7 +230,7 @@ abstract class CommandBase
 
         // format text styles
         $formatter = $this->getFormatter();
-        $text = preg_replace_callback( '#<(\w+)>(.*?)</\1>#i', function($matches) use ($formatter) {
+        $text = preg_replace_callback('#<(\w+)>(.*?)</\1>#i', function ($matches) use ($formatter) {
             $style = $matches[1];
             $text = $matches[2];
 
@@ -231,21 +239,21 @@ abstract class CommandBase
                 case 'u': $style = 'underline'; break;
             }
 
-            if ( $formatter->hasStyle($style) ) {
-                return $formatter->format( $text , $style );
+            if ($formatter->hasStyle($style)) {
+                return $formatter->format($text, $style);
             }
 
             return $matches[0];
-        }, $text );
+        }, $text);
 
         // support simple markdown style
-        $text = preg_replace_callback( '#[*]([^*]*?)[*]#' , function($matches) use ($formatter) {
-            return $formatter->format( $matches[1] , 'bold' );
-        } , $text );
+        $text = preg_replace_callback('#[*]([^*]*?)[*]#', function ($matches) use ($formatter) {
+            return $formatter->format($matches[1], 'bold');
+        }, $text);
 
-        $text = preg_replace_callback( '#[_]([^_]*?)[_]#' , function($matches) use ($formatter) {
-            return $formatter->format( $matches[1] , 'underline' );
-        } , $text );
+        $text = preg_replace_callback('#[_]([^_]*?)[_]#', function ($matches) use ($formatter) {
+            return $formatter->format($matches[1], 'underline');
+        }, $text);
 
         return $text;
     }
@@ -267,7 +275,6 @@ abstract class CommandBase
      */
     public function options($getopt)
     {
-
     }
 
     /**
@@ -275,12 +282,12 @@ abstract class CommandBase
      *
      * Register custom subcommand here.
      */
-    public function init()
+    protected function initCommandAutoload()
     {
-        if ($this->isCommandAutoloadEnabled())
+        if ($this->isCommandAutoloadEnabled()) {
             $this->autoloadCommands();
+        }
     }
-
 
     public function isCommandAutoloadEnabled()
     {
@@ -294,7 +301,8 @@ abstract class CommandBase
      *
      * @return CLIFramework\Application
      */
-    public function getApplication() {
+    public function getApplication()
+    {
         if ($this instanceof Application) {
             return $this;
         }
@@ -322,19 +330,11 @@ abstract class CommandBase
     }
 
 
-    public function _init() 
+    public function init()
     {
-        // get option parser, init specs from the command.
-        $this->optionSpecs = new OptionCollection;
-
-        // create an empty option result, please note this result object will
-        // be replaced with the parsed option result.
-        $this->options = new OptionResult;
-
         // init application options
         $this->options($this->optionSpecs);
-
-        $this->init();
+        $this->initCommandAutoload();
         $this->initExtensions();
     }
 
@@ -359,7 +359,7 @@ abstract class CommandBase
         $this->parent = $parent;
     }
 
-    public function getParent() 
+    public function getParent()
     {
         return $this->parent;
     }
@@ -367,7 +367,7 @@ abstract class CommandBase
     /**
      * Returns command loader object.
      */
-    public function getLoader() 
+    public function getLoader()
     {
         return CommandLoader::getInstance();
     }
@@ -384,7 +384,7 @@ abstract class CommandBase
     public function commandGroup($groupName, $commands = array())
     {
         if (is_string($commands)) {
-            $commands = explode(' ',$commands);
+            $commands = explode(' ', $commands);
         }
         return $this->addCommandGroup($groupName, $commands);
     }
@@ -397,7 +397,7 @@ abstract class CommandBase
      * @param string $class   (optional) The command class. if this argument is
      *                        ignroed, the class name is automatically detected.
      */
-    public function command($command, $class = null) 
+    public function command($command, $class = null)
     {
         return $this->addCommand($command, $class);
     }
@@ -416,17 +416,18 @@ abstract class CommandBase
      * @return string Loaded class name
      * @throws CommandClassNotFoundException
      */
-    public function addCommand($command,$class = null)
+    public function addCommand($command, $class = null)
     {
         // try to load the class/subclass,
         // or generate command class name automatically.
         if ($class) {
-            if ($this->getLoader()->loadClass($class) === false )
+            if ($this->getLoader()->loadClass($class) === false) {
                 throw CommandClassNotFoundException("Command class $class not found.");
+            }
         } else {
             if ($this->parent) {
                 // get class name by subcommand rules.
-                $class = $this->getLoader()->loadSubcommand($command,$this);
+                $class = $this->getLoader()->loadSubcommand($command, $this);
             } else {
                 // get class name by command rules.
                 $class = $this->getLoader()->load($command);
@@ -454,39 +455,40 @@ abstract class CommandBase
     {
         $lines = array();
 
-        if (method_exists($this,'execute')) {
+        if (method_exists($this, 'execute')) {
             $lines[] = $this->getCommandPrototype();
         }
         if ($this->hasCommands()) {
-            foreach( $this->commands as $name => $subcmd) {
+            foreach ($this->commands as $name => $subcmd) {
                 $lines[] = $subcmd->getCommandPrototype();
             }
         }
         return $lines;
     }
 
-    public function getCommandPrototype() {
+    public function getCommandPrototype()
+    {
         $out = array();
 
         $out[] = $this->getApplication()->getProgramName();
 
         // $out[] = $this->getName();
-        foreach($this->getCommandNameTraceArray() as $n) {
+        foreach ($this->getCommandNameTraceArray() as $n) {
             $out[] = $n;
         }
 
-        if (! empty($this->getOptionCollection()->options) ) {
+        if (! empty($this->getOptionCollection()->options)) {
             $out[] = "[options]";
         }
-        if ($this->hasCommands() ) {
+        if ($this->hasCommands()) {
             $out[] = "<subcommand>";
         } else {
             $argInfos = $this->getArgInfoList();
-            foreach( $argInfos as $argInfo ) {
+            foreach ($argInfos as $argInfo) {
                 $out[] = "<" . $argInfo->name . ">";
             }
         }
-        return join(" ",$out);
+        return join(" ", $out);
     }
 
 
@@ -497,7 +499,8 @@ abstract class CommandBase
      * @param string $name
      * @param CLIFramework\CommandBase $cmd
      */
-    protected function connectCommand($name, CommandBase $cmd) {
+    protected function connectCommand($name, CommandBase $cmd)
+    {
         $cmd->setName($name);
         $this->commands[$name] = $cmd;
 
@@ -509,7 +512,7 @@ abstract class CommandBase
         if (!is_array($aliases)) {
             throw new InvalidArgumentException("Aliases needs to be an array or a space-separated string.");
         }
-        foreach( $aliases as $alias) {
+        foreach ($aliases as $alias) {
             $this->aliases[$alias] = $cmd;
         }
     }
@@ -519,24 +522,27 @@ abstract class CommandBase
     /**
      * Aggregate command info
      */
-    public function aggregate() {
+    public function aggregate()
+    {
         $groups = array();
         $commands = array();
-        foreach($this->getVisibleCommands() as $name => $cmd) {
+        foreach ($this->getVisibleCommands() as $name => $cmd) {
             $commands[ $name ] = $cmd;
         }
 
-        foreach($this->commandGroups as $g) {
+        foreach ($this->commandGroups as $g) {
             if ($g->isHidden) {
                 continue;
             }
-            foreach($g->getCommands() as $name => $cmd) {
+            foreach ($g->getCommands() as $name => $cmd) {
                 unset($commands[$name]);
             }
         }
 
-        uasort($this->commandGroups, function($a, $b) { 
-            if ($a->getId() == "dev") return 1;
+        uasort($this->commandGroups, function ($a, $b) {
+            if ($a->getId() == "dev") {
+                return 1;
+            }
             return 0;
         });
 
@@ -552,7 +558,8 @@ abstract class CommandBase
      *
      * @return boolean
      */
-    public function hasCommands() {
+    public function hasCommands()
+    {
         return ! empty($this->commands);
     }
 
@@ -575,7 +582,7 @@ abstract class CommandBase
      */
     public function getCommandList()
     {
-        return array_keys( $this->commands );
+        return array_keys($this->commands);
     }
 
 
@@ -586,10 +593,10 @@ abstract class CommandBase
      *
      * @return array[string]CommandBase command map
      */
-    public function getVisibleCommands() 
+    public function getVisibleCommands()
     {
         $cmds = array();
-        foreach( $this->getVisibleCommandList() as $name ) {
+        foreach ($this->getVisibleCommandList() as $name) {
             $cmds[ $name ] = $this->commands[ $name ];
         }
         return $cmds;
@@ -603,9 +610,9 @@ abstract class CommandBase
      *
      * @return CommandBase[]
      */
-    public function getVisibleCommandList() 
+    public function getVisibleCommandList()
     {
-        return array_filter(array_keys($this->commands), function($name) {
+        return array_filter(array_keys($this->commands), function ($name) {
             return !preg_match('#^_#', $name);
         });
     }
@@ -616,10 +623,11 @@ abstract class CommandBase
      *
      * @return string[]
      */
-    public function getCommandNameTraceArray() {
+    public function getCommandNameTraceArray()
+    {
         $cmdStacks = array( $this->getName() );
         $p = $this->parent;
-        while($p) {
+        while ($p) {
             if (! $p instanceof Application) {
                 $cmdStacks[] = $p->getName();
             }
@@ -628,7 +636,8 @@ abstract class CommandBase
         return array_reverse($cmdStacks);
     }
 
-    public function getSignature() {
+    public function getSignature()
+    {
         return join('.', $this->getCommandNameTraceArray());
     }
 
@@ -638,7 +647,7 @@ abstract class CommandBase
      *
      * @return Command[]
      */
-    public function getCommands() 
+    public function getCommands()
     {
         return $this->commands;
     }
@@ -653,16 +662,17 @@ abstract class CommandBase
      */
     public function getCommand($commandName)
     {
-        if ( isset($this->aliases[$commandName]) ) {
+        if (isset($this->aliases[$commandName])) {
             return $this->aliases[$commandName];
         }
-        if ( isset($this->commands[ $commandName ]) ) {
+        if (isset($this->commands[ $commandName ])) {
             return $this->commands[ $commandName ];
         }
         throw new CommandNotFoundException($this, $commandName);
     }
 
-    public function guessCommand($commandName) {
+    public function guessCommand($commandName)
+    {
         // array of words to check against
         $words = array_keys($this->commands);
         $correction = new Corrector($words);
@@ -680,7 +690,7 @@ abstract class CommandBase
     public function createCommand($commandClass)
     {
         $cmd = new $commandClass($this);
-        $cmd->_init();
+        $cmd->init();
         return $cmd;
     }
 
@@ -715,11 +725,11 @@ abstract class CommandBase
     }
 
     /**
-     * Prepare stage method 
+     * Prepare stage method
      */
     public function prepare()
     {
-        foreach ($this->extensions as $extension) { 
+        foreach ($this->extensions as $extension) {
             $extension->prepare();
         }
     }
@@ -727,9 +737,9 @@ abstract class CommandBase
     /**
      * Finalize stage method
      */
-    public function finish() 
+    public function finish()
     {
-        foreach ($this->extensions as $extension) { 
+        foreach ($this->extensions as $extension) {
             $extension->finish();
         }
     }
@@ -739,7 +749,9 @@ abstract class CommandBase
      *
      * @param CLIFramework\ArgInfoList
      */
-    public function arguments($args) { }
+    public function arguments($args)
+    {
+    }
 
 
     /**
@@ -769,7 +781,7 @@ abstract class CommandBase
         $argInfo = new ArgInfoList;
 
         $ro = new ReflectionObject($this);
-        if (!method_exists($this,'execute')) {
+        if (!method_exists($this, 'execute')) {
             throw new ExecuteMethodNotDefinedException($this);
         }
 
@@ -798,7 +810,7 @@ abstract class CommandBase
      */
     public function executeWrapper(array $args)
     {
-        if (!method_exists($this,'execute')) {
+        if (!method_exists($this, 'execute')) {
             $cmd = $this->createCommand('CLIFramework\\Command\\HelpCommand');
             return $cmd->executeWrapper([$this->getName()]);
         }
@@ -806,13 +818,13 @@ abstract class CommandBase
         // Validating arguments
         $argInfos = $this->getArgInfoList();
 
-        for ($i = 0; $i < count($argInfos); $i++ ) {
+        for ($i = 0; $i < count($argInfos); $i++) {
             $argInfo = $argInfos[$i];
             if (isset($args[$i])) {
                 $arg = $args[$i];
 
                 $valid = false;
-                $message = NULL;
+                $message = null;
                 $ret = $argInfo->validate($arg);
 
                 if (is_array($ret)) {
@@ -822,7 +834,7 @@ abstract class CommandBase
                     $valid = $ret;
                 }
 
-                if ($valid === FALSE) {
+                if ($valid === false) {
                     $this->logger->error($message ?: "Invalid argument $arg");
                     return;
                 }
@@ -832,7 +844,7 @@ abstract class CommandBase
         $refl = new ReflectionObject($this);
         $reflMethod = $refl->getMethod('execute');
         $requiredNumber = $reflMethod->getNumberOfRequiredParameters();
-        if ( count($args) < $requiredNumber ) {
+        if (count($args) < $requiredNumber) {
             throw new CommandArgumentNotEnoughException($this, count($args), $requiredNumber);
         }
 
@@ -842,7 +854,7 @@ abstract class CommandBase
         $event->trigger('execute.before');
 
         $event->trigger('execute');
-        foreach ($this->extensions as $extension) { 
+        foreach ($this->extensions as $extension) {
             $extension->execute();
         }
 
@@ -865,11 +877,11 @@ abstract class CommandBase
      *
      * @return string user input value
      */
-    public function ask($prompt, $validAnswers = null )
+    public function ask($prompt, $validAnswers = null)
     {
         $prompter = new Prompter;
         $prompter->setStyle('ask');
-        return $prompter->ask( $prompt , $validAnswers );
+        return $prompter->ask($prompt, $validAnswers);
     }
 
     /**
@@ -895,7 +907,7 @@ abstract class CommandBase
     {
         $chooser = new Chooser;
         $chooser->setStyle('choose');
-        return $chooser->choose( $prompt, $choices );
+        return $chooser->choose($prompt, $choices);
     }
 
     public function offsetExists($key)
@@ -903,7 +915,7 @@ abstract class CommandBase
         return isset($this->commands[$key]);
     }
 
-    public function offsetSet($key,$value)
+    public function offsetSet($key, $value)
     {
         $this->commands[$key] = $value;
     }
@@ -922,5 +934,4 @@ abstract class CommandBase
     {
         return new ArrayIterator($this->commands);
     }
-
 }

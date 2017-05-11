@@ -230,9 +230,9 @@ class MetaCommand extends Command
                 if ($opt->short && $opt->long) {
                     fwrite(STDERR, ' '.$opt->short.'|'.$opt->long);
                 } elseif ($opt->short) {
-                    fwrite(STDERR,  ' '.$opt->short);
+                    fwrite(STDERR, ' '.$opt->short);
                 } elseif ($opt->long) {
-                    fwrite(STDERR,  ' '.$opt->long);
+                    fwrite(STDERR, ' '.$opt->long);
                 }
                 fwrite(STDERR, "\n");
             }

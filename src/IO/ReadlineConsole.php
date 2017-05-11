@@ -24,26 +24,20 @@ class ReadlineConsole implements Console
 
     public function readLine($prompt)
     {
-        $line = $this->doReadLine($prompt);
+        $line = readline($prompt);
         readline_add_history($line);
-
         return $line;
     }
 
     public function readPassword($prompt)
     {
         return $this->noEcho(function () use ($prompt) {
-            return $this->doReadLine($prompt);
+            return readline($prompt);
         });
     }
 
     public function noEcho(\Closure $callback)
     {
         return $this->stty->withoutEcho($callback);
-    }
-
-    private function doReadLine($prompt)
-    {
-        return readline($prompt);
     }
 }

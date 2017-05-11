@@ -15,8 +15,8 @@ class CursorControl
     }
 
     /**
-     * Sets the cursor position where subsequent text will begin. If no 
-     * row/column parameters are provided (ie. <ESC>[H), the cursor will move 
+     * Sets the cursor position where subsequent text will begin. If no
+     * row/column parameters are provided (ie. <ESC>[H), the cursor will move
      * to the home position, at the upper left of the screen.
      */
     public function home($row, $col)
