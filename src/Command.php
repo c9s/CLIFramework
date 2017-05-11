@@ -118,8 +118,6 @@ abstract class Command extends CommandBase
         return array();
     }
 
-
-
     /**
      * Provide a shorthand property for retrieving logger object.
      *

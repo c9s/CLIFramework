@@ -461,7 +461,8 @@ abstract class CommandBase
      *
      * @return string
      */
-    public function getAllCommandPrototype() {
+    public function getAllCommandPrototype()
+    {
         $lines = array();
 
         if (method_exists($this,'execute')) {
@@ -751,7 +752,13 @@ abstract class CommandBase
      */
     public function arguments($args) { }
 
-    public function getArgInfoList() 
+
+    /**
+     * Return the defined argument info objects.
+     *
+     * @return CLIFramework\ArgInfoList
+     */
+    public function getArgInfoList()
     {
         return $this->argInfos;
     }
@@ -781,7 +788,6 @@ abstract class CommandBase
         return $argInfo;
     }
 
-
     /**
      * Execute command object, this is a wrapper method for execution.
      *
@@ -793,6 +799,11 @@ abstract class CommandBase
      */
     public function executeWrapper(array $args)
     {
+        if (!method_exists($this,'execute')) {
+            $cmd = $this->createCommand('CLIFramework\\Command\\HelpCommand');
+            return $cmd->executeWrapper([$this->getName()]);
+        }
+
         // Validating arguments
         $argInfos = $this->getArgInfoList();
 
@@ -819,13 +830,7 @@ abstract class CommandBase
             }
         }
 
-
-        // call_user_func_array(  );
         $refl = new ReflectionObject($this);
-        if (!method_exists( $this,'execute' )) {
-            throw new ExecuteMethodNotDefinedException($this);
-        }
-
         $reflMethod = $refl->getMethod('execute');
         $requiredNumber = $reflMethod->getNumberOfRequiredParameters();
         if ( count($args) < $requiredNumber ) {
