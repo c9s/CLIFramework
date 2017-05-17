@@ -4,6 +4,7 @@ namespace CLIFramework\Command;
 
 use CLIFramework\Command;
 use CodeGen\Block;
+use CodeGen\ClassFile;
 use ClassTemplate\TemplateClassFile;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -101,10 +102,7 @@ class BuildGitHubWikiTopicsCommand extends Command
 
                 $classFile = $outputDir.DIRECTORY_SEPARATOR.str_replace('\\', DIRECTORY_SEPARATOR, $topicFullClassName).'.php';
 
-                $cTemplate = new TemplateClassFile($topicFullClassName, array(
-                    'template' => 'Class.php.twig',
-                ));
-
+                $cTemplate = new ClassFile($topicFullClassName);
                 $cTemplate->addProperty('id', $topicId);
                 $cTemplate->addProperty('url', $topicRemoteUrl);
                 $cTemplate->addProperty('title', $topicTitle);

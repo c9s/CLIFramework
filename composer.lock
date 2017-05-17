@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d518c2f29e8ecbb5af27ee4adf8e2d83",
+    "content-hash": "74397094ce06f24526c611e81eade34b",
     "packages": [
         {
             "name": "corneltek/class-template",
@@ -56,16 +56,16 @@
         },
         {
             "name": "corneltek/codegen",
-            "version": "3.1.1",
+            "version": "3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/c9s/CodeGen.git",
-                "reference": "f6bb90e0a823b2d4630d0b88c93fc6d42f6f5044"
+                "reference": "b06298170ab9bf49f54391973b520e661ad0d37f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/c9s/CodeGen/zipball/f6bb90e0a823b2d4630d0b88c93fc6d42f6f5044",
-                "reference": "f6bb90e0a823b2d4630d0b88c93fc6d42f6f5044",
+                "url": "https://api.github.com/repos/c9s/CodeGen/zipball/b06298170ab9bf49f54391973b520e661ad0d37f",
+                "reference": "b06298170ab9bf49f54391973b520e661ad0d37f",
                 "shasum": ""
             },
             "require": {
@@ -79,12 +79,12 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "3.1.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "CodeGen\\": "src/CodeGen/"
+                    "CodeGen\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -99,7 +99,7 @@
             ],
             "description": "PHP Code Generation Library",
             "homepage": "http://github.com/c9s/CodeGen",
-            "time": "2017-01-17T16:17:24+00:00"
+            "time": "2017-05-17T05:29:08+00:00"
         },
         {
             "name": "corneltek/getoptionkit",
@@ -307,28 +307,32 @@
         },
         {
             "name": "symfony/class-loader",
-            "version": "v3.0.0",
+            "version": "v3.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/class-loader.git",
-                "reference": "05ad69969796955102e42b12d13ad73fc6dadaaf"
+                "reference": "fc4c04bfd17130a9dccfded9578353f311967da7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/class-loader/zipball/05ad69969796955102e42b12d13ad73fc6dadaaf",
-                "reference": "05ad69969796955102e42b12d13ad73fc6dadaaf",
+                "url": "https://api.github.com/repos/symfony/class-loader/zipball/fc4c04bfd17130a9dccfded9578353f311967da7",
+                "reference": "fc4c04bfd17130a9dccfded9578353f311967da7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.5.9"
             },
             "require-dev": {
-                "symfony/finder": "~2.8|~3.0"
+                "symfony/finder": "~2.8|~3.0",
+                "symfony/polyfill-apcu": "~1.1"
+            },
+            "suggest": {
+                "symfony/polyfill-apcu": "For using ApcClassLoader on HHVM"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -355,20 +359,20 @@
             ],
             "description": "Symfony ClassLoader Component",
             "homepage": "https://symfony.com",
-            "time": "2015-11-26T07:02:09+00:00"
+            "time": "2017-04-12T14:13:17+00:00"
         },
         {
             "name": "symfony/finder",
-            "version": "v3.0.0",
+            "version": "v3.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "3577eb98dba90721d1a0a3edfc6956ab8b1aecee"
+                "reference": "9cf076f8f492f4b1ffac40aae9c2d287b4ca6930"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/3577eb98dba90721d1a0a3edfc6956ab8b1aecee",
-                "reference": "3577eb98dba90721d1a0a3edfc6956ab8b1aecee",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/9cf076f8f492f4b1ffac40aae9c2d287b4ca6930",
+                "reference": "9cf076f8f492f4b1ffac40aae9c2d287b4ca6930",
                 "shasum": ""
             },
             "require": {
@@ -377,7 +381,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -404,7 +408,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-30T23:35:59+00:00"
+            "time": "2017-04-12T14:13:17+00:00"
         },
         {
             "name": "twig/twig",

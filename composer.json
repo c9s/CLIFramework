@@ -15,7 +15,7 @@
         "corneltek/getoptionkit": "~2.5.4",
         "corneltek/class-template": "^3.0.0",
         "corneltek/universal": "^1.7",
-        "corneltek/codegen": "^3.0.0",
+        "corneltek/codegen": "^3.1.0",
         "pimple/pimple": "*",
         "symfony/finder": "~2.8|~3.0|~3.2",
         "symfony/class-loader": "~2.8|~3.0|~3.2"
@@ -26,10 +26,7 @@
     },
     "license": "MIT",
     "authors": [
-        {
-            "name": "Yo-An Lin",
-            "email": "cornelius.howl@gmail.com"
-        }
+        { "name": "Yo-An Lin", "email": "yoanlin93@gmail.com" }
     ],
     "autoload": {
         "psr-4": {
