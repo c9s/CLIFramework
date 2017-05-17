@@ -30,6 +30,14 @@ use Pimple\Container;
 use CLIFramework\ExceptionPrinter\ProductionExceptionPrinter;
 use CLIFramework\ExceptionPrinter\DevelopmentExceptionPrinter;
 
+use CLIFramework\Command\HelpCommand;
+use CLIFramework\Command\ZshCompletionCommand;
+use CLIFramework\Command\BashCompletionCommand;
+use CLIFramework\Command\MetaCommand;
+use CLIFramework\Command\CompileCommand;
+use CLIFramework\Command\ArchiveCommand;
+use CLIFramework\Command\BuildGitHubWikiTopicsCommand;
+
 use Exception;
 use ReflectionClass;
 use InvalidArgumentException;
@@ -257,14 +265,14 @@ class Application extends CommandBase implements CommandInterface
     {
         // $this->addCommand('list','CLIFramework\\Command\\ListCommand');
         parent::init();
-        $this->command('help', 'CLIFramework\\Command\\HelpCommand');
+        $this->command('help', HelpCommand::class);
         $this->commandGroup("Development Commands", array(
-            'zsh'                 => 'CLIFramework\\Command\\ZshCompletionCommand',
-            'bash'                => 'CLIFramework\\Command\\BashCompletionCommand',
-            'meta'                => 'CLIFramework\\Command\\MetaCommand',
-            'compile'             => 'CLIFramework\\Command\\CompileCommand',
-            'archive'             => 'CLIFramework\\Command\\ArchiveCommand',
-            'github:build-topics' => 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand',
+            'zsh'                 => ZshCompletionCommand::class,
+            'bash'                => BashCompletionCommand::class,
+            'meta'                => MetaCommand::class,
+            'compile'             => CompileCommand::class,
+            'archive'             => ArchiveCommand::class,
+            'github:build-topics' => BuildGitHubWikiTopicsCommand::class,
         ))->setId('dev');
     }
 

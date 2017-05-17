@@ -21,6 +21,10 @@ use CLIFramework\Utils;
 use ReflectionClass;
 use ReflectionObject;
 use SplFileInfo;
+use Universal\ClassLoader\ClassLoader;
+use Universal\ClassLoader\Psr0ClassLoader;
+use Universal\ClassLoader\Psr4ClassLoader;
+use Universal\ClassLoader\MapClassLoader;
 
 /**
  * Archive: build phar file from composer.json.
@@ -144,10 +148,10 @@ class ArchiveCommand extends Command
         // However the class path might be in another directory because the
         // classes are loaded from vendor/autoload.php
         $classPaths = array(
-            Utils::getClassPath('Universal\\ClassLoader\\ClassLoader'),
-            Utils::getClassPath('Universal\\ClassLoader\\Psr0ClassLoader'),
-            Utils::getClassPath('Universal\\ClassLoader\\Psr4ClassLoader'),
-            Utils::getClassPath('Universal\\ClassLoader\\MapClassLoader'),
+            Utils::getClassPath(ClassLoader::class),
+            Utils::getClassPath(Psr0ClassLoader::class),
+            Utils::getClassPath(Psr4ClassLoader::class),
+            Utils::getClassPath(MapClassLoader::class),
         );
 
         // Generate class loader stub

@@ -13,6 +13,11 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\ClassLoader\ClassMapGenerator;
 use CLIFramework\Logger;
 
+use Universal\ClassLoader\ClassLoader;
+use Universal\ClassLoader\Psr0ClassLoader;
+use Universal\ClassLoader\Psr4ClassLoader;
+use Universal\ClassLoader\MapClassLoader;
+
 class ComposerAutoloadGenerator
 {
     /**
@@ -227,9 +232,9 @@ class ComposerAutoloadGenerator
 
         // Generate classloader initialization code
         $block = new Block();
-        $block[] = new UseStatement('Universal\\ClassLoader\\Psr0ClassLoader');
-        $block[] = new UseStatement('Universal\\ClassLoader\\Psr4ClassLoader');
-        $block[] = new UseStatement('Universal\\ClassLoader\\MapClassLoader');
+        $block[] = new UseStatement(Psr0ClassLoader::class);
+        $block[] = new UseStatement(Psr4ClassLoader::class);
+        $block[] = new UseStatement(MapClassLoader::class);
 
         if (!empty($files)) {
             foreach ($files as $file) {
