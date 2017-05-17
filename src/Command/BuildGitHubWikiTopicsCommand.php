@@ -5,7 +5,6 @@ namespace CLIFramework\Command;
 use CLIFramework\Command;
 use CodeGen\Block;
 use CodeGen\ClassFile;
-use ClassTemplate\TemplateClassFile;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Exception;
