@@ -35,6 +35,7 @@ use CLIFramework\Extension\Extension;
 use CLIFramework\Extension\ExtensionBase;
 use CLIFramework\Extension\CommandExtension;
 use CLIFramework\Extension\ApplicationExtension;
+use CLIFramework\Command\HelpCommand;
 
 /**
  * Command based class (application & subcommands inherit from this class)
@@ -811,7 +812,7 @@ abstract class CommandBase implements ArrayAccess, IteratorAggregate, CommandInt
     public function executeWrapper(array $args)
     {
         if (!method_exists($this, 'execute')) {
-            $cmd = $this->createCommand('CLIFramework\\Command\\HelpCommand');
+            $cmd = $this->createCommand(HelpCommand::class);
             return $cmd->executeWrapper([$this->getName()]);
         }
 
