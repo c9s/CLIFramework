@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3fc5c4cc70269134d7040f40c8de73aa",
+    "content-hash": "da626204a683d1ef3e6d4b042a38c0a5",
     "packages": [
         {
             "name": "corneltek/codegen",
-            "version": "3.1.2",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/c9s/CodeGen.git",
-                "reference": "b06298170ab9bf49f54391973b520e661ad0d37f"
+                "reference": "266c2087eeaf630764f4a0a7d707cc7ef568710e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/c9s/CodeGen/zipball/b06298170ab9bf49f54391973b520e661ad0d37f",
-                "reference": "b06298170ab9bf49f54391973b520e661ad0d37f",
+                "url": "https://api.github.com/repos/c9s/CodeGen/zipball/266c2087eeaf630764f4a0a7d707cc7ef568710e",
+                "reference": "266c2087eeaf630764f4a0a7d707cc7ef568710e",
                 "shasum": ""
             },
             "require": {
@@ -31,7 +31,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1.x-dev"
+                    "dev-master": "3.2.x-dev"
                 }
             },
             "autoload": {
@@ -51,7 +51,7 @@
             ],
             "description": "PHP Code Generation Library",
             "homepage": "http://github.com/c9s/CodeGen",
-            "time": "2017-05-17T05:29:08+00:00"
+            "time": "2017-05-18T14:12:40+00:00"
         },
         {
             "name": "corneltek/getoptionkit",
