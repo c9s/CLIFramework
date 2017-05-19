@@ -9,12 +9,7 @@ abstract class CommandTestCase extends TestCase
 
     public $outputBufferingActive = false;
 
-    // Remove abstract keyword to make it runnable for php5
-    // abstract public static function setupApplication();
-    public static function setupApplication()
-    {
-        throw new \Exception("Please implement setupApplication() to return your command line app.");
-    }
+    abstract public static function setupApplication();
 
     public function getApplication()
     {
