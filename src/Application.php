@@ -389,7 +389,7 @@ class Application extends CommandBase implements CommandInterface
 
             } else {
 
-                $r = $getopt->continueParse();
+                $r = $parser->continueParse();
 
                 if (count($r)) {
 
@@ -398,7 +398,7 @@ class Application extends CommandBase implements CommandInterface
 
                 } else {
 
-                    $a = $getopt->advance();
+                    $a = $parser->advance();
                     $arguments[] = $a;
 
                 }
