@@ -77,7 +77,7 @@ abstract class CommandBase implements ArrayAccess, IteratorAggregate, CommandInt
      */
     public $parent;
 
-    public $optionSpecs;
+    protected $optionSpecs;
 
     protected $argInfos;
 
@@ -90,8 +90,6 @@ abstract class CommandBase implements ArrayAccess, IteratorAggregate, CommandInt
             $this->setParent($parent);
         }
 
-        // get option parser, init specs from the command.
-        $this->optionSpecs = new OptionCollection;
 
         // create an empty option result, please note this result object will
         // be replaced with the parsed option result.
@@ -333,8 +331,6 @@ abstract class CommandBase implements ArrayAccess, IteratorAggregate, CommandInt
 
     public function init()
     {
-        // init application options
-        $this->options($this->optionSpecs);
         $this->initCommandAutoload();
         $this->initExtensions();
     }
@@ -722,6 +718,12 @@ abstract class CommandBase implements ArrayAccess, IteratorAggregate, CommandInt
      */
     public function getOptionCollection()
     {
+        // get option parser, init specs from the command.
+        if (!$this->optionSpecs) {
+            $this->optionSpecs = new OptionCollection;
+            // build options
+            $this->options($this->optionSpecs);
+        }
         return $this->optionSpecs;
     }
 

@@ -332,14 +332,14 @@ class Application extends CommandBase implements CommandInterface
     {
         $this->setProgramName($argv[0]);
 
-        $currentCmd = $this;
+        $currentCommand = $this;
 
         // init application,
         // before parsing options, we have to known the registered commands.
-        $currentCmd->init();
+        $currentCommand->init();
 
         // use getoption kit to parse application options
-        $getopt = new ContinuousOptionParser($currentCmd->optionSpecs);
+        $parser = new ContinuousOptionParser($currentCommand->getOptionCollection());
 
         // parse the first part options (options after script name)
         // option parser should stop before next command name.
@@ -349,72 +349,84 @@ class Application extends CommandBase implements CommandInterface
         //                  |->> parser
         //
         //
-        $appOptions = $getopt->parse($argv);
-        $currentCmd->setOptions($appOptions);
-        if (false === $currentCmd->prepare()) {
+        $appOptions = $parser->parse($argv);
+        $currentCommand->setOptions($appOptions);
+        if (false === $currentCommand->prepare()) {
             return false;
         }
 
 
-        $command_stack = array();
+        $commandStack = array();
         $arguments = array();
 
-        // get command list from application self
-        while (! $getopt->isEnd()) {
-            $a = $getopt->getCurrentArgument();
+        // build the command list from command line arguments
+        while (! $parser->isEnd()) {
+            $a = $parser->getCurrentArgument();
 
             // if current command is in subcommand list.
+            if ($currentCommand->hasCommands()) {
 
-            if ($currentCmd->hasCommands()) {
-                $a = $getopt->getCurrentArgument();
-
-                if (!$currentCmd->hasCommand($a)) {
-                    if (!$appOptions->noInteract && ($guess = $currentCmd->guessCommand($a)) !== null) {
+                if (!$currentCommand->hasCommand($a)) {
+                    if (!$appOptions->noInteract && ($guess = $currentCommand->guessCommand($a)) !== null) {
                         $a = $guess;
                     } else {
-                        throw new CommandNotFoundException($currentCmd, $a);
+                        throw new CommandNotFoundException($currentCommand, $a);
                     }
                 }
 
-                $getopt->advance(); // advance position
+                $parser->advance(); // advance position
 
-                // get command object
-                $currentCmd = $currentCmd->getCommand($a);
-                $getopt->setSpecs($currentCmd->optionSpecs);
+                // get command object of "$a"
+                $nextCommand = $currentCommand->getCommand($a);
 
-                // parse option result for command.
-                $currentCmd->setOptions($getopt->continueParse());
-                $command_stack[] = $currentCmd; // save command object into the stack
+                $parser->setSpecs($nextCommand->getOptionCollection());
+
+                // parse the option result for command.
+                $result = $parser->continueParse();
+                $nextCommand->setOptions($result);
+
+                $commandStack[] = $currentCommand = $nextCommand; // save command object into the stack
+
             } else {
+
                 $r = $getopt->continueParse();
+
                 if (count($r)) {
-                    $currentCmd->getOptions()->merge($r);
+
+                    // get the option result and merge the new result
+                    $currentCommand->getOptions()->merge($r);
+
                 } else {
+
                     $a = $getopt->advance();
                     $arguments[] = $a;
+
                 }
             }
         }
 
-        foreach ($command_stack as $cmd) {
+        foreach ($commandStack as $cmd) {
             if (false === $cmd->prepare()) {
                 return false;
             }
         }
 
         // get last command and run
-        if ($last_cmd = array_pop($command_stack)) {
-            $return = $last_cmd->executeWrapper($arguments);
-            $last_cmd->finish();
-            while ($cmd = array_pop($command_stack)) {
+        if ($lastCommand = array_pop($commandStack)) {
+
+            $return = $lastCommand->executeWrapper($arguments);
+            $lastCommand->finish();
+            while ($cmd = array_pop($commandStack)) {
                 // call finish stage.. of every command.
                 $cmd->finish();
             }
+
         } else {
             // no command specified.
             return $this->executeWrapper($arguments);
         }
-        $currentCmd->finish();
+
+        $currentCommand->finish();
         $this->finish();
         return true;
     }
