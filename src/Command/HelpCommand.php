@@ -141,7 +141,7 @@ class HelpCommand extends Command implements CommandInterface
             }
             $logger->write("\n");
 
-            if ($optionLines = $printer->render($cmd->optionSpecs)) {
+            if ($optionLines = $printer->render($cmd->getOptionCollection())) {
                 $logger->write($formatter->format('OPTIONS', 'strong_white')."\n");
                 $logger->write($optionLines);
                 $logger->write("\n");
@@ -177,7 +177,7 @@ class HelpCommand extends Command implements CommandInterface
 
             // print application options
             $logger->write($formatter->format('OPTIONS', 'strong_white')."\n");
-            $logger->write($printer->render($cmd->optionSpecs));
+            $logger->write($printer->render($cmd->getOptionCollection()));
             $logger->write("\n\n");
 
             // get command list, Command classes should be preloaded.
