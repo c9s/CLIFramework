@@ -8,7 +8,7 @@
         "corneltek/getoptionkit": "~2",
         "corneltek/class-template": "*",
         "corneltek/codegen": "dev-master as 2.99",
-        "corneltek/universal": "dev-master",
+        "universal/universal": "dev-master",
         "pimple/pimple": "*",
         "symfony/class-loader": "^2.7",
         "sebastian/version": "^1.0",
