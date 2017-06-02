@@ -10,7 +10,7 @@ use CLIFramework\IO\NullStty;
 use CLIFramework\IO\UnixStty;
 use CLIFramework\IO\ReadlineConsole;
 use CLIFramework\IO\StandardConsole;
-use Universal\Event\PhpEvent;
+use Universal\Event\EventDispatcher;
 
 /**
  *
@@ -48,7 +48,7 @@ class ServiceContainer extends Container
         };
 
         $this['event'] = function () {
-            return new PhpEvent;
+            return new EventDispatcher;
         };
 
         $this['config'] = function ($c) {

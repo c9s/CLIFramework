@@ -93,7 +93,7 @@ class Application extends CommandBase implements CommandInterface
 
 
     /**
-     * @var Unviersal\Event\PhpEvent
+     * @var Unviersal\Event\EventDispatcher
      */
     protected $eventService;
 
@@ -116,7 +116,7 @@ class Application extends CommandBase implements CommandInterface
         if (isset($this->serviceContainer['event'])) {
             $this->eventService = $this->serviceContainer['event'];
         } else {
-            $this->eventService = PhpEvent::getInstance();
+            $this->eventService = EventDispatcher::getInstance();
         }
 
         // initliaze command loader
