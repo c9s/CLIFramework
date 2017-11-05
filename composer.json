@@ -22,7 +22,8 @@
     },
     "require-dev": {
         "corneltek/phpunit-testmore": "dev-master",
-        "satooshi/php-coveralls": "^1"
+        "satooshi/php-coveralls": "^1",
+        "phpunit/phpunit": "^5.7"
     },
     "license": "MIT",
     "authors": [

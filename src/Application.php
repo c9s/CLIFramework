@@ -407,7 +407,8 @@ class Application extends CommandBase
         }
         $currentCmd->finish();
         $this->finish();
-        return true;
+
+        return $return !== false;
     }
 
     /**
