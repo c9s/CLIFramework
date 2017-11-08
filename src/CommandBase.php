@@ -814,7 +814,8 @@ abstract class CommandBase
 
                 if ($valid === FALSE) {
                     $this->logger->error($message ?: "Invalid argument $arg");
-                    return;
+
+                    return false;
                 }
             }
         }

@@ -1,6 +1,7 @@
-composer.lock
-vendor/
-src/PHPBrew/
-build/
-.onion
 .hhconfig
+.onion
+build/
+composer.lock
+src/PHPBrew/
+vendor/
+tmp/
