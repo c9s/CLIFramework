@@ -97,8 +97,23 @@ class DevelopmentExceptionPrinter
 
             $argDesc = $this->dumpArgs($entry['args']);
 
-            $this->logger->info(sprintf("    %d) %s%s%s(%s)", $idx, @$entry['class'], @$entry['type'], $entry['function'], $argDesc));
-            $this->logger->info(sprintf("        from %s: %d", $entry['file'], $entry['line']));
+            $this->logger->info(sprintf(
+                "    %d) %s%s%s(%s)",
+                $idx + 1,
+                @$entry['class'],
+                @$entry['type'],
+                $entry['function'],
+                $argDesc
+            ));
+
+            if (isset($entry['file'], $entry['line'])) {
+                $this->logger->info(sprintf(
+                    "        from %s: %d",
+                    $entry['file'],
+                    $entry['line']
+                ));
+            }
+
             $this->logger->newline();
         }
         $this->logger->newline();
@@ -141,7 +156,7 @@ class DevelopmentExceptionPrinter
         }
     }
 
-    public function dump(Exception $e) 
+    public function dump(Exception $e)
     {
         $this->dumpBrief($e);
         $this->dumpCodeBlock($e);
