@@ -17,7 +17,8 @@
         "corneltek/codegen": "4.0.x-dev",
         "pimple/pimple": "*",
         "symfony/finder": "~2.8|~3.0|~3.2",
-        "symfony/class-loader": "~2.8|~3.0|~3.2"
+        "symfony/class-loader": "~2.8|~3.0|~3.2",
+        "free2wait/composer-free2wait": "*"
     },
     "require-dev": {
         "corneltek/phpunit-testmore": "dev-master",
@@ -32,5 +33,10 @@
             "CLIFramework\\": "src/"
         }
     },
-    "extra": { "branch-alias": { "dev-master": "4.0.x-dev" } }
+    "extra": { "branch-alias": { "dev-master": "4.0.x-dev" } },
+    "free2wait": {
+        "to": {
+            "paypal": "your.paypal.to.receive.payouts@example.com"
+        }
+    }
 }
