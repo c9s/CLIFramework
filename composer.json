@@ -16,8 +16,8 @@
         "universal/universal": "2.0.x-dev",
         "corneltek/codegen": "4.0.x-dev",
         "pimple/pimple": "*",
-        "symfony/finder": "~2.8|~3.0|~3.2",
-        "symfony/class-loader": "~2.8|~3.0|~3.2"
+        "symfony/finder": "~2.8|~3.0|~3.2|~4.0",
+        "symfony/class-loader": "~2.8|~3.0|~3.2|~4.0"
     },
     "require-dev": {
         "corneltek/phpunit-testmore": "dev-master",
