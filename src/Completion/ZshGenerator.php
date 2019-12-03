@@ -187,7 +187,13 @@ class ZshGenerator
         // output description
         $str .= "[" . addcslashes($opt->desc,'[]:') . "]";
 
-        $placeholder = ($opt->valueName) ? $opt->valueName : $opt->isa ? $opt->isa : null;
+        if ($opt->valueName) {
+            $placeholder = $opt->valueName;
+        } elseif ($opt->isa) {
+            $placeholder = $opt->isa;
+        } else {
+            $placeholder = null;
+        }
 
         // has anything to complete
         if ($opt->validValues || $opt->suggestions || $opt->isa) {
