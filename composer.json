@@ -11,7 +11,7 @@
         "getopt"
     ],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.5.0",
         "corneltek/getoptionkit": "~2.5.4",
         "universal/universal": "2.0.x-dev",
         "corneltek/codegen": "4.0.x-dev",
