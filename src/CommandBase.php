@@ -913,26 +913,31 @@ abstract class CommandBase implements ArrayAccess, IteratorAggregate, CommandInt
         return $chooser->choose($prompt, $choices);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($key)
     {
         return isset($this->commands[$key]);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($key, $value)
     {
         $this->commands[$key] = $value;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         return $this->commands[$key];
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($key)
     {
         unset($this->commands[$key]);
     }
 
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new ArrayIterator($this->commands);
