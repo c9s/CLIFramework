@@ -192,6 +192,7 @@ class Application extends CommandBase implements CommandInterface
 
     public function usage()
     {
+        return 'application usage';
     }
 
     /**
