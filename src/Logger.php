@@ -185,7 +185,7 @@ class Logger
         if ($this->level <= 4 && $level >= 4) {
             $style = 'dim';
         }
-        fprintf(STDERR, $this->formatter->format($msg, $style) . PHP_EOL);
+        fprintf(STDERR, str_replace('%', '%%', $this->formatter->format($msg, $style)) . PHP_EOL);
     }
 
     public function __call($method, $args)
