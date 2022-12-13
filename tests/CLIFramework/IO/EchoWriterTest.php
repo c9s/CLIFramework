@@ -16,7 +16,7 @@ class EchoWriterTest extends \PHPUnit\Framework\TestCase
 {
     private $writer;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->writer = new EchoWriter();
     }

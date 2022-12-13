@@ -183,7 +183,7 @@ class TableTest extends TestCase
         $this->assertStringEqualsFile('tests/data/markdown-table.txt', $out);
     }
 
-    static public function assertStringEqualsFile($file, $str, $message = NULL, $canonicalize = false, $ignoreCase = false) {
+    public static function assertStringEqualsFile($file, $str, $message = NULL, $canonicalize = false, $ignoreCase = false): void {
         if ($str instanceof Table) {
             $str = $str->render();
         }
@@ -192,7 +192,7 @@ class TableTest extends TestCase
             echo "Actual:\n";
             echo $str , "\n";
         }
-        parent::assertStringEqualsFile($file, $str, $message, $canonicalize, $ignoreCase);
+        parent::assertStringEqualsFile($file, $str, (string) $message, $canonicalize, $ignoreCase);
     }
 
 }

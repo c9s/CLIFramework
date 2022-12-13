@@ -16,7 +16,7 @@ class LoggerTest extends TestCase
 {
     private $logger;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->logger = new \CLIFramework\Logger;
     }

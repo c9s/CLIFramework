@@ -17,13 +17,13 @@ class StreamWriterTest extends \PHPUnit\Framework\TestCase
     private $writer;
     private $stream;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->stream = fopen('php://memory', 'rw');
         $this->writer = new StreamWriter($this->stream);
     }
 
-    function tearDown()
+    protected function tearDown(): void
     {
         fclose($this->stream);
     }
