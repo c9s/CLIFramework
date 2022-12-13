@@ -11,7 +11,7 @@
         "getopt"
     ],
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=7.2.0",
         "corneltek/getoptionkit": "~2.6.1",
         "universal/universal": "2.0.x-dev",
         "corneltek/codegen": "4.0.x-dev",
@@ -20,8 +20,9 @@
         "symfony/class-loader": "~2.8|~3.0|~3.2"
     },
     "require-dev": {
-        "corneltek/phpunit-testmore": "dev-master",
-        "satooshi/php-coveralls": "^1"
+        "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
+        "satooshi/php-coveralls": "^1",
+        "ext-intl": "*"
     },
     "license": "MIT",
     "authors": [

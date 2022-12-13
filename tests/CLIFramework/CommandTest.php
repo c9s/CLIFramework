@@ -9,7 +9,7 @@ class CommandTest extends TestCase
 {
     private $command;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->command = new CommandTestCommand();
     }
