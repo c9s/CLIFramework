@@ -9,7 +9,9 @@
  *
  */
 
-class CommandLoaderTest extends PHPUnit_Framework_TestCase 
+use PHPUnit\Framework\TestCase;
+
+class CommandLoaderTest extends TestCase
 {
     public function test()
     {

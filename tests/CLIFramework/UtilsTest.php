@@ -1,7 +1,8 @@
 <?php
 use CLIFramework\Utils;
+use PHPUnit\Framework\TestCase;
 
-class UtilsTest extends PHPUnit_Framework_TestCase
+class UtilsTest extends TestCase
 {
     public function testGetClassPath()
     {

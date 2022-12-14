@@ -11,12 +11,13 @@
 namespace tests\CLIFramework\IO;
 
 use CLIFramework\IO\EchoWriter;
+use PHPUnit\Framework\TestCase;
 
-class EchoWriterTest extends \PHPUnit_Framework_TestCase 
+class EchoWriterTest extends TestCase
 {
     private $writer;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->writer = new EchoWriter();
     }

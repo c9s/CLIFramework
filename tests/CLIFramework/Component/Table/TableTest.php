@@ -8,8 +8,9 @@ use CLIFramework\Component\Table\NumberFormatCell;
 use CLIFramework\Component\Table\CurrencyCellAttribute;
 use CLIFramework\Component\Table\SpellOutNumberFormatCell;
 use CLIFramework\Component\Table\RowSeparator;
+use PHPUnit\Framework\TestCase;
 
-class TableTest extends PHPUnit_Framework_TestCase
+class TableTest extends TestCase
 {
 
     public function testNumberFormatCell()
@@ -181,7 +182,7 @@ class TableTest extends PHPUnit_Framework_TestCase
         $this->assertStringEqualsFile('tests/data/markdown-table.txt', $out);
     }
 
-    static public function assertStringEqualsFile($file, $str, $message = NULL, $canonicalize = false, $ignoreCase = false) {
+    public static function assertStringEqualsFile($file, $str, $message = NULL, $canonicalize = false, $ignoreCase = false): void {
         if ($str instanceof Table) {
             $str = $str->render();
         }
@@ -190,7 +191,7 @@ class TableTest extends PHPUnit_Framework_TestCase
             echo "Actual:\n";
             echo $str , "\n";
         }
-        parent::assertStringEqualsFile($file, $str, $message, $canonicalize, $ignoreCase);
+        parent::assertStringEqualsFile($file, $str, (string)$message, $canonicalize, $ignoreCase);
     }
 
 }

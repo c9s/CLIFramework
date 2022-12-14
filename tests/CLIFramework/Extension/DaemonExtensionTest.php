@@ -13,15 +13,15 @@ use CLIFramework\Extension\DaemonExtension;
 use CLIFramework\Command;
 use CLIFramework\Application;
 use CLIFramework\ServiceContainer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class DaemonExtensionTest extends PHPUnit_Framework_TestCase 
+class DaemonExtensionTest extends TestCase
 {
     private $extension;
 
     private $command;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $extension = new DaemonExtensionForTest;
         if (!$extension->isAvailable()) {
@@ -40,7 +40,7 @@ class DaemonExtensionTest extends PHPUnit_Framework_TestCase
         $this->command->executeWrapper(array());
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
     }
 }

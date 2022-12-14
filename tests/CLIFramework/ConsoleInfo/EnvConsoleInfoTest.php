@@ -1,7 +1,8 @@
 <?php
 use CLIFramework\ConsoleInfo\EnvConsoleInfo;
+use PHPUnit\Framework\TestCase;
 
-class EnvConsoleInfoTest extends PHPUnit_Framework_TestCase
+class EnvConsoleInfoTest extends TestCase
 {
     public function test()
     {

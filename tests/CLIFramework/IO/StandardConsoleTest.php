@@ -17,6 +17,9 @@ class StandardConsoleTest extends ConsoleTestCase
 {
     function testReadLine()
     {
+        if (!extension_loaded('readline')) {
+            $this->markTestSkipped("readline is required.");
+        }
         $script = __DIR__ . '/../../script/CLIFramework/IO/StandardConsoleReadLine.php';
         $self = $this;
         $this->runScript($script, "test\n", function($line) use($self) {
@@ -26,6 +29,9 @@ class StandardConsoleTest extends ConsoleTestCase
 
     function testReadPassword()
     {
+        if (!extension_loaded('readline')) {
+            $this->markTestSkipped("readline is required.");
+        }
         $script = __DIR__ . '/../../script/CLIFramework/IO/StandardConsoleReadPassword.php';
         $self = $this;
         $this->runScript($script, "test\n", function($line) use($self) {

@@ -1,7 +1,8 @@
 <?php
 use CLIFramework\ValueGroup;
+use PHPUnit\Framework\TestCase;
 
-class ValueGroupTest extends PHPUnit_Framework_TestCase
+class ValueGroupTest extends TestCase
 {
     public function testValueGroup()
     {

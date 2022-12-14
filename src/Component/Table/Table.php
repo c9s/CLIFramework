@@ -128,6 +128,9 @@ class Table
 
         $columns = array(count($this->headers));
         foreach ($this->rows as $row) {
+            if (!is_array($row)) {
+                $row = [];
+            }
             $columns[] = count($row);
         }
         return $this->numberOfColumns = max($columns);
