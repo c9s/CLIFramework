@@ -92,7 +92,7 @@ class ExampleApplication extends CLIFramework\Application {
 }
 
 
-class ZshCompletionCommandTest extends PHPUnit_Framework_TestCase
+class ZshCompletionCommandTest extends \PHPUnit\Framework\TestCase
 {
 
     public function test()

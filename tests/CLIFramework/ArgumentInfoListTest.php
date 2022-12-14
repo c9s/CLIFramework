@@ -1,8 +1,9 @@
 <?php
 use CLIFramework\ArgInfo;
 use CLIFramework\ArgInfoList;
+use PHPUnit\Framework\TestCase;
 
-class ArgInfoListTest extends PHPUnit_Framework_TestCase
+class ArgInfoListTest extends TestCase
 {
     public function test()
     {

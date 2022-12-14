@@ -1,7 +1,8 @@
 <?php
 use CLIFramework\Buffer;
+use PHPUnit\Framework\TestCase;
 
-class BufferTest extends PHPUnit_Framework_TestCase
+class BufferTest extends TestCase
 {
     public function testAppend()
     {

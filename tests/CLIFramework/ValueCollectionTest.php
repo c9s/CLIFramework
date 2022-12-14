@@ -1,7 +1,8 @@
 <?php
 use CLIFramework\ValueCollection;
+use PHPUnit\Framework\TestCase;
 
-class ValueCollectionTest extends PHPUnit_Framework_TestCase
+class ValueCollectionTest extends TestCase
 {
     public function test()
     {

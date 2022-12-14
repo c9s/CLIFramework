@@ -51,12 +51,12 @@ ActionKit
     }
 
     public function testCommandNotFound() {
-        $this->setExpectedException('CLIFramework\\Exception\\CommandNotFoundException');
+        $this->expectException('CLIFramework\\Exception\\CommandNotFoundException');
         ok( $this->runCommand('example/demo --no-interact zzz') );
     }
 
     public function testArgument() {
-        $this->setExpectedException('CLIFramework\\Exception\\CommandArgumentNotEnoughException');
+        $this->expectException('CLIFramework\\Exception\\CommandArgumentNotEnoughException');
         ok( $this->runCommand('example/demo commit') );
     }
 

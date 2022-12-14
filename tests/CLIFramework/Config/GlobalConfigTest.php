@@ -11,8 +11,9 @@
 namespace tests\CLIFramework\Config;
 
 use CLIFramework\Config\GlobalConfig;
+use PHPUnit\Framework\TestCase;
 
-class GlobalConfigTest extends \PHPUnit_Framework_TestCase 
+class GlobalConfigTest extends TestCase
 {
     /**
      * @test

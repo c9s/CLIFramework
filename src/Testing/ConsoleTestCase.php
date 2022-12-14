@@ -1,7 +1,9 @@
 <?php
 namespace CLIFramework\Testing;
 
-class ConsoleTestCase extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ConsoleTestCase extends TestCase
 {
     protected function runScript($path, $input, $callback)
     {
@@ -21,7 +23,7 @@ class ConsoleTestCase extends \PHPUnit_Framework_TestCase
         @fclose($pipes[0]);
         @fclose($pipes[1]);
         @fclose($pipes[2]);
-        @pclose($process);
+        @proc_close($process);
         $callback($content);
     }
 }

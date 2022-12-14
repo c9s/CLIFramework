@@ -1,7 +1,8 @@
 <?php
 use CLIFramework\ArgumentEditor\ArgumentEditor;
+use PHPUnit\Framework\TestCase;
 
-class ArgumentEditorTest extends PHPUnit_Framework_TestCase
+class ArgumentEditorTest extends TestCase
 {
     public function testAppendAndRemove()
     {

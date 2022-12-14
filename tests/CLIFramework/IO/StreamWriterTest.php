@@ -11,19 +11,20 @@
 namespace tests\CLIFramework\IO;
 
 use CLIFramework\IO\StreamWriter;
+use PHPUnit\Framework\TestCase;
 
-class StreamWriterTest extends \PHPUnit_Framework_TestCase 
+class StreamWriterTest extends TestCase
 {
     private $writer;
     private $stream;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->stream = fopen('php://memory', 'rw');
         $this->writer = new StreamWriter($this->stream);
     }
 
-    function tearDown()
+    protected function tearDown(): void
     {
         fclose($this->stream);
     }

@@ -64,7 +64,7 @@ class ArchiveCommand extends Command
             ->defaultValue(true)
             ;
 
-        $opts->add('c|compress?', 'compress type: gz, bz2')
+        $opts->add('compress?', 'compress type: gz, bz2')
             ->defaultValue('gz')
             ->validValues(array('gz', 'bz2'))
             ;

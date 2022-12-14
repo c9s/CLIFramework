@@ -9,12 +9,13 @@
  *
  */
 use CLIFramework\IO\EchoWriter;
+use PHPUnit\Framework\TestCase;
 
-class LoggerTest extends PHPUnit_Framework_TestCase 
+class LoggerTest extends TestCase
 {
     private $logger;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->logger = new \CLIFramework\Logger;
     }

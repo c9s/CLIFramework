@@ -11,12 +11,13 @@
 namespace tests\CLIFramework\IO;
 
 use CLIFramework\IO\NullStty;
+use PHPUnit\Framework\TestCase;
 
-class NullSttyTest extends \PHPUnit_Framework_TestCase 
+class NullSttyTest extends TestCase
 {
     private $stty;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->stty = new NullStty();
     }

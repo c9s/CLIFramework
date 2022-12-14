@@ -1,7 +1,8 @@
 <?php
 use CLIFramework\CompletionUtils;
+use PHPUnit\Framework\TestCase;
 
-class CompletionUtilsTest extends PHPUnit_Framework_TestCase
+class CompletionUtilsTest extends TestCase
 {
     public function testSplitWords()
     {

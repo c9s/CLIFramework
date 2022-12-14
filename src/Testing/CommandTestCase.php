@@ -1,8 +1,8 @@
 <?php
 namespace CLIFramework\Testing;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-abstract class CommandTestCase extends PHPUnit_Framework_TestCase
+abstract class CommandTestCase extends TestCase
 {
     public $app;
 
@@ -15,7 +15,7 @@ abstract class CommandTestCase extends PHPUnit_Framework_TestCase
         return $this->app;
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         if ($this->outputBufferingActive) {
             ob_start();
@@ -23,7 +23,7 @@ abstract class CommandTestCase extends PHPUnit_Framework_TestCase
         $this->app = $this->setupApplication();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->app = NULL;
         if ($this->outputBufferingActive) {

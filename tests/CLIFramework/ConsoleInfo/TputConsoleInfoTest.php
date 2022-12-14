@@ -1,7 +1,11 @@
 <?php
 use CLIFramework\ConsoleInfo\TputConsoleInfo;
+use PHPUnit\Framework\TestCase;
 
-class TputConsoleInfoTest extends PHPUnit_Framework_TestCase
+/**
+ * @group github_action
+ */
+class TputConsoleInfoTest extends TestCase
 {
     public function test()
     {

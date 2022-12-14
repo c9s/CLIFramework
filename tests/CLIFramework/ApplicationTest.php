@@ -10,8 +10,9 @@
  */
 namespace tests\CLIFramework;
 use TestApp\Application;
+use PHPUnit\Framework\TestCase;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
     function test()
     {

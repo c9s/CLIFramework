@@ -1,8 +1,9 @@
 <?php
 use CLIFramework\ArgInfo;
 use TestApp\Application;
+use PHPUnit\Framework\TestCase;
 
-class TestAppCommandTest extends PHPUnit_Framework_TestCase
+class TestAppCommandTest extends TestCase
 {
     public function testSimpleCommand()
     {
