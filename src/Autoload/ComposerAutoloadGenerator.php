@@ -227,9 +227,9 @@ class ComposerAutoloadGenerator
 
         // Generate classloader initialization code
         $block = new Block();
-        $block[] = new UseStatement('Universal\\ClassLoader\\Psr0ClassLoader');
-        $block[] = new UseStatement('Universal\\ClassLoader\\Psr4ClassLoader');
-        $block[] = new UseStatement('Universal\\ClassLoader\\MapClassLoader');
+        $block[] = new UseStatement(\Universal\ClassLoader\Psr0ClassLoader::class);
+        $block[] = new UseStatement(\Universal\ClassLoader\Psr4ClassLoader::class);
+        $block[] = new UseStatement(\Universal\ClassLoader\MapClassLoader::class);
 
         if (!empty($files)) {
             foreach ($files as $file) {

@@ -33,6 +33,7 @@ class Chooser
      */
     public function choose($prompt, $choices )
     {
+        $i = null;
         echo $prompt . ": \n";
 
         $choicesMap = array();

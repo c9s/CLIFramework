@@ -21,6 +21,7 @@ class CursorControl
      */
     public function home($row, $col)
     {
+        $column = null;
         fwrite($this->fd, "\e[{$row};{$column}H");
     }
 

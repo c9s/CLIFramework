@@ -168,7 +168,7 @@ class ZshGenerator
         $str = "";
 
         $optspec = $opt->flag || $opt->optional ? '' : '=';
-        $optName = $opt->long ? $opt->long : $opt->short;
+        $optName = $opt->long ?: $opt->short;
 
         if ($opt->short && $opt->long) {
             if (!$opt->multiple) {
@@ -187,7 +187,7 @@ class ZshGenerator
         // output description
         $str .= "[" . addcslashes($opt->desc,'[]:') . "]";
 
-        $placeholder = (($opt->valueName) ? $opt->valueName : $opt->isa) ? $opt->isa : null;
+        $placeholder = ($opt->valueName ?: $opt->isa) ? $opt->isa : null;
 
         // has anything to complete
         if ($opt->validValues || $opt->suggestions || $opt->isa) {

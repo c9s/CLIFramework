@@ -77,6 +77,7 @@ class CommandAutoloader
 
     private function translateFileNameToCommand($fileName)
     {
+        $matches = [];
         $extensions = explode(',', spl_autoload_extensions());
         $isCommandClassFile = ($fileName[0] !== '.'
             and preg_match('/(^.*Command)(\..*)$/', $fileName, $matches) === 1

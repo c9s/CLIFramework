@@ -4,6 +4,7 @@ namespace CLIFramework;
 class LevenshteinCorrector extends Corrector
 {
     public function match($input) {
+        $closet = null;
         // no shortest distance found, yet
         $shortest = -1;
 
