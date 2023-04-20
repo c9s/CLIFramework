@@ -2,6 +2,7 @@
 namespace CLIFramework\PharKit;
 use CodeGen\Renderable;
 
+#[\AllowDynamicProperties]
 class PharURI implements Renderable
 {
     protected $alias;

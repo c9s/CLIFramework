@@ -14,6 +14,7 @@ use GetOptionKit\Option;
 use GetOptionKit\OptionPrinter\OptionPrinter as OptionPrinterInterface;
 use CLIFramework\Formatter;
 
+#[\AllowDynamicProperties]
 class OptionPrinter implements OptionPrinterInterface
 {
     public $screenWidth = 78;

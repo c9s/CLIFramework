@@ -41,6 +41,7 @@ function command_signature_suffix(CommandBase $command) {
     // return str_replace('.','_', $command->getSignature());
 }
 
+#[\AllowDynamicProperties]
 class BashGenerator
 {
     public $app;

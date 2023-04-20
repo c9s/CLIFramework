@@ -3,6 +3,7 @@ namespace CLIFramework\Testing;
 
 use PHPUnit\Framework\TestCase;
 
+#[\AllowDynamicProperties]
 class ConsoleTestCase extends TestCase
 {
     protected function runScript($path, $input, $callback)

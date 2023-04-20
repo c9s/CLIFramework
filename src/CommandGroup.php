@@ -3,6 +3,7 @@ namespace CLIFramework;
 use CLIFramework\Command;
 use CLIFramework\CommandBase;
 
+#[\AllowDynamicProperties]
 class CommandGroup
 {
     public $id;

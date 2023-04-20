@@ -2,6 +2,7 @@
 namespace CLIFramework\Component\Table;
 use CLIFramework\Ansi\Colors;
 
+#[\AllowDynamicProperties]
 class CellAttribute { 
 
     public const ALIGN_RIGHT = 1;

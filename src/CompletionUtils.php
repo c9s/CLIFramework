@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework;
 
+#[\AllowDynamicProperties]
 class CompletionUtils
 {
     public static function split_words($line) {

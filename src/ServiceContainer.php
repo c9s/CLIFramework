@@ -27,6 +27,7 @@ use Universal\Event\PhpEvent;
  *    $logger = $container['logger'];
  *
  */
+#[\AllowDynamicProperties]
 class ServiceContainer extends Container
 {
     public function __construct()

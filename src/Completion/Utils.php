@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Completion;
 
+#[\AllowDynamicProperties]
 class Utils
 {
 

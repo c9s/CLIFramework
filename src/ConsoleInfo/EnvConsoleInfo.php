@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\ConsoleInfo;
 
+#[\AllowDynamicProperties]
 class EnvConsoleInfo implements ConsoleInfoInterface
 {
     public function getColumns() 

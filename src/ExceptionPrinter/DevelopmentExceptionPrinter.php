@@ -49,6 +49,7 @@ function output_var($a) {
     }
 }
 
+#[\AllowDynamicProperties]
 class DevelopmentExceptionPrinter
 {
     public $reportUrl;

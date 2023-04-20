@@ -11,6 +11,7 @@
 namespace CLIFramework;
 use ReflectionClass;
 
+#[\AllowDynamicProperties]
 class Utils
 {
 

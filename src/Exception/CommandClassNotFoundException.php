@@ -2,6 +2,7 @@
 namespace CLIFramework\Exception;
 use Exception;
 
+#[\AllowDynamicProperties]
 class CommandClassNotFoundException extends Exception
 {
     public $class;

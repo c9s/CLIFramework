@@ -40,6 +40,7 @@ use CLIFramework\Extension\ApplicationExtension;
  *
  * register subcommands.
  */
+#[\AllowDynamicProperties]
 abstract class CommandBase
     implements ArrayAccess, IteratorAggregate, CommandInterface
 {

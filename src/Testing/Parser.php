@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Testing;
 
+#[\AllowDynamicProperties]
 class Parser
 {
     public static function getArguments($command)

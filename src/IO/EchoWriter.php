@@ -2,6 +2,7 @@
 
 namespace CLIFramework\IO;
 
+#[\AllowDynamicProperties]
 class EchoWriter implements Writer
 {
     public function write($text)

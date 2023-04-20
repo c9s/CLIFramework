@@ -6,6 +6,7 @@ use Countable;
 use ArrayIterator;
 use ArrayObject;
 
+#[\AllowDynamicProperties]
 class ArgInfoList extends ArrayObject {
 
     public function add($name) {

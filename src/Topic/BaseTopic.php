@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Topic;
 
+#[\AllowDynamicProperties]
 abstract class BaseTopic
 {
 

@@ -12,6 +12,7 @@ use CodeGen\Statement\MethodCallStatement;
 use GetOptionKit\OptionResult;
 
 
+#[\AllowDynamicProperties]
 class PharGenerator
 {
     protected $pharFile;

@@ -3,6 +3,7 @@ namespace CLIFramework;
 
 // TODO: refactoring this to a standalone package.
 
+#[\AllowDynamicProperties]
 class Buffer {
     public $content = '';
 

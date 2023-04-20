@@ -13,6 +13,7 @@ use CLIFramework\Formatter;
 use CLIFramework\ServiceContainer;
 use CLIFramework\IO\Writer;
 
+#[\AllowDynamicProperties]
 class Logger
 {
     /*

@@ -5,6 +5,7 @@ namespace CLIFramework\IO;
 /**
  * Console utilities using readline.
  */
+#[\AllowDynamicProperties]
 class ReadlineConsole implements Console
 {
     /**

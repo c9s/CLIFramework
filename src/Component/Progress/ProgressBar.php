@@ -16,6 +16,7 @@ class LaserProgressBarStyle extends ProgressBarStyle
     public $barCharacter = '#';
 }
 
+#[\AllowDynamicProperties]
 class ProgressBar implements ProgressReporter
 {
     protected $terminalWidth = 78;

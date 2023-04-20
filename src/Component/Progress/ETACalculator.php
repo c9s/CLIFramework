@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Component\Progress;
 
+#[\AllowDynamicProperties]
 class ETACalculator
 {
     static public function calculateRemainingSeconds($proceeded, $total, $start, $now)

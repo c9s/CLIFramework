@@ -3,6 +3,7 @@ namespace CLIFramework\Exception;
 use CLIFramework\Extension\ExtensionBase;
 use Exception;
 
+#[\AllowDynamicProperties]
 class ExtensionException extends \Exception
 {
     protected $extension;

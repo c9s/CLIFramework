@@ -11,11 +11,13 @@ interface Separator { }
 /**
  * RowSeparator is a slight separator for separating distinct rows...
  */
+#[\AllowDynamicProperties]
 class RowSeparator implements Separator { }
 
 /**
  * TableSeparator is more likely a section separator, the style is customizable.
  */
+#[\AllowDynamicProperties]
 class TableSeparator implements Separator { }
 
 /**
@@ -24,6 +26,7 @@ class TableSeparator implements Separator { }
  * - Support column wrapping if the cell text is too long.
  * - Table style
  */
+#[\AllowDynamicProperties]
 class Table
 {
 

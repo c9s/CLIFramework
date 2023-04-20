@@ -8,6 +8,7 @@ use CLIFramework\Formatter;
  *
  *
  */
+#[\AllowDynamicProperties]
 class Chooser
 {
 

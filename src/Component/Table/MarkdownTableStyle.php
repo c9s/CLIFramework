@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Component\Table;
 
+#[\AllowDynamicProperties]
 class MarkdownTableStyle extends TableStyle
 {
     public $cellPadding = 1;

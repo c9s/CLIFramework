@@ -12,6 +12,7 @@ namespace CLIFramework;
 use CLIFramework\Exception\CommandClassNotFoundException;
 use Exception;
 
+#[\AllowDynamicProperties]
 class CommandLoader
 {
     public $namespaces = array();

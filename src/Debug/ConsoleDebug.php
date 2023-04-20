@@ -12,6 +12,7 @@ use CLIFramework\Component\Table\RowSeparator;
 use LazyRecord\BaseCollection;
 use Exception;
 
+#[\AllowDynamicProperties]
 class ConsoleDebug
 {
     static public function dumpException(Exception $e)

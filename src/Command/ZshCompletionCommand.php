@@ -16,6 +16,7 @@ use CLIFramework\Command;
 use CLIFramework\CommandInterface;
 use CLIFramework\Completion\ZshGenerator;
 
+#[\AllowDynamicProperties]
 class ZshCompletionCommand extends Command implements CommandInterface
 {
     public function brief()

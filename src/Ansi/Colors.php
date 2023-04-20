@@ -9,6 +9,7 @@ use InvalidArgumentException;
  *
  * @author Yo-An Lin <yoanlin93@gmail.com>
  */
+#[\AllowDynamicProperties]
 class Colors
 {
     public const CODE_PATTERN = '#\033\[\d{0,1}[,;]?\d*(?:;\d2)?m#x';

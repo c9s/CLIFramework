@@ -5,6 +5,7 @@ use CLIFramework\ServiceContainer;
 /**
  * Prompter class
  */
+#[\AllowDynamicProperties]
 class Prompter
 {
     private $style;

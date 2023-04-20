@@ -7,6 +7,7 @@ namespace CLIFramework;
  * @method __construct
  * @method autoload
  */
+#[\AllowDynamicProperties]
 class CommandAutoloader
 {
     /** @var \CLIFramework\CommandBase */
