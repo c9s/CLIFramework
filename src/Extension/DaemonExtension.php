@@ -9,6 +9,7 @@ use CLIFramework\Extension\CommandExtension;
 use CLIFramework\IO\StreamWriter;
 use GetOptionKit\OptionCollection;
 
+#[\AllowDynamicProperties]
 class DaemonExtension extends CommandExtension
 {
     protected $logger;

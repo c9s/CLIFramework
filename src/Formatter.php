@@ -20,6 +20,7 @@ namespace CLIFramework;
  *   $text = $formatter->format( 'text', 'green' );
  *
  */
+#[\AllowDynamicProperties]
 class Formatter
 {
 

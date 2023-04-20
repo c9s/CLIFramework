@@ -75,6 +75,7 @@ function zsh_comp_desc_array(array $array) {
 }
 
 
+#[\AllowDynamicProperties]
 class ZshGenerator
 {
     public $app;

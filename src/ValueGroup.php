@@ -2,6 +2,7 @@
 namespace CLIFramework;
 use ArrayObject;
 
+#[\AllowDynamicProperties]
 class ValueGroup extends ArrayObject
 {
 

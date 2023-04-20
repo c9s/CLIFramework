@@ -5,6 +5,7 @@ namespace CLIFramework\IO;
 /**
  * Console utilities using STDIN.
  */
+#[\AllowDynamicProperties]
 class StandardConsole implements Console
 {
     /**

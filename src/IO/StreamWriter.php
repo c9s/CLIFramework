@@ -6,6 +6,7 @@ namespace CLIFramework\IO;
  * @code
  *  $writer = new StreamWriter(STDERR);
  */
+#[\AllowDynamicProperties]
 class StreamWriter implements Writer
 {
     private $stream;

@@ -5,6 +5,7 @@ use NumberFormatter;
 use IntlDateFormatter;
 use DateTime;
 
+#[\AllowDynamicProperties]
 class DateFormatCell extends NumberFormatCell
 {
 

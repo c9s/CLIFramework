@@ -12,14 +12,17 @@ use GetOptionKit\OptionResult;
 use Exception;
 use InvalidArgumentException;
 
+#[\AllowDynamicProperties]
 class UnsupportedShellException extends Exception
 {
 }
 
+#[\AllowDynamicProperties]
 class UndefinedArgumentException extends Exception
 {
 }
 
+#[\AllowDynamicProperties]
 class UndefinedOptionException extends Exception
 {
     public $options;
@@ -101,6 +104,7 @@ function encode_array_as_shell_string($array)
     }
 }
 
+#[\AllowDynamicProperties]
 class MetaCommand extends Command
 {
     public function brief()

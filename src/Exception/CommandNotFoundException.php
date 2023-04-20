@@ -4,6 +4,7 @@ use Exception;
 use CLIFramework\CommandBase;
 use CLIFramework\Exception\CommandBaseException;
 
+#[\AllowDynamicProperties]
 class CommandNotFoundException extends CommandBaseException
 {
     public $name;

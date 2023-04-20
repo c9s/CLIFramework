@@ -3,6 +3,7 @@ namespace CLIFramework\ConsoleInfo;
 use CLIFramework\ConsoleInfo\EnvConsoleInfo;
 use CLIFramework\ConsoleInfo\TputConsoleInfo;
 
+#[\AllowDynamicProperties]
 class ConsoleInfoFactory
 {
 

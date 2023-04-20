@@ -2,6 +2,7 @@
 namespace CLIFramework;
 use CLIFramework\ValueCollection;
 
+#[\AllowDynamicProperties]
 class ArgInfo
 {
     public $name;

@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Config;
 
+#[\AllowDynamicProperties]
 class GlobalConfig
 {
     /**

@@ -6,6 +6,7 @@ use ArrayIterator;
 /**
  * 
  */
+#[\AllowDynamicProperties]
 class ValueCollection implements IteratorAggregate
 {
 

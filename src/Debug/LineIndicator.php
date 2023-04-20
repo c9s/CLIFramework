@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Debug;
 
+#[\AllowDynamicProperties]
 class LineIndicator
 {
     protected $contextLines = 4;

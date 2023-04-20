@@ -4,6 +4,7 @@ use Exception;
 use CLIFramework\Exception\CommandBaseException;
 use CLIFramework\CommandBase;
 
+#[\AllowDynamicProperties]
 class InvalidCommandArgumentException extends CommandBaseException
 {
     public $arg;

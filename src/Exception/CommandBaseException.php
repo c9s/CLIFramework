@@ -3,6 +3,7 @@ namespace CLIFramework\Exception;
 use Exception;
 use CLIFramework\CommandBase;
 
+#[\AllowDynamicProperties]
 class CommandBaseException extends Exception
 {
     public $command;

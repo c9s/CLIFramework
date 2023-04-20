@@ -17,6 +17,7 @@ use CLIFramework\CommandInterface;
 use CLIFramework\OptionPrinter;
 use CLIFramework\Corrector;
 
+#[\AllowDynamicProperties]
 class HelpCommand extends Command implements CommandInterface
 {
     /**

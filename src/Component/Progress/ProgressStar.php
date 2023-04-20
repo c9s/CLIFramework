@@ -1,6 +1,7 @@
 <?php
 namespace CLIFramework\Component\Progress;
 
+#[\AllowDynamicProperties]
 class ProgressStar implements ProgressReporter
 {
     public $stars = array('-','\\','|','/');

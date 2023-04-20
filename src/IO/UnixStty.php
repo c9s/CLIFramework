@@ -2,6 +2,7 @@
 
 namespace CLIFramework\IO;
 
+#[\AllowDynamicProperties]
 class UnixStty implements Stty
 {
     public function enableEcho()

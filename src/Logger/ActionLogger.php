@@ -5,6 +5,7 @@ namespace CLIFramework\Logger;
 use CLIFramework\Formatter;
 use CLIFramework\Ansi\CursorControl;
 
+#[\AllowDynamicProperties]
 class LogAction
 {
     public $title;
@@ -66,6 +67,7 @@ class LogAction
     }
 }
 
+#[\AllowDynamicProperties]
 class ActionLogger
 {
     public $fd;

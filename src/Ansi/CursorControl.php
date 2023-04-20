@@ -5,6 +5,7 @@ namespace CLIFramework\Ansi;
 /**
  * @codeCoverageIgnore
  */
+#[\AllowDynamicProperties]
 class CursorControl
 {
     protected $fd;

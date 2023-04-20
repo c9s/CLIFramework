@@ -2,6 +2,7 @@
 
 namespace CLIFramework\ArgumentEditor;
 
+#[\AllowDynamicProperties]
 class ArgumentEditor
 {
     public $args = array();

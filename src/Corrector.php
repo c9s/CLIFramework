@@ -8,6 +8,7 @@ namespace CLIFramework;
  * @method guess
  * @method match
  */
+#[\AllowDynamicProperties]
 class Corrector
 {
     protected $possibleTokens = array();

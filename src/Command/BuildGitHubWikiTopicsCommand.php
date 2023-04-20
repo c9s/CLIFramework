@@ -9,6 +9,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Exception;
 
+#[\AllowDynamicProperties]
 class BuildGitHubWikiTopicsCommand extends Command
 {
     public function brief()

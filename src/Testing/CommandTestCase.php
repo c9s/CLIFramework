@@ -2,6 +2,7 @@
 namespace CLIFramework\Testing;
 use PHPUnit\Framework\TestCase;
 
+#[\AllowDynamicProperties]
 abstract class CommandTestCase extends TestCase
 {
     public $app;

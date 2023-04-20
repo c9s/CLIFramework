@@ -18,6 +18,7 @@ use Phar;
  * {{Halt Compiler}}
  * {{Content Section}}
  */
+#[\AllowDynamicProperties]
 class CompileCommand extends Command
 {
     public function options($opts)

@@ -8,6 +8,7 @@ use GetOptionKit\OptionCollection;
 use LogicException;
 use CLIFramework\ArgInfoList;
 
+#[\AllowDynamicProperties]
 abstract class ExtensionBase
 {
     protected $container;

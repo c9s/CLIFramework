@@ -13,6 +13,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\ClassLoader\ClassMapGenerator;
 use CLIFramework\Logger;
 
+#[\AllowDynamicProperties]
 class ComposerAutoloadGenerator
 {
     /**
