@@ -4,17 +4,17 @@ use CLIFramework\Ansi\Colors;
 
 class CellAttribute { 
 
-    const ALIGN_RIGHT = 1;
+    public const ALIGN_RIGHT = 1;
 
-    const ALIGN_LEFT = 2;
+    public const ALIGN_LEFT = 2;
 
-    const ALIGN_CENTER = 3;
+    public const ALIGN_CENTER = 3;
 
-    const WRAP = 1;
+    public const WRAP = 1;
 
-    const CLIP = 2;
+    public const CLIP = 2;
 
-    const ELLIPSIS = 3;
+    public const ELLIPSIS = 3;
 
     protected $alignment = 2;
 

@@ -185,11 +185,11 @@ class HelpCommand extends Command implements CommandInterface
             $command_classes = array();
             foreach ($classes as $class) {
                 if (version_compare(phpversion(), '5.3.9') >= 0) {
-                    if (is_subclass_of($class, 'CLIFramework\\Command', true)) {
+                    if (is_subclass_of($class, \CLIFramework\Command::class, true)) {
                         $command_classes[] = $class;
                     }
                 } else {
-                    if (is_subclass_of($class, 'CLIFramework\\Command')) {
+                    if (is_subclass_of($class, \CLIFramework\Command::class)) {
                         $command_classes[] = $class;
                     }
                 }

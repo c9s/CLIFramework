@@ -288,7 +288,7 @@ class MetaCommand extends Command
             if ($opts->zsh) {
                 // for zsh, we output the first line as the label
                 foreach ($values as $value) {
-                    list($key, $val) = $value;
+                    [$key, $val] = $value;
                     $this->logger->writeln("$key:".addcslashes($val, ':'));
                 }
             } else {

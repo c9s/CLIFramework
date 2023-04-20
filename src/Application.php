@@ -37,9 +37,9 @@ use BadMethodCallException;
 class Application extends CommandBase
     implements CommandInterface
 {
-    const CORE_VERSION = '2.5.4';
-    const VERSION = "2.8.1";
-    const NAME = 'CLIFramework';
+    public const CORE_VERSION = '2.5.4';
+    public const VERSION = "2.8.1";
+    public const NAME = 'CLIFramework';
 
 
     /**
@@ -123,7 +123,7 @@ class Application extends CommandBase
         $appRefClass = new ReflectionClass($this);
         $appNs = $appRefClass->getNamespaceName();
         $this->loader->addNamespace( '\\' . $appNs . '\\Command' );
-        $this->loader->addNamespace( array('\\CLIFramework\\Command' ));
+        $this->loader->addNamespace( array('\\' . \CLIFramework\Command::class ));
 
         $this->supportReadline = extension_loaded('readline');
     }
@@ -257,14 +257,14 @@ class Application extends CommandBase
     {
         // $this->addCommand('list','CLIFramework\\Command\\ListCommand');
         parent::init();
-        $this->command('help','CLIFramework\\Command\\HelpCommand');
+        $this->command('help',\CLIFramework\Command\HelpCommand::class);
         $this->commandGroup("Development Commands", array(
-            'zsh'                 => 'CLIFramework\\Command\\ZshCompletionCommand',
-            'bash'                => 'CLIFramework\\Command\\BashCompletionCommand',
-            'meta'                => 'CLIFramework\\Command\\MetaCommand',
-            'compile'             => 'CLIFramework\\Command\\CompileCommand',
-            'archive'             => 'CLIFramework\\Command\\ArchiveCommand',
-            'github:build-topics' => 'CLIFramework\\Command\\BuildGitHubWikiTopicsCommand',
+            'zsh'                 => \CLIFramework\Command\ZshCompletionCommand::class,
+            'bash'                => \CLIFramework\Command\BashCompletionCommand::class,
+            'meta'                => \CLIFramework\Command\MetaCommand::class,
+            'compile'             => \CLIFramework\Command\CompileCommand::class,
+            'archive'             => \CLIFramework\Command\ArchiveCommand::class,
+            'github:build-topics' => \CLIFramework\Command\BuildGitHubWikiTopicsCommand::class,
         ))->setId('dev');
     }
 

@@ -109,7 +109,7 @@ class BuildGitHubWikiTopicsCommand extends Command
                 $cTemplate->addProperty('url', $topicRemoteUrl);
                 $cTemplate->addProperty('title', $topicTitle);
 
-                $cTemplate->extendClass('\\CLIFramework\\Topic\\GitHubTopic');
+                $cTemplate->extendClass('\\' . \CLIFramework\Topic\GitHubTopic::class);
 
                 $cTemplate->addMethod('public', 'getRemoteUrl', array(), 'return $this->remoteUrl;');
                 $cTemplate->addMethod('public', 'getId', array(), 'return $this->id;');

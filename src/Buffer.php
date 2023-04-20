@@ -14,8 +14,8 @@ class Buffer {
 
     public $format;
 
-    const FORMAT_UNIX = 0;
-    const FORMAT_DOS = 1;
+    public const FORMAT_UNIX = 0;
+    public const FORMAT_DOS = 1;
 
     public $newline = "\n";
 
