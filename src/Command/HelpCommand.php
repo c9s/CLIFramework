@@ -199,7 +199,7 @@ class HelpCommand extends Command implements CommandInterface
             $ret = $app->aggregate();
 
             // show "General commands" title if there are more than one groups
-            if (count($ret['groups']) > 1 || $this->options->dev) {
+            if ((is_array($ret['groups']) || $ret['groups'] instanceof \Countable ? count($ret['groups']) : 0) > 1 || $this->options->dev) {
                 $this->logger->writeln('  '.$formatter->format('General Commands', 'strong_white'));
             }
             $this->layoutCommands($ret['commands']);

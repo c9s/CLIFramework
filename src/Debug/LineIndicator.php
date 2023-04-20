@@ -23,7 +23,7 @@ class LineIndicator
     {
         $lines = file($file);
         $fromIndex = max($line - 1 - $this->contextLines, 0);
-        $toIndex = min($line - 1 + $this->contextLines, count($lines));
+        $toIndex = min($line - 1 + $this->contextLines, is_array($lines) || $lines instanceof \Countable ? count($lines) : 0);
 
         if ($fromIndex === $toIndex) {
             $indexRange = [ $fromIndex ];

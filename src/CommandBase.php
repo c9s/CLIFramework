@@ -796,7 +796,7 @@ abstract class CommandBase
         // Validating arguments
         $argInfos = $this->getArgInfoList();
 
-        for ($i = 0; $i < count($argInfos); $i++ ) {
+        for ($i = 0; $i < (is_array($argInfos) || $argInfos instanceof \Countable ? count($argInfos) : 0); $i++ ) {
             $argInfo = $argInfos[$i];
             if (isset($args[$i])) {
                 $arg = $args[$i];
