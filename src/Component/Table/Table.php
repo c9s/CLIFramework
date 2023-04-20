@@ -165,7 +165,7 @@ class Table
 
             $lines = $attribute->handleTextOverflow($cell, $this->maxColumnWidth);
 
-            if (count($lines) == 1) {
+            if ((is_array($lines) || $lines instanceof \Countable ? count($lines) : 0) == 1) {
                 $lines[0] = $attribute->format($lines[0]);
             }
 

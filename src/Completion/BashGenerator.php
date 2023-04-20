@@ -378,7 +378,7 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         // local argument_min_length=0
         $argInfos = $cmd->getArgInfoList();
         // $buf->appendLine("local argument_min_length=" . count($argInfos));
-        $buf->appendLine(local_bash_var('argument_min_length', count($argInfos)));
+        $buf->appendLine(local_bash_var('argument_min_length', is_array($argInfos) || $argInfos instanceof \Countable ? count($argInfos) : 0));
 
 
         $buf->append('
@@ -454,7 +454,7 @@ complete -o bashdefault -o default -o nospace -F {$compPrefix}_main_wrapper {$bi
         $buf->appendLine('      fi');
         $buf->appendLine('      # If the command requires at least $argument_min_length to run, we check the argument');
 
-        if (count($argInfos) > 0) {
+        if ((is_array($argInfos) || $argInfos instanceof \Countable ? count($argInfos) : 0) > 0) {
             $buf->appendLine('if [[ $argument_min_length > 0 ]] ; then');
 
             // $buf->appendLine('echo argument_index: [$argument_index]');

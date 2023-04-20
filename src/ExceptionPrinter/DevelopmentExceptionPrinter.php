@@ -126,7 +126,7 @@ class DevelopmentExceptionPrinter
         $this->logger->info("Thrown from $file at line $line:\n");
 
         $lines = file($file);
-        $indexRange = range(max($line - 4, 0), min($line + 3, count($lines)));
+        $indexRange = range(max($line - 4, 0), min($line + 3, is_array($lines) || $lines instanceof \Countable ? count($lines) : 0));
         foreach($indexRange as $index) {
             if ($index == ($line - 1)) {
                 $this->logger->warn(sprintf("> % 3d", $index + 1) . rtrim($lines[$index]));
